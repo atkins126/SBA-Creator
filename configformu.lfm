@@ -1,0 +1,104 @@
+object ConfigForm: TConfigForm
+  Left = 1023
+  Height = 250
+  Top = 447
+  Width = 452
+  BorderStyle = bsDialog
+  Caption = 'ConfigForm'
+  ClientHeight = 250
+  ClientWidth = 452
+  OnShow = FormShow
+  Position = poMainFormCenter
+  LCLVersion = '1.4.0.4'
+  object L_ConfigDir: TStaticText
+    Left = 8
+    Height = 16
+    Top = 10
+    Width = 57
+    AutoSize = True
+    Caption = 'Config Dir:'
+    TabOrder = 0
+  end
+  object Label1: TLabel
+    Left = 8
+    Height = 15
+    Top = 40
+    Width = 57
+    Caption = 'Library Dir:'
+    FocusControl = Ed_LibraryDir
+    ParentColor = False
+  end
+  object Label2: TLabel
+    Left = 8
+    Height = 15
+    Top = 88
+    Width = 61
+    Caption = 'Snippet Dir:'
+    FocusControl = Ed_SnippetDir
+    ParentColor = False
+  end
+  object Ed_LibraryDir: TDirectoryEdit
+    Left = 8
+    Height = 23
+    Top = 56
+    Width = 436
+    ShowHidden = False
+    ButtonWidth = 23
+    NumGlyphs = 1
+    Flat = True
+    Anchors = [akTop, akLeft, akRight]
+    MaxLength = 0
+    TabOrder = 1
+  end
+  object Ed_SnippetDir: TDirectoryEdit
+    Left = 8
+    Height = 23
+    Top = 104
+    Width = 436
+    ShowHidden = False
+    ButtonWidth = 23
+    NumGlyphs = 1
+    Flat = True
+    Anchors = [akTop, akLeft, akRight]
+    MaxLength = 0
+    TabOrder = 2
+  end
+  object ButtonPanel1: TButtonPanel
+    Left = 6
+    Height = 34
+    Top = 210
+    Width = 440
+    OKButton.Name = 'OKButton'
+    OKButton.DefaultCaption = True
+    HelpButton.Name = 'HelpButton'
+    HelpButton.DefaultCaption = True
+    CloseButton.Name = 'CloseButton'
+    CloseButton.DefaultCaption = True
+    CancelButton.Name = 'CancelButton'
+    CancelButton.DefaultCaption = True
+    TabOrder = 3
+    ShowButtons = [pbOK, pbCancel]
+  end
+  object Ed_ProjectsDir: TDirectoryEdit
+    Left = 8
+    Height = 23
+    Top = 152
+    Width = 436
+    ShowHidden = False
+    ButtonWidth = 23
+    NumGlyphs = 1
+    Flat = True
+    Anchors = [akTop, akLeft, akRight]
+    MaxLength = 0
+    TabOrder = 4
+  end
+  object Label3: TLabel
+    Left = 8
+    Height = 15
+    Top = 136
+    Width = 63
+    Caption = 'Projects Dir:'
+    FocusControl = Ed_SnippetDir
+    ParentColor = False
+  end
+end
