@@ -1,0 +1,52 @@
+object FloatForm: TFloatForm
+  Left = 971
+  Height = 257
+  Top = 422
+  Width = 320
+  BorderIcons = [biSystemMenu]
+  BorderStyle = bsNone
+  BorderWidth = 1
+  ClientHeight = 257
+  ClientWidth = 320
+  Color = clBlack
+  FormStyle = fsStayOnTop
+  ShowInTaskBar = stNever
+  LCLVersion = '1.4.0.4'
+  object Panel1: TPanel
+    Left = 1
+    Height = 255
+    Top = 1
+    Width = 318
+    Align = alClient
+    Caption = 'Panel1'
+    ClientHeight = 255
+    ClientWidth = 318
+    Color = clInfoBk
+    ParentColor = False
+    TabOrder = 0
+    object Image: TImage
+      Left = 1
+      Height = 234
+      Top = 20
+      Width = 316
+      AntialiasingMode = amOn
+      Align = alClient
+      Center = True
+      Proportional = True
+      Stretch = True
+      Transparent = True
+    end
+    object L_CoreName: TLabel
+      Left = 4
+      Height = 13
+      Top = 4
+      Width = 310
+      Align = alTop
+      AutoSize = False
+      BorderSpacing.Around = 3
+      Caption = 'L_CoreName'
+      Layout = tlCenter
+      ParentColor = False
+    end
+  end
+end

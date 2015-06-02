@@ -1,0 +1,15 @@
+//SBA reserved
+sba_config=sba_config
+sba_package=sba_package
+debug=debug
+adr_width=adr_width
+dat_width=dat_width
+stb_width=stb_width
+max_steps=max_steps
+sysfrec=sysfrec
+addr_type=addr_type
+adri_type=adri_type
+data_type=data_type
+dati_type=dati_type
+stb_type=stb_type
+step_type=step_type
