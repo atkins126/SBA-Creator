@@ -432,18 +432,10 @@ begin
          KeyComp('string')
       then fTokenID := tkIeee;
       //SBA
-<<<<<<< HEAD
       if KeyComp('sbaconfig') or
          KeyComp('sbapackage') or
          KeyComp('sbaread') or
          KeyComp('sbawrite') or
-=======
-      if KeyComp('sbaread') or
-         KeyComp('sbawrite') or
-         KeyComp('sba_config') or
-         KeyComp('sba_package') or
-         KeyComp('sba_typedef') or
->>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
          KeyComp('sbacall') or
          KeyComp('sbaret') or
          KeyComp('sbajump') or

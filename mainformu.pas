@@ -10,12 +10,7 @@ uses
   SynHighlighterVerilog, SynEditMarkupHighAll, SynEdit, SynEditTypes,
   uSynEditPopupEdit, SynPluginSyncroEdit, FileUtil, strutils, Clipbrd,
   IniPropStorage, StdActns, ShellCtrls, BGRASpriteAnimation, uebutton,
-<<<<<<< HEAD
   uETilePanel, versionsupportu, types, lclintf, LCLType, HistoryFiles, Math;
-=======
-  uETilePanel, versionsupportu, SBAProgContrlrU, SBAProyectU, ConfigFormU,
-  AboutFormU, sbasnippetu, types, lclintf, LCLType;
->>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
 
 type
   thdltype=(vhdl, prg, verilog, systemverilog, other);
@@ -24,11 +19,7 @@ type
   { TMainForm }
 
   TMainForm = class(TForm)
-<<<<<<< HEAD
     EditInsertDate: TAction;
-=======
-    AboutMenuItem1: TMenuItem;
->>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
     BitBtn1: TuEButton;
     BitBtn2: TuEButton;
     BitBtn3: TuEButton;
@@ -36,7 +27,6 @@ type
     B_SBAForum: TuEButton;
     B_SBAWebsite: TuEButton;
     B_SBALibrary: TuEButton;
-<<<<<<< HEAD
     EditorHistory: THistoryFiles;
     CoreImage: TImage;
     MenuItem26: TMenuItem;
@@ -53,31 +43,14 @@ type
     MainPanel: TuETilePanel;
     MenuItem14: TMenuItem;
     ProjectsHistory: TMenuItem;
-=======
-    MarkImages: TImageList;
-    MainPanel: TuETilePanel;
->>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
     SBA_InsertTemplate: TAction;
     MenuItem13: TMenuItem;
     PrgTemplates: TPopupMenu;
     SBA_NewPrg: TAction;
     SnippetsList: TShellListView;
-<<<<<<< HEAD
     ProjectExport: TAction;
     GroupBox1: TGroupBox;
     ProjectClose: TAction;
-=======
-    ProjectMenu: TMainMenu;
-    MenuItem56: TMenuItem;
-    MenuItem57: TMenuItem;
-    MenuItem58: TMenuItem;
-    MenuItem62: TMenuItem;
-    MenuItem63: TMenuItem;
-    ProjectExport: TAction;
-    GroupBox1: TGroupBox;
-    ProjectClose: TAction;
-    ProjectMenu1: TMenuItem;
->>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
     ProjectSave: TAction;
     MenuItem12: TMenuItem;
     ProjectGotoPrg: TAction;
@@ -133,11 +106,8 @@ type
     MenuItem53: TMenuItem;
     MenuItem59: TMenuItem;
     Splitter3: TSplitter;
-<<<<<<< HEAD
     Splitter4: TSplitter;
     Splitter5: TSplitter;
-=======
->>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
     TreeImg: TImageList;
     EditRedo: TAction;
     EditCopy: TEditCopy;
@@ -278,11 +248,7 @@ type
     ToolButton7: TToolButton;
     ToolButton9: TToolButton;
     B_Config: TuEButton;
-<<<<<<< HEAD
     PrjTree: TTreeView;
-=======
-    TreeView1: TTreeView;
->>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
     procedure B_SBAForumClick(Sender: TObject);
     procedure B_ConfigClick(Sender: TObject);
     procedure B_SBALibraryClick(Sender: TObject);
@@ -291,12 +257,9 @@ type
     procedure B_SBAWebsiteClick(Sender: TObject);
     procedure EditCopyExecute(Sender: TObject);
     procedure EditCutExecute(Sender: TObject);
-<<<<<<< HEAD
     procedure EditInsertDateExecute(Sender: TObject);
     procedure EditorHistoryClickHistoryItem(Sender: TObject; Item: TMenuItem;
       const Filename: string);
-=======
->>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
     procedure EditorsTabContextPopup(Sender: TObject; MousePos: TPoint;
       var Handled: Boolean);
     procedure EditPasteExecute(Sender: TObject);
@@ -306,7 +269,6 @@ type
     procedure FileSaveAsExecute(Sender: TObject);
     procedure FormResize(Sender: TObject);
     procedure L_SBALabelsDblClick(Sender: TObject);
-<<<<<<< HEAD
     procedure MainPanelResize(Sender: TObject);
     procedure PrjHistoryClickHistoryItem(Sender: TObject; Item: TMenuItem;
       const Filename: string);
@@ -315,8 +277,6 @@ type
     procedure PrjTreeMouseLeave(Sender: TObject);
     procedure PrjTreeMouseMove(Sender: TObject; Shift: TShiftState; X,
       Y: Integer);
-=======
->>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
     procedure ProjectCloseExecute(Sender: TObject);
     procedure ProjectExportExecute(Sender: TObject);
     procedure ProjectGotoEditorExecute(Sender: TObject);
@@ -366,7 +326,6 @@ type
     procedure RW_SavelistExecute(Sender: TObject);
     procedure SynEditStatusChange(Sender: TObject; Changes: TSynStatusChanges);
   private
-<<<<<<< HEAD
     { private declarations }
     procedure ChangeEditorButtons(editor: TSynEdit);
     procedure Check;
@@ -377,27 +336,14 @@ type
     function CreateTempFile(fn:string): boolean;
     procedure DetectSBAController;
     procedure GotoEditor;
-=======
-    procedure ChangeEditorButtons(editor: TSynEdit);
-    { private declarations }
-    procedure Check;
-    function CloseProg: boolean;
-    function CloseEditor(T: TTabSheet): boolean;
-    procedure CreateEditor(var ActiveTab: TTabSheet);
-    function CreateTempFile(fn:string): boolean;
-    procedure DetectSBAController;
->>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
     procedure hdltypeselect(const ts: string);
     procedure HighLightReservedWords(List:TStrings);
     procedure NewEditorPage;
     procedure Ofuscate(f: string; hdl: thdltype);
     procedure Open(f:String);
-<<<<<<< HEAD
     procedure OpenInEditor(const f: string);
     procedure OpenProject(const f:string);
     procedure ProcessWGET(url, f: string; status: TProcessStatus);
-=======
->>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
     procedure Reformat(sl: Tstrings);
     function  SaveFile(f:String; Src:TStrings):Boolean;
     procedure SetupPrgTmplMenu;
@@ -405,14 +351,9 @@ type
     procedure SyntaxCheck(f: string; hdl: Thdltype);
     procedure ExtractSBALabels;
     procedure LoadRsvWordsFile;
-<<<<<<< HEAD
     procedure LoadAnnouncement;
     procedure GetAnnouncement;
   protected
-=======
-  protected
-    procedure GetAnnouncement;
->>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
   public
     { public declarations }
   end; 
@@ -424,11 +365,8 @@ implementation
 
 {$R *.lfm}
 
-<<<<<<< HEAD
 uses DebugFormU, SBAProgContrlrU, SBAProjectU, ConfigFormU, AboutFormU, sbasnippetu, PrjWizU,
      DwFileU, FloatFormU;
-=======
->>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
 
 var
   SynMarkup: TSynEditMarkupHighlightAllCaret;
@@ -445,11 +383,7 @@ var
   PrgReturnTab:TTabSheet=nil;
   ProcessStatus:TProcessStatus=Idle;
 
-<<<<<<< HEAD
 { TMainForm }
-=======
- { TMainForm }
->>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
 
 function TMainForm.CloseEditor(T:TTabSheet):boolean;
 var
@@ -654,11 +588,7 @@ end;
 
 procedure TMainForm.B_SBAForumClick(Sender: TObject);
 begin
-<<<<<<< HEAD
   OpenURL('https://sourceforge.net/p/sbacreator/discussion/?source=navbar');
-=======
-  OpenURL('https://gist.github.com/');
->>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
 end;
 
 procedure TMainForm.EditCopyExecute(Sender: TObject);
@@ -671,7 +601,6 @@ begin
   ActiveEditor.CutToClipboard;
 end;
 
-<<<<<<< HEAD
 procedure TMainForm.EditInsertDateExecute(Sender: TObject);
 begin
   If assigned(ActiveEditor) then ActiveEditor.InsertTextAtCaret(FormatDateTime('yyyy/mm/dd',date));
@@ -683,8 +612,6 @@ begin
   OpenInEditor(Filename);
 end;
 
-=======
->>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
 procedure TMainForm.EditorsTabContextPopup(Sender: TObject; MousePos: TPoint;
   var Handled: Boolean);
 Var
@@ -750,7 +677,6 @@ begin
   ActiveEditor.SearchReplace(cSBALblSignatr+TListBox(Sender).GetSelectedText, '', [ssoEntireScope,ssoWholeWord])
 end;
 
-<<<<<<< HEAD
 procedure TMainForm.MainPanelResize(Sender: TObject);
 var v:integer;
 begin
@@ -840,13 +766,6 @@ end;
 
 
 
-=======
-procedure TMainForm.ProjectCloseExecute(Sender: TObject);
-begin
-  MainPages.ActivePage:=SystemTab;
-end;
-
->>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
 procedure TMainForm.ProjectExportExecute(Sender: TObject);
 begin
   //
@@ -855,7 +774,6 @@ end;
 procedure TMainForm.ProjectGotoEditorExecute(Sender: TObject);
 begin
   P_Project.Visible:=false;
-<<<<<<< HEAD
   GotoEditor;
 end;
 
@@ -866,8 +784,6 @@ begin
     EditorCnt:=1;
     NewEditorPage;
   end;
-=======
->>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
   MainPages.ActivePage:=EditorsTab;
 end;
 
@@ -891,18 +807,12 @@ end;
 
 procedure TMainForm.ProjectNewExecute(Sender: TObject);
 begin
-<<<<<<< HEAD
   if (PrjWizForm.showmodal=mrOk) and CreateNewProject(PrjWizForm.PrjData) then
     OpenProject(SBAPrj.location+SBAPrj.name+cSBAPrjExt);
-=======
-  P_Project.Visible:=true;
-  MainPages.ActivePage:=EditorsTab;
->>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
 end;
 
 procedure TMainForm.ProjectOpenExecute(Sender: TObject);
 begin
-<<<<<<< HEAD
   OpenDialog.FileName:='';
   OpenDialog.DefaultExt:='.sba';
   OpenDialog.Filter:='SBA project|*.sba;';
@@ -966,10 +876,6 @@ begin
   finally
     if assigned(SL) then FreeAndNil(SL);
   end;
-=======
-  P_Project.Visible:=true;
-  MainPages.ActivePage:=EditorsTab;
->>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
 end;
 
 procedure TMainForm.MainPagesChange(Sender: TObject);
@@ -977,7 +883,6 @@ begin
   If MainPages.ActivePage=EditorsTab then
   begin
     if P_Project.visible then
-<<<<<<< HEAD
     begin
       //MainForm.Menu := ProjectMenu
       MainForm.Menu := EditorMenu;
@@ -987,11 +892,6 @@ begin
       MainForm.Menu := EditorMenu;
       ProjectMenuEd.Visible:=false;
     end;
-=======
-      MainForm.Menu := ProjectMenu
-    else
-      MainForm.Menu := EditorMenu;
->>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
     EditorPagesChange(Self);
   end else if MainPages.ActivePage=ProgEditTab then
   begin
@@ -1028,17 +928,11 @@ begin
   CloseEditor(EditorPages.ActivePage);
   If EditorPages.PageCount=0 then
   begin
-<<<<<<< HEAD
     if not P_Project.Visible then MainPages.ActivePage:=SystemTab
     else begin
       EditorCnt:=1;
       NewEditorPage;
     end;
-=======
-    EditorCnt:=1;
-    NewEditorPage;
-    if not P_Project.Visible then MainPages.ActivePage:=SystemTab;
->>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
   end;
 end;
 
@@ -1194,15 +1088,11 @@ end;
 
 procedure TMainForm.FormCreate(Sender: TObject);
 begin
-<<<<<<< HEAD
   DebugForm:=TDebugForm.Create(Self);
-=======
->>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
   if not GetConfigValues then application.Terminate
   else begin
     caption:='SBA Creator v'+GetFileVersion;
     wdir:='.\';
-<<<<<<< HEAD
     LoadAnnouncement;
     GetAnnouncement;
     MainPages.ShowTabs:=false;
@@ -1212,13 +1102,6 @@ begin
     SBASnippet:=TSBASnippet.Create;
     IpCoreList:=TStringList.Create;
     PopulateDirList(LibraryDir,IpCoreList);
-=======
-    GetAnnouncement;
-    MainPages.ShowTabs:=false;
-    MainPages.ActivePage:=SystemTab;
-    SBAContrlrProg:=TSBAContrlrProg.Create;
-    SBASnippet:=TSBASnippet.Create;
->>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
     SnippetsList.Root:=SnippetDir;
     SnippetsList.Mask:='*.prg';
     SnippetsList.Columns[0].MinWidth:=SnippetsList.width;
@@ -1226,13 +1109,9 @@ begin
     SynSBASyn:= TSynSBASyn.Create(Self);
     SynVerilogSyn:= TSynVerilogSyn.Create(Self);
     SetupSynMarkup;
-<<<<<<< HEAD
     EditorHistory.IniFile:=ConfigDir+'FileHistory.ini';
     PrjHistory.IniFile:=ConfigDir+'FileHistory.ini';
     EditorHistory.UpdateParentMenu;
-=======
-    NewEditorPage;
->>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
   end;
 end;
 
@@ -1285,10 +1164,7 @@ procedure TMainForm.NewEditorPage;
 var
   ActiveTab:TTabSheet;
 begin
-<<<<<<< HEAD
 infoln('Creando editor #'+inttostr(EditorCnt));
-=======
->>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
   ActiveTab:=EditorPages.AddTabSheet;
   ActiveTab.Caption:='NewFile'+inttostr(EditorCnt)+'.vhd';
   ActiveTab.Hint:=AppendPathDelim(GetCurrentDirUTF8)+ActiveTab.Caption;
@@ -1301,19 +1177,13 @@ end;
 
 procedure TMainForm.FormDestroy(Sender: TObject);
 begin
-<<<<<<< HEAD
   if Assigned(IPCoreList) then FreeandNil(IPCoreList);
-=======
->>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
   If Assigned(SynSBASyn) then FreeandNil(SynSBASyn);
   If Assigned(SynVerilogSyn) then FreeandNil(SynVerilogSyn);
   if Assigned(SBASnippet) then FreeandNil(SBASnippet);
   If Assigned(SBAContrlrProg) then FreeandNil(SBAContrlrProg);
-<<<<<<< HEAD
   if assigned(SBAPrj) then FreeAndNil(SBAPrj);
   if Assigned(DebugForm) then FreeandNil(DebugForm);
-=======
->>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
 end;
 
 procedure TMainForm.FormDropFiles(Sender: TObject;
@@ -1322,10 +1192,7 @@ var
   f:string;
   i:integer;
 begin
-<<<<<<< HEAD
   If MainPages.ActivePage=SystemTab then ProjectGotoEditorExecute(nil);
-=======
->>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
   For i:=0 to Length(FileNames)-1 do
   begin
     f:=FileNames[i];
@@ -1337,10 +1204,6 @@ begin
   ChangeEditorButtons(ActiveEditor);
   DetectSBAController;
   if ToolsFileObf.Checked then ToolsFileObfExecute(Sender);
-<<<<<<< HEAD
-=======
-  If MainPages.ActivePage=SystemTab then ProjectGotoEditorExecute(Sender);
->>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
 end;
 
 procedure TMainForm.HelpAboutExecute(Sender: TObject);
@@ -1582,20 +1445,7 @@ begin
   OpenDialog.InitialDir:=wdir;
   OpenDialog.DefaultExt:='.vhd';
   OpenDialog.Filter:='VHDL file|*.vhd;*.vhdl|Verilog file|*.v;*.vl;*.ver|System Verilog|*.sv|Text files|*.txt|All files|*.*';
-<<<<<<< HEAD
   if OpenDialog.Execute then OpenInEditor(OpenDialog.FileName);
-=======
-  if OpenDialog.Execute then
-  begin
-    if ActiveEditor.Lines.Count>0 then NewEditorPage;
-    Open(OpenDialog.FileName);
-    EditorPages.ActivePage.Hint:=OpenDialog.FileName;
-    EditorPages.ActivePage.Caption:=ExtractFilename(OpenDialog.FileName);
-    ChangeEditorButtons(ActiveEditor);
-    DetectSBAController;
-    if ToolsFileObf.Checked then ToolsFileObfExecute(Sender);
-  end;
->>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
 end;
 
 procedure TMainForm.DetectSBAController;
@@ -1627,11 +1477,7 @@ begin
   Process1ReadData(Sender);
   Log.ItemIndex:=Log.Count-1;
   case ProcessStatus of
-<<<<<<< HEAD
     GetBanner: LoadAnnouncement;
-=======
-    GetBanner: if FileexistsUtf8(ConfigDir+'newbanner.gif') then AnnouncementImage.AnimatedGifToSprite(ConfigDir+'newbanner.gif');
->>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
   end;
   ProcessStatus:=Idle;
 end;
@@ -1760,7 +1606,6 @@ begin
   hdltypeselect(extractfileext(f));
   ActiveEditor.Lines.LoadFromFile(f);
   ActiveEditor.Modified:=false;
-<<<<<<< HEAD
   ActiveEditor.ReadOnly:=(FileGetAttr(f) and faReadOnly)<>0;
   StatusBar1.Panels[1].Text:=f;
   EditorHistory.UpdateList(f);
@@ -1788,9 +1633,6 @@ begin
   ChangeEditorButtons(ActiveEditor);
   DetectSBAController;
   if ToolsFileObf.Checked then ToolsFileObfExecute(nil);
-=======
-  StatusBar1.Panels[1].Text:=f;
->>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
 end;
 
 procedure TMainForm.Reformat(sl:Tstrings);
@@ -1864,30 +1706,18 @@ begin
 end;
 
 procedure TMainForm.ChangeEditorButtons(editor:TSynEdit);
-<<<<<<< HEAD
 var f1,f2,f3:boolean;
 begin
   f1:=editor.Modified;
   f2:=(editor.Lines.Count>0);
   f3:=not editor.ReadOnly;
-=======
-var f1,f2:boolean;
-begin
-  f1:=editor.Modified;
-  f2:=(editor.Lines.Count>0);
->>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
   FileRevert.Enabled:=f1;
   FileSave.Enabled:=f1 and f2;
   FileSaveAs.Enabled:=f2;
   ToolsFileObf.Enabled:=f2;
-<<<<<<< HEAD
   ToolsFileReformat.Enabled:=f2 and f3;
   ToolsFileSyntaxCheck.Enabled:=f2;
   SearchReplace.Enabled:=f2 and f3;
-=======
-  ToolsFileReformat.Enabled:=f2;
-  ToolsFileSyntaxCheck.Enabled:=f2;
->>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
   if (EditorPages.ActivePage.Caption[1]<>'*') then
   begin
    if f1 then EditorPages.ActivePage.Caption:='*'+ExtractFileName(EditorPages.ActivePage.Hint);
@@ -1932,7 +1762,6 @@ end;
 
 procedure TMainForm.GetAnnouncement;
 begin
-<<<<<<< HEAD
   processWGET('http://sba.accesus.com/newbanner.gif?attredirects=0',ConfigDir+'newbanner.gif',GetBanner);
 end;
 
@@ -1966,21 +1795,6 @@ begin
   end;
 end;
 
-=======
-  if FileexistsUtf8(ConfigDir+'newbanner.gif') then AnnouncementImage.AnimatedGifToSprite(ConfigDir+'newbanner.gif');
-  process1.Executable:='cmd.exe';
-  process1.CurrentDirectory:=ConfigDir;
-  process1.Parameters.Clear;
-  process1.Parameters.Add('/c');
-  // Hay un bug en el CMD /C que no interpreta adecuadamente las rutas con paréntesis
-  // La inclusión de los dobles "" ayuda en la solución temporal del bug
-  process1.Parameters.Add(Application.Location+'getbanner.bat');
-  Log.Clear;
-  ProcessStatus:=GetBanner;
-  process1.Execute;
-end;
-
->>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
 function TMainForm.CloseProg: boolean;
 begin
   if SynEdit_X.Modified then

@@ -1,20 +1,11 @@
 object ConfigForm: TConfigForm
   Left = 1023
-<<<<<<< HEAD
   Height = 316
   Top = 366
   Width = 452
   BorderStyle = bsDialog
   Caption = 'ConfigForm'
   ClientHeight = 316
-=======
-  Height = 250
-  Top = 447
-  Width = 452
-  BorderStyle = bsDialog
-  Caption = 'ConfigForm'
-  ClientHeight = 250
->>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
   ClientWidth = 452
   OnShow = FormShow
   Position = poMainFormCenter
@@ -50,11 +41,7 @@ object ConfigForm: TConfigForm
     Left = 8
     Height = 23
     Top = 56
-<<<<<<< HEAD
     Width = 438
-=======
-    Width = 436
->>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
     ShowHidden = False
     ButtonWidth = 23
     NumGlyphs = 1
@@ -67,11 +54,7 @@ object ConfigForm: TConfigForm
     Left = 8
     Height = 23
     Top = 104
-<<<<<<< HEAD
     Width = 438
-=======
-    Width = 436
->>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
     ShowHidden = False
     ButtonWidth = 23
     NumGlyphs = 1
@@ -83,11 +66,7 @@ object ConfigForm: TConfigForm
   object ButtonPanel1: TButtonPanel
     Left = 6
     Height = 34
-<<<<<<< HEAD
     Top = 276
-=======
-    Top = 210
->>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
     Width = 440
     OKButton.Name = 'OKButton'
     OKButton.DefaultCaption = True
@@ -104,11 +83,7 @@ object ConfigForm: TConfigForm
     Left = 8
     Height = 23
     Top = 152
-<<<<<<< HEAD
     Width = 438
-=======
-    Width = 436
->>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
     ShowHidden = False
     ButtonWidth = 23
     NumGlyphs = 1
@@ -126,7 +101,6 @@ object ConfigForm: TConfigForm
     FocusControl = Ed_SnippetDir
     ParentColor = False
   end
-<<<<<<< HEAD
   object Ed_DefAuthor: TLabeledEdit
     Left = 8
     Height = 23
@@ -154,6 +128,4 @@ object ConfigForm: TConfigForm
     State = cbChecked
     TabOrder = 6
   end
-=======
->>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
 end
