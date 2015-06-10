@@ -1,4 +1,5 @@
 object MainForm: TMainForm
+<<<<<<< HEAD
   Left = 942
   Height = 769
   Top = 141
@@ -8,6 +9,17 @@ object MainForm: TMainForm
   ClientWidth = 765
   Constraints.MinHeight = 690
   Constraints.MinWidth = 765
+=======
+  Left = 602
+  Height = 790
+  Top = 88
+  Width = 783
+  AllowDropFiles = True
+  ClientHeight = 770
+  ClientWidth = 783
+  Constraints.MinHeight = 580
+  Constraints.MinWidth = 580
+>>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
   Menu = MainMenu
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
@@ -18,6 +30,7 @@ object MainForm: TMainForm
   LCLVersion = '1.4.0.4'
   object MainPages: TPageControl
     Left = 0
+<<<<<<< HEAD
     Height = 726
     Top = 0
     Width = 765
@@ -26,19 +39,38 @@ object MainForm: TMainForm
     ParentShowHint = False
     ShowHint = True
     TabIndex = 1
+=======
+    Height = 747
+    Top = 0
+    Width = 783
+    ActivePage = ProgEditTab
+    Align = alClient
+    ParentShowHint = False
+    ShowHint = True
+    TabIndex = 2
+>>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
     TabOrder = 0
     TabPosition = tpBottom
     OnChange = MainPagesChange
     object SystemTab: TTabSheet
       Caption = 'SystemTab'
+<<<<<<< HEAD
       ClientHeight = 698
       ClientWidth = 757
+=======
+      ClientHeight = 719
+      ClientWidth = 775
+>>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
       ImageIndex = 0
       object Shape1: TShape
         Left = 0
         Height = 130
         Top = 0
+<<<<<<< HEAD
         Width = 756
+=======
+        Width = 776
+>>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
         Anchors = [akTop, akLeft, akRight]
         Brush.Color = clBlack
       end
@@ -46,7 +78,11 @@ object MainForm: TMainForm
         Left = 0
         Height = 130
         Top = 0
+<<<<<<< HEAD
         Width = 757
+=======
+        Width = 775
+>>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
         Align = alTop
         Picture.Data = {
           0A544A706567496D616765FB8A0000FFD8FFE000104A46494600010101004800
@@ -1165,7 +1201,11 @@ object MainForm: TMainForm
         }
       end
       object LogoImage: TImage
+<<<<<<< HEAD
         Left = 626
+=======
+        Left = 644
+>>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
         Height = 130
         Top = 0
         Width = 131
@@ -1730,13 +1770,22 @@ object MainForm: TMainForm
       object AnnouncementPanel: TPanel
         Left = 0
         Height = 100
+<<<<<<< HEAD
         Top = 598
         Width = 757
+=======
+        Top = 619
+        Width = 775
+>>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
         Align = alBottom
         BorderSpacing.InnerBorder = 10
         BevelOuter = bvNone
         ClientHeight = 100
+<<<<<<< HEAD
         ClientWidth = 757
+=======
+        ClientWidth = 775
+>>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
         Color = clBlack
         ParentColor = False
         TabOrder = 0
@@ -1744,7 +1793,11 @@ object MainForm: TMainForm
           Left = 0
           Height = 100
           Top = 0
+<<<<<<< HEAD
           Width = 757
+=======
+          Width = 775
+>>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
           AnimInvert = False
           AnimPosition = 1
           AnimRepeat = 0
@@ -1769,9 +1822,15 @@ object MainForm: TMainForm
       end
       object MainPanel: TuETilePanel
         Left = 0
+<<<<<<< HEAD
         Height = 468
         Top = 130
         Width = 757
+=======
+        Height = 489
+        Top = 130
+        Width = 775
+>>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
         Align = alClient
         BevelOuter = bvNone
         ChildSizing.EnlargeHorizontal = crsHomogenousSpaceResize
@@ -1780,14 +1839,22 @@ object MainForm: TMainForm
         ChildSizing.ShrinkVertical = crsHomogenousSpaceResize
         ChildSizing.Layout = cclLeftToRightThenTopToBottom
         ChildSizing.ControlsPerLine = 4
+<<<<<<< HEAD
         ClientHeight = 468
         ClientWidth = 757
+=======
+        ClientHeight = 489
+        ClientWidth = 775
+>>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
         Font.Color = clWhite
         Font.Height = -16
         Font.Style = [fsBold]
         ParentFont = False
         TabOrder = 1
+<<<<<<< HEAD
         OnResize = MainPanelResize
+=======
+>>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
         Image.Data = {
           36840300424D36840300000000003600000028000000F0000000F00000000100
           20000000000000840300640000006400000000000000000000003A1C01FF3A1C
@@ -8993,10 +9060,17 @@ object MainForm: TMainForm
           02FF3B1D02FF3B1D02FF3B1D02FF3B1D02FF3B1D02FF3B1D02FF
         }
         object BitBtn1: TuEButton
+<<<<<<< HEAD
           Left = 8
           Height = 180
           Top = 36
           Width = 180
+=======
+          Left = 53
+          Height = 128
+          Top = 78
+          Width = 128
+>>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
           Debug = False
           Image.Data = {
             36900100424D3690010000000000360000002800000032000000000200000100
@@ -12728,6 +12802,7 @@ object MainForm: TMainForm
           BitmapOptions.MarginBottom = 2
           BitmapOptions.MarginLeft = 2
           BitmapOptions.Direction = sdVertical
+<<<<<<< HEAD
           Constraints.MinHeight = 180
           Constraints.MinWidth = 180
         end
@@ -12736,6 +12811,16 @@ object MainForm: TMainForm
           Height = 180
           Top = 36
           Width = 180
+=======
+          Constraints.MinHeight = 128
+          Constraints.MinWidth = 128
+        end
+        object BitBtn2: TuEButton
+          Left = 234
+          Height = 128
+          Top = 78
+          Width = 128
+>>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
           Debug = False
           Image.Data = {
             36900100424D3690010000000000360000002800000032000000000200000100
@@ -16467,6 +16552,7 @@ object MainForm: TMainForm
           BitmapOptions.MarginBottom = 2
           BitmapOptions.MarginLeft = 2
           BitmapOptions.Direction = sdVertical
+<<<<<<< HEAD
           Constraints.MinHeight = 180
           Constraints.MinWidth = 180
         end
@@ -16475,6 +16561,16 @@ object MainForm: TMainForm
           Height = 180
           Top = 36
           Width = 180
+=======
+          Constraints.MinHeight = 128
+          Constraints.MinWidth = 128
+        end
+        object BitBtn3: TuEButton
+          Left = 415
+          Height = 128
+          Top = 78
+          Width = 128
+>>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
           Debug = False
           Image.Data = {
             36900100424D3690010000000000360000002800000032000000000200000100
@@ -20206,6 +20302,7 @@ object MainForm: TMainForm
           BitmapOptions.MarginBottom = 2
           BitmapOptions.MarginLeft = 2
           BitmapOptions.Direction = sdVertical
+<<<<<<< HEAD
           Constraints.MinHeight = 180
           Constraints.MinWidth = 180
         end
@@ -20214,6 +20311,16 @@ object MainForm: TMainForm
           Height = 180
           Top = 36
           Width = 180
+=======
+          Constraints.MinHeight = 128
+          Constraints.MinWidth = 128
+        end
+        object BitBtn4: TuEButton
+          Left = 596
+          Height = 128
+          Top = 78
+          Width = 128
+>>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
           Debug = False
           Image.Data = {
             36900100424D3690010000000000360000002800000032000000000200000100
@@ -23945,6 +24052,7 @@ object MainForm: TMainForm
           BitmapOptions.MarginBottom = 2
           BitmapOptions.MarginLeft = 2
           BitmapOptions.Direction = sdVertical
+<<<<<<< HEAD
           Constraints.MinHeight = 180
           Constraints.MinWidth = 180
         end
@@ -23953,6 +24061,16 @@ object MainForm: TMainForm
           Height = 180
           Top = 252
           Width = 180
+=======
+          Constraints.MinHeight = 128
+          Constraints.MinWidth = 128
+        end
+        object B_SBALibrary: TuEButton
+          Left = 53
+          Height = 128
+          Top = 284
+          Width = 128
+>>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
           Debug = False
           Image.Data = {
             36900100424D3690010000000000360000002800000032000000000200000100
@@ -27684,6 +27802,7 @@ object MainForm: TMainForm
           BitmapOptions.MarginLeft = 2
           BitmapOptions.Direction = sdVertical
           Caption = 'SBA Library'
+<<<<<<< HEAD
           Constraints.MinHeight = 180
           Constraints.MinWidth = 180
           OnClick = B_SBALibraryClick
@@ -27693,6 +27812,17 @@ object MainForm: TMainForm
           Height = 180
           Top = 252
           Width = 180
+=======
+          Constraints.MinHeight = 128
+          Constraints.MinWidth = 128
+          OnClick = B_SBALibraryClick
+        end
+        object B_SBAWebsite: TuEButton
+          Left = 234
+          Height = 128
+          Top = 284
+          Width = 128
+>>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
           Debug = False
           Image.Data = {
             36900100424D3690010000000000360000002800000032000000000200000100
@@ -31424,6 +31554,7 @@ object MainForm: TMainForm
           BitmapOptions.MarginLeft = 2
           BitmapOptions.Direction = sdVertical
           Caption = 'SBA Website'
+<<<<<<< HEAD
           Constraints.MinHeight = 180
           Constraints.MinWidth = 180
           OnClick = B_SBAWebsiteClick
@@ -31433,6 +31564,17 @@ object MainForm: TMainForm
           Height = 180
           Top = 252
           Width = 180
+=======
+          Constraints.MinHeight = 128
+          Constraints.MinWidth = 128
+          OnClick = B_SBAWebsiteClick
+        end
+        object B_SBAForum: TuEButton
+          Left = 415
+          Height = 128
+          Top = 284
+          Width = 128
+>>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
           Debug = False
           Image.Data = {
             36900100424D3690010000000000360000002800000032000000000200000100
@@ -35164,6 +35306,7 @@ object MainForm: TMainForm
           BitmapOptions.MarginLeft = 2
           BitmapOptions.Direction = sdVertical
           Caption = 'SBA Forum'
+<<<<<<< HEAD
           Constraints.MinHeight = 180
           Constraints.MinWidth = 180
           OnClick = B_SBAForumClick
@@ -35173,6 +35316,17 @@ object MainForm: TMainForm
           Height = 180
           Top = 252
           Width = 180
+=======
+          Constraints.MinHeight = 128
+          Constraints.MinWidth = 128
+          OnClick = B_SBAForumClick
+        end
+        object B_Config: TuEButton
+          Left = 596
+          Height = 128
+          Top = 284
+          Width = 128
+>>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
           Debug = False
           Image.Data = {
             36900100424D3690010000000000360000002800000032000000000200000100
@@ -38904,14 +39058,20 @@ object MainForm: TMainForm
           BitmapOptions.MarginLeft = 2
           BitmapOptions.Direction = sdVertical
           Caption = 'Configuration'
+<<<<<<< HEAD
           Constraints.MinHeight = 180
           Constraints.MinWidth = 180
+=======
+          Constraints.MinHeight = 128
+          Constraints.MinWidth = 128
+>>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
           OnClick = B_ConfigClick
         end
       end
     end
     object EditorsTab: TTabSheet
       Caption = 'EditorsTab'
+<<<<<<< HEAD
       ClientHeight = 698
       ClientWidth = 757
       ImageIndex = 1
@@ -38925,21 +39085,46 @@ object MainForm: TMainForm
         BevelOuter = bvNone
         ClientHeight = 698
         ClientWidth = 579
+=======
+      ClientHeight = 719
+      ClientWidth = 775
+      ImageIndex = 1
+      OnContextPopup = EditorsTabContextPopup
+      object P_Editors: TPanel
+        Left = 160
+        Height = 719
+        Top = 0
+        Width = 615
+        Align = alClient
+        BevelOuter = bvNone
+        ClientHeight = 719
+        ClientWidth = 615
+>>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
         TabOrder = 0
         object Splitter1: TSplitter
           Cursor = crVSplit
           Left = 0
           Height = 6
+<<<<<<< HEAD
           Top = 597
           Width = 579
+=======
+          Top = 618
+          Width = 615
+>>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
           Align = alBottom
           ResizeAnchor = akBottom
         end
         object Log: TListBox
           Left = 0
           Height = 95
+<<<<<<< HEAD
           Top = 603
           Width = 579
+=======
+          Top = 624
+          Width = 615
+>>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
           Align = alBottom
           ItemHeight = 0
           OnDblClick = LogDblClick
@@ -38950,9 +39135,15 @@ object MainForm: TMainForm
         end
         object EditorPages: TPageControl
           Left = 0
+<<<<<<< HEAD
           Height = 558
           Top = 39
           Width = 448
+=======
+          Height = 579
+          Top = 39
+          Width = 484
+>>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
           Align = alClient
           ParentShowHint = False
           TabOrder = 2
@@ -38962,7 +39153,11 @@ object MainForm: TMainForm
           Left = 0
           Height = 35
           Top = 0
+<<<<<<< HEAD
           Width = 579
+=======
+          Width = 615
+>>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
           AutoSize = True
           BorderSpacing.Bottom = 4
           ButtonHeight = 35
@@ -38979,7 +39174,10 @@ object MainForm: TMainForm
           ShowHint = True
           TabOrder = 3
           Transparent = True
+<<<<<<< HEAD
           Wrapable = False
+=======
+>>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
           object ToolButton6: TToolButton
             Left = 37
             Top = 0
@@ -39086,14 +39284,23 @@ object MainForm: TMainForm
           end
         end
         object P_AuxEditor: TPanel
+<<<<<<< HEAD
           Left = 448
           Height = 558
+=======
+          Left = 484
+          Height = 579
+>>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
           Top = 39
           Width = 131
           Align = alRight
           AutoSize = True
           BevelOuter = bvNone
+<<<<<<< HEAD
           ClientHeight = 558
+=======
+          ClientHeight = 579
+>>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
           ClientWidth = 131
           TabOrder = 4
           object P_Obf: TPanel
@@ -39225,6 +39432,7 @@ object MainForm: TMainForm
       end
       object P_Project: TPanel
         Left = 0
+<<<<<<< HEAD
         Height = 698
         Top = 0
         Width = 173
@@ -39232,10 +39440,20 @@ object MainForm: TMainForm
         BevelOuter = bvNone
         ClientHeight = 698
         ClientWidth = 173
+=======
+        Height = 719
+        Top = 0
+        Width = 160
+        Align = alLeft
+        BevelOuter = bvNone
+        ClientHeight = 719
+        ClientWidth = 160
+>>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
         TabOrder = 1
         Visible = False
         object GroupBox1: TGroupBox
           Left = 0
+<<<<<<< HEAD
           Height = 540
           Top = 0
           Width = 173
@@ -39257,6 +39475,30 @@ object MainForm: TMainForm
             Caption = 'ToolBar4'
             EdgeBorders = [ebBottom]
             EdgeInner = esLowered
+=======
+          Height = 432
+          Top = 0
+          Width = 157
+          Align = alTop
+          BorderSpacing.Right = 3
+          BorderSpacing.Bottom = 4
+          Caption = 'Project Info'
+          ClientHeight = 412
+          ClientWidth = 153
+          TabOrder = 0
+          object ToolBar4: TToolBar
+            Left = 0
+            Height = 23
+            Top = 0
+            Width = 153
+            AutoSize = True
+            BorderSpacing.Bottom = 4
+            ButtonHeight = 23
+            ButtonWidth = 22
+            Caption = 'ToolBar4'
+            EdgeBorders = []
+            EdgeInner = esNone
+>>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
             EdgeOuter = esNone
             Font.Height = 13
             Images = ImageList
@@ -39264,6 +39506,10 @@ object MainForm: TMainForm
             ParentShowHint = False
             ShowHint = True
             TabOrder = 0
+<<<<<<< HEAD
+=======
+            Transparent = True
+>>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
             object ToolButton8: TToolButton
               Left = 23
               Top = 0
@@ -39290,6 +39536,7 @@ object MainForm: TMainForm
               Action = ProjectExport
             end
           end
+<<<<<<< HEAD
           object PrjTree: TTreeView
             Left = 0
             Height = 496
@@ -39354,17 +39601,52 @@ object MainForm: TMainForm
         Top = 0
         Width = 5
         ParentColor = False
+=======
+          object TreeView1: TTreeView
+            Left = 0
+            Height = 385
+            Top = 27
+            Width = 153
+            Align = alClient
+            DefaultItemHeight = 18
+            Images = TreeImg
+            ReadOnly = True
+            TabOrder = 1
+            Options = [tvoAutoItemHeight, tvoHideSelection, tvoKeepCollapsedNodes, tvoReadOnly, tvoShowButtons, tvoShowLines, tvoShowRoot, tvoToolTips, tvoThemedDraw]
+            Items.Data = {
+              F9FFFFFF020003000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF030000000000
+              0000010C0000004D61696E204950436F726573FFFFFFFFFFFFFFFFFFFFFFFFFF
+              FFFFFF0000000000000000000A00000053424120436F6E666967FFFFFFFFFFFF
+              FFFFFFFFFFFFFFFFFFFF0000000000000000000B000000534241204465636F64
+              6572FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000000000000000000E00000053
+              424120436F6E74726F6C6C6572FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF010000
+              0000000000010B000000417578204950436F726573FFFFFFFFFFFFFFFFFFFFFF
+              FFFFFFFFFF00000000000000000006000000537973436F6EFFFFFFFFFFFFFFFF
+              FFFFFFFFFFFFFFFF000000000000000000070000004C696272617279
+            }
+          end
+        end
+>>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
       end
     end
     object ProgEditTab: TTabSheet
       Caption = 'ProgEditTab'
+<<<<<<< HEAD
       ClientHeight = 698
       ClientWidth = 839
+=======
+      ClientHeight = 719
+      ClientWidth = 775
+>>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
       object ToolBar3: TToolBar
         Left = 0
         Height = 35
         Top = 0
+<<<<<<< HEAD
         Width = 839
+=======
+        Width = 775
+>>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
         AutoSize = True
         BorderSpacing.Bottom = 4
         ButtonHeight = 35
@@ -39377,7 +39659,10 @@ object MainForm: TMainForm
         ShowCaptions = True
         TabOrder = 0
         Transparent = True
+<<<<<<< HEAD
         Wrapable = False
+=======
+>>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
         object ToolButton20: TToolButton
           Left = 43
           Top = 0
@@ -39491,18 +39776,31 @@ object MainForm: TMainForm
         end
       end
       object P_AuxProg: TPanel
+<<<<<<< HEAD
         Left = 709
         Height = 659
+=======
+        Left = 645
+        Height = 680
+>>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
         Top = 39
         Width = 130
         Align = alRight
         BevelOuter = bvNone
+<<<<<<< HEAD
         ClientHeight = 659
+=======
+        ClientHeight = 680
+>>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
         ClientWidth = 130
         TabOrder = 1
         object P_CodeSnippets: TGroupBox
           Left = 2
+<<<<<<< HEAD
           Height = 383
+=======
+          Height = 404
+>>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
           Top = 273
           Width = 126
           Align = alClient
@@ -39510,7 +39808,11 @@ object MainForm: TMainForm
           BorderSpacing.Right = 2
           BorderSpacing.Bottom = 3
           Caption = 'Code snippets'
+<<<<<<< HEAD
           ClientHeight = 363
+=======
+          ClientHeight = 384
+>>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
           ClientWidth = 122
           Constraints.MinHeight = 290
           TabOrder = 0
@@ -39528,7 +39830,11 @@ object MainForm: TMainForm
           end
           object SnippetDescription: TMemo
             Left = 3
+<<<<<<< HEAD
             Height = 141
+=======
+            Height = 162
+>>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
             Top = 186
             Width = 116
             Align = alClient
@@ -39549,7 +39855,11 @@ object MainForm: TMainForm
           object B_InsertSnipped: TBitBtn
             Left = 3
             Height = 30
+<<<<<<< HEAD
             Top = 330
+=======
+            Top = 351
+>>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
             Width = 116
             Align = alBottom
             BorderSpacing.Around = 3
@@ -39689,9 +39999,15 @@ object MainForm: TMainForm
       end
       inline SynEdit_X: TSynEdit
         Left = 0
+<<<<<<< HEAD
         Height = 659
         Top = 39
         Width = 709
+=======
+        Height = 680
+        Top = 39
+        Width = 645
+>>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
         Align = alClient
         Font.CharSet = ANSI_CHARSET
         Font.Height = -13
@@ -40199,8 +40515,13 @@ object MainForm: TMainForm
   object StatusBar1: TStatusBar
     Left = 0
     Height = 23
+<<<<<<< HEAD
     Top = 726
     Width = 765
+=======
+    Top = 747
+    Width = 783
+>>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
     Panels = <    
       item
         Width = 50
@@ -40214,7 +40535,11 @@ object MainForm: TMainForm
     left = 24
     top = 584
     Bitmap = {
+<<<<<<< HEAD
       4C691D0000001000000010000000FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+=======
+      4C691A0000001000000010000000FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+>>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
       FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00006699FF006699FF006699FF0066
       99FF006699FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
       FF00FFFFFF00FFFFFF00FFFFFF00006699FFFFFFFF00FFFFFF00FFFFFF00FFFF
@@ -41046,6 +41371,7 @@ object MainForm: TMainForm
       C000C0C0C000C0C0C000C0C0C000000000FFC0C0C000C0C0C000C0C0C000C0C0
       C000C0C0C000000000FFC0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0
       C000C0C0C000C0C0C000000000FF000000FF000000FFC0C0C000C0C0C000C0C0
+<<<<<<< HEAD
       C000000000FF000000FF000000FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
       FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
       FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
@@ -41143,6 +41469,9 @@ object MainForm: TMainForm
       FFFFFFFFFFFFFFFFFFFF746A61FF5E544B0042372BFF42362BFF42362BFF4236
       2BFF42362BFF42362BFF42362BFF42362BFF42362BFF42362BFF42362BFF4236
       2BFF42362BFF42372BFF5E544B00
+=======
+      C000000000FF000000FF000000FF
+>>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
     }
   end
   object Process1: TAsyncProcess
@@ -41641,7 +41970,10 @@ object MainForm: TMainForm
     object ProjectExport: TAction
       Category = 'Project'
       Caption = '&Export Project'
+<<<<<<< HEAD
       ImageIndex = 26
+=======
+>>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
       OnExecute = ProjectExportExecute
     end
     object SBA_NewPrg: TAction
@@ -41653,6 +41985,7 @@ object MainForm: TMainForm
     object SBA_InsertTemplate: TAction
       Category = 'SBA'
       Caption = 'Insert &Template'
+<<<<<<< HEAD
       ImageIndex = 27
       OnExecute = SBA_InsertTemplateExecute
     end
@@ -41662,6 +41995,10 @@ object MainForm: TMainForm
       ImageIndex = 28
       OnExecute = EditInsertDateExecute
     end
+=======
+      OnExecute = SBA_InsertTemplateExecute
+    end
+>>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
   end
   object OpenDialog: TOpenDialog
     Title = 'Open File'
@@ -41801,12 +42138,17 @@ object MainForm: TMainForm
   object IniStor: TIniPropStorage
     StoredValues = <>
     left = 152
+<<<<<<< HEAD
     top = 640
+=======
+    top = 648
+>>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
   end
   object EditorMenu: TMainMenu
     Images = ImageList
     left = 88
     top = 528
+<<<<<<< HEAD
     object ProjectMenuEd: TMenuItem
       Caption = 'Project'
       object MenuItem956: TMenuItem
@@ -42011,6 +42353,8 @@ object MainForm: TMainForm
         Caption = 'Recent Projects'
       end
     end
+=======
+>>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
     object FileMenu: TMenuItem
       Caption = '&File'
       object MenuItem5: TMenuItem
@@ -42250,12 +42594,15 @@ object MainForm: TMainForm
           FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00
         }
       end
+<<<<<<< HEAD
       object MenuItem26: TMenuItem
         Caption = '-'
       end
       object FileHistoryEd: TMenuItem
         Caption = 'Recent Files'
       end
+=======
+>>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
     end
     object EditMenu: TMenuItem
       Caption = 'Edit'
@@ -42820,6 +43167,7 @@ object MainForm: TMainForm
   object TreeImg: TImageList
     left = 152
     top = 584
+<<<<<<< HEAD
     Bitmap = {
       4C69050000001000000010000000FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
       FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
@@ -42983,6 +43331,8 @@ object MainForm: TMainForm
       FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
       FF00FFFFFF00FFFFFF00FFFFFF00
     }
+=======
+>>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
   end
   object ProgMenu: TMainMenu
     Images = ImageList
@@ -43883,6 +44233,7 @@ object MainForm: TMainForm
       Action = FileNew
     end
   end
+<<<<<<< HEAD
   object PrgTemplates: TPopupMenu
     left = 152
     top = 528
@@ -43890,6 +44241,218 @@ object MainForm: TMainForm
       Caption = 'New Item1'
     end
   end
+=======
+  object ProjectMenu: TMainMenu
+    Images = ImageList
+    left = 152
+    top = 528
+    object ProjectMenu1: TMenuItem
+      Caption = 'Project'
+      object MenuItem56: TMenuItem
+        Action = ProjectNew
+        Bitmap.Data = {
+          36040000424D3604000000000000360000002800000010000000100000000100
+          2000000000000004000064000000640000000000000000000000FFFFFF00FFFF
+          FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+          FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+          FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+          FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+          FF00FFFFFF00AAAAAAFFAAAAAAFFAAAAAAFFAAAAAAFFAAAAAAFFAAAAAAFFAAAA
+          AAFFAAAAAAFFAAAAAAFFAAAAAAFFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+          FF00FFFFFF00AAAAAAFFF8F8F8FFF8F8F8FFF8F8F8FFF8F8F8FFF8F8F8FFF8F8
+          F8FFF8F8F8FFF8F8F8FFAAAAAAFFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+          FF00FFFFFF00AAAAAAFFEDEDEDFFEDEDEDFFEDEDEDFFEDEDEDFFEDEDEDFFEDED
+          EDFFEDEDEDFFEDEDEDFFAAAAAAFFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+          FF00FFFFFF00AAAAAAFFE8E8E8FFE8E8E8FFE8E8E8FFE8E8E8FFE8E8E8FFE8E8
+          E8FFE8E8E8FFE8E8E8FFAAAAAAFFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+          FF00FFFFFF00AAAAAAFFEAEAEAFFEAEAEAFFEAEAEAFFEAEAEAFFEAEAEAFFEAEA
+          EAFFEAEAEAFFEAEAEAFFAAAAAAFFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+          FF00FFFFFF00AAAAAAFFEBEBEBFFEBEBEBFFEBEBEBFFEBEBEBFFEBEBEBFFEBEB
+          EBFFEBEBEBFFEBEBEBFFAAAAAAFFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+          FF00FFFFFF00AAAAAAFFEFEFEFFFEFEFEFFFEFEFEFFFEFEFEFFFEFEFEFFFEFEF
+          EFFFEFEFEFFFEFEFEFFFAAAAAAFFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+          FF00FFFFFF00AAAAAAFFF3F3F3FFF3F3F3FFF3F3F3FFF3F3F3FFF3F3F3FFF3F3
+          F3FFF3F3F3FFF3F3F3FFAAAAAAFFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+          FF00FFFFFF00AAAAAAFFF7F7F7FFF7F7F7FFF7F7F7FFF7F7F7FFF7F7F7FFF7F7
+          F7FFF7F7F7FFF7F7F7FFAAAAAAFFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+          FF00FFFFFF00AAAAAAFFFAFAFAFFFAFAFAFFFAFAFAFFFAFAFAFFFAFAFAFFAAAA
+          AAFFAAAAAAFFAAAAAAFFAAAAAAFFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+          FF00FFFFFF00AAAAAAFFFDFDFDFFFDFDFDFFFDFDFDFFFDFDFDFFFDFDFDFFAAAA
+          AAFFEDEDEDFFEDEDEDFFAAAAAAFFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+          FF00FFFFFF00AAAAAAFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFAAAA
+          AAFFFFFFFFFFAAAAAAFFAAAAAA00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+          FF00FFFFFF00AAAAAAFFAAAAAAFFAAAAAAFFAAAAAAFFAAAAAAFFAAAAAAFFAAAA
+          AAFFAAAAAAFFAAAAAA00AAAAAA00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+          FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+          FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00
+        }
+      end
+      object MenuItem57: TMenuItem
+        Action = ProjectOpen
+        Bitmap.Data = {
+          36040000424D3604000000000000360000002800000010000000100000000100
+          2000000000000004000064000000640000000000000000000000FFFFFF00FFFF
+          FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+          FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+          FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+          FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF0037A3
+          CA0037A3CAFF37A3CAFF37A3CAFF37A3CAFF37A3CAFF37A3CAFF37A3CAFF37A3
+          CAFF37A3CAFF37A3CAFF37A3CA0037A3CA0037A3CA00FFFFFF00FFFFFF0037A3
+          CAFF37A3CAFFA2FFFFFFA2FFFFFFA2FFFFFFA2FFFFFFA2FFFFFFA2FFFFFFA2FF
+          FFFFA2FFFFFFA2FFFFFF37A3CAFFFFFFFF0037A3CA00FFFFFF00FFFFFF0037A3
+          CAFF37A3CAFF8FF5FCFF69F2FBFF69F2FBFF69F2FBFF69F2FBFF69F2FBFF69F2
+          FBFF69F2FBFF8FF5FCFF37A3CAFFFFFFFF0037A3CA00FFFFFF00FFFFFF0037A3
+          CAFF80EFFAFF37A3CAFF74E9F8FF45E1F6FF45E1F6FF45E1F6FF45E1F6FF45E1
+          F6FF45E1F6FF45E1F6FF74E9F8FF37A3CAFF37A3CA00FFFFFF00FFFFFF0037A3
+          CAFF74E9F8FF37A3CAFF66E2F6FF33D8F3FF33D8F3FF33D8F3FF33D8F3FF33D8
+          F3FF33D8F3FF33D8F3FF66E2F6FF37A3CAFF37A3CA00FFFFFF00FFFFFF0037A3
+          CAFF6AE4F7FF38DBF4FF37A3CAFFA2FFFFFFA2FFFFFFA2FFFFFFA2FFFFFFA2FF
+          FFFFA2FFFFFFA2FFFFFFA2FFFFFFA2FFFFFF37A3CAFFFFFFFF00FFFFFF0037A3
+          CAFF66E2F6FF33D8F3FF33D8F3FF37A3CAFF37A3CAFF37A3CAFF37A3CAFF37A3
+          CAFF37A3CAFF37A3CAFF37A3CAFF37A3CAFF37A3CA00FFFFFF00FFFFFF0037A3
+          CAFF80EFFAFF55E9F8FF55E9F8FF80EFFAFF80EFFAFF80EFFAFF80EFFAFF80EF
+          FAFF80EFFAFF80EFFAFF37A3CAFF37A3CA0037A3CA00FFFFFF00FFFFFF0037A3
+          CAFFA2FFFFFFA2FFFFFFA2FFFFFF37A3CAFF37A3CAFF37A3CAFF37A3CAFF37A3
+          CAFF37A3CAFF37A3CAFF37A3CA0037A3CA0037A3CA00FFFFFF00FFFFFF0037A3
+          CA0037A3CAFF37A3CAFF37A3CAFF37A3CA0037A3CA0037A3CA0037A3CA0037A3
+          CA0037A3CA0037A3CA0037A3CA0037A3CA0037A3CA00FFFFFF00FFFFFF00FFFF
+          FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+          FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+          FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+          FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+          FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+          FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+          FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+          FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00
+        }
+      end
+      object MenuItem58: TMenuItem
+        Action = ProjectSave
+        Bitmap.Data = {
+          36040000424D3604000000000000360000002800000010000000100000000100
+          2000000000000004000064000000640000000000000000000000FFFFFF00FFFF
+          FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+          FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+          FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+          FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00A98D
+          63FFAF8D5BFFA98D63FFAEAEAEFFAEAEAEFFAEAEAEFFAEAEAEFFAEAEAEFFAEAE
+          AEFFAEAEAEFFA98D63FFAF8D5BFFA98D63FFFFFFFF00FFFFFF00FFFFFF00AF8D
+          5BFFF6DFC2FFA98D63FFF3F3F3FFF3F3F3FFF3F3F3FFF3F3F3FFF3F3F3FFF3F3
+          F3FFF3F3F3FFA98D63FFF6DFC2FFAF8D5BFFFFFFFF00FFFFFF00FFFFFF00AF8D
+          5BFFF0C79AFFA98D63FFF5F5F5FFC2C2C2FFC2C2C2FFC2C2C2FFC2C2C2FFC2C2
+          C2FFF5F5F5FFA98D63FFF0C79AFFAF8D5BFFFFFFFF00FFFFFF00FFFFFF00AF8D
+          5BFFF1C99CFFA98D63FFF8F8F8FFF8F8F8FFF8F8F8FFF8F8F8FFF8F8F8FFF8F8
+          F8FFF8F8F8FFA98D63FFF1C99CFFAF8D5BFFFFFFFF00FFFFFF00FFFFFF00AF8D
+          5BFFF3CB9DFFA98D63FFFBFBFBFFC2C2C2FFC2C2C2FFC2C2C2FFC2C2C2FFC2C2
+          C2FFFBFBFBFFA98D63FFF3CB9DFFAF8D5BFFFFFFFF00FFFFFF00FFFFFF00AF8D
+          5BFFF5CEA1FFA98D63FFFDFDFDFFFDFDFDFFFDFDFDFFFDFDFDFFFDFDFDFFFDFD
+          FDFFFDFDFDFFA98D63FFF5CEA1FFAF8D5BFFFFFFFF00FFFFFF00FFFFFF00AF8D
+          5BFFF7D1A4FFA98D63FFA98D63FFA98D63FFA98D63FFA98D63FFA98D63FFA98D
+          63FFA98D63FFA98D63FFF7D1A4FFAF8D5BFFFFFFFF00FFFFFF00FFFFFF00AF8D
+          5BFFF9D4A6FFF7C990FFF7C990FFF7C990FFF7C990FFF7C990FFF7C990FFF7C9
+          90FFF7C990FFF7C990FFF9D4A6FFAF8D5BFFFFFFFF00FFFFFF00FFFFFF00AF8D
+          5BFFFAD7A9FFA98D63FFA98D63FFA98D63FFA98D63FFA98D63FFA98D63FFA98D
+          63FFA98D63FFA98D63FFFAD7A9FFAF8D5BFFFFFFFF00FFFFFF00FFFFFF00AF8D
+          5BFFFDDAABFFA98D63FFF4F4F4FFF4F4F4FFF4F4F4FFF4F4F4FF928780FF9287
+          80FFF4F4F4FFA98D63FFFDDAABFFAF8D5BFFFFFFFF00FFFFFF00FFFFFF00AF8D
+          5BFFFDDDADFFA98D63FFF8F8F8FFF8F8F8FFF8F8F8FFF8F8F8FF928780FF9287
+          80FFF8F8F8FFA98D63FFFDDDADFFAF8D5BFFFFFFFF00FFFFFF00FFFFFF00AF8D
+          5BFFFFEDD3FFD0BE9FFFFDFDFDFFFDFDFDFFFDFDFDFFFDFDFDFFC1BAB5FFC1BA
+          B5FFFDFDFDFFD0BE9FFFAF8D5BFFA98D6300FFFFFF00FFFFFF00FFFFFF00A98D
+          63FFAF8D5BFFA98D63FFAEAEAEFFAEAEAEFFAEAEAEFFAEAEAEFFAEAEAEFFAEAE
+          AEFFAEAEAEFFA98D63FFA98D6300A98D6300FFFFFF00FFFFFF00FFFFFF00FFFF
+          FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+          FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00
+        }
+      end
+      object MenuItem62: TMenuItem
+        Action = ProjectExport
+      end
+      object MenuItem63: TMenuItem
+        Action = ProjectClose
+        Bitmap.Data = {
+          36040000424D3604000000000000360000002800000010000000100000000100
+          2000000000000004000064000000640000000000000000000000FFFFFF00FFFF
+          FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+          FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+          FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+          FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+          FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+          FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+          FF00FFFFFF006464B8006464B8FF6464B8FF6464B8006464B8006464B8006464
+          B8006464B8FF6464B8FF6464B800FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+          FF00FFFFFF006464B8FF9898EEFF9898EEFF6464B8FFFFFFFF00FFFFFF006464
+          B8FF9898EEFF9898EEFF6464B8FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+          FF00FFFFFF006464B8FF6060E3FF6060E3FF9C9CF1FF6464B8FF6464B8FF9C9C
+          F1FF6060E3FF6060E3FF6464B8FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+          FF00FFFFFF006464B8006464B8FF6666E8FF6666E8FFA1A1F3FFA1A1F3FF6666
+          E8FF6666E8FF6464B8FF6464B800FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+          FF00FFFFFF006464B800FFFFFF006464B8FF6D6DEDFF6D6DEDFF6D6DEDFF6D6D
+          EDFF6464B8FFFFFFFF006464B800FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+          FF00FFFFFF006464B800FFFFFF006464B8FF7373F3FF7373F3FF7373F3FF7373
+          F3FF6464B8FFFFFFFF006464B800FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+          FF00FFFFFF006464B8006464B8FFB0B0FBFF7979F8FF7979F8FF7979F8FF7979
+          F8FFB0B0FBFF6464B8FF6464B800FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+          FF00FFFFFF006464B8FFB3B3FDFF7E7EFCFF7E7EFCFF6464B8FF6464B8FF7E7E
+          FCFF7E7EFCFFB3B3FDFF6464B8FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+          FF00FFFFFF006464B8FF8181FFFF8181FFFF6464B8FF6464B8006464B8006464
+          B8FF8181FFFF8181FFFF6464B8FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+          FF00FFFFFF006464B8006464B8FF6464B8FF6464B8006464B8006464B8006464
+          B8006464B8FF6464B8FF6464B800FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+          FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+          FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+          FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+          FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+          FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+          FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00
+        }
+      end
+    end
+    object AboutMenuItem1: TMenuItem
+      Action = HelpAbout
+      Bitmap.Data = {
+        36040000424D3604000000000000360000002800000010000000100000000100
+        2000000000000004000064000000640000000000000000000000C0C0C000C0C0
+        C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0
+        C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0
+        C000C0C0C000C0C0C000C0C0C000C0C0C000808080FF808080FF808080FF8080
+        80FF808080FFC0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0
+        C000C0C0C000C0C0C000C0C0C000BF0000FFBF0000FFBF0000FFBF0000FFBF00
+        00FFBF0000FF808080FFC0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0
+        C000C0C0C000C0C0C000BF0000FFBF0000FFBF0000FF00FFFFFF00FFFFFFBF00
+        00FFBF0000FFBF0000FF808080FFC0C0C000C0C0C000C0C0C000C0C0C000C0C0
+        C000FFFF00FFBF0000FFBF0000FFBF0000FFBF0000FFBF0000FFBF0000FFBF00
+        00FFBF0000FFBF0000FFBF0000FF808080FFC0C0C000C0C0C000C0C0C000FFFF
+        00FFBF0000FFBF0000FFBF0000FFBF0000FFBF0000FF00FFFFFF00FFFFFFBF00
+        00FFBF0000FFBF0000FFBF0000FFBF0000FF808080FFC0C0C000C0C0C000FFFF
+        00FFBF0000FFBF0000FFBF0000FFBF0000FFBF0000FF00FFFFFF00FFFFFFBF00
+        00FFBF0000FFBF0000FFBF0000FFBF0000FF808080FFC0C0C000C0C0C000FFFF
+        00FFBF0000FFBF0000FFBF0000FFBF0000FFBF0000FFBF0000FF00FFFFFF00FF
+        FFFFBF0000FFBF0000FFBF0000FFBF0000FF808080FFC0C0C000C0C0C000FFFF
+        00FFBF0000FFBF0000FFBF0000FFBF0000FFBF0000FFBF0000FFBF0000FF00FF
+        FFFF00FFFFFFBF0000FFBF0000FFBF0000FF808080FFC0C0C000C0C0C000FFFF
+        00FFBF0000FFBF0000FFBF0000FF00FFFFFFBF0000FFBF0000FFBF0000FF00FF
+        FFFF00FFFFFFBF0000FFBF0000FFBF0000FF808080FFC0C0C000C0C0C000FFFF
+        00FFBF0000FFBF0000FFBF0000FF00FFFFFF00FFFFFFBF0000FFBF0000FF00FF
+        FFFF00FFFFFFBF0000FFBF0000FFBF0000FFC0C0C000C0C0C000C0C0C000C0C0
+        C000FFFF00FFBF0000FFBF0000FFBF0000FF00FFFFFF00FFFFFF00FFFFFF00FF
+        FFFFBF0000FFBF0000FFBF0000FFC0C0C000C0C0C000C0C0C000C0C0C000C0C0
+        C000C0C0C000FFFF00FFBF0000FFBF0000FFBF0000FFBF0000FFBF0000FFBF00
+        00FFBF0000FFBF0000FFC0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0
+        C000C0C0C000C0C0C000FFFF00FFBF0000FFBF0000FFBF0000FFBF0000FFBF00
+        00FFBF0000FFC0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0
+        C000C0C0C000C0C0C000C0C0C000FFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF
+        00FFC0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0
+        C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0
+        C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000
+      }
+    end
+  end
+  object PrgTemplates: TPopupMenu
+    left = 448
+    top = 528
+  end
+>>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
   object MarkImages: TImageList
     Height = 12
     Width = 12
@@ -44079,6 +44642,7 @@ object MainForm: TMainForm
       00FF666600FF666600FF666600FF
     }
   end
+<<<<<<< HEAD
   object EditorHistory: THistoryFiles
     MaxItems = 10
     IniKey = 'Editor History'
@@ -44099,4 +44663,6 @@ object MainForm: TMainForm
     left = 528
     top = 640
   end
+=======
+>>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
 end

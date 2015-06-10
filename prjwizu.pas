@@ -1,21 +1,30 @@
+<<<<<<< HEAD
 unit PrjWizU;
+=======
+unit prjwizu;
+>>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
 
 {$mode objfpc}{$H+}
 
 interface
 
 uses
+<<<<<<< HEAD
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, ExtCtrls,
   Buttons, EditBtn, StdCtrls, Spin, Grids, fpjson, jsonparser, strutils;
 
 const
   CDefPrjTitle='Short title or description of the project';
+=======
+  Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, ExtCtrls;
+>>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
 
 type
 
   { TprjWizForm }
 
   TprjWizForm = class(TForm)
+<<<<<<< HEAD
     B_PrjSaveAsTemplate: TBitBtn;
     B_PrjLoadFromTemplate: TBitBtn;
     B_CoreDel: TBitBtn;
@@ -100,6 +109,13 @@ type
   public
     { public declarations }
     PrjData:String;
+=======
+    Panel1: TPanel;
+  private
+    { private declarations }
+  public
+    { public declarations }
+>>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
   end;
 
 var
@@ -109,6 +125,7 @@ implementation
 
 {$R *.lfm}
 
+<<<<<<< HEAD
 uses ConfigFormU, SBAProjectU, DebugFormU, FloatFormU;
 
 { TprjWizForm }
@@ -547,5 +564,7 @@ begin
   end;
 end;
 
+=======
+>>>>>>> db05c8822c401acbd5e1b0bd01635f339acbe6e5
 end.
 
