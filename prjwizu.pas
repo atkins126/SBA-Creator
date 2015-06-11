@@ -91,15 +91,15 @@ type
       ANewIndex: Integer);
     procedure PrjIpCoreListDblClick(Sender: TObject);
   private
-    function CollectData: string;
-    procedure FillPrjWizValues(SData: String);
-    procedure ResetFormData;
     procedure SummarizeData(SData: String);
     function ValidateSBAName(s: string): boolean;
     { private declarations }
   public
     { public declarations }
     PrjData:String;
+    function CollectData: string;
+    procedure FillPrjWizValues(SData: String);
+    procedure ResetFormData;
   end;
 
 var
@@ -364,6 +364,7 @@ begin
     Ed_PrjTitle.Text:=J.FindPath('title').AsString;
     Ed_PrjAuthor.Text:=J.FindPath('author').AsString;
     Ed_Description.Text:=J.FindPath('description').AsString;
+    { TODO 1 : Debe de cargarse Location, version y date, puesto que estamos usando este formulario también como un medio de edición }
     // The version and the date is also not loaded from the template
     if not J.FindPath('interface').IsNull then
     begin
@@ -407,9 +408,11 @@ begin
 end;
 
 procedure TprjWizForm.Ed_PrjNameChange(Sender: TObject);
+Var s:string;
 begin
-  If CB_CreateSubDir.Checked then L_PrjFinalLoc.caption:=Ed_PrjLocation.text+Ed_PrjName.Text
-  else L_PrjFinalLoc.caption:=Ed_PrjLocation.text;
+  s:=AppendPathDelim(TrimFilename(Ed_PrjLocation.text));
+  s+=IfThen(CB_CreateSubDir.Checked,Ed_PrjName.Text);
+  L_PrjFinalLoc.caption:=AppendPathDelim(TrimFilename(s));
 end;
 
 procedure TprjWizForm.Ed_PrjNameEditingDone(Sender: TObject);

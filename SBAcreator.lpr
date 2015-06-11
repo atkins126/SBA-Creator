@@ -10,7 +10,7 @@ uses
   Forms, HistoryLazarus, uecontrols, MainFormU, synhighlighterverilog,
   synhighlightersba, uSynEditPopupEdit, versionsupportu, SBAProgContrlrU,
   AboutFormU, sbasnippetu, configformu, PrjWizU, dwfileU, DebugFormU,
-  SBAProjectU, floatformu;
+  SBAProjectU, floatformu, CoresPrjEdFormU;
 
 {$R *.res}
 
@@ -22,6 +22,7 @@ begin
   Application.CreateForm(TConfigForm, ConfigForm);
   Application.CreateForm(TprjWizForm, prjWizForm);
   Application.CreateForm(TFloatForm, FloatForm);
+  Application.CreateForm(TCoresPrjEdForm, CoresPrjEdForm);
   Application.Run;
 end.
 

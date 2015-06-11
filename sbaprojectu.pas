@@ -5,7 +5,7 @@ unit SBAProjectU;
 interface
 
 uses
-  Classes, SysUtils, fpjson, jsonparser, fileutil, strutils, Dialogs;
+  Classes, SysUtils, fpjson, jsonparser, fileutil, strutils, Dialogs, Inifiles;
 
 const
   cSBABaseZipFile='sbamaster.zip';
@@ -20,6 +20,9 @@ const
   cPrjDescrip='%description%';
   cPrjInterface='%interface%';
   cPrjIpcores='%ipcores%';
+  cPrjIpCSgnls='%ipcoressignals%';
+  cPrjSTB='%stblines%';
+  cPrjAddress='%addressmap%';
 
 type
 
@@ -36,136 +39,30 @@ type
     description:string;
     libcores:tstringlist;
     ports:tstringlist;
+    Modified:boolean;
+    PrjData:string;
     constructor Create;
     destructor Destroy; override;
-    function Fill(PrjData:string):boolean;
+    function Fill(Data: string): boolean;
+  private
+  public
+    function PrepareNewFolder: boolean;
+    function CustomizeFiles:boolean;
+    function CleanUpLibCores(CL: TStrings): boolean;
+    procedure SaveAs(f: String);
+    procedure Save;
+    procedure LoadIPData(ipname: String; IP, IPS, STL, AML: TStrings);
   end;
 
 var
   SBAPrj:TSBAPrj=nil;
 
-function CreateNewProject(PrjData:String):boolean;
-function CustomizeFiles:boolean;
 
 implementation
 
-uses DebugFormU,ConfigFormU;
+uses DebugFormU, prjWizU, ConfigFormU;
 
-function CustomizeFiles: boolean;
-var
-  FL,SL,IP:TStringList;
-  i:integer;
-begin
-  result:=false;
-  With SBAPrj do try
-    FL:=TStringList.Create;
-    SL:=TStringList.Create;
-    IP:=TStringList.Create;
-    for i:=0 to libcores.Count-1 do
-    begin
-      if DirectoryExistsUTF8(LibraryDir+libcores[i]) then
-      begin
-        IP.add(Format('  %0:s: entity work.%0:s',[libcores[i]]));
-        IP.add('  port map(');
-        IP.add('    RST_I => RSTi,');
-        IP.add('    CLK_I => CLKi,');
-        IP.add('    DAT_I => DATOi,');
-        IP.add('    DAT_O => DAT_'+libcores[i]+',');
-        IP.add('    ADR_I => ADRi,');
-        IP.add('    STB_I => STBi(STB_'+libcores[i]+'),');
-        IP.add('    WE_I  => WEi,');
-        IP.add('    -------------');
-        IP.add('  );');
-        IP.add('');
-      end;
-    end;
-    FL.Add(location+name+'_Top.vhd');
-    FL.Add(location+name+'_SBAcfg.vhd');
-    FL.Add(location+name+'_SBActrlr.vhd');
-    FL.Add(location+name+'_SBAdcdr.vhd');
-    for i:=0 to FL.Count-1 do
-    begin
-      SL.LoadFromFile(FL[i]);
-      SL.text:=StringReplace(SL.text, cPrjName, name, [rfReplaceAll]);
-      SL.text:=StringReplace(SL.text, cPrjTitle, title, []);
-      SL.text:=StringReplace(SL.text, cPrjAuthor, author, []);
-      SL.text:=StringReplace(SL.text, cPrjVersion, version, []);
-      SL.text:=StringReplace(SL.text, cPrjDate, date, []);
-      SL.text:=StringReplace(SL.text, cPrjDescrip, description, []);
-      if i=0 then
-      begin
-        SL.text:=StringReplace(SL.text, cPrjInterface, ports.text, []);
-        SL.text:=StringReplace(SL.text, cPrjIpcores, IP.text, []);
-      end;
-      SL.SaveToFile(FL[i]);
-    end;
-    result:=true;
-  finally
-    if assigned(IP) then FreeAndNil(IP);
-    if assigned(SL) then FreeAndNil(SL);
-    if assigned(FL) then FreeAndNil(FL);
-  end;
-end;
-
-function CreateNewProject(PrjData:String):boolean;
-var
-  J:TJSONData;
-  SL:TStringList;
-  PrjName:String;
-  PrjLocation:String;
-  PrjLocLib:String;
-  S:String;
-  i:integer;
-begin
-  result:=false;
-  try
-    SL:=TStringList.Create;
-    SL.Text:=PrjData;
-    J:=GetJSON(ReplaceStr(PrjData,'\','/'));
-    PrjName:=J.FindPath('name').AsString;
-    PrjLocation:=AppendPathDelim(TrimFilename(J.FindPath('location').AsString));
-    PrjLocLib:=AppendPathDelim(TrimFilename(PrjLocation+'lib'));
-    If (not DirectoryExistsUTF8(PrjLocation)) and (not CreateDirUTF8(PrjLocation)) Then
-    begin
-      ShowMessage('Failed to create SBA project folder: '+PrjLocation);
-      exit;
-    end;
-    try
-      CreateDirUTF8(PrjLocLib);
-      SL.SaveToFile(PrjLocation+PrjName+cSBAPrjExt);
-      CopyFile(SBAbaseDir+'Top.vhd',PrjLocation+PrjName+'_Top.vhd');
-      CopyFile(SBAbaseDir+'SBAcfg.vhd',PrjLocation+PrjName+'_SBAcfg.vhd');
-      CopyFile(SBAbaseDir+'SBActrlr.vhd',PrjLocation+PrjName+'_SBActrlr.vhd');
-      CopyFile(SBAbaseDir+'SBAdcdr.vhd',PrjLocation+PrjName+'_SBAdcdr.vhd');
-      CopyFile(SBAbaseDir+'SBApkg.vhd',PrjLocLib+'SBApkg.vhd');
-      CopyFile(SBAbaseDir+'Syscon.vhd',PrjLocLib+'Syscon.vhd');
-      CopyFile(SBAbaseDir+'DataIntf.vhd',PrjLocLib+'DataIntf.vhd');
-      if LibAsReadOnly then
-      begin
-        FileSetAttr(PrjLocLib+'SBApkg.vhd',faReadOnly);
-        FileSetAttr(PrjLocLib+'Syscon.vhd',faReadOnly);
-        FileSetAttr(PrjLocLib+'DataIntf.vhd',faReadOnly);
-      end;
-      if not J.FindPath('ipcores').IsNull then
-        with J.FindPath('ipcores') do For i:=0 to count-1 do
-        begin
-          S:=Items[i].AsString;
-          CopyFile(LibraryDir+S+PathDelim+S+'.vhd',PrjLocLib+S+'.vhd');
-          if LibAsReadOnly then FileSetAttr(PrjLocLib+S+'.vhd',faReadOnly);
-        end;
-      result:=SBAPrj.Fill(PrjData) and CustomizeFiles;
-    except
-      on E:Exception do
-      begin
-        ShowMessage('Failed to create all SBA project files: '+E.Message);
-        exit;
-      end;
-    end;
-  finally
-    if assigned(J) then FreeAndNil(J);
-    if assigned(SL) then FreeAndNil(SL);
-  end;
-end;
+var AM:integer=0; //Address Map
 
 { TSBAPrj }
 
@@ -173,8 +70,10 @@ constructor TSBAPrj.Create;
 begin
   inherited Create;
   name:='';
+  PrjData:='';
   libcores:=TStringList.create;
   ports:=tstringlist.create;
+  modified:=false;
 end;
 
 destructor TSBAPrj.Destroy;
@@ -184,7 +83,7 @@ begin
   inherited Destroy;
 end;
 
-function TSBAPrj.Fill(PrjData: string): boolean;
+function TSBAPrj.Fill(Data: string): boolean;
 var
   J:TJSONData;
   i:integer;
@@ -195,7 +94,7 @@ begin
   libcores.Clear;
   ports.Clear;
   try
-    J:=GetJSON(ReplaceStr(PrjData,'\','/'));
+    J:=GetJSON(ReplaceStr(Data,'\','/'));
   except
     on E:Exception do
     begin
@@ -227,10 +126,259 @@ begin
         if (i<J.FindPath('interface').count-1) then S+=';';
         ports.Add(S);
       end;
+    PrjData:=Data;
     result:=true;
   finally
     if assigned(J) then FreeAndNil(J);
   end;
+end;
+
+function TSBAPrj.PrepareNewFolder:boolean;
+var
+  S:String;
+  i:integer;
+  SL:TStringList;
+begin
+  result:=false;
+  if SBAPrj.name='' then exit;
+  If (not DirectoryExistsUTF8(SBAPrj.Location)) and (not CreateDirUTF8(SBAPrj.Location)) Then
+  begin
+    ShowMessage('Failed to create SBA project folder: '+SBAPrj.Location);
+    exit;
+  end;
+  with SBAPrj do
+  try
+    try
+      SL:=TStringList.Create;
+      SL.Text:=PrjData;
+      SL.SaveToFile(Location+Name+cSBAPrjExt);
+    finally
+      if assigned(SL) then FreeAndNil(SL);
+    end;
+    CopyFile(SBAbaseDir+'Top.vhd',Location+Name+'_Top.vhd');
+    CopyFile(SBAbaseDir+'SBAcfg.vhd',Location+Name+'_SBAcfg.vhd');
+    CopyFile(SBAbaseDir+'SBActrlr.vhd',Location+Name+'_SBActrlr.vhd');
+    CopyFile(SBAbaseDir+'SBAdcdr.vhd',Location+Name+'_SBAdcdr.vhd');
+    CreateDirUTF8(LocLib);
+    CopyFile(SBAbaseDir+'SBApkg.vhd',LocLib+'SBApkg.vhd');
+    CopyFile(SBAbaseDir+'Syscon.vhd',LocLib+'Syscon.vhd');
+    CopyFile(SBAbaseDir+'DataIntf.vhd',LocLib+'DataIntf.vhd');
+    if LibAsReadOnly then
+    begin
+      FileSetAttr(LocLib+'SBApkg.vhd',faReadOnly);
+      FileSetAttr(LocLib+'Syscon.vhd',faReadOnly);
+      FileSetAttr(LocLib+'DataIntf.vhd',faReadOnly);
+    end;
+    if libcores.count>0 then For i:=0 to libcores.count-1 do
+      begin
+        S:=libcores[i];
+        CopyFile(LibraryDir+S+PathDelim+S+'.vhd',LocLib+S+'.vhd');
+        if LibAsReadOnly then FileSetAttr(LocLib+S+'.vhd',faReadOnly);
+      end;
+    result:= CustomizeFiles;
+  except
+    on E:Exception do
+    begin
+      ShowMessage('Failed to create all SBA project files: '+E.Message);
+      exit;
+    end;
+  end;
+end;
+
+function TSBAPrj.CustomizeFiles: boolean;
+var
+  FL,SL,IP,IPS,STL,AML:TStringList;
+  i:integer;
+begin
+  result:=false;
+  try
+    FL:=TStringList.Create;
+    SL:=TStringList.Create;
+    IP:=TStringList.Create;
+    IPS:=TStringList.Create;
+    STL:=TStringList.Create;
+    AML:=TStringList.Create;
+    for i:=0 to libcores.Count-1 do LoadIPData(libcores[i],IP,IPS,STL,AML);
+    FL.Add(location+name+'_Top.vhd');
+    FL.Add(location+name+'_SBAcfg.vhd');
+    FL.Add(location+name+'_SBAdcdr.vhd');
+    FL.Add(location+name+'_SBActrlr.vhd');
+    for i:=0 to FL.Count-1 do
+    begin
+      SL.LoadFromFile(FL[i]);
+      SL.text:=StringReplace(SL.text, cPrjName, name, [rfReplaceAll]);
+      SL.text:=StringReplace(SL.text, cPrjTitle, title, []);
+      SL.text:=StringReplace(SL.text, cPrjAuthor, author, []);
+      SL.text:=StringReplace(SL.text, cPrjVersion, version, []);
+      SL.text:=StringReplace(SL.text, cPrjDate, date, []);
+      SL.text:=StringReplace(SL.text, cPrjDescrip, description, []);
+      case i of
+        0:begin //Top
+          SL.text:=StringReplace(SL.text, cPrjInterface, ports.text, []);
+          SL.text:=StringReplace(SL.text, cPrjIpcores, IP.text, []);
+          SL.text:=StringReplace(SL.text, cPrjIpCSgnls, IPS.text, []);
+        end;
+        1:begin //SBAconfig
+            SL.text:=StringReplace(SL.text, cPrjSTB, STL.text, []);
+            SL.text:=StringReplace(SL.text, cPrjAddress, AML.text, []);
+        end;
+      end;
+      SL.SaveToFile(FL[i]);
+    end;
+    result:=true;
+  finally
+    if assigned(AML) then FreeAndNil(AML);
+    if assigned(STL) then FreeAndNil(STL);
+    if assigned(IPS) then FreeAndNil(IPS);
+    if assigned(IP) then FreeAndNil(IP);
+    if assigned(SL) then FreeAndNil(SL);
+    if assigned(FL) then FreeAndNil(FL);
+  end;
+end;
+
+procedure TSBAPrj.LoadIPData(ipname: String; IP, IPS, STL, AML: TStrings);
+var
+  INI:TINIFile;
+  GL,CL,AL,IL,SL:TStringList;
+  f:String;
+  i:integer;
+  DIL,DOL,ADL:Integer;
+  WE,STB:boolean;
+begin
+  ADL:=1;
+  DIL:=16;
+  DOL:=16;
+  WE:=true;
+  STB:=true;
+  if DirectoryExistsUTF8(LibraryDir+ipname) then
+  try
+    GL:=TStringList.Create;
+    CL:=TStringList.Create;
+    AL:=TStringList.Create;
+    IL:=TStringList.Create;
+    SL:=TStringList.Create;
+    f:=LibraryDir+ipname+PathDelim+ipname+'.ini';
+    if fileexistsUTF8(f) then
+    try
+      INI:=TIniFile.Create(f);
+      INI.ReadSectionRaw('Generic',GL);
+      INI.ReadSectionRaw('Config',CL);
+      INI.ReadSectionRaw('Address',AL);
+      INI.ReadSectionRaw('Interface',IL);
+      INI.ReadSectionRaw('Signals',SL);
+      if StrToIntDef(CL.Values['SBAPORTS'],1)=1 then
+      begin
+        WE:=StrToIntDef(CL.Values['WE'],1)=1;
+        STB:=StrToIntDef(CL.Values['STB'],1)=1;
+        ADL:=StrToIntDef(CL.Values['ADRLINES'],1);
+        DIL:=StrToIntDef(CL.Values['DATILINES'],16);
+        DOL:=StrToIntDef(CL.Values['DATOLINES'],16);
+      end else
+      begin
+        ADL:=1;
+        DIL:=16;
+        DOL:=16;
+      end;
+    finally
+      if assigned(INI) then FreeAndNil(INI);
+    end;
+
+    IP.add(Format('  %0:s: entity work.%0:s',[ipname]));
+    if GL.Count>0 then
+    begin
+      IP.add('  generic map(');
+      for i:=0 to GL.Count-1 do IP.add('    '+
+        Format('%:-8s=> %s',[GL.names[i],GL.ValueFromIndex[i]])+
+        IfThen(i<GL.Count-1,','));
+      IP.add('  )');
+    end;
+    IP.add('  port map(');
+    IP.add('    -------------');
+    IP.add('    RST_I => RSTi,');
+    IP.add('    CLK_I => CLKi,');
+    if STB then   IP.add('    STB_I => STBi(STB_'+ipname+'),');
+    if ADL>0 then IP.add('    ADR_I => ADRi,');
+    if WE then    IP.add('    WE_I  => WEi,');
+    if DIL>0 then IP.add('    DAT_I => DATOi,');
+    if DOL>0 then IP.add('    DAT_O => DAT_'+ipname+',');
+    IP.add('    -------------');
+    if IL.Count>0 then for i:=0 to IL.Count-1 do
+      IP.add(Format('    %:-8s=> %s',[IL.names[i],IL.ValueFromIndex[i]])+
+      IfThen(i<IL.Count-1,','));
+    IP.add('  );');
+    IP.add('');
+    if DOL>0 then
+    begin
+      IP.add(Format('  %:sDataIntf: entity work.DataIntf',[ipname]));
+      IP.add('  port map(');
+      IP.add('    STB_I => STBi(STB_'+ipname+'),');
+      IP.add('    DAT_I => DAT_'+ipname+',');
+      IP.add('    DAT_O => DATIi');
+      IP.add('  );');
+      IP.add('');
+      IPS.add(Format('  Signal %:-11s: DATA_type;',['DAT_'+ipname]));
+    end;
+    if STB then STL.add(Format('  Constant %:-11s: integer := %d;',['STB_'+ipname,STL.count]));
+    if SL.Count>0 then for i:=0 to SL.Count-1 do
+      IPS.add(Format('  Signal %:-11s: %s;',[SL.names[i],SL.ValueFromIndex[i]]));
+    if AL.Count>0 then for i:=0 to AL.Count-1 do
+    begin
+      if (AL.ValueFromIndex[i]='0') and ((AM mod 2)=1) then inc(AM);
+      AML.Add(Format('  Constant %:-11s: integer := %d;',[AL.Names[i],AM]));
+      inc(AM);
+{ TODO : Calcular AM en base al offset dado en la sección Address del INI }
+    end;
+  finally
+    if assigned(SL) then FreeAndNil(SL);
+    if assigned(IL) then FreeAndNil(IL);
+    if assigned(AL) then FreeAndNil(AL);
+    if assigned(CL) then FreeAndNil(CL);
+    if assigned(GL) then FreeAndNil(GL);
+  end;
+end;
+
+function TSBAPrj.CleanUpLibCores(CL:TStrings): boolean;
+var
+  s,NewData:string;
+begin
+  result:=false;
+  prjWizForm.ResetFormData;
+  prjWizForm.FillPrjWizValues(PrjData);
+  prjWizForm.PrjIpCoreList.Items.Assign(CL);
+  NewData:=prjWizForm.CollectData;
+  for s in libcores do if CL.IndexOf(s)=-1 then
+  begin
+    FileSetAttr(LocLib+s+'.vhd',faArchive);
+    DeleteFileUTF8(loclib+s+'.vhd');
+  end;
+  for s in CL do if libcores.IndexOf(s)=-1 then
+  begin
+    CopyFile(LibraryDir+S+PathDelim+s+'.vhd',LocLib+s+'.vhd');
+    if LibAsReadOnly then FileSetAttr(LocLib+s+'.vhd',faReadOnly);
+  end;
+  libcores.Assign(CL);
+  PrjData:=NewData;
+  Save;
+  result:=true;
+end;
+
+procedure TSBAPrj.SaveAs(f: String);
+var
+  SL:TStringList;
+begin
+  try
+    SL:=TStringList.Create;
+    SL.Text:=PrjData;
+    SL.SaveToFile(f);
+    Modified:=false;
+  finally
+    if assigned(SL) then FreeAndNil(SL);
+  end;
+end;
+
+procedure TSBAPrj.Save;
+begin
+  SaveAs(Location+Name+cSBAPrjExt);
 end;
 
 end.

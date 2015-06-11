@@ -40,8 +40,10 @@ var
 function GetConfigValues:boolean;
 function SetConfigValues:boolean;
 function PopulateDirList(const directory : string; list : TStrings): boolean;
+function PopulateFileList(const directory : string; list : TStrings): boolean;
 function UnZip(f,p:string):boolean;
 function IsDirectoryEmpty(const directory : string) : boolean;
+function GetPosList(s: string; list: Tstrings; start:integer=0): integer;
 
 implementation
 
@@ -91,6 +93,23 @@ begin
   result:=true;
 end;
 
+function PopulateFileList(const directory: string; list: TStrings): boolean;
+var
+  sr : TSearchRec;
+begin
+  result:=false;
+  try
+    if FindFirstUTF8(IncludeTrailingPathDelimiter(directory) + '*.*', faAnyFile, sr) < 0 then Exit
+    else
+    repeat
+      if (sr.Attr and faDirectory = 0) then List.Add(sr.Name);
+    until FindNextUTF8(sr) <> 0;
+  finally
+    FindCloseUTF8(sr);
+  end;
+  result:=true;
+end;
+
 function UnZip(f,p:string):boolean;
 var
   UnZipper: TUnZipper;
@@ -114,13 +133,13 @@ begin
   with ConfigForm, MainForm.IniStor do
   begin
     WriteString('ConfigDir',ConfigDir);
-    if DirectoryExistsUTF8(Ed_LibraryDir.text) then LibraryDir:=Ed_LibraryDir.text
+    if DirectoryExistsUTF8(Ed_LibraryDir.text) then LibraryDir:=AppendPathDelim(TrimFilename(Ed_LibraryDir.text))
     else raise exception.create('Library folder could not be changed');
     WriteString('LibraryDir',LibraryDir);
-    if DirectoryExistsUTF8(Ed_SnippetDir.text) then SnippetDir:=Ed_SnippetDir.text
+    if DirectoryExistsUTF8(Ed_SnippetDir.text) then SnippetDir:=AppendPathDelim(TrimFilename(Ed_SnippetDir.text))
     else raise exception.create('Snippet folder could not be changed');
     WriteString('SnippetDir',SnippetDir);
-    if DirectoryExistsUTF8(Ed_ProjectsDir.text) then ProjectsDir:=Ed_ProjectsDir.text
+    if DirectoryExistsUTF8(Ed_ProjectsDir.text) then ProjectsDir:=AppendPathDelim(TrimFilename(Ed_ProjectsDir.text))
     else raise exception.create('SBA Projects folder could not be changed');
     WriteString('SBAbaseDir',SBAbaseDir);
     WriteString('ProjectsDir',ProjectsDir);
@@ -175,6 +194,14 @@ begin
   end;
 end;
 
+function GetPosList(s: string; list: Tstrings; start: integer=0): integer;
+var
+  i: integer;
+begin
+  if start<0 then begin result:=-1; exit; end;
+  For i:=start to list.Count-1 do if pos(s,list[i])<>0 then break;
+  if pos(s,list[i])<>0 then Result:=i else Result:=-1;
+end;
 
 end.
 

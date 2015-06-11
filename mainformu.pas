@@ -8,17 +8,18 @@ uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, Buttons,
   ComCtrls, AsyncProcess, ExtCtrls, Menus, ActnList, SynHighlighterSBA,
   SynHighlighterVerilog, SynEditMarkupHighAll, SynEdit, SynEditTypes,
-  uSynEditPopupEdit, SynPluginSyncroEdit, FileUtil, strutils, Clipbrd,
-  IniPropStorage, StdActns, ShellCtrls, BGRASpriteAnimation, uebutton,
+  uSynEditPopupEdit, SynPluginSyncroEdit, SynHighlighterIni, FileUtil, strutils,
+  Clipbrd, IniPropStorage, StdActns, ShellCtrls, BGRASpriteAnimation, uebutton,
   uETilePanel, versionsupportu, types, lclintf, LCLType, HistoryFiles, Math;
 
 type
-  thdltype=(vhdl, prg, verilog, systemverilog, other);
+  thdltype=(vhdl, prg, verilog, systemverilog, ini, other);
   tProcessStatus=(Idle,GetBanner);
 
   { TMainForm }
 
   TMainForm = class(TForm)
+    ProjectCoresEdit: TAction;
     EditInsertDate: TAction;
     BitBtn1: TuEButton;
     BitBtn2: TuEButton;
@@ -31,12 +32,14 @@ type
     CoreImage: TImage;
     MenuItem26: TMenuItem;
     FileHistoryEd: TMenuItem;
+    EdPrjCores: TMenuItem;
     MenuItem929: TMenuItem;
     MenuItem956: TMenuItem;
     MenuItem957: TMenuItem;
     MenuItem958: TMenuItem;
     MenuItem962: TMenuItem;
     MenuItem963: TMenuItem;
+    M_EdPrjCores: TPopupMenu;
     ProjectMenuEd: TMenuItem;
     PrjHistory: THistoryFiles;
     MarkImages: TImageList;
@@ -108,6 +111,9 @@ type
     Splitter3: TSplitter;
     Splitter4: TSplitter;
     Splitter5: TSplitter;
+    SynIniSyn: TSynIniSyn;
+    ToolButton48: TToolButton;
+    ToolButton49: TToolButton;
     TreeImg: TImageList;
     EditRedo: TAction;
     EditCopy: TEditCopy;
@@ -278,6 +284,7 @@ type
     procedure PrjTreeMouseMove(Sender: TObject; Shift: TShiftState; X,
       Y: Integer);
     procedure ProjectCloseExecute(Sender: TObject);
+    procedure ProjectCoresEditExecute(Sender: TObject);
     procedure ProjectExportExecute(Sender: TObject);
     procedure ProjectGotoEditorExecute(Sender: TObject);
     procedure ProjectGotoPrgExecute(Sender: TObject);
@@ -353,6 +360,7 @@ type
     procedure LoadRsvWordsFile;
     procedure LoadAnnouncement;
     procedure GetAnnouncement;
+    procedure UpdatePrjTree;
   protected
   public
     { public declarations }
@@ -366,7 +374,7 @@ implementation
 {$R *.lfm}
 
 uses DebugFormU, SBAProgContrlrU, SBAProjectU, ConfigFormU, AboutFormU, sbasnippetu, PrjWizU,
-     DwFileU, FloatFormU;
+     DwFileU, FloatFormU, CoresPrjEdFormU;
 
 var
   SynMarkup: TSynEditMarkupHighlightAllCaret;
@@ -550,8 +558,8 @@ begin
   ActiveEditor.CaretX:=0;
   Y:=ActiveEditor.CaretY;
   try
-    sblk:=SBASnippet.GetPosList(cSBAStartUserProg,ActiveEditor.Lines)+1;
-    eblk:=SBASnippet.GetPosList(cSBAEndUserProg,ActiveEditor.Lines,sblk)-1;
+    sblk:=GetPosList(cSBAStartUserProg,ActiveEditor.Lines)+1;
+    eblk:=GetPosList(cSBAEndUserProg,ActiveEditor.Lines,sblk)-1;
     if (sblk=-1) or (eblk=-1) then
     begin
      ShowMessage('Error in User program block definitions, check "-- /SBA:" keywords');
@@ -561,8 +569,8 @@ begin
     ActiveEditor.InsertTextAtCaret(SBASnippet.code.Text);
 
     ActiveEditor.CaretY:=Y;
-    sblk:=SBASnippet.GetPosList(cSBAStartProgUReg,ActiveEditor.Lines)+1;
-    eblk:=SBASnippet.GetPosList(cSBAEndProgUReg,ActiveEditor.Lines,sblk)-1;
+    sblk:=GetPosList(cSBAStartProgUReg,ActiveEditor.Lines)+1;
+    eblk:=GetPosList(cSBAEndProgUReg,ActiveEditor.Lines,sblk)-1;
     if (sblk=-1) or (eblk=-1) then
     begin
       ShowMessage('Error in User registers block definitions, check "-- /SBA:" keywords');
@@ -654,7 +662,7 @@ begin
     SaveDialog.FileName:=EditorPages.ActivePage.Hint;
     SaveDialog.InitialDir:=ExtractFilePath(EditorPages.ActivePage.Hint);
     SaveDialog.DefaultExt:=hdlext;
-    SaveDialog.Filter:='VHDL file|*.vhd;*.vhdl|Verilog file|*.v;*.vl|System Verilog|*.sv|Text files|*.txt|All files|*.*';
+    SaveDialog.Filter:='VHDL file|*.vhd;*.vhdl|Verilog file|*.v;*.vl|System Verilog|*.sv|Ini files|*.ini|Text files|*.txt|All files|*.*';
     if SaveDialog.Execute and SaveFile(SaveDialog.FileName, ActiveEditor.Lines) then
     begin
       EditorPages.ActivePage.Hint:=SaveDialog.FileName;
@@ -697,10 +705,13 @@ var
   TN:TTreeNode;
 begin
   TN:=PrjTree.Selected;
-  if (TN.Parent<>nil) and (TN.Parent.Text='Lib') then
-    CoreImage.Picture.LoadFromFile(LibraryDir+TN.Text+PathDelim+'image.png')
-  else
-    CoreImage.Picture.Clear;
+  if (TN<>nil) and (TN.Parent<>nil) and (TN.Parent.Text='Lib') then
+  try
+    CoreImage.Picture.LoadFromFile(LibraryDir+TN.Text+PathDelim+'image.png');
+  except
+    ON E:Exception do CoreImage.Picture.Clear;
+  end
+  else CoreImage.Picture.Clear;
 end;
 
 procedure TMainForm.PrjTreeDblClick(Sender: TObject);
@@ -751,17 +762,39 @@ begin
   if CloseProject then MainPages.ActivePage:=SystemTab;
 end;
 
+procedure TMainForm.ProjectCoresEditExecute(Sender: TObject);
+begin
+  if CoresPrjEdForm.CoresEdit(SBAPrj) then
+  begin
+    SBAPrj.CleanUpLibCores(CoresPrjEdForm.PrjIpCoreList.Items);
+    UpdatePrjTree;
+  end;
+end;
+
 function TMainForm.CloseProject:boolean;
 var CanClose:boolean;
 begin
+  result:=false;
   CanClose:=true;
   while EditorPages.PageCount>0 do
   begin
     CanClose:=CloseEditor(EditorPages.ActivePage);
     If not CanClose then break;
   end;
-  SBAPrj.name:='';
-  result:=CanClose;
+  If SBAPrj.Modified then
+  begin
+    CanClose:=false;
+    case MessageDlg('The Project was modified', 'Save Project? ', mtConfirmation, [mbYes, mbNo, mbCancel],0) of
+      mrCancel: exit;
+      mrYes: SBAPrj.Save;
+      mrNo:CanClose:=True;
+    end;
+  end;
+  if CanClose then
+  begin
+    SBAPrj.name:='';
+    result:=true;
+  end;
 end;
 
 
@@ -807,8 +840,9 @@ end;
 
 procedure TMainForm.ProjectNewExecute(Sender: TObject);
 begin
-  if (PrjWizForm.showmodal=mrOk) and CreateNewProject(PrjWizForm.PrjData) then
-    OpenProject(SBAPrj.location+SBAPrj.name+cSBAPrjExt);
+  if (PrjWizForm.showmodal=mrOk) and CloseProject and
+     SBAPrj.Fill(PrjWizForm.PrjData) and SBAPrj.PrepareNewFolder then
+     OpenProject(SBAPrj.location+SBAPrj.name+cSBAPrjExt);
 end;
 
 procedure TMainForm.ProjectOpenExecute(Sender: TObject);
@@ -823,8 +857,6 @@ procedure TMainForm.OpenProject(const f: string);
 var
   SL:TStringList;
   s:string;
-  i:integer;
-  m,a,l:TTreeNode;
 begin
   if not FileExistsUTF8(f) then
   begin
@@ -836,30 +868,7 @@ begin
     SL.LoadFromFile(f);
     if not SBAPrj.Fill(SL.Text) then exit;
 
-    PrjTree.BeginUpdate;
-    PrjTree.Items.Clear;
-
-    m:=PrjTree.Items.AddChild(nil,SBAPrj.name);
-    PrjTree.Items.AddChild(m,'Top').StateIndex:=2;
-    PrjTree.Items.AddChild(m,'SBAcfg').StateIndex:=2;
-    PrjTree.Items.AddChild(m,'SBActrlr').StateIndex:=2;
-    PrjTree.Items.AddChild(m,'SBAdcdr').StateIndex:=2;
-
-    a:=PrjTree.Items.AddChild(nil,'Aux');
-    PrjTree.Items.AddChild(a,'SBApkg').StateIndex:=3;
-    PrjTree.Items.AddChild(a,'Syscon').StateIndex:=3;
-    PrjTree.Items.AddChild(a,'DataIntf').StateIndex:=3;
-
-    if SBAPrj.libcores.Count>0 then
-    begin
-     l:=PrjTree.Items.AddChild(nil,'Lib');
-     for i:=0 to SBAPrj.libcores.Count-1 do
-       PrjTree.Items.AddChild(l,SBAPrj.libcores[i]).StateIndex:=4;
-    end;
-
-    PrjTree.FullExpand;
-    PrjTree.EndUpdate;
-
+    UpdatePrjTree;
     PrjHistory.UpdateList(f);
 
     P_Project.Visible:=true;
@@ -909,7 +918,7 @@ end;
 
 procedure TMainForm.ProjectSaveExecute(Sender: TObject);
 begin
-  //
+  SBAPrj.Save;
 end;
 
 procedure TMainForm.SBA_cancelExecute(Sender: TObject);
@@ -1045,10 +1054,6 @@ procedure TMainForm.ToolsFileSyntaxCheckExecute(Sender: TObject);
 var s:string;
 begin
   case hdltype of
-    other : begin
-      showmessage('Sorry, Syntax check is not implemented yet for this kind of file.');
-      exit;
-    end;
     vhdl : begin
       if not fileexistsUTF8(Application.Location+'ghdl\bin\ghdl.exe') then
       begin
@@ -1062,6 +1067,10 @@ begin
        showmessage('Icarus Verilog tool not found');
        exit;
       end;
+    end;
+    else begin
+      showmessage('Sorry, Syntax check is not implemented yet for this kind of file.');
+      exit;
     end;
   end;
   s:=EditorPages.ActivePage.Hint;
@@ -1430,7 +1439,7 @@ procedure TMainForm.WordSelectionChange(Sender: TObject);
 Var S:String;
 begin
   s:=TListBox(Sender).GetSelectedText;
-  if hdltype=vhdl then ActiveEditor.SetHighlightSearch(S,[ssoSelectedOnly,ssoWholeWord])
+  if hdltype in [vhdl,ini,prg,other] then ActiveEditor.SetHighlightSearch(S,[ssoSelectedOnly,ssoWholeWord])
     else ActiveEditor.SetHighlightSearch(S,[ssoMatchCase,ssoSelectedOnly,ssoWholeWord]);
 end;
 
@@ -1444,7 +1453,7 @@ begin
   OpenDialog.FileName:='';
   OpenDialog.InitialDir:=wdir;
   OpenDialog.DefaultExt:='.vhd';
-  OpenDialog.Filter:='VHDL file|*.vhd;*.vhdl|Verilog file|*.v;*.vl;*.ver|System Verilog|*.sv|Text files|*.txt|All files|*.*';
+  OpenDialog.Filter:='VHDL file|*.vhd;*.vhdl|Verilog file|*.v;*.vl;*.ver|System Verilog|*.sv|Ini files|*.ini|Text files|*.txt|All files|*.*';
   if OpenDialog.Execute then OpenInEditor(OpenDialog.FileName);
 end;
 
@@ -1686,7 +1695,7 @@ begin
 
   // Add last comments
   sl.Add(commentstr+'------------------------------------------------------------------------------');
-  sl.Add(commentstr+' This file was obfuscated and reformated using vHDL Obfuscator GUI          --');
+  sl.Add(commentstr+' This file was obfuscated and reformated using SBA Creator                  --');
   sl.Add(commentstr+' (c) Miguel Risco-Castillo                                                  --');
   sl.Add(commentstr+'------------------------------------------------------------------------------');
   ostr.Free;
@@ -1765,6 +1774,38 @@ begin
   processWGET('http://sba.accesus.com/newbanner.gif?attredirects=0',ConfigDir+'newbanner.gif',GetBanner);
 end;
 
+procedure TMainForm.UpdatePrjTree;
+var
+  l: TTreeNode;
+  a: TTreeNode;
+  m: TTreeNode;
+  i: integer;
+begin
+  PrjTree.BeginUpdate;
+  PrjTree.Items.Clear;
+
+  m:=PrjTree.Items.AddChild(nil, SBAPrj.name);
+  PrjTree.Items.AddChild(m, 'Top').StateIndex:=2;
+  PrjTree.Items.AddChild(m, 'SBAcfg').StateIndex:=2;
+  PrjTree.Items.AddChild(m, 'SBActrlr').StateIndex:=2;
+  PrjTree.Items.AddChild(m, 'SBAdcdr').StateIndex:=2;
+
+  a:=PrjTree.Items.AddChild(nil, 'Aux');
+  PrjTree.Items.AddChild(a, 'SBApkg').StateIndex:=3;
+  PrjTree.Items.AddChild(a, 'Syscon').StateIndex:=3;
+  PrjTree.Items.AddChild(a, 'DataIntf').StateIndex:=3;
+
+  if SBAPrj.libcores.Count>0 then
+  begin
+   l:=PrjTree.Items.AddChild(nil, 'Lib');
+   for i:=0 to SBAPrj.libcores.Count-1 do
+     PrjTree.Items.AddChild(l, SBAPrj.libcores[i]).StateIndex:=4;
+  end;
+
+  PrjTree.FullExpand;
+  PrjTree.EndUpdate;
+end;
+
 procedure TMainForm.ProcessWGET(url,f:string;status:TProcessStatus);
 begin
   Log.Clear;
@@ -1829,7 +1870,8 @@ begin
     if (hdlext='.prg') then hdltype:=prg else
       if (hdlext='.v') or (hdlext='.vl') or (hdlext='.ver') then hdltype:=verilog else
         if (hdlext='.sv') then hdltype:=systemverilog else
-          hdltype:=other;
+          if (hdlext='.ini') then hdltype:=ini else
+            hdltype:=other;
   case hdltype of
     vhdl,prg : begin
       commentstr:='--';
@@ -1840,6 +1882,11 @@ begin
       commentstr:='//';
       ActiveEditor.Highlighter:=SynVerilogSyn;
       mapfile:='verilog_map.dat'
+    end;
+    ini: begin
+      commentstr:=';';
+      ActiveEditor.Highlighter:=SynIniSyn;
+      mapfile:='vhdl_map.dat'
     end;
     other : begin
       commentstr:='--';

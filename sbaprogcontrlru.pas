@@ -31,7 +31,6 @@ type
     procedure SetFilename(AValue: String);
   public
     constructor Create;
-    function GetPosList(s: string; list: Tstrings; start:integer=0): integer;
     function DetectSBAContrlr(Src:TStrings):boolean;
     function ExtractSBALbls(Prog, Labels: TStrings): boolean;
     function CpySrc2Prog(Src,Prog:TStrings):boolean;
@@ -44,6 +43,8 @@ type
   end;
 
 implementation
+
+uses ConfigFormU;
 
 { TSBAContrlrProg }
 
@@ -158,15 +159,6 @@ begin
 
   For i:=eblock downto sblock do Src.Insert(iPos,Prog[i]);
   Result:=true;
-end;
-
-function TSBAContrlrProg.GetPosList(s: string; list: Tstrings; start: integer=0): integer;
-var
-  i: integer;
-begin
-  if start<0 then begin result:=-1; exit; end;
-  For i:=start to list.Count-1 do if pos(s,list[i])<>0 then break;
-  if pos(s,list[i])<>0 then Result:=i else Result:=-1;
 end;
 
 procedure TSBAContrlrProg.SetFilename(AValue: String);

@@ -959,11 +959,12 @@ object prjWizForm: TprjWizForm
     }
   end
   object OpenDialog1: TOpenDialog
-    Options = [ofPathMustExist, ofFileMustExist, ofNoTestFileCreate, ofEnableSizing, ofViewDetail]
+    Options = [ofShowHelp, ofPathMustExist, ofFileMustExist, ofNoTestFileCreate, ofEnableSizing, ofViewDetail]
     left = 344
     top = 128
   end
   object SaveDialog1: TSaveDialog
+    Options = [ofShowHelp, ofEnableSizing, ofViewDetail]
     left = 344
     top = 192
   end
