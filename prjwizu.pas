@@ -6,7 +6,8 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, ExtCtrls,
-  Buttons, EditBtn, StdCtrls, Spin, Grids, fpjson, jsonparser, strutils;
+  Buttons, EditBtn, StdCtrls, Spin, Grids, ValEdit, fpjson, jsonparser,
+  strutils;
 
 const
   CDefPrjTitle='Short title or description of the project';
@@ -16,6 +17,8 @@ type
   { TprjWizForm }
 
   TprjWizForm = class(TForm)
+    B_AddFile: TBitBtn;
+    B_RemoveFile: TBitBtn;
     B_PrjSaveAsTemplate: TBitBtn;
     B_PrjLoadFromTemplate: TBitBtn;
     B_CoreDel: TBitBtn;
@@ -25,6 +28,7 @@ type
     B_Next: TBitBtn;
     B_Previous: TBitBtn;
     CB_CreateSubDir: TCheckBox;
+    CheckBox1: TCheckBox;
     Ed_Date: TDateEdit;
     Ed_PrjLocation: TDirectoryEdit;
     Image1: TImage;
@@ -34,9 +38,11 @@ type
     Label6: TLabel;
     Label7: TLabel;
     Label8: TLabel;
+    Label9: TLabel;
     LibIpCoreList: TListBox;
     LabelX: TLabel;
     OpenDialog1: TOpenDialog;
+    Page4: TPage;
     SaveDialog1: TSaveDialog;
     Summary: TMemo;
     PrjIpCoreList: TListBox;
@@ -62,18 +68,22 @@ type
     TB_Start: TToggleBox;
     TB_Step2: TToggleBox;
     TB_Step3: TToggleBox;
+    TB_Step4: TToggleBox;
     TB_End: TToggleBox;
+    UserFileList: TValueListEditor;
     WizPages: TNotebook;
     StartPage: TPage;
     Page2: TPage;
     EndPage: TPage;
     NavPanel: TPanel;
+    procedure B_AddFileClick(Sender: TObject);
     procedure B_CoreAddClick(Sender: TObject);
     procedure B_CoreDelClick(Sender: TObject);
     procedure B_NextClick(Sender: TObject);
     procedure B_PreviousClick(Sender: TObject);
     procedure B_PrjLoadFromTemplateClick(Sender: TObject);
     procedure B_PrjSaveAsTemplateClick(Sender: TObject);
+    procedure B_RemoveFileClick(Sender: TObject);
     procedure Ed_MayorVerChange(Sender: TObject);
     procedure Ed_PrjNameChange(Sender: TObject);
     procedure Ed_PrjNameEditingDone(Sender: TObject);
@@ -109,7 +119,7 @@ implementation
 
 {$R *.lfm}
 
-uses ConfigFormU, SBAProjectU, DebugFormU, FloatFormU;
+uses ConfigFormU, UtilsU, SBAProjectU, DebugFormU, FloatFormU;
 
 { TprjWizForm }
 
@@ -119,6 +129,7 @@ begin
   TB_Start.Checked:=false;
   TB_Step2.Checked:=false;
   TB_Step3.Checked:=false;
+  TB_Step4.Checked:=false;
   TB_End.Checked:=false;
   case ANewIndex of
   0://if ANewPage=StartPage then
@@ -132,22 +143,21 @@ begin
   1://if ANewPage=Page2 then
   begin
     B_Previous.Visible:=true;
-    B_Next.visible:=true;
-    B_Next.Default:=true;
-    B_Ok.visible:=false;
     TB_Step2.Checked:=true;
   end;
   2://if ANewPage=Page3 then
   begin
-    B_Previous.Visible:=true;
+    TB_Step3.Checked:=true;
+  end;
+  3://if ANewPage=Page4 then
+  begin
     B_Next.visible:=true;
     B_Next.Default:=true;
     B_Ok.visible:=false;
-    TB_Step3.Checked:=true;
+    TB_Step4.Checked:=true;
   end;
-  3://if ANewPage=EndPage then
+  4://if ANewPage=EndPage then
   begin
-    B_Previous.Visible:=true;
     B_Next.visible:=false;
     B_Ok.visible:=true;
     B_Ok.Default:=true;
@@ -168,7 +178,7 @@ var
 begin
   SData:='{'#10+
             '"name": "'+Ed_PrjName.text+'",'#10+
-            '"location": "'+L_PrjFinalLoc.caption+'",'#10+
+            '"location": "'+AppendPathDelim(L_PrjFinalLoc.caption)+'",'#10+
             '"title": "'+Ed_Prjtitle.text+'",'#10+
             '"author": "'+Ed_PrjAuthor.text+'",'#10+
             '"version": "'+L_PrjVersion.caption+'",'#10+
@@ -192,8 +202,12 @@ begin
     else SData+=','#10'"interface": null';
   S:='';
   if PrjIpCoreList.Count>0 then for i:=0 to PrjIpCoreList.Count-1 do S+=#9'"'+PrjIpCoreList.Items[i]+'",'#10;
-  if S<>'' then SData+=','#10'"ipcores": ['#10+LeftStr(S, length(S)-2)+#10']'#10
-    else SData+=','#10'"ipcores": null'#10;
+  if S<>'' then SData+=','#10'"ipcores": ['#10+LeftStr(S, length(S)-2)+#10']'
+    else SData+=','#10'"ipcores": null';
+  S:='';
+  if UserFileList.Strings.Count>0 then for i:=0 to UserFileList.Strings.Count-1 do S+=#9'"'+UserFileList.Strings[i]+'",'#10;
+  if S<>'' then SData+=','#10'"userfiles": ['#10+LeftStr(S, length(S)-2)+#10']'#10
+    else SData+=','#10'"userfiles": null'#10;
   SData+='}';
   result:=SData;
 end;
@@ -243,6 +257,14 @@ begin
       Summary.Append(LineEnding+'IP Cores added to Project:');
       Summary.Append(J.FindPath('ipcores').AsJSON);
     end;
+
+    if not J.FindPath('userfiles').IsNull then
+    begin
+      Summary.Append(LineEnding+'User files added to Project:');
+      For i:=0 to J.FindPath('userfiles').Count-1 do
+        Summary.Append(J.FindPath('userfiles').Items[i].AsString);
+    end;
+
   finally
     if assigned(J) then FreeAndNil(J);
   end;
@@ -258,7 +280,7 @@ begin
         exit;
       end;
     end;
-    2: begin
+    3: begin
       PrjData:=CollectData;
       SummarizeData(PrjData);
     end;
@@ -283,6 +305,27 @@ begin
   begin
     ShowMessage('Please select an item first!');
   end;
+end;
+
+procedure TprjWizForm.B_AddFileClick(Sender: TObject);
+var
+  f,s:string;
+  r:integer;
+begin
+  OpenDialog1.Options:=OpenDialog1.Options+[ofAllowMultiSelect];
+  OpenDialog1.DefaultExt:='';
+  OpenDialog1.Filter:='';
+  if OpenDialog1.Execute then for s in OpenDialog1.Files do if fileexistsUTF8(s) then
+  begin
+    f:=ExtractFileName(s);
+    if UserFileList.FindRow(f,r) then
+    begin
+      ShowMessage('The file is already in the list');
+      UserFileList.Row:=r;
+      continue;
+    end;
+    UserFileList.Strings.Append(f+'='+extractfilepath(s));
+  end else ShowMessage('The user file: '+s+',could not be found.');
 end;
 
 procedure TprjWizForm.B_CoreDelClick(Sender: TObject);
@@ -313,6 +356,7 @@ procedure TprjWizForm.B_PrjLoadFromTemplateClick(Sender: TObject);
 var
   S:TStringList;
 begin
+  OpenDialog1.Options:=OpenDialog1.Options-[ofAllowMultiSelect];
   OpenDialog1.DefaultExt:='.sba';
   OpenDialog1.Filter:='SBA Project|*.sba';
   try
@@ -327,6 +371,7 @@ begin
     S.Free;
   end;
   if PrjData<>'' then FillPrjWizValues(PrjData);
+  Ed_prjLocation.Text:=ProjectsDir;
 end;
 
 procedure TprjWizForm.B_PrjSaveAsTemplateClick(Sender: TObject);
@@ -344,10 +389,16 @@ begin
   end;
 end;
 
+procedure TprjWizForm.B_RemoveFileClick(Sender: TObject);
+begin
+  if UserFileList.RowCount>1 then UserFileList.DeleteRow(UserFileList.Row);
+end;
+
 procedure TPrjWizForm.FillPrjWizValues(SData:String);
 var
   h,i:Integer;
   J:TJSONData;
+  s:string;
 begin
   try
     J:=GetJSON(ReplaceStr(SData,'\','/'));
@@ -360,12 +411,20 @@ begin
   end;
   try
     Ed_PrjName.text:=J.FindPath('name').AsString;
-    J.FindPath('location').AsString:=L_PrjFinalLoc.caption;  //The location is not loaded from the template
+    s:=ChompPathDelim(TrimFileName(J.FindPath('location').AsString));
+    if AnsiEndsText(Ed_PrjName.text,s) then
+      Ed_PrjLocation.text:=LeftStr(s,pos(Ed_PrjName.text,s)-1)
+    else
+      Ed_PrjLocation.text:=s;
     Ed_PrjTitle.Text:=J.FindPath('title').AsString;
     Ed_PrjAuthor.Text:=J.FindPath('author').AsString;
     Ed_Description.Text:=J.FindPath('description').AsString;
-    { TODO 1 : Debe de cargarse Location, version y date, puesto que estamos usando este formulario también como un medio de edición }
-    // The version and the date is also not loaded from the template
+    s:=J.FindPath('version').AsString;
+    Ed_MayorVer.Value:=StrtoIntDef(ExtractDelimited(1,s,['.']),0);
+    Ed_MinVer.Value:=StrtoIntDef(ExtractDelimited(2,s,['.']),1);
+    Ed_RevVer.Value:=StrtoIntDef(ExtractDelimited(3,s,['.']),1);
+    L_PrjVersion.Caption:=s;
+    Ed_Date.Text:=J.FindPath('date').AsString;
     if not J.FindPath('interface').IsNull then
     begin
       Ed_TopInterface.RowCount:=J.FindPath('interface').count+2;
@@ -381,7 +440,6 @@ begin
         end;
       end;
     end;
-
     if not J.FindPath('ipcores').IsNull then
     begin
       with J.FindPath('ipcores') do For i:=0 to count-1 do
@@ -397,6 +455,15 @@ begin
         end;
       end;
     end;
+    try if not J.FindPath('userfiles').IsNull then
+      with J.FindPath('userfiles') do For i:=0 to count-1 do
+      begin
+        s:=Items[i].AsString;
+        UserFileList.Strings.Add(s);
+      end;
+    except
+      ON E:Exception do UserFileList.Clear;
+    end;
   finally
     if assigned(J) then FreeAndNil(J);
   end;
@@ -404,7 +471,7 @@ end;
 
 procedure TprjWizForm.Ed_MayorVerChange(Sender: TObject);
 begin
-  L_PrjVersion.caption:='Version: '+Ed_MayorVer.Text+'.'+Ed_MinVer.Text+'.'+Ed_RevVer.Text;
+  L_PrjVersion.caption:=Ed_MayorVer.Text+'.'+Ed_MinVer.Text+'.'+Ed_RevVer.Text;
 end;
 
 procedure TprjWizForm.Ed_PrjNameChange(Sender: TObject);
@@ -412,7 +479,7 @@ Var s:string;
 begin
   s:=AppendPathDelim(TrimFilename(Ed_PrjLocation.text));
   s+=IfThen(CB_CreateSubDir.Checked,Ed_PrjName.Text);
-  L_PrjFinalLoc.caption:=AppendPathDelim(TrimFilename(s));
+  L_PrjFinalLoc.caption:=TrimFilename(s);
 end;
 
 procedure TprjWizForm.Ed_PrjNameEditingDone(Sender: TObject);
@@ -501,6 +568,7 @@ begin
   Ed_Date.Date:=Now;
   Ed_Description.Clear;
   Ed_TopInterface.Clean;
+  UserFileList.Clear;
   with Ed_TopInterface do
   begin
     Cells[0, 1]:='CLK_I';
@@ -532,7 +600,6 @@ procedure TprjWizForm.ListMouseMove(Sender: TObject;
 var
   P: TPoint;
   i: Integer;
-  S: String;
   L:TListBox;
 begin
   If not Sender.ClassNameIs('TListBox') then exit;

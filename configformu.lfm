@@ -1,7 +1,7 @@
 object ConfigForm: TConfigForm
-  Left = 1023
+  Left = 1059
   Height = 316
-  Top = 366
+  Top = 354
   Width = 452
   BorderStyle = bsDialog
   Caption = 'ConfigForm'
@@ -23,8 +23,8 @@ object ConfigForm: TConfigForm
     Left = 8
     Height = 15
     Top = 40
-    Width = 57
-    Caption = 'Library Dir:'
+    Width = 87
+    Caption = 'Main Library Dir:'
     FocusControl = Ed_LibraryDir
     ParentColor = False
   end
@@ -96,8 +96,8 @@ object ConfigForm: TConfigForm
     Left = 8
     Height = 15
     Top = 136
-    Width = 63
-    Caption = 'Projects Dir:'
+    Width = 104
+    Caption = 'Default Projects Dir:'
     FocusControl = Ed_SnippetDir
     ParentColor = False
   end
@@ -127,5 +127,16 @@ object ConfigForm: TConfigForm
     Checked = True
     State = cbChecked
     TabOrder = 6
+  end
+  object CB_AutoOpenPrjF: TCheckBox
+    Left = 239
+    Height = 19
+    Top = 240
+    Width = 185
+    Anchors = [akTop, akLeft, akRight]
+    Caption = 'Auto open all project main files'
+    Checked = True
+    State = cbChecked
+    TabOrder = 7
   end
 end

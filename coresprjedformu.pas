@@ -76,7 +76,6 @@ procedure TCoresPrjEdForm.ListMouseMove(Sender: TObject;Shift: TShiftState; X, Y
 var
   P: TPoint;
   i: Integer;
-  S: String;
   L:TListBox;
 begin
   If not Sender.ClassNameIs('TListBox') then exit;

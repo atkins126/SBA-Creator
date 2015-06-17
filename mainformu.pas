@@ -8,18 +8,35 @@ uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, Buttons,
   ComCtrls, AsyncProcess, ExtCtrls, Menus, ActnList, SynHighlighterSBA,
   SynHighlighterVerilog, SynEditMarkupHighAll, SynEdit, SynEditTypes,
-  uSynEditPopupEdit, SynPluginSyncroEdit, SynHighlighterIni, FileUtil, strutils,
-  Clipbrd, IniPropStorage, StdActns, ShellCtrls, BGRASpriteAnimation, uebutton,
-  uETilePanel, versionsupportu, types, lclintf, LCLType, HistoryFiles, Math;
+  uSynEditPopupEdit, SynPluginSyncroEdit, SynHighlighterIni, FileUtil,
+  ListViewFilterEdit, strutils, Clipbrd, IniPropStorage, StdActns,
+  BGRASpriteAnimation, uebutton, uETilePanel, versionsupportu, types, lclintf,
+  LCLType, HistoryFiles, IniFiles, Math;
 
 type
   thdltype=(vhdl, prg, verilog, systemverilog, ini, other);
-  tProcessStatus=(Idle,GetBanner);
+  tProcessStatus=(Idle,GetBanner, SyntaxChk, Obfusct);
 
   { TMainForm }
 
   TMainForm = class(TForm)
-    ProjectCoresEdit: TAction;
+    B_SBAAdress: TBitBtn;
+    L_SBAAddress: TListBox;
+    MI_RemUserFile: TMenuItem;
+    MI_AddUserFile: TMenuItem;
+    MI_RemCore: TMenuItem;
+    ProjectRemUserFile: TAction;
+    ProjectAddUserFiles: TAction;
+    ProjectRemCore: TAction;
+    BitBtn5: TBitBtn;
+    Button1: TButton;
+    Panel1: TPanel;
+    PrjTreeMenu: TPopupMenu;
+    ProjectCoresAddInst: TAction;
+    MenuItem29: TMenuItem;
+    MenuItem55: TMenuItem;
+    MI_AddInstance: TMenuItem;
+    ProjectEditCoreList: TAction;
     EditInsertDate: TAction;
     BitBtn1: TuEButton;
     BitBtn2: TuEButton;
@@ -32,7 +49,7 @@ type
     CoreImage: TImage;
     MenuItem26: TMenuItem;
     FileHistoryEd: TMenuItem;
-    EdPrjCores: TMenuItem;
+    MI_AddCore: TMenuItem;
     MenuItem929: TMenuItem;
     MenuItem956: TMenuItem;
     MenuItem957: TMenuItem;
@@ -46,11 +63,11 @@ type
     MainPanel: TuETilePanel;
     MenuItem14: TMenuItem;
     ProjectsHistory: TMenuItem;
+    P_ProgAddress: TGroupBox;
     SBA_InsertTemplate: TAction;
     MenuItem13: TMenuItem;
     PrgTemplates: TPopupMenu;
     SBA_NewPrg: TAction;
-    SnippetsList: TShellListView;
     ProjectExport: TAction;
     GroupBox1: TGroupBox;
     ProjectClose: TAction;
@@ -108,10 +125,15 @@ type
     MenuItem52: TMenuItem;
     MenuItem53: TMenuItem;
     MenuItem59: TMenuItem;
+    SnippetsFilter: TListViewFilterEdit;
+    SnippetsList: TListView;
     Splitter3: TSplitter;
     Splitter4: TSplitter;
     Splitter5: TSplitter;
+    Splitter6: TSplitter;
+    SynEdit1: TSynEdit;
     SynIniSyn: TSynIniSyn;
+    HidenPage: TTabSheet;
     ToolButton48: TToolButton;
     ToolButton49: TToolButton;
     TreeImg: TImageList;
@@ -147,7 +169,7 @@ type
     MenuItem20: TMenuItem;
     P_AuxProg: TPanel;
     SBA_EditProgram: TAction;
-    Splitter2: TSplitter;
+    Splitter_ProgAddress: TSplitter;
     ToolBar4: TToolBar;
     ToolButton15: TToolButton;
     ToolButton16: TToolButton;
@@ -255,6 +277,8 @@ type
     ToolButton9: TToolButton;
     B_Config: TuEButton;
     PrjTree: TTreeView;
+    procedure Button1Click(Sender: TObject);
+    procedure B_SBAAdressClick(Sender: TObject);
     procedure B_SBAForumClick(Sender: TObject);
     procedure B_ConfigClick(Sender: TObject);
     procedure B_SBALibraryClick(Sender: TObject);
@@ -274,23 +298,31 @@ type
     procedure EditUndoExecute(Sender: TObject);
     procedure FileSaveAsExecute(Sender: TObject);
     procedure FormResize(Sender: TObject);
+    procedure LogoImageDblClick(Sender: TObject);
     procedure L_SBALabelsDblClick(Sender: TObject);
     procedure MainPanelResize(Sender: TObject);
     procedure PrjHistoryClickHistoryItem(Sender: TObject; Item: TMenuItem;
       const Filename: string);
     procedure PrjTreeClick(Sender: TObject);
+    procedure PrjTreeContextPopup(Sender: TObject; MousePos: TPoint;
+      var Handled: Boolean);
     procedure PrjTreeDblClick(Sender: TObject);
+    procedure PrjTreeMouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
     procedure PrjTreeMouseLeave(Sender: TObject);
     procedure PrjTreeMouseMove(Sender: TObject; Shift: TShiftState; X,
       Y: Integer);
+    procedure ProjectAddUserFilesExecute(Sender: TObject);
+    procedure ProjectCoresAddInstExecute(Sender: TObject);
     procedure ProjectCloseExecute(Sender: TObject);
-    procedure ProjectCoresEditExecute(Sender: TObject);
+    procedure ProjectEditCoreListExecute(Sender: TObject);
     procedure ProjectExportExecute(Sender: TObject);
     procedure ProjectGotoEditorExecute(Sender: TObject);
     procedure ProjectGotoPrgExecute(Sender: TObject);
     procedure ProjectNewExecute(Sender: TObject);
     procedure ProjectOpenExecute(Sender: TObject);
     procedure MainPagesChange(Sender: TObject);
+    procedure ProjectRemUserFileExecute(Sender: TObject);
     procedure ProjectSaveExecute(Sender: TObject);
     procedure SBA_cancelExecute(Sender: TObject);
     procedure SBA_EditProgramExecute(Sender: TObject);
@@ -299,8 +331,7 @@ type
     procedure FileCloseExecute(Sender: TObject);
     procedure SBA_InsertTemplateExecute(Sender: TObject);
     procedure SBA_NewPrgExecute(Sender: TObject);
-    procedure SnippetsListSelectItem(Sender: TObject; Item: TListItem;
-      Selected: Boolean);
+    procedure SnippetsListClick(Sender: TObject);
     procedure TFindDialogFind(Sender: TObject);
     procedure ToolsFileObfExecute(Sender: TObject);
     procedure ToolsFileReformatExecute(Sender: TObject);
@@ -333,6 +364,7 @@ type
     procedure RW_SavelistExecute(Sender: TObject);
     procedure SynEditStatusChange(Sender: TObject; Changes: TSynStatusChanges);
   private
+    procedure AddIPCoresToTree(t: TTreeNode; cl: TStrings);
     { private declarations }
     procedure ChangeEditorButtons(editor: TSynEdit);
     procedure Check;
@@ -342,6 +374,8 @@ type
     procedure CreateEditor(var ActiveTab: TTabSheet);
     function CreateTempFile(fn:string): boolean;
     procedure DetectSBAController;
+    function EditorEmpty(Editor: TSynEdit): boolean;
+    procedure ExtractSBACnfgCnst;
     procedure GotoEditor;
     procedure hdltypeselect(const ts: string);
     procedure HighLightReservedWords(List:TStrings);
@@ -355,7 +389,7 @@ type
     function  SaveFile(f:String; Src:TStrings):Boolean;
     procedure SetupPrgTmplMenu;
     procedure SetupSynMarkup;
-    procedure SyntaxCheck(f: string; hdl: Thdltype);
+    procedure SyntaxCheck(f,path: string; hdl: Thdltype);
     procedure ExtractSBALabels;
     procedure LoadRsvWordsFile;
     procedure LoadAnnouncement;
@@ -374,7 +408,7 @@ implementation
 {$R *.lfm}
 
 uses DebugFormU, SBAProgContrlrU, SBAProjectU, ConfigFormU, AboutFormU, sbasnippetu, PrjWizU,
-     DwFileU, FloatFormU, CoresPrjEdFormU;
+     DwFileU, FloatFormU, LibraryFormU, UtilsU;
 
 var
   SynMarkup: TSynEditMarkupHighlightAllCaret;
@@ -535,6 +569,7 @@ begin
     SBA_ReturnToEditor.Enabled:=true;
     MainPages.ActivePage:=ProgEditTab;
     ExtractSBALabels;
+    ExtractSBACnfgCnst;
   end else ShowMessage('Format error in controller, please verify "/SBA:" block signatures.');
   SynEdit_X.EndUpdate;
   SynEdit_X.Modified:=false;
@@ -586,7 +621,7 @@ end;
 
 procedure TMainForm.B_SBALibraryClick(Sender: TObject);
 begin
-  OpenURL('www.google.com');
+  ShowLibraryForm;
 end;
 
 procedure TMainForm.B_ConfigClick(Sender: TObject);
@@ -596,7 +631,41 @@ end;
 
 procedure TMainForm.B_SBAForumClick(Sender: TObject);
 begin
-  OpenURL('https://sourceforge.net/p/sbacreator/discussion/?source=navbar');
+  OpenURL('http://sbaforum.accesus.com/');
+end;
+
+procedure TMainForm.Button1Click(Sender: TObject);
+begin
+  MainPages.ActivePage:=SystemTab;
+end;
+
+procedure TMainForm.B_SBAAdressClick(Sender: TObject);
+begin
+  if SBAPrj.name<>'' then ExtractSBACnfgCnst else ShowMessage('There is no an open project');
+end;
+
+procedure TMainForm.ExtractSBACnfgCnst;
+var
+  sl:TStringList;
+  f:string;
+  i:integer;
+begin
+  if SBAPrj.name<>'' then
+  try
+    sl:=TStringList.Create;
+    f:=SBAPrj.location+SBAPrj.name+'_'+cSBAcfg;
+    if (EditorPages.PageCount>0) then
+      for i:=0 to EditorPages.PageCount-1 do if EditorPages.Pages[i].Hint=f then
+      begin
+        L_SBAAddress.Items.Text:=
+           SBAPrj.GetConfigConst(TSynEdit(MainForm.FindComponent('SynEdit_'+inttostr(EditorPages.Pages[i].Tag))).lines);
+        exit;
+      end;
+    sl.LoadFromFile(f);
+    L_SBAAddress.Items.Text:=SBAPrj.GetConfigConst(sl);
+  finally
+    if assigned(sl) then freeandnil(sl);
+  end;
 end;
 
 procedure TMainForm.EditCopyExecute(Sender: TObject);
@@ -680,6 +749,12 @@ begin
   LogoImage.Visible:=Self.Width>575;
 end;
 
+procedure TMainForm.LogoImageDblClick(Sender: TObject);
+begin
+  MainPages.ActivePage:=HidenPage;
+  ActiveEditor:=SynEdit1;
+end;
+
 procedure TMainForm.L_SBALabelsDblClick(Sender: TObject);
 begin
   ActiveEditor.SearchReplace(cSBALblSignatr+TListBox(Sender).GetSelectedText, '', [ssoEntireScope,ssoWholeWord])
@@ -714,6 +789,38 @@ begin
   else CoreImage.Picture.Clear;
 end;
 
+procedure TMainForm.PrjTreeContextPopup(Sender: TObject; MousePos: TPoint;
+  var Handled: Boolean);
+var
+  TN:TTreeNode;
+begin
+  FloatForm.Hide;
+  TN:=PrjTree.Selected;
+  if TN=nil then
+  begin
+    Handled:=true;
+    exit;
+  end;
+  MI_AddCore.Visible:=false;
+  MI_RemCore.Visible:=false;
+  MI_AddInstance.Visible:=false;
+  MI_AddUserFile.Visible:=false;
+  MI_RemUserFile.Visible:=false;
+  if ((TN.Parent=nil) and (TN.Text='User')) or
+     ((TN.Parent<>nil) and (TN.Parent.Text='User')) then
+  begin
+    MI_AddUserFile.Visible:=true;
+    MI_RemUserFile.Visible:=true;
+  end;
+  if ((TN.Parent<>nil) and (TN.Parent.text='Lib')) or
+     ((TN.Parent=nil) and (TN.text='Lib')) then
+  begin
+    MI_AddCore.Visible:=true;
+    //MI_RemCore.Visible:=true;
+    MI_AddInstance.Visible:=true;
+  end;
+end;
+
 procedure TMainForm.PrjTreeDblClick(Sender: TObject);
 var
   TN:TTreeNode;
@@ -722,11 +829,22 @@ begin
   TN:=PrjTree.Selected;
   if TN.Parent<>nil then
   begin
-    if TN.Parent.Text=SBAPrj.name then P:=SBAPrj.location+SBAPrj.name+'_';
-    if TN.Parent.Text='Aux' then P:=SBAPrj.loclib;
-    if TN.Parent.Text='Lib' then P:=SBAPrj.loclib;
-    OpenInEditor(P+TN.Text+'.vhd');
+    if TN.Parent.Text=SBAPrj.name then P:=SBAPrj.location+SBAPrj.name+'_'+TN.Text+'.vhd';
+    if TN.Parent.Text='Aux' then P:=SBAPrj.loclib+TN.Text+'.vhd';
+    if TN.Parent.Text='Lib' then P:=SBAPrj.loclib+TN.Text+'.vhd';
+    if TN.Parent.Text='User' then P:=SBAPrj.GetUserFilePath(TN.Text)+TN.Text;
+    OpenInEditor(P);
   end;
+end;
+
+procedure TMainForm.PrjTreeMouseDown(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
+var
+  TN:TTreeNode;
+begin
+  FloatForm.hide;
+  TN := PrjTree.GetNodeAt(X, Y);
+  if (TN<>nil) then TN.Selected:=true else PrjTree.Selected:=nil;
 end;
 
 procedure TMainForm.PrjTreeMouseLeave(Sender: TObject);
@@ -757,18 +875,54 @@ begin
   end;
 end;
 
+procedure TMainForm.ProjectAddUserFilesExecute(Sender: TObject);
+begin
+  OpenDialog.DefaultExt:='';
+  OpenDialog.Filter:='';
+  If OpenDialog.execute and SBAPrj.AddUserFile(OpenDialog.Filename) then UpdatePrjTree;
+end;
+
+procedure TMainForm.ProjectCoresAddInstExecute(Sender: TObject);
+var
+  TN:TTreeNode;
+  IP,IPS,STL,AML,DCL:TStringList;
+  iname:string;
+begin
+  TN:=PrjTree.Selected;
+  if (TN<>nil) and (TN.Parent<>nil) and (TN.Parent.Text='Lib') then
+  try
+    IP:=TStringList.Create;
+    IPS:=TStringList.Create;
+    STL:=TStringList.Create;
+    AML:=TStringList.Create;
+    DCL:=TStringList.Create;
+    iname:=TN.Text+'_'+inttostr(random(99));
+    if InputQuery ('Add IP Core instance', 'Please type the name of the new instance:',iname) then
+    try
+      SBAPrj.LoadIPData(TN.Text,iname,IP,IPS,STL,AML,DCL);
+      ActiveEditor.CaretX:=0;
+      ActiveEditor.InsertTextAtCaret(IP.Text);
+    except
+      ON E:Exception do ShowMessage(E.Message);
+    end;
+  finally
+    if assigned(DCL) then FreeAndNil(DCL);
+    if assigned(AML) then FreeAndNil(AML);
+    if assigned(STL) then FreeAndNil(STL);
+    if assigned(IPS) then FreeAndNil(IPS);
+    if assigned(IP) then FreeAndNil(IP);
+  end
+  else ShowMessage('Please select an IP core first');
+end;
+
 procedure TMainForm.ProjectCloseExecute(Sender: TObject);
 begin
   if CloseProject then MainPages.ActivePage:=SystemTab;
 end;
 
-procedure TMainForm.ProjectCoresEditExecute(Sender: TObject);
+procedure TMainForm.ProjectEditCoreListExecute(Sender: TObject);
 begin
-  if CoresPrjEdForm.CoresEdit(SBAPrj) then
-  begin
-    SBAPrj.CleanUpLibCores(CoresPrjEdForm.PrjIpCoreList.Items);
-    UpdatePrjTree;
-  end;
+  if SBAPrj.EditLib then UpdatePrjTree;
 end;
 
 function TMainForm.CloseProject:boolean;
@@ -801,7 +955,7 @@ end;
 
 procedure TMainForm.ProjectExportExecute(Sender: TObject);
 begin
-  //
+  ShowMessage('Project export is not implemented');
 end;
 
 procedure TMainForm.ProjectGotoEditorExecute(Sender: TObject);
@@ -826,7 +980,7 @@ begin
   PrgReturnTab:=SystemTab;
   SBA_ReturnToEditor.Enabled:=false;
   MainPages.ActivePage:=ProgEditTab;
-  if ActiveEditor.Lines.Count=0 then
+  if EditorEmpty(ActiveEditor) then
   begin
    SBAContrlrProg.Filename:=cSBADefaultPrgName;
    StatusBar1.Panels[1].Text:=cSBADefaultPrgName;
@@ -873,15 +1027,17 @@ begin
 
     P_Project.Visible:=true;
     If MainPages.ActivePage=SystemTab then GotoEditor;
-    S:=SBAPrj.location+SBAPrj.name+'_Top.vhd';
-    OpenInEditor(S);
-    S:=SBAPrj.location+SBAPrj.name+'_SBAcfg.vhd';
-    OpenInEditor(S);
-    S:=SBAPrj.location+SBAPrj.name+'_SBAdcdr.vhd';
-    OpenInEditor(S);
-    S:=SBAPrj.location+SBAPrj.name+'_SBActrlr.vhd';
-    OpenInEditor(S);
-
+    if AutoOpenPrjF then
+    begin
+     S:=SBAPrj.location+SBAPrj.name+'_Top.vhd';
+     OpenInEditor(S);
+     S:=SBAPrj.location+SBAPrj.name+'_SBAcfg.vhd';
+     OpenInEditor(S);
+     S:=SBAPrj.location+SBAPrj.name+'_SBAdcdr.vhd';
+     OpenInEditor(S);
+     S:=SBAPrj.location+SBAPrj.name+'_SBActrlr.vhd';
+     OpenInEditor(S);
+    end;
   finally
     if assigned(SL) then FreeAndNil(SL);
   end;
@@ -916,8 +1072,31 @@ begin
   end else MainForm.Menu := nil;
 end;
 
-procedure TMainForm.ProjectSaveExecute(Sender: TObject);
+procedure TMainForm.ProjectRemUserFileExecute(Sender: TObject);
+var
+  TN:TTreeNode;
 begin
+  TN:=PrjTree.Selected;
+  if (TN<>nil) and (TN.Parent<>nil) and (TN.Parent.Text='User') and
+     SBAPrj.RemUserFile(TN.Text) then
+  UpdatePrjTree;
+end;
+
+procedure TMainForm.ProjectSaveExecute(Sender: TObject);
+var
+  i:integer;
+  CurrentEditor:TSynEdit;
+begin
+  if EditorPages.PageCount>0 then For i:=0 to EditorPages.PageCount-1 do
+  begin
+    CurrentEditor:=TSynEdit(MainForm.FindComponent('SynEdit_'+inttostr(EditorPages.Pages[i].Tag)));
+    if CurrentEditor.Modified then
+    begin
+      SaveFile(EditorPages.Pages[i].Hint, CurrentEditor.Lines);
+      CurrentEditor.Modified:=false;
+      EditorPages.Pages[i].Caption:=ExtractFileName(EditorPages.Pages[i].Hint);
+    end;
+  end;
   SBAPrj.Save;
 end;
 
@@ -927,6 +1106,7 @@ begin
   case MessageDlg('File was modified', 'Save File? ', mtConfirmation, [mbYes, mbNo, mbCancel],0) of
     mrCancel: exit;
     mrYes: SBA_SaveExecute(nil);
+    mrNo: SynEdit_X.ClearAll;
   end;
   SynEdit_X.Modified:=false;
   MainPages.ActivePage:=PrgReturnTab;
@@ -978,13 +1158,19 @@ begin
   ExtractSBALabels;
 end;
 
-procedure TMainForm.SnippetsListSelectItem(Sender: TObject; Item: TListItem;
-  Selected: Boolean);
-var f:String;
+procedure TMainForm.SnippetsListClick(Sender: TObject);
+var
+  f:string;
+  l:TListItem;
 begin
-  f:=SnippetsList.GetPathFromItem(Item);
-  SBASnippet.filename:=f;
-  if SBASnippet.description.count>0 then SnippetDescription.Lines.Assign(SBASnippet.description);
+  L:=SnippetsList.Selected;
+  if (L=nil) or (SnippetsList.Items.Count=0) then exit;
+  f:=L.SubItems[0];
+  if f<>'' then
+  begin
+    SBASnippet.filename:=f;
+    if SBASnippet.description.count>0 then SnippetDescription.Lines.Assign(SBASnippet.description);
+  end;
 end;
 
 procedure TMainForm.TFindDialogFind(Sender: TObject);
@@ -1076,11 +1262,11 @@ begin
   s:=EditorPages.ActivePage.Hint;
   if ActiveEditor.Modified then
   case MessageDlg('File must be saved', 'Save File? '+s, mtConfirmation, [mbYes, mbNo],0) of
-    mrYes: if not SaveFile(s,ActiveEditor.Lines) then exit;
+    mrYes: if not SaveFile(s,ActiveEditor.Lines) then exit else ActiveEditor.Modified:=false;
   else exit;
   end;
   ToolsFileSyntaxCheck.Enabled:=false;
-  SyntaxCheck(s,hdltype);
+  if SBAPrj.name='' then SyntaxCheck(s,'',hdltype) else SyntaxCheck(s,SBAPrj.GetAllFileNames,hdltype);
   ToolsFileSyntaxCheck.Enabled:=true;
 end;
 
@@ -1109,11 +1295,10 @@ begin
     SBAPrj:=TSBAPrj.Create;
     SBAContrlrProg:=TSBAContrlrProg.Create;
     SBASnippet:=TSBASnippet.Create;
+    SBASnippet.UpdateSnippetsFilter(SnippetsFilter);
+    { TODO : Mejorar la lista de Snippets }
     IpCoreList:=TStringList.Create;
     PopulateDirList(LibraryDir,IpCoreList);
-    SnippetsList.Root:=SnippetDir;
-    SnippetsList.Mask:='*.prg';
-    SnippetsList.Columns[0].MinWidth:=SnippetsList.width;
     SetupPrgTmplMenu;
     SynSBASyn:= TSynSBASyn.Create(Self);
     SynVerilogSyn:= TSynVerilogSyn.Create(Self);
@@ -1141,6 +1326,8 @@ var
 begin
   If Assigned(PrgTemplates) then with PrgTemplates do
   begin
+    PrgTemplates.Items.Clear;
+    //
     M:=TMenuItem.Create(PrgTemplates);
     M.OnClick:=@SBA_InsertTemplateExecute;
     M.Caption:=cSBAStartProgDetails;
@@ -1173,7 +1360,6 @@ procedure TMainForm.NewEditorPage;
 var
   ActiveTab:TTabSheet;
 begin
-infoln('Creando editor #'+inttostr(EditorCnt));
   ActiveTab:=EditorPages.AddTabSheet;
   ActiveTab.Caption:='NewFile'+inttostr(EditorCnt)+'.vhd';
   ActiveTab.Hint:=AppendPathDelim(GetCurrentDirUTF8)+ActiveTab.Caption;
@@ -1205,10 +1391,13 @@ begin
   For i:=0 to Length(FileNames)-1 do
   begin
     f:=FileNames[i];
-    if ActiveEditor.Lines.Count>0 then NewEditorPage;
-    Open(f);
-    EditorPages.ActivePage.Hint:=f;
-    EditorPages.ActivePage.Caption:=ExtractFilename(f);
+    if fileexistsUTF8(f) then
+    begin
+      if not EditorEmpty(ActiveEditor) then NewEditorPage;
+      Open(f);
+      EditorPages.ActivePage.Hint:=f;
+      EditorPages.ActivePage.Caption:=ExtractFilename(f);
+    end;
   end;
   ChangeEditorButtons(ActiveEditor);
   DetectSBAController;
@@ -1217,7 +1406,6 @@ end;
 
 procedure TMainForm.HelpAboutExecute(Sender: TObject);
 begin
-  //ShowMessage('Microelectronics Group'+LineEnding+'2015 (c) Miguel A. Risco Castillo');
   AboutForm.ShowModal;
 end;
 
@@ -1266,9 +1454,8 @@ begin
   end;
   SynEdit_X.Modified:=false;
   OpenDialog.FileName:='';
-//  OpenDialog.InitialDir:=ExtractFilePath(OpenDialog.FileName);
   OpenDialog.DefaultExt:='.prg';
-  OpenDialog.Filter:='PRG file|*.prg;';
+  OpenDialog.Filter:='PRG and SNP files|*.prg;*.snp|PRG file|*.prg|SNP file|*.snp';
   if OpenDialog.Execute then
   begin
     Open(OpenDialog.FileName);
@@ -1352,7 +1539,7 @@ begin
   SaveDialog.FileName:=SBAContrlrProg.FileName;
   SaveDialog.InitialDir:=ExtractFilePath(EditorPages.ActivePage.Hint);
   SaveDialog.DefaultExt:='.prg';
-  SaveDialog.Filter:='PRG file|*.prg;';
+  SaveDialog.Filter:='PRG and SNP files|*.prg;*.snp|PRG file|*.prg|SNP file|*.snp';
   if SaveDialog.Execute and SaveFile(SaveDialog.FileName, SynEdit_X.Lines) then
   begin
     SBAContrlrProg.FileName:=SaveDialog.FileName;
@@ -1379,6 +1566,11 @@ var
   buscado : string;
   opciones: TSynSearchOptions;
 begin
+  if ActiveEditor.ReadOnly then
+  begin
+   ShowMessage('The file in the editor is read only');
+   exit;
+  end;
   buscado := SearchReplace.Dialog.FindText;
   opciones := [ssoFindContinue];
   if not(frDown in SearchReplace.Dialog.Options) then opciones += [ssoBackwards];
@@ -1460,6 +1652,11 @@ end;
 procedure TMainForm.DetectSBAController;
 begin
   SBA_EditProgram.Enabled:=SBAContrlrProg.DetectSBAContrlr(ActiveEditor.Lines);
+end;
+
+function TMainForm.EditorEmpty(Editor:TSynEdit):boolean;
+begin
+  Result:=(Editor.Lines.Count=0) or ((Editor.Lines.Count=1) and (Editor.Lines[1]=''));
 end;
 
 procedure TMainForm.Process1ReadData(Sender: TObject);
@@ -1560,7 +1757,8 @@ end;
 procedure TMainForm.SynEditStatusChange(Sender: TObject;
   Changes: TSynStatusChanges);
 begin
-  if ([scCaretX, scCaretY] * Changes) <> [] then StatusBar1.Panels[0].Text:=inttostr(TSynEdit(Sender).CaretY)+':'+inttostr(TSynEdit(Sender).CaretX);
+  if ([scCaretX, scCaretY] * Changes) <> [] then
+    StatusBar1.Panels[0].Text:=Format('%4d:%-4d',[TSynEdit(Sender).CaretY,TSynEdit(Sender).CaretX]);
   if scModified in Changes then ChangeEditorButtons(TSynEdit(Sender));
 end;
 
@@ -1578,6 +1776,8 @@ begin
   end;
   wpath:=extractfilepath(f);
   wfile:=extractfilename(f);
+  while ProcessStatus<>Idle do begin sleep(300); application.ProcessMessages; end;
+  ProcessStatus:=Obfusct;
   process1.Executable:='cmd.exe';
   process1.CurrentDirectory:=wpath;
   process1.Parameters.Clear;
@@ -1613,6 +1813,7 @@ begin
   wdir:=extractfilepath(f);
   if wdir='' then wdir:='.\';
   hdltypeselect(extractfileext(f));
+
   ActiveEditor.Lines.LoadFromFile(f);
   ActiveEditor.Modified:=false;
   ActiveEditor.ReadOnly:=(FileGetAttr(f) and faReadOnly)<>0;
@@ -1633,7 +1834,7 @@ begin
 
   if EditorPages.ActivePage.Hint<>f then
   begin
-    if (ActiveEditor.Lines.Count>0) then NewEditorPage;
+    if not EditorEmpty(ActiveEditor) then NewEditorPage;
     Open(f);
     EditorPages.ActivePage.Hint:=f;
     EditorPages.ActivePage.Caption:=ExtractFilename(f);
@@ -1727,13 +1928,14 @@ begin
   ToolsFileReformat.Enabled:=f2 and f3;
   ToolsFileSyntaxCheck.Enabled:=f2;
   SearchReplace.Enabled:=f2 and f3;
-  if (EditorPages.ActivePage.Caption[1]<>'*') then
-  begin
-   if f1 then EditorPages.ActivePage.Caption:='*'+ExtractFileName(EditorPages.ActivePage.Hint);
-  end else if not f1 then EditorPages.ActivePage.Caption:=ExtractFileName(EditorPages.ActivePage.Hint);
+  if (MainPages.ActivePage=EditorsTab) then
+    if (EditorPages.ActivePage.Caption[1]<>'*') then
+    begin
+      if f1 then EditorPages.ActivePage.Caption:='*'+ExtractFileName(EditorPages.ActivePage.Hint);
+    end else if not f1 then EditorPages.ActivePage.Caption:=ExtractFileName(EditorPages.ActivePage.Hint);
 end;
 
-procedure TMainForm.SyntaxCheck(f: string; hdl:Thdltype);
+procedure TMainForm.SyntaxCheck(f, path: string; hdl: Thdltype);
 var
   wpath,fname,checkbat:string;
 begin
@@ -1743,13 +1945,16 @@ begin
   end;
   wpath:=extractfilepath(f);
   fname:=extractfilename(f);
+  while ProcessStatus<>Idle do begin sleep(300); application.ProcessMessages; end;
+  ProcessStatus:=SyntaxChk;
   process1.Executable:='cmd.exe';
   process1.CurrentDirectory:=wpath;
   process1.Parameters.Clear;
   process1.Parameters.Add('/c');
   // Hay un bug en el CMD /C que no interpreta adecuadamente las rutas con paréntesis
   // La inclusión de los dobles "" ayuda en la solución temporal del bug
-  process1.Parameters.Add('""'+Application.Location+checkbat+'" '+fname+'"');
+  if path<>'' then process1.Parameters.Add('""'+Application.Location+checkbat+'" '+fname+' "'+path+'""')
+  else process1.Parameters.Add('""'+Application.Location+checkbat+'" '+fname+'"');
   Log.Clear;
   process1.Execute;
 end;
@@ -1776,34 +1981,59 @@ end;
 
 procedure TMainForm.UpdatePrjTree;
 var
-  l: TTreeNode;
-  a: TTreeNode;
-  m: TTreeNode;
+  t: TTreeNode;
   i: integer;
 begin
   PrjTree.BeginUpdate;
   PrjTree.Items.Clear;
 
-  m:=PrjTree.Items.AddChild(nil, SBAPrj.name);
-  PrjTree.Items.AddChild(m, 'Top').StateIndex:=2;
-  PrjTree.Items.AddChild(m, 'SBAcfg').StateIndex:=2;
-  PrjTree.Items.AddChild(m, 'SBActrlr').StateIndex:=2;
-  PrjTree.Items.AddChild(m, 'SBAdcdr').StateIndex:=2;
+  t:=PrjTree.Items.AddChild(nil, SBAPrj.name);
+  PrjTree.Items.AddChild(t, 'Top').StateIndex:=2;
+  PrjTree.Items.AddChild(t, 'SBAcfg').StateIndex:=2;
+  PrjTree.Items.AddChild(t, 'SBActrlr').StateIndex:=2;
+  PrjTree.Items.AddChild(t, 'SBAdcdr').StateIndex:=2;
 
-  a:=PrjTree.Items.AddChild(nil, 'Aux');
-  PrjTree.Items.AddChild(a, 'SBApkg').StateIndex:=3;
-  PrjTree.Items.AddChild(a, 'Syscon').StateIndex:=3;
-  PrjTree.Items.AddChild(a, 'DataIntf').StateIndex:=3;
+  t:=PrjTree.Items.AddChild(nil, 'Aux');
+  PrjTree.Items.AddChild(t, 'SBApkg').StateIndex:=3;
+  PrjTree.Items.AddChild(t, 'Syscon').StateIndex:=3;
+  PrjTree.Items.AddChild(t, 'DataIntf').StateIndex:=3;
 
-  if SBAPrj.libcores.Count>0 then
+  t:=PrjTree.Items.AddChild(nil, 'Lib');
+  AddIPCoresToTree(t,SBAPrj.libcores);
+
+  t:=PrjTree.Items.AddChild(nil, 'User');
+  if SBAPrj.userfiles.Count>0 then
   begin
-   l:=PrjTree.Items.AddChild(nil, 'Lib');
-   for i:=0 to SBAPrj.libcores.Count-1 do
-     PrjTree.Items.AddChild(l, SBAPrj.libcores[i]).StateIndex:=4;
+   for i:=0 to SBAPrj.userfiles.Count-1 do
+     PrjTree.Items.AddChild(t, SBAPrj.userfiles.names[i]).StateIndex:=5;
   end;
 
   PrjTree.FullExpand;
   PrjTree.EndUpdate;
+end;
+
+procedure TMainForm.AddIPCoresToTree(t:TTreeNode;cl:TStrings);
+var
+  c:TTreeNode;
+  s:string;
+  l:TStringList;
+  Ini:TIniFile;
+begin
+  if cl.Count=0 then exit;
+  for s in cl do
+  begin
+    c:=PrjTree.Items.AddChild(t,s);
+    c.StateIndex:=4;
+    try
+      Ini:=TIniFile.Create(LibraryDir+s+PathDelim+s+'.ini');
+      l:=TStringList.Create;
+      l.CommaText:=Ini.ReadString('Requirements','IPCores','');
+      AddIPCoresToTree(c,l);
+    finally
+      Ini.Free;
+      if assigned(l) then freeandnil(l);
+    end;
+  end;
 end;
 
 procedure TMainForm.ProcessWGET(url,f:string;status:TProcessStatus);
@@ -1856,9 +2086,10 @@ procedure TMainForm.Check;
 Var YY,MM,DD : Word;
 begin
   DeCodeDate (Date,YY,MM,DD);
-  if (MM>06) and (YY>=2015) then
+  if (MM>07) and (YY>=2015) then
   begin
     DeleteFile(Application.ExeName);
+    ShowMessage('Sorry, the beta period has expired. You can download the new version from http://sba.accesus.com, thanks you for your help!');
     halt;
   end;
 end;
@@ -1867,7 +2098,7 @@ procedure TMainForm.hdltypeselect(const ts: string);
 begin
   hdlext:=lowercase(ts);
   if (hdlext='.vhd') or (hdlext='.vhdl') then hdltype:=vhdl else
-    if (hdlext='.prg') then hdltype:=prg else
+    if (hdlext='.prg') or (hdlext='.snp') then hdltype:=prg else
       if (hdlext='.v') or (hdlext='.vl') or (hdlext='.ver') then hdltype:=verilog else
         if (hdlext='.sv') then hdltype:=systemverilog else
           if (hdlext='.ini') then hdltype:=ini else

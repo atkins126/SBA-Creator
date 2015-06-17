@@ -1,11 +1,11 @@
-unit sbasnippetu;
+unit SBASnippetU;
 
 {$mode objfpc}{$H+}
 
 interface
 
 uses
-  Dialogs, Classes, SysUtils, SBAProgContrlrU;
+  Dialogs, Classes, SysUtils, SBAProgContrlrU, ListViewFilterEdit, FileUtil;
 
 const
   cSBADefaultSnippetName='NewSnippet.prg';
@@ -20,6 +20,8 @@ type
     FCode: Tstrings;
     FDescription: Tstrings;
     FRegisters: Tstrings;
+    FFilter:TListViewFilterEdit;
+    procedure AddItemToSnippetsFilter(FileIterator: TFileIterator);
     procedure Setfilename(AValue: string);
   public
     constructor Create;
@@ -27,6 +29,7 @@ type
     function CpyProgDetails(Prog,Src:TStrings):boolean;
     function CpyUserProg(Prog,Src:TStrings):boolean;
     function CpyProgUReg(Prog,Src:TStrings):boolean;
+    procedure UpdateSnippetsFilter(Filter: TListViewFilterEdit);
   published
     property Filename:string read Ffilename write Setfilename;
     property Code:Tstrings read Fcode;
@@ -36,6 +39,8 @@ type
 
 
 implementation
+
+uses ConfigFormU,UtilsU;
 
 { TSBASnippet }
 
@@ -113,6 +118,26 @@ begin
     Src.Delete(Src.Count-1);
   end;
 end;
+
+procedure TSBASnippet.AddItemToSnippetsFilter(FileIterator: TFileIterator);
+var
+  Data:TStringArray;
+begin
+  SetLength(Data,2);
+  Data[0]:=ExtractFileNameWithoutExt(FileIterator.FileInfo.Name);
+  Data[1]:=AppendPathDelim(FileIterator.Path)+FileIterator.FileInfo.Name;
+  FFilter.Items.Add(Data);
+end;
+
+procedure TSBASnippet.UpdateSnippetsFilter(Filter:TListViewFilterEdit);
+begin
+  FFilter:=Filter;
+  FFilter.Items.Clear;
+  SearchForFiles(SnippetDir,'*.snp',@AddItemToSnippetsFilter);
+  SearchForFiles(LibraryDir,'*.snp',@AddItemToSnippetsFilter);
+  FFilter.InvalidateFilter;
+end;
+
 
 end.
 

@@ -1,13 +1,14 @@
 object MainForm: TMainForm
-  Left = 942
+  Left = 1057
   Height = 769
-  Top = 141
+  Top = 101
   Width = 765
   AllowDropFiles = True
   ClientHeight = 749
   ClientWidth = 765
   Constraints.MinHeight = 690
   Constraints.MinWidth = 765
+  KeyPreview = True
   Menu = MainMenu
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
@@ -21,11 +22,11 @@ object MainForm: TMainForm
     Height = 726
     Top = 0
     Width = 765
-    ActivePage = EditorsTab
+    ActivePage = SystemTab
     Align = alClient
     ParentShowHint = False
     ShowHint = True
-    TabIndex = 1
+    TabIndex = 0
     TabOrder = 0
     TabPosition = tpBottom
     OnChange = MainPagesChange
@@ -1171,6 +1172,7 @@ object MainForm: TMainForm
         Width = 131
         Anchors = [akTop, akRight]
         AutoSize = True
+        OnDblClick = LogoImageDblClick
         Picture.Data = {
           1754506F727461626C654E6574776F726B47726170686963E644000089504E47
           0D0A1A0A0000000D494844520000008300000082080600000065C17BC3000000
@@ -23945,6 +23947,7 @@ object MainForm: TMainForm
           BitmapOptions.MarginBottom = 2
           BitmapOptions.MarginLeft = 2
           BitmapOptions.Direction = sdVertical
+          Caption = '&PRG/SNP Editor'
           Constraints.MinHeight = 180
           Constraints.MinWidth = 180
         end
@@ -38917,21 +38920,21 @@ object MainForm: TMainForm
       ImageIndex = 1
       OnContextPopup = EditorsTabContextPopup
       object P_Editors: TPanel
-        Left = 178
+        Left = 160
         Height = 698
         Top = 0
-        Width = 579
+        Width = 597
         Align = alClient
         BevelOuter = bvNone
         ClientHeight = 698
-        ClientWidth = 579
+        ClientWidth = 597
         TabOrder = 0
         object Splitter1: TSplitter
           Cursor = crVSplit
           Left = 0
           Height = 6
           Top = 597
-          Width = 579
+          Width = 597
           Align = alBottom
           ResizeAnchor = akBottom
         end
@@ -38939,7 +38942,7 @@ object MainForm: TMainForm
           Left = 0
           Height = 95
           Top = 603
-          Width = 579
+          Width = 597
           Align = alBottom
           ItemHeight = 0
           OnDblClick = LogDblClick
@@ -38952,7 +38955,7 @@ object MainForm: TMainForm
           Left = 0
           Height = 558
           Top = 39
-          Width = 448
+          Width = 466
           Align = alClient
           ParentShowHint = False
           TabOrder = 2
@@ -38962,7 +38965,7 @@ object MainForm: TMainForm
           Left = 0
           Height = 35
           Top = 0
-          Width = 579
+          Width = 597
           AutoSize = True
           BorderSpacing.Bottom = 4
           ButtonHeight = 35
@@ -38977,7 +38980,7 @@ object MainForm: TMainForm
           ParentShowHint = False
           ShowCaptions = True
           ShowHint = True
-          TabOrder = 3
+          TabOrder = 4
           Transparent = True
           Wrapable = False
           object ToolButton6: TToolButton
@@ -39086,7 +39089,7 @@ object MainForm: TMainForm
           end
         end
         object P_AuxEditor: TPanel
-          Left = 448
+          Left = 466
           Height = 558
           Top = 39
           Width = 131
@@ -39095,7 +39098,7 @@ object MainForm: TMainForm
           BevelOuter = bvNone
           ClientHeight = 558
           ClientWidth = 131
-          TabOrder = 4
+          TabOrder = 3
           object P_Obf: TPanel
             Left = 0
             Height = 336
@@ -39227,22 +39230,22 @@ object MainForm: TMainForm
         Left = 0
         Height = 698
         Top = 0
-        Width = 173
+        Width = 155
         Align = alLeft
         BevelOuter = bvNone
         ClientHeight = 698
-        ClientWidth = 173
+        ClientWidth = 155
         TabOrder = 1
         Visible = False
         object GroupBox1: TGroupBox
           Left = 0
           Height = 540
           Top = 0
-          Width = 173
+          Width = 155
           Align = alClient
           Caption = 'Project Info'
           ClientHeight = 520
-          ClientWidth = 169
+          ClientWidth = 151
           Color = clWhite
           ParentColor = False
           TabOrder = 0
@@ -39250,7 +39253,7 @@ object MainForm: TMainForm
             Left = 0
             Height = 24
             Top = 0
-            Width = 169
+            Width = 151
             AutoSize = True
             ButtonHeight = 23
             ButtonWidth = 22
@@ -39285,17 +39288,17 @@ object MainForm: TMainForm
               Action = ProjectClose
             end
             object ToolButton33: TToolButton
-              Left = 89
+              Left = 116
               Top = 0
               Action = ProjectExport
             end
             object ToolButton49: TToolButton
-              Left = 116
+              Left = 94
               Top = 0
-              Action = ProjectCoresEdit
+              Action = ProjectEditCoreList
             end
             object ToolButton48: TToolButton
-              Left = 111
+              Left = 89
               Height = 23
               Top = 0
               Width = 5
@@ -39307,7 +39310,7 @@ object MainForm: TMainForm
             Left = 0
             Height = 496
             Top = 24
-            Width = 169
+            Width = 151
             Align = alClient
             AutoExpand = True
             BackgroundColor = clCream
@@ -39317,27 +39320,30 @@ object MainForm: TMainForm
             ExpandSignType = tvestPlusMinus
             HotTrack = True
             Images = TreeImg
-            PopupMenu = M_EdPrjCores
+            PopupMenu = PrjTreeMenu
             ReadOnly = True
             ScrollBars = ssAutoBoth
             StateImages = TreeImg
             TabOrder = 1
             OnClick = PrjTreeClick
+            OnContextPopup = PrjTreeContextPopup
             OnDblClick = PrjTreeDblClick
+            OnMouseDown = PrjTreeMouseDown
             OnMouseLeave = PrjTreeMouseLeave
             OnMouseMove = PrjTreeMouseMove
             Options = [tvoAutoExpand, tvoAutoItemHeight, tvoHideSelection, tvoHotTrack, tvoKeepCollapsedNodes, tvoReadOnly, tvoShowButtons, tvoShowLines, tvoShowRoot, tvoToolTips, tvoThemedDraw]
             Items.Data = {
-              F9FFFFFF020003000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF020000000000
+              F9FFFFFF020004000000FFFFFFFFFFFFFFFF02000000FFFFFFFF020000000000
               000001070000004E657750726F67FFFFFFFFFFFFFFFF02000000FFFFFFFF0000
               00000000000000050000004974656D31FFFFFFFFFFFFFFFF02000000FFFFFFFF
-              000000000000000000050000004974656D32FFFFFFFFFFFFFFFFFFFFFFFFFFFF
-              FFFF02000000000000000103000000417578FFFFFFFFFFFFFFFF03000000FFFF
-              FFFF000000000000000000050000004974656D34FFFFFFFFFFFFFFFF03000000
-              FFFFFFFF000000000000000000050000004974656D35FFFFFFFFFFFFFFFFFFFF
-              FFFFFFFFFFFF020000000000000001030000004C6962FFFFFFFFFFFFFFFF0400
+              000000000000000000050000004974656D32FFFFFFFFFFFFFFFF03000000FFFF
+              FFFF02000000000000000103000000417578FFFFFFFFFFFFFFFFFFFFFFFFFFFF
+              FFFF000000000000000000050000004974656D34FFFFFFFFFFFFFFFFFFFFFFFF
+              FFFFFFFF000000000000000000050000004974656D35FFFFFFFFFFFFFFFF0400
+              0000FFFFFFFF020000000000000001030000004C6962FFFFFFFFFFFFFFFF0400
               0000FFFFFFFF000000000000000000050000004974656D37FFFFFFFFFFFFFFFF
-              04000000FFFFFFFF000000000000000000050000004974656D38
+              04000000FFFFFFFF000000000000000000050000004974656D38FFFFFFFFFFFF
+              FFFF05000000FFFFFFFF0000000000000000000400000055736572
             }
           end
         end
@@ -39345,7 +39351,7 @@ object MainForm: TMainForm
           Left = 0
           Height = 152
           Top = 546
-          Width = 173
+          Width = 155
           AntialiasingMode = amOn
           Align = alBottom
           Center = True
@@ -39357,13 +39363,14 @@ object MainForm: TMainForm
           Left = 0
           Height = 6
           Top = 540
-          Width = 173
+          Width = 155
           Align = alBottom
+          ParentColor = False
           ResizeAnchor = akBottom
         end
       end
       object Splitter4: TSplitter
-        Left = 173
+        Left = 155
         Height = 698
         Top = 0
         Width = 5
@@ -39373,12 +39380,12 @@ object MainForm: TMainForm
     object ProgEditTab: TTabSheet
       Caption = 'ProgEditTab'
       ClientHeight = 698
-      ClientWidth = 839
+      ClientWidth = 757
       object ToolBar3: TToolBar
         Left = 0
         Height = 35
         Top = 0
-        Width = 839
+        Width = 757
         AutoSize = True
         BorderSpacing.Bottom = 4
         ButtonHeight = 35
@@ -39505,7 +39512,7 @@ object MainForm: TMainForm
         end
       end
       object P_AuxProg: TPanel
-        Left = 709
+        Left = 627
         Height = 659
         Top = 39
         Width = 130
@@ -39516,22 +39523,22 @@ object MainForm: TMainForm
         TabOrder = 1
         object P_CodeSnippets: TGroupBox
           Left = 2
-          Height = 383
-          Top = 273
+          Height = 362
+          Top = 294
           Width = 126
           Align = alClient
           BorderSpacing.Left = 2
           BorderSpacing.Right = 2
           BorderSpacing.Bottom = 3
           Caption = 'Code snippets'
-          ClientHeight = 363
+          ClientHeight = 342
           ClientWidth = 122
           Constraints.MinHeight = 290
           TabOrder = 0
           object Label5: TLabel
             Left = 5
             Height = 18
-            Top = 168
+            Top = 152
             Width = 117
             Align = alTop
             AutoSize = False
@@ -39542,8 +39549,8 @@ object MainForm: TMainForm
           end
           object SnippetDescription: TMemo
             Left = 3
-            Height = 141
-            Top = 186
+            Height = 136
+            Top = 170
             Width = 116
             Align = alClient
             BorderSpacing.Left = 3
@@ -39563,7 +39570,7 @@ object MainForm: TMainForm
           object B_InsertSnipped: TBitBtn
             Left = 3
             Height = 30
-            Top = 330
+            Top = 309
             Width = 116
             Align = alBottom
             BorderSpacing.Around = 3
@@ -39586,57 +39593,80 @@ object MainForm: TMainForm
             OnClick = B_InsertSnippedClick
             TabOrder = 1
           end
-          object SnippetsList: TShellListView
-            Left = 3
-            Height = 157
-            Top = 3
-            Width = 116
-            Align = alTop
-            BorderSpacing.Around = 3
-            Color = clDefault
-            Constraints.MinHeight = 100
-            ReadOnly = True
-            RowSelect = True
-            ScrollBars = ssAutoVertical
-            ShowColumnHeaders = False
-            SortColumn = 0
-            SortType = stText
-            TabOrder = 2
-            ViewStyle = vsList
-            OnSelectItem = SnippetsListSelectItem
-            ObjectTypes = [otNonFolders]
-          end
           object Splitter3: TSplitter
             Cursor = crVSplit
             Left = 0
             Height = 5
-            Top = 163
+            Top = 147
             Width = 122
             Align = alTop
             ResizeAnchor = akTop
           end
+          object SnippetsFilter: TListViewFilterEdit
+            Left = 3
+            Height = 23
+            Top = 0
+            Width = 116
+            ButtonWidth = 23
+            NumGlyphs = 1
+            Align = alTop
+            BorderSpacing.Left = 3
+            BorderSpacing.Right = 3
+            AutoSize = False
+            MaxLength = 0
+            TabOrder = 3
+            FilteredListview = SnippetsList
+            ByAllFields = False
+          end
+          object SnippetsList: TListView
+            Left = 3
+            Height = 118
+            Top = 26
+            Width = 116
+            Align = alTop
+            BorderSpacing.Around = 3
+            Columns = <            
+              item
+                AutoSize = True
+                Caption = 'Snippet'
+                MinWidth = 100
+                Width = 112
+              end            
+              item
+                Caption = 'Path'
+                Visible = False
+              end>
+            ReadOnly = True
+            RowSelect = True
+            ScrollBars = ssAutoBoth
+            ShowColumnHeaders = False
+            SortType = stText
+            TabOrder = 4
+            ViewStyle = vsReport
+            OnClick = SnippetsListClick
+          end
         end
         object P_ProgLabels: TGroupBox
           Left = 2
-          Height = 267
+          Height = 144
           Top = 0
           Width = 126
           Align = alTop
           BorderSpacing.Left = 2
           BorderSpacing.Right = 2
-          Caption = 'Labels'
-          ClientHeight = 247
+          Caption = 'Program Labels'
+          ClientHeight = 124
           ClientWidth = 122
           Constraints.MinHeight = 120
           TabOrder = 1
           object B_SBALabels: TBitBtn
             Left = 3
             Height = 30
-            Top = 214
+            Top = 91
             Width = 116
             Align = alBottom
             BorderSpacing.Around = 3
-            Caption = 'Scan Labels'
+            Caption = 'Search for ...'
             Glyph.Data = {
               36040000424D3604000000000000360000002800000010000000100000000100
               2000000000000004000064000000640000000000000000000000FFFFFFFFFFFF
@@ -39678,7 +39708,7 @@ object MainForm: TMainForm
           end
           object L_SBALabels: TListBox
             Left = 3
-            Height = 208
+            Height = 85
             Top = 3
             Width = 116
             Align = alClient
@@ -39691,11 +39721,92 @@ object MainForm: TMainForm
             TabOrder = 1
           end
         end
-        object Splitter2: TSplitter
+        object Splitter_ProgAddress: TSplitter
           Cursor = crVSplit
           Left = 0
           Height = 6
-          Top = 267
+          Top = 288
+          Width = 130
+          Align = alTop
+          ResizeAnchor = akTop
+        end
+        object P_ProgAddress: TGroupBox
+          Left = 2
+          Height = 138
+          Top = 150
+          Width = 126
+          Align = alTop
+          BorderSpacing.Left = 2
+          BorderSpacing.Right = 2
+          Caption = 'Config Constants'
+          ClientHeight = 118
+          ClientWidth = 122
+          Constraints.MinHeight = 120
+          TabOrder = 3
+          object B_SBAAdress: TBitBtn
+            Left = 3
+            Height = 30
+            Top = 85
+            Width = 116
+            Align = alBottom
+            BorderSpacing.Around = 3
+            Caption = 'Seach for ...'
+            Glyph.Data = {
+              36040000424D3604000000000000360000002800000010000000100000000100
+              2000000000000004000064000000640000000000000000000000FFFFFFFFFFFF
+              FFFFFFFFFFFFFFFFFFFFFFFFFFFF00375BFF00375BFFFFFFFFFFFFFFFFFFFFFF
+              FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+              FFFFFFFFFFFFFFFFFFFF00375BFF00CCFFFF00CCFFFF00375BFFFFFFFFFFFFFF
+              FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+              FFFFFFFFFFFF00375BFF00CCFFFF00EFFFFF00FFFFFF00CCFFFF00375BFFFFFF
+              FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+              FFFF00375BFF00CCFFFF00CDFFFF00D6FFFF00E5FFFF00FEFFFF00CCFFFF0037
+              5BFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0037
+              5BFF00CCFFFF00CCFFFF00CDFFFF00CBFFFF00D5FFFF00E5FFFF00FEFFFF00CC
+              FFFF00375BFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00375BFF00CC
+              FFFF00CDFFFF00CDFFFF00CCFFFF00CCFFFF00CBFFFF00D5FFFF00E5FFFF00FE
+              FFFF00CCFFFF00375BFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF006699FFFFFF
+              FFFF00CCFFFF00CAFFFF00CCFFFF00CCFFFF00CCFFFF00CBFFFF00D5FFFF00E5
+              FFFF00FEFFFF00CCFFFF00375BFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0066
+              99FFFFFFFFFF00CCFFFF00CAFFFF00CCFFFF00CCFFFF00CCFFFF00CBFFFF00D5
+              FFFF00E5FFFF00FEFFFF00CCFFFF00375BFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+              FFFF006699FFFFFFFFFF00CCFFFF00CAFFFF00CCFFFF00CCFFFF00CCFFFF00CA
+              FFFF00D5FFFF00E5FFFF00FEFFFF00CCFFFF00375BFFFFFFFFFFFFFFFFFFFFFF
+              FFFFFFFFFFFF006699FFFFFFFFFF00CCFFFF00CAFFFF00CCFFFF00CCFFFF00CC
+              FFFF2DD1FFFFA7E0FFFFA7E0FFFF2DFAFFFF00CCFFFF00375BFFFFFFFFFFFFFF
+              FFFFFFFFFFFFFFFFFFFF006699FFFFFFFFFF00CCFFFF00CAFFFF00CCFFFF00CE
+              FFFF52BDE8FF006699FF006699FF52C1E9FF00FFFFFF006699FFFFFFFFFFFFFF
+              FFFFFFFFFFFFFFFFFFFFFFFFFFFF006699FFFFFFFFFF00CCFFFF00CAFFFF00D1
+              FFFF006699FFFFFFFFFFFFFFFFFF006699FF00F5FFFF006699FFFFFFFFFFFFFF
+              FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF006699FFFFFFFFFF00CCFFFF00D0
+              FFFF006699FFFFFFFFFFFFFFFFFF006699FF00E8FFFF006699FFFFFFFFFFFFFF
+              FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF006699FFFFFFFFFF00CC
+              FFFF0093C9FF00375CFF00385DFF00E8FFFF00E8FFFF006699FFFFFFFFFFFFFF
+              FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF006699FFFFFF
+              FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF006699FFFFFFFFFFFFFFFFFFFFFF
+              FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0066
+              99FF006699FF006699FF006699FF006699FFFFFFFFFFFFFFFFFF
+            }
+            OnClick = B_SBAAdressClick
+            TabOrder = 0
+          end
+          object L_SBAAddress: TListBox
+            Left = 3
+            Height = 79
+            Top = 3
+            Width = 116
+            Align = alClient
+            BorderSpacing.Around = 3
+            ItemHeight = 0
+            MultiSelect = True
+            TabOrder = 1
+          end
+        end
+        object Splitter6: TSplitter
+          Cursor = crVSplit
+          Left = 0
+          Height = 6
+          Top = 144
           Width = 130
           Align = alTop
           ResizeAnchor = akTop
@@ -39705,7 +39816,7 @@ object MainForm: TMainForm
         Left = 0
         Height = 659
         Top = 39
-        Width = 709
+        Width = 627
         Align = alClient
         Font.CharSet = ANSI_CHARSET
         Font.Height = -13
@@ -39717,6 +39828,516 @@ object MainForm: TMainForm
         TabOrder = 2
         BookMarkOptions.BookmarkImages = MarkImages
         Gutter.Width = 54
+        Gutter.MouseActions = <>
+        RightGutter.Width = 0
+        RightGutter.MouseActions = <>
+        Keystrokes = <        
+          item
+            Command = ecUp
+            ShortCut = 38
+          end        
+          item
+            Command = ecSelUp
+            ShortCut = 8230
+          end        
+          item
+            Command = ecScrollUp
+            ShortCut = 16422
+          end        
+          item
+            Command = ecDown
+            ShortCut = 40
+          end        
+          item
+            Command = ecSelDown
+            ShortCut = 8232
+          end        
+          item
+            Command = ecScrollDown
+            ShortCut = 16424
+          end        
+          item
+            Command = ecLeft
+            ShortCut = 37
+          end        
+          item
+            Command = ecSelLeft
+            ShortCut = 8229
+          end        
+          item
+            Command = ecWordLeft
+            ShortCut = 16421
+          end        
+          item
+            Command = ecSelWordLeft
+            ShortCut = 24613
+          end        
+          item
+            Command = ecRight
+            ShortCut = 39
+          end        
+          item
+            Command = ecSelRight
+            ShortCut = 8231
+          end        
+          item
+            Command = ecWordRight
+            ShortCut = 16423
+          end        
+          item
+            Command = ecSelWordRight
+            ShortCut = 24615
+          end        
+          item
+            Command = ecPageDown
+            ShortCut = 34
+          end        
+          item
+            Command = ecSelPageDown
+            ShortCut = 8226
+          end        
+          item
+            Command = ecPageBottom
+            ShortCut = 16418
+          end        
+          item
+            Command = ecSelPageBottom
+            ShortCut = 24610
+          end        
+          item
+            Command = ecPageUp
+            ShortCut = 33
+          end        
+          item
+            Command = ecSelPageUp
+            ShortCut = 8225
+          end        
+          item
+            Command = ecPageTop
+            ShortCut = 16417
+          end        
+          item
+            Command = ecSelPageTop
+            ShortCut = 24609
+          end        
+          item
+            Command = ecLineStart
+            ShortCut = 36
+          end        
+          item
+            Command = ecSelLineStart
+            ShortCut = 8228
+          end        
+          item
+            Command = ecEditorTop
+            ShortCut = 16420
+          end        
+          item
+            Command = ecSelEditorTop
+            ShortCut = 24612
+          end        
+          item
+            Command = ecLineEnd
+            ShortCut = 35
+          end        
+          item
+            Command = ecSelLineEnd
+            ShortCut = 8227
+          end        
+          item
+            Command = ecEditorBottom
+            ShortCut = 16419
+          end        
+          item
+            Command = ecSelEditorBottom
+            ShortCut = 24611
+          end        
+          item
+            Command = ecToggleMode
+            ShortCut = 45
+          end        
+          item
+            Command = ecCopy
+            ShortCut = 16429
+          end        
+          item
+            Command = ecPaste
+            ShortCut = 8237
+          end        
+          item
+            Command = ecDeleteChar
+            ShortCut = 46
+          end        
+          item
+            Command = ecCut
+            ShortCut = 8238
+          end        
+          item
+            Command = ecDeleteLastChar
+            ShortCut = 8
+          end        
+          item
+            Command = ecDeleteLastChar
+            ShortCut = 8200
+          end        
+          item
+            Command = ecDeleteLastWord
+            ShortCut = 16392
+          end        
+          item
+            Command = ecUndo
+            ShortCut = 32776
+          end        
+          item
+            Command = ecRedo
+            ShortCut = 40968
+          end        
+          item
+            Command = ecLineBreak
+            ShortCut = 13
+          end        
+          item
+            Command = ecSelectAll
+            ShortCut = 16449
+          end        
+          item
+            Command = ecCopy
+            ShortCut = 16451
+          end        
+          item
+            Command = ecBlockIndent
+            ShortCut = 24649
+          end        
+          item
+            Command = ecLineBreak
+            ShortCut = 16461
+          end        
+          item
+            Command = ecInsertLine
+            ShortCut = 16462
+          end        
+          item
+            Command = ecDeleteWord
+            ShortCut = 16468
+          end        
+          item
+            Command = ecBlockUnindent
+            ShortCut = 24661
+          end        
+          item
+            Command = ecPaste
+            ShortCut = 16470
+          end        
+          item
+            Command = ecCut
+            ShortCut = 16472
+          end        
+          item
+            Command = ecDeleteLine
+            ShortCut = 16473
+          end        
+          item
+            Command = ecDeleteEOL
+            ShortCut = 24665
+          end        
+          item
+            Command = ecUndo
+            ShortCut = 16474
+          end        
+          item
+            Command = ecRedo
+            ShortCut = 24666
+          end        
+          item
+            Command = ecGotoMarker0
+            ShortCut = 16432
+          end        
+          item
+            Command = ecGotoMarker1
+            ShortCut = 16433
+          end        
+          item
+            Command = ecGotoMarker2
+            ShortCut = 16434
+          end        
+          item
+            Command = ecGotoMarker3
+            ShortCut = 16435
+          end        
+          item
+            Command = ecGotoMarker4
+            ShortCut = 16436
+          end        
+          item
+            Command = ecGotoMarker5
+            ShortCut = 16437
+          end        
+          item
+            Command = ecGotoMarker6
+            ShortCut = 16438
+          end        
+          item
+            Command = ecGotoMarker7
+            ShortCut = 16439
+          end        
+          item
+            Command = ecGotoMarker8
+            ShortCut = 16440
+          end        
+          item
+            Command = ecGotoMarker9
+            ShortCut = 16441
+          end        
+          item
+            Command = ecToggleMarker0
+            ShortCut = 24624
+          end        
+          item
+            Command = ecToggleMarker1
+            ShortCut = 24625
+          end        
+          item
+            Command = ecToggleMarker2
+            ShortCut = 24626
+          end        
+          item
+            Command = ecToggleMarker3
+            ShortCut = 24627
+          end        
+          item
+            Command = ecToggleMarker4
+            ShortCut = 24628
+          end        
+          item
+            Command = ecToggleMarker5
+            ShortCut = 24629
+          end        
+          item
+            Command = ecToggleMarker6
+            ShortCut = 24630
+          end        
+          item
+            Command = ecToggleMarker7
+            ShortCut = 24631
+          end        
+          item
+            Command = ecToggleMarker8
+            ShortCut = 24632
+          end        
+          item
+            Command = ecToggleMarker9
+            ShortCut = 24633
+          end        
+          item
+            Command = EcFoldLevel1
+            ShortCut = 41009
+          end        
+          item
+            Command = EcFoldLevel2
+            ShortCut = 41010
+          end        
+          item
+            Command = EcFoldLevel1
+            ShortCut = 41011
+          end        
+          item
+            Command = EcFoldLevel1
+            ShortCut = 41012
+          end        
+          item
+            Command = EcFoldLevel1
+            ShortCut = 41013
+          end        
+          item
+            Command = EcFoldLevel6
+            ShortCut = 41014
+          end        
+          item
+            Command = EcFoldLevel7
+            ShortCut = 41015
+          end        
+          item
+            Command = EcFoldLevel8
+            ShortCut = 41016
+          end        
+          item
+            Command = EcFoldLevel9
+            ShortCut = 41017
+          end        
+          item
+            Command = EcFoldLevel0
+            ShortCut = 41008
+          end        
+          item
+            Command = EcFoldCurrent
+            ShortCut = 41005
+          end        
+          item
+            Command = EcUnFoldCurrent
+            ShortCut = 41003
+          end        
+          item
+            Command = EcToggleMarkupWord
+            ShortCut = 32845
+          end        
+          item
+            Command = ecNormalSelect
+            ShortCut = 24654
+          end        
+          item
+            Command = ecColumnSelect
+            ShortCut = 24643
+          end        
+          item
+            Command = ecLineSelect
+            ShortCut = 24652
+          end        
+          item
+            Command = ecTab
+            ShortCut = 9
+          end        
+          item
+            Command = ecShiftTab
+            ShortCut = 8201
+          end        
+          item
+            Command = ecMatchBracket
+            ShortCut = 24642
+          end        
+          item
+            Command = ecColSelUp
+            ShortCut = 40998
+          end        
+          item
+            Command = ecColSelDown
+            ShortCut = 41000
+          end        
+          item
+            Command = ecColSelLeft
+            ShortCut = 40997
+          end        
+          item
+            Command = ecColSelRight
+            ShortCut = 40999
+          end        
+          item
+            Command = ecColSelPageDown
+            ShortCut = 40994
+          end        
+          item
+            Command = ecColSelPageBottom
+            ShortCut = 57378
+          end        
+          item
+            Command = ecColSelPageUp
+            ShortCut = 40993
+          end        
+          item
+            Command = ecColSelPageTop
+            ShortCut = 57377
+          end        
+          item
+            Command = ecColSelLineStart
+            ShortCut = 40996
+          end        
+          item
+            Command = ecColSelLineEnd
+            ShortCut = 40995
+          end        
+          item
+            Command = ecColSelEditorTop
+            ShortCut = 57380
+          end        
+          item
+            Command = ecColSelEditorBottom
+            ShortCut = 57379
+          end>
+        MouseActions = <>
+        MouseTextActions = <>
+        MouseSelActions = <>
+        Options = [eoAutoIndent, eoBracketHighlight, eoGroupUndo, eoScrollPastEof, eoScrollPastEol, eoSmartTabs, eoTabIndent, eoTabsToSpaces, eoTrimTrailingSpaces, eoAltSetsColumnMode]
+        MouseOptions = [emAltSetsColumnMode]
+        VisibleSpecialChars = [vscSpace, vscTabAtLast]
+        ScrollBars = ssAutoBoth
+        SelectedColor.BackPriority = 50
+        SelectedColor.ForePriority = 50
+        SelectedColor.FramePriority = 50
+        SelectedColor.BoldPriority = 50
+        SelectedColor.ItalicPriority = 50
+        SelectedColor.UnderlinePriority = 50
+        SelectedColor.StrikeOutPriority = 50
+        HighlightAllColor.Background = clMaroon
+        BracketHighlightStyle = sbhsBoth
+        BracketMatchColor.Background = clSilver
+        BracketMatchColor.Foreground = clNone
+        BracketMatchColor.Style = [fsBold]
+        FoldedCodeColor.Background = clNone
+        FoldedCodeColor.Foreground = clGray
+        FoldedCodeColor.FrameColor = clGray
+        MouseLinkColor.Background = clNone
+        MouseLinkColor.Foreground = clBlue
+        LineHighlightColor.Background = clCream
+        LineHighlightColor.Foreground = clNone
+        LineHighlightColor.FrameColor = clSilver
+        LineHighlightColor.FrameStyle = slsDotted
+        TabWidth = 4
+        OnStatusChange = SynEditStatusChange
+        inline SynLeftGutterPartList1: TSynGutterPartList
+          object SynGutterMarks1: TSynGutterMarks
+            AutoSize = False
+            Width = 16
+            MouseActions = <>
+          end
+          object SynGutterLineNumber1: TSynGutterLineNumber
+            Width = 22
+            MouseActions = <>
+            MarkupInfo.Background = clBtnFace
+            MarkupInfo.Foreground = clNone
+            DigitCount = 3
+            ShowOnlyLineNumbersMultiplesOf = 5
+            ZeroStart = False
+            LeadingZeros = False
+          end
+          object SynGutterChanges1: TSynGutterChanges
+            Width = 4
+            MouseActions = <>
+            ModifiedColor = 59900
+            SavedColor = clGreen
+          end
+          object SynGutterSeparator1: TSynGutterSeparator
+            Width = 2
+            MouseActions = <>
+            MarkupInfo.Background = clWhite
+            MarkupInfo.Foreground = clGray
+          end
+          object SynGutterCodeFolding1: TSynGutterCodeFolding
+            MouseActions = <>
+            MarkupInfo.Background = clNone
+            MarkupInfo.Foreground = clGray
+            MouseActionsExpanded = <>
+            MouseActionsCollapsed = <>
+          end
+        end
+      end
+    end
+    object HidenPage: TTabSheet
+      Caption = 'HidenPage'
+      ClientHeight = 698
+      ClientWidth = 757
+      inline SynEdit1: TSynEdit
+        Left = 0
+        Height = 648
+        Top = 50
+        Width = 757
+        Align = alClient
+        Font.Height = -13
+        Font.Name = 'Courier New'
+        Font.Pitch = fpFixed
+        Font.Quality = fqNonAntialiased
+        ParentColor = False
+        ParentFont = False
+        TabOrder = 0
+        Gutter.Width = 57
         Gutter.MouseActions = <>
         RightGutter.Width = 0
         RightGutter.MouseActions = <>
@@ -40026,15 +40647,15 @@ object MainForm: TMainForm
             ShortCut = 41010
           end        
           item
-            Command = EcFoldLevel1
+            Command = EcFoldLevel3
             ShortCut = 41011
           end        
           item
-            Command = EcFoldLevel1
+            Command = EcFoldLevel4
             ShortCut = 41012
           end        
           item
-            Command = EcFoldLevel1
+            Command = EcFoldLevel5
             ShortCut = 41013
           end        
           item
@@ -40144,10 +40765,10 @@ object MainForm: TMainForm
         MouseActions = <>
         MouseTextActions = <>
         MouseSelActions = <>
-        Options = [eoAutoIndent, eoBracketHighlight, eoGroupUndo, eoScrollPastEol, eoSmartTabs, eoTabsToSpaces, eoTrimTrailingSpaces, eoAltSetsColumnMode]
-        MouseOptions = [emAltSetsColumnMode]
+        Lines.Strings = (
+          'SynEdit1'
+        )
         VisibleSpecialChars = [vscSpace, vscTabAtLast]
-        ScrollBars = ssAutoBoth
         SelectedColor.BackPriority = 50
         SelectedColor.ForePriority = 50
         SelectedColor.FramePriority = 50
@@ -40155,9 +40776,8 @@ object MainForm: TMainForm
         SelectedColor.ItalicPriority = 50
         SelectedColor.UnderlinePriority = 50
         SelectedColor.StrikeOutPriority = 50
-        HighlightAllColor.Background = clMaroon
         BracketHighlightStyle = sbhsBoth
-        BracketMatchColor.Background = clSilver
+        BracketMatchColor.Background = clNone
         BracketMatchColor.Foreground = clNone
         BracketMatchColor.Style = [fsBold]
         FoldedCodeColor.Background = clNone
@@ -40165,25 +40785,20 @@ object MainForm: TMainForm
         FoldedCodeColor.FrameColor = clGray
         MouseLinkColor.Background = clNone
         MouseLinkColor.Foreground = clBlue
-        LineHighlightColor.Background = clCream
+        LineHighlightColor.Background = clNone
         LineHighlightColor.Foreground = clNone
-        LineHighlightColor.FrameColor = clSilver
-        LineHighlightColor.FrameStyle = slsDotted
-        TabWidth = 4
-        OnStatusChange = SynEditStatusChange
         inline SynLeftGutterPartList1: TSynGutterPartList
           object SynGutterMarks1: TSynGutterMarks
-            AutoSize = False
-            Width = 16
+            Width = 24
             MouseActions = <>
           end
           object SynGutterLineNumber1: TSynGutterLineNumber
-            Width = 22
+            Width = 17
             MouseActions = <>
             MarkupInfo.Background = clBtnFace
             MarkupInfo.Foreground = clNone
-            DigitCount = 3
-            ShowOnlyLineNumbersMultiplesOf = 5
+            DigitCount = 2
+            ShowOnlyLineNumbersMultiplesOf = 1
             ZeroStart = False
             LeadingZeros = False
           end
@@ -40208,6 +40823,34 @@ object MainForm: TMainForm
           end
         end
       end
+      object Panel1: TPanel
+        Left = 0
+        Height = 50
+        Top = 0
+        Width = 757
+        Align = alTop
+        Caption = 'Panel1'
+        ClientHeight = 50
+        ClientWidth = 757
+        TabOrder = 1
+        object Button1: TButton
+          Left = 8
+          Height = 31
+          Top = 8
+          Width = 75
+          Caption = 'Close'
+          OnClick = Button1Click
+          TabOrder = 0
+        end
+        object BitBtn5: TBitBtn
+          Left = 96
+          Height = 31
+          Top = 8
+          Width = 75
+          Action = SearchFind
+          TabOrder = 1
+        end
+      end
     end
   end
   object StatusBar1: TStatusBar
@@ -40228,7 +40871,7 @@ object MainForm: TMainForm
     left = 24
     top = 584
     Bitmap = {
-      4C691E0000001000000010000000FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      4C69210000001000000010000000FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
       FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00006699FF006699FF006699FF0066
       99FF006699FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
       FF00FFFFFF00FFFFFF00FFFFFF00006699FFFFFFFF00FFFFFF00FFFFFF00FFFF
@@ -40548,39 +41191,39 @@ object MainForm: TMainForm
       FF001134E3FF1134E3FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
       FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
       FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00A98D63FFAF8D5BFFA98D63FFAEAE
-      AEFFAEAEAEFFAEAEAEFFAEAEAEFFAEAEAEFFAEAEAEFFAEAEAEFFA98D63FFA98D
-      6300A98D6300FFFFFF00FFFFFF00FFFFFF00AF8D5BFFFFEDD3FFD0BE9FFFFDFD
-      FDFFFDFDFDFFFDFDFDFFFDFDFDFFC1BAB5FFC1BAB5FFFDFDFDFFD0BE9FFFAF8D
-      5BFFA98D6300FFFFFF00FFFFFF00FFFFFF00AF8D5BFFFDDDADFFA98D63FFF8F8
-      F8FFF8F8F8FFF8F8F8FFF8F8F8FF928780FF928780FFF8F8F8FFA98D63FFFDDD
-      ADFFAF8D5BFFFFFFFF00FFFFFF00FFFFFF00AF8D5BFFFDDAABFFA98D63FFF4F4
-      F4FFF4F4F4FFF4F4F4FFF4F4F4FF928780FF928780FFF4F4F4FFA98D63FFFDDA
-      ABFFAF8D5BFFFFFFFF00FFFFFF00FFFFFF00AF8D5BFFFAD7A9FFA98D63FFA98D
-      63FFA98D63FFA98D63FFA98D63FFA98D63FFA98D63FFA98D63FFA98D63FFFAD7
-      A9FFAF8D5BFFFFFFFF00FFFFFF00FFFFFF00AF8D5BFFF9D4A6FFF7C990FFF7C9
-      90FFF7C990FFF7C990FFF7C990FFF7C990FFF7C990FFF7C990FFF7C990FFF9D4
-      A6FFAF8D5BFFFFFFFF00FFFFFF00FFFFFF00AF8D5BFFF7D1A4FFA98D63FFA98D
-      63FFA98D63FFA98D63FFA98D63FFA98D63FFA98D63FFA98D63FFA98D63FFF7D1
-      A4FFAF8D5BFFFFFFFF00FFFFFF00FFFFFF00AF8D5BFFF5CEA1FFA98D63FFFDFD
-      FDFFFDFDFDFFFDFDFDFFFDFDFDFFFDFDFDFFFDFDFDFFFDFDFDFFA98D63FFF5CE
-      A1FFAF8D5BFFFFFFFF00FFFFFF00FFFFFF00AF8D5BFFF3CB9DFFA98D63FFFBFB
-      FBFFC2C2C2FFC2C2C2FFC2C2C2FFC2C2C2FFC2C2C2FFFBFBFBFFA98D63FFF3CB
-      9DFFAF8D5BFFFFFFFF00FFFFFF00FFFFFF00AF8D5BFFF1C99CFFA98D63FFF8F8
-      F8FFF8F8F8FFF8F8F8FFF8F8F8FFF8F8F8FFF8F8F8FFF8F8F8FFA98D63FFF1C9
-      9CFFAF8D5BFFFFFFFF00FFFFFF00FFFFFF00AF8D5BFFF0C79AFFA98D63FFF5F5
-      F5FFC2C2C2FFC2C2C2FFC2C2C2FFC2C2C2FFC2C2C2FFF5F5F5FFA98D63FFF0C7
-      9AFFAF8D5BFFFFFFFF00FFFFFF00FFFFFF00AF8D5BFFF6DFC2FFA98D63FFF3F3
-      F3FFF3F3F3FFF3F3F3FFF3F3F3FFF3F3F3FFF3F3F3FFF3F3F3FFA98D63FFF6DF
-      C2FFAF8D5BFFFFFFFF00FFFFFF00FFFFFF00A98D63FFAF8D5BFFA98D63FFAEAE
-      AEFFAEAEAEFFAEAEAEFFAEAEAEFFAEAEAEFFAEAEAEFFAEAEAEFFA98D63FFAF8D
-      5BFFA98D63FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00FFFFFF00FFFFFF00A449A300A449A300A449A300A449A300A449
+      A300A449A300A449A300A449A300A449A300A449A300A449A300A449A300A449
+      A300A449A300A449A300A449A300A449A300A449A300A449A300A449A300A449
+      A300F1E3D9FFD4A483FFDBAF91FFDAAF92FFD8A889FFD8A688FFDFB79CFFDAAE
+      8FFFDDB397FFDDAD8DFFA449A300A449A300A449A300A449A300A449A300FFFF
+      FFFFD4A282FFEECDB5FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+      FFFFF6D8C1FFD7A586FFA449A300A449A300A449A300A449A300F0E1D6FFCF9A
+      76FFD19A75FFD39F7BFFD39E7BFFD39D7BFFDBB092FFD6A683FFD4A07EFFDAA5
+      81FFF2CDB3FFD3A07EFFA449A300A449A300A449A300FFFFFFFFD09875FFEDC7
+      ADFFF8F1EDFFFBF6F2FFFFFFFFFFFFFFFEFFFFFFFFFFFFFFFFFFF4D3BAFFD29C
+      79FFF2CDB5FFD4A17FFFA449A300A449A300EEDCD0FFC88B62FFD19973FFD09A
+      75FFCD9069FFCD8E68FFD6A482FFD09871FFD49E7BFFD4976EFFEDBF9EFFCA8C
+      63FFEEC7AFFFD5A586FFA449A300A449A300C98960FFEABFA1FFFFFFFFFFFFFF
+      FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF3CDB0FFCC8D65FFEEBEA1FFCC8E
+      65FFEBC5A9FFD4A482FFA449A300A449A300C78A61FFE4AF8CFFFFF8F1FFE8A2
+      00FFE8A200FFE8A200FFE8A200FFFFFFFFFFEFC09EFFC7865BFFEBC0A4FFCF9B
+      77FFEEC5ADFFD09C78FFA449A300A449A300C17F53FFDDA885FFFDFCFBFFFDFB
+      FAFFFEFDFCFFFEFDFDFFFEFCFBFFFDFCFAFFEFBFA1FFC8885DFFD7B894FFCD99
+      73FFF2C5AFFFD09A76FFA449A300A449A300BF845DFFD89E78FFFFFFFFFFFFFF
+      FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEAB899FFCA8D65FFE1BE9FFFC991
+      6AFFF2D8C9FFD29D79FFA449A300A449A300BB7E57FFD49A73FFDCA17BFFDCA1
+      7BFFDCA17BFFDCA17BFFE1A781FFE2A781FFE6B592FFC98B61FFEEB499FFC783
+      58FFD09E7BFFD5A383FFA449A300A449A300B07044FFD59C79FFE4F4E9FFE4F4
+      E9FFE4F4E9FFE4F4E9FFE4F4E9FFE4F4E9FFEAB697FFC48154FFF1D4C3FFCD93
+      6BFFA449A300A449A300A449A300A449A300AA693AFFDD9C7BFFE4F4E9FFDCA1
+      7BFFE4F4E9FFE4F4E9FFE4F4E9FFEAF3E8FFEFB69AFFC37F51FFCB946EFFD099
+      75FFA449A300A449A300A449A300A449A300AB6A3EFFDDA285FFE0FFFFFFDCA1
+      7BFFDDFFFFFFDDFFFFFFDDFFFFFFDDFFFFFFEFCEBAFFC68355FFA449A300A449
+      A300A449A300A449A300A449A300A449A300A65F2EFFAB6D44FFCD8B6CFFD78A
+      6EFFDA8B6DFFDC8D6CFFE18F70FFD38B68FFC38458FFCA8A61FFA449A300A449
+      A300A449A300A449A300A449A300A449A300A449A300A449A300A449A300A449
+      A300A449A300A449A300A449A300A449A300A449A300A449A300A449A300A449
+      A300A449A300A449A300A449A300FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
       FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
       FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
       FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
@@ -41156,9 +41799,7 @@ object MainForm: TMainForm
       FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
       FFFFFFFFFFFFFFFFFFFF746A61FF5E544B0042372BFF42362BFF42362BFF4236
       2BFF42362BFF42362BFF42362BFF42362BFF42362BFF42362BFF42362BFF4236
-      2BFF42362BFF42372BFF5E544B00C0C0C000C0C0C000C0C0C000C0C0C000C0C0
-      C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0
-      C000C0C0C000C0C0C000C0C0C000C0C0C000000000FF000000FF000000FF0000
+      2BFF42362BFF42372BFF5E544B00C0C0C000000000FF000000FF000000FF0000
       00FF000000FF000000FF000000FFC0C0C000000000FF000000FF000000FF0000
       00FF000000FF000000FF000000FFC0C0C000000000FFFFFFFFFFFFFFFFFFFFFF
       FFFFFFFFFFFFFFFFFFFF000000FFC0C0C000000000FFFFFFFFFFFFFFFFFFFFFF
@@ -41170,25 +41811,123 @@ object MainForm: TMainForm
       80FF808080FFFFFFFFFF000000FFC0C0C000000000FFFFFFFFFF808080FF8080
       80FF808080FFFFFFFFFF000000FFC0C0C000000000FFFFFFFFFFFFFFFFFFFFFF
       FFFFFFFFFFFFFFFFFFFF000000FFC0C0C000000000FFFFFFFFFFFFFFFFFFFFFF
-      FFFFFFFFFFFFFFFFFFFF000000FFC0C0C000000000FFFFFFFFFF000000FF0000
-      00FF000000FF000000FF000000FF000000FF000000FFFFFFFFFF000000FF0000
-      00FF000000FF000000FF000000FFC0C0C000000000FF000000FF000000FFFFFF
-      FFFF00FFFFFFFFFFFFFF00FFFFFF000000FF000000FF000000FF000000FFFFFF
-      FFFF00FFFFFFFFFFFFFF00FFFFFFC0C0C000C0C0C000C0C0C000000000FF0000
-      00FF000000FF000000FF000000FF000000FFC0C0C000C0C0C000000000FF0000
+      FFFFFFFFFFFFFFFFFFFF000000FF000000FF000000FF000000FF000000FF0000
+      00FF000000FFFFFFFFFF000000FF000000FF000000FF000000FF000000FF0000
+      00FF000000FFFFFFFFFF000000FF000000FF00FFFFFFFFFFFFFF00FFFFFFFFFF
+      FFFF000000FF000000FF000000FF000000FF00FFFFFFFFFFFFFF00FFFFFFFFFF
+      FFFF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+      00FF000000FFC0C0C000C0C0C000000000FF000000FF000000FF000000FF0000
+      00FF000000FFC0C0C000C0C0C000C0C0C000C0C0C000C0C0C000800000FFC0C0
+      C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0
+      C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0
+      C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000800000FFC0C0
+      C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000800000FFC0C0
+      C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000800000FF800000FF8000
+      00FFC0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0
+      C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000800000FFC0C0
+      C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000800000FFC0C0
+      C000800000FFC0C0C000800000FFC0C0C000800000FFC0C0C000800000FFC0C0
+      C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0
+      C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0
+      C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0
+      C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0
+      C000C0C0C000C0C0C000C0C0C000FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00D5BA94FFD5BA94FFD5BA
+      94FFD5BA94FFD5BA94FFD5BA94FFD5BA94FFD5BA94FFD5BA94FFD5BA94FFD5BA
+      94FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00D5BA94FFF8EBC5FFF8EB
+      C5FFF8EBC5FFF8EBC5FFF8EBC5FFF8EBC5FFF8EBC5FFF8EBC5FFF8EBC5FFD5BA
+      94FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00D5BA94FFF0E0C0FFE1C1
+      80FFE1C180FFE1C180FFE1C180FFE1C180FFE1C180FFE1C180FFF0E0C0FFD5BA
+      94FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00D5BA94FFEBD8BBFFD6B1
+      77FFD6B177FFD6B177FFD6B177FFD6B177FFD6B177FFD6B177FFEBD8BBFFD5BA
+      94FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00D5BA94FFECD9BCFFD8B3
+      79FFD8B379FFD8B379FFD8B379FFD8B379FFD8B379FFD8B379FFECD9BCFFD5BA
+      94FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00D5BA94FFEEDDBEFFDCBA
+      7CFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFDCBA7CFFEEDDBEFFD5BA
+      94FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00D5BA94FFF0E1C0FFE1C2
+      80FFE1C280FFE1C280FFE1C280FFE1C280FFE1C280FFE1C280FFF0E1C0FFD5BA
+      94FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00D5BA94FFF3E5C2FFE7CA
+      84FFE7CA84FFE7CA84FFE7CA84FFE7CA84FFE7CA84FFE7CA84FFF3E5C2FFD5BA
+      94FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00D5BA94FFF6E9C4FFECD2
+      89FFECD289FFECD289FFECD289FFECD289FFECD289FFECD289FFF6E9C4FFD5BA
+      94FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00D5BA94FFF8EBC5FFF8EB
+      C5FFF8EBC5FFF8EBC5FFF8EBC5FFF8EBC5FFF8EBC5FFF8EBC5FFF8EBC5FFD5BA
+      94FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00D5BA94FFD5BA94FFD5BA
+      94FFD5BA94FFD5BA94FFD5BA94FFD5BA94FFD5BA94FFD5BA94FFD5BA94FFD5BA
+      94FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00FFFFFF00FFFFFF00C0C0C000C0C0C000C0C0C000C0C0C000C0C0
+      C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0
+      C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0
+      C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000000000FF000000FF0000
+      00FF000000FF000000FF000000FFC0C0C000C0C0C000C0C0C000C0C0C000C0C0
+      C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000000000FFFFFFFFFFFFFF
+      FFFFFFFFFFFFFFFFFFFF000000FFC0C0C000C0C0C000C0C0C000C0C0C000C0C0
+      C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000000000FFFFFFFFFFFFFF
+      FFFFFFFFFFFFFFFFFFFF000000FFC0C0C000C0C0C000C0C0C000C0C0C000C0C0
+      C000C0C0C000C0C0C000800000FFC0C0C000C0C0C000000000FF000000FF0000
+      00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+      00FF000000FFC0C0C000800000FF800000FFC0C0C000C0C0C000C0C0C000C0C0
+      C000C0C0C000C0C0C000C0C0C000000000FFFFFF00FFFFFFFFFFFFFF00FFFFFF
+      FFFF000000FF800000FF800000FF800000FF800000FFC0C0C000C0C0C000C0C0
+      C000C0C0C000C0C0C000C0C0C000000000FFFFFFFFFFFFFF00FFFFFFFFFFFFFF
+      00FF000000FFC0C0C000800000FF800000FFC0C0C000C0C0C000C0C0C000C0C0
+      C000C0C0C000C0C0C000C0C0C000000000FF000000FF000000FF000000FF0000
+      00FF000000FFC0C0C000800000FFC0C0C000C0C0C000000000FF000000FF0000
+      00FF000000FF000000FF000000FFC0C0C000C0C0C000C0C0C000C0C0C000C0C0
+      C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000000000FFFFFFFFFFFFFF
+      FFFFFFFFFFFFFFFFFFFF000000FFC0C0C000C0C0C000C0C0C000C0C0C000C0C0
+      C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000000000FFFFFFFFFFFFFF
+      FFFFFFFFFFFFFFFFFFFF000000FFC0C0C000C0C0C000C0C0C000C0C0C000C0C0
+      C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000000000FF000000FF0000
+      00FF000000FF000000FF000000FFC0C0C000C0C0C000C0C0C000C0C0C000C0C0
+      C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000000000FFFFFFFFFFFFFF
+      FFFFFFFFFFFFFFFFFFFF000000FFC0C0C000C0C0C000C0C0C000C0C0C000C0C0
+      C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000000000FFFFFFFFFFFFFF
+      FFFFFFFFFFFFFFFFFFFF000000FFC0C0C000C0C0C000C0C0C000C0C0C000C0C0
+      C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000000000FF000000FF0000
       00FF000000FF000000FF000000FFC0C0C000C0C0C000C0C0C000C0C0C000C0C0
       C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0
-      C000BF0000FFC0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0
-      C000BF0000FFC0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0
-      C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000BF00
-      00FFBF0000FFBF0000FFC0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0
-      C000BF0000FFC0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0
-      C000BF0000FFC0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0
-      C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0
-      C000BF0000FFC0C0C000BF0000FFC0C0C000BF0000FFC0C0C000BF0000FFC0C0
-      C000BF0000FFC0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0
-      C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0
-      C000C0C0C000C0C0C000C0C0C000
+      C000C0C0C000C0C0C000C0C0C000FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00D5BA94FFD5BA94FFD5BA
+      94FFD5BA94FFD5BA94FFD5BA94FFD5BA94FFD5BA94FFD5BA94FFD5BA94FFD5BA
+      94FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00D5BA94FFF8EBC5FFF8EB
+      C5FFF8EBC5FFF8EBC5FFF8EBC5FFF8EBC5FFF8EBC5FFF8EBC5FFF8EBC5FFD5BA
+      94FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00D5BA94FFF0E0C0FFE1C1
+      80FFE1C180FFE1C180FFE1C180FFE1C180FFE1C180FFE1C180FFF0E0C0FFD5BA
+      94FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00D5BA94FFEBD8BBFFD6B1
+      77FFD6B177FFD6B177FFFFFFFFFFD6B177FFD6B177FFD6B177FFEBD8BBFFD5BA
+      94FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00D5BA94FFECD9BCFFD8B3
+      79FFD8B379FFD8B379FFFFFFFFFFD8B379FFD8B379FFD8B379FFECD9BCFFD5BA
+      94FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00D5BA94FFEEDDBEFFDCBA
+      7CFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFDCBA7CFFEEDDBEFFD5BA
+      94FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00D5BA94FFF0E1C0FFE1C2
+      80FFE1C280FFE1C280FFFFFFFFFFE1C280FFE1C280FFE1C280FFF0E1C0FFD5BA
+      94FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00D5BA94FFF3E5C2FFE7CA
+      84FFE7CA84FFE7CA84FFFFFFFFFFE7CA84FFE7CA84FFE7CA84FFF3E5C2FFD5BA
+      94FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00D5BA94FFF6E9C4FFECD2
+      89FFECD289FFECD289FFECD289FFECD289FFECD289FFECD289FFF6E9C4FFD5BA
+      94FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00D5BA94FFF8EBC5FFF8EB
+      C5FFF8EBC5FFF8EBC5FFF8EBC5FFF8EBC5FFF8EBC5FFF8EBC5FFF8EBC5FFD5BA
+      94FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00D5BA94FFD5BA94FFD5BA
+      94FFD5BA94FFD5BA94FFD5BA94FFD5BA94FFD5BA94FFD5BA94FFD5BA94FFD5BA
+      94FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00FFFFFF00FFFFFF00
     }
   end
   object Process1: TAsyncProcess
@@ -41538,7 +42277,6 @@ object MainForm: TMainForm
       Hint = 'Close File'
       ImageIndex = 11
       OnExecute = FileCloseExecute
-      ShortCut = 16499
     end
     object FileRevert: TAction
       Category = 'File'
@@ -41585,14 +42323,12 @@ object MainForm: TMainForm
       Hint = 'Undo'
       ImageIndex = 17
       OnExecute = EditUndoExecute
-      ShortCut = 16474
     end
     object EditRedo: TAction
       Category = 'Edit'
       Caption = 'Redo'
       ImageIndex = 18
       OnExecute = EditRedoExecute
-      ShortCut = 24666
     end
     object EditSelectAll: TEditSelectAll
       Category = 'Edit'
@@ -41600,7 +42336,6 @@ object MainForm: TMainForm
       Hint = 'Select All'
       ImageIndex = 19
       OnExecute = EditSelectAllExecute
-      ShortCut = 16449
     end
     object EditCut: TEditCut
       Category = 'Edit'
@@ -41608,7 +42343,6 @@ object MainForm: TMainForm
       Hint = 'Cut'
       ImageIndex = 20
       OnExecute = EditCutExecute
-      ShortCut = 16472
     end
     object EditCopy: TEditCopy
       Category = 'Edit'
@@ -41616,7 +42350,6 @@ object MainForm: TMainForm
       Hint = 'Copy'
       ImageIndex = 21
       OnExecute = EditCopyExecute
-      ShortCut = 16451
     end
     object EditPaste: TEditPaste
       Category = 'Edit'
@@ -41624,7 +42357,6 @@ object MainForm: TMainForm
       Hint = 'Paste'
       ImageIndex = 22
       OnExecute = EditPasteExecute
-      ShortCut = 16470
     end
     object SearchFind: TSearchFind
       Category = 'Search'
@@ -41632,21 +42364,6 @@ object MainForm: TMainForm
       Dialog.OnFind = TFindDialogFind
       ImageIndex = 23
       ShortCut = 16454
-    end
-    object SearchFindNext: TSearchFindNext
-      Category = 'Search'
-      Caption = 'Find &Next'
-      ImageIndex = 24
-      SearchFind = SearchFind
-      ShortCut = 114
-    end
-    object SearchReplace: TSearchReplace
-      Category = 'Search'
-      Caption = '&Replace'
-      Dialog.Options = [frDown, frReplace, frReplaceAll, frHidePromptOnReplace]
-      Dialog.OnFind = TFindDialogFind
-      Dialog.OnReplace = TReplaceDialogReplace
-      ImageIndex = 25
     end
     object ProjectOpen: TAction
       Category = 'Project'
@@ -41675,6 +42392,7 @@ object MainForm: TMainForm
     object ProjectSave: TAction
       Category = 'Project'
       Caption = '&Save Project'
+      Hint = 'Save All files in the project'
       ImageIndex = 10
       OnExecute = ProjectSaveExecute
     end
@@ -41708,11 +42426,52 @@ object MainForm: TMainForm
       ImageIndex = 28
       OnExecute = EditInsertDateExecute
     end
-    object ProjectCoresEdit: TAction
+    object ProjectEditCoreList: TAction
       Category = 'Project'
-      Caption = 'Add Remove IP Cores'
+      Caption = 'Edit IP Cores List'
+      Hint = 'Add or Remove Library IP cores'
       ImageIndex = 29
-      OnExecute = ProjectCoresEditExecute
+      OnExecute = ProjectEditCoreListExecute
+    end
+    object SearchFindNext: TSearchFindNext
+      Category = 'Search'
+      Caption = 'Find &Next'
+      ImageIndex = 24
+      SearchFind = SearchFind
+      ShortCut = 114
+    end
+    object SearchReplace: TSearchReplace
+      Category = 'Search'
+      Caption = '&Replace'
+      Dialog.Options = [frDown, frReplace, frReplaceAll, frHidePromptOnReplace]
+      Dialog.OnFind = TFindDialogFind
+      Dialog.OnReplace = TReplaceDialogReplace
+      ImageIndex = 25
+    end
+    object ProjectRemCore: TAction
+      Category = 'Project'
+      Caption = 'Remove IP Core'
+      Hint = 'Remove IP Core from Project'
+      ImageIndex = 30
+    end
+    object ProjectCoresAddInst: TAction
+      Category = 'Project'
+      Caption = 'Add instance'
+      Hint = 'Add IP Core Instance at cursor position'
+      ImageIndex = 31
+      OnExecute = ProjectCoresAddInstExecute
+    end
+    object ProjectAddUserFiles: TAction
+      Category = 'Project'
+      Caption = 'Add User Files'
+      ImageIndex = 32
+      OnExecute = ProjectAddUserFilesExecute
+    end
+    object ProjectRemUserFile: TAction
+      Category = 'Project'
+      Caption = 'Remove User File'
+      ImageIndex = 30
+      OnExecute = ProjectRemUserFileExecute
     end
   end
   object OpenDialog: TOpenDialog
@@ -42548,6 +43307,48 @@ object MainForm: TMainForm
           FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
         }
       end
+      object MenuItem29: TMenuItem
+        Caption = '-'
+      end
+      object MenuItem55: TMenuItem
+        Action = EditInsertDate
+        Bitmap.Data = {
+          36040000424D3604000000000000360000002800000010000000100000000100
+          20000000000000040000640000006400000000000000000000005E544B004237
+          2BFF42362BFF42362BFF42362BFF42362BFF42362BFF42362BFF42362BFF4236
+          2BFF42362BFF42362BFF42362BFF42362BFF42372BFF5E544B00746A61FFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF746A61FF776C63FFFFFF
+          FFFFFDF4E3FF001DFFFF001FFFFF001FFFFF001FFFFFD1C3AEFFC7BCB2FFC8BE
+          B3FFC7BCB2FFC7BCB2FFC7BCB1FFF4EDE7FFFFFFFFFF776C63FF7B7067FFFFFF
+          FFFFFFF8E7FF001FFFFFFFFFE7FFFFFFE7FF0020FFFFFFFAEAFFF8F2EEFFC8BE
+          B3FFF8F2EEFFF8F2EEFFC8BEB3FFF6F0EBFFFFFFFFFF7B7067FF80756BFFFFFF
+          FFFFFFFAE9FF001FFFFFFFFFE9FFFFFFE9FF0021FFFFFFFFE9FFFFFDECFFD2C4
+          B0FFFBF6F0FFF9F5F0FFC8BDB3FFF7F2EDFFFFFFFFFF80756BFF857A6FFFFFFF
+          FFFFFFFAEBFF001DFFFF001FFFFF0021FFFF002DFFFF0021FFFF001FFFFF0021
+          FFFFD2C4B0FFC8BDB3FFC9BEB4FFF8F4EFFFFFFFFFFF857A6FFF897E72FFFFFF
+          FFFFF9F4EEFFFFFCEEFFFFFEEEFFFFFFEDFF0020FFFFFFFFEDFFFFFFEDFF001F
+          FFFFFFFFF1FFFBF8F5FFC8BDB2FFF9F5F1FFFFFFFFFF897E72FF8E8277FFFFFF
+          FFFFF8F5F0FFF8F5F1FFF8F5F1FFFFFFF0FF001FFFFFFFFFF0FFFFFFF0FF001F
+          FFFFFFFFF3FFFCFAF7FFC8BDB2FFFAF7F3FFFFFFFFFF8E8277FF92877BFFFFFF
+          FFFFF9F6F3FFF9F6F4FFF9F6F4FFFFFFF3FF001DFFFF001FFFFF001FFFFF001F
+          FFFFD1C3AEFFC7BCB2FFC7BCB1FFFBF8F6FFFFFFFFFF92877BFF988B80FFFFFF
+          FFFFFCFAF8FFFCFBF9FFFCFBF9FFFEFCF9FFFFFFF8FFFFFFF8FFFFFFF8FFFFFF
+          F9FFFFFFFCFFFFFEFCFFFEFDFCFFFCFBF9FFFFFFFFFF988B80FF9F988FFFD4D3
+          D0FFD2D1CDFFD2D1CDFFD2D1CDFFD2D1CDFFD2D1CDFFD2D1CDFFD2D1CDFFD2D1
+          CDFFD2D1CDFFD2D1CDFFD2D1CDFFD2D1CDFFD4D3D0FF9F988FFFB24700FF9024
+          00FF902400FF902400FF902400FF902400FF902400FF902400FF902400FF9024
+          00FF902400FF902400FF902400FF902400FF902400FFB24700FFCB6500FFFFAA
+          1AFFFFA718FFFFA617FFFFA617FFFFA617FFFFA617FFFFA617FFFFA617FFFFA6
+          17FFFFA617FFFFA617FFFFA617FFFFA617FFFFA919FFCB6500FFC96200FFFFB8
+          51FFFFB950FFFFB950FFFFB34BFFFFB14AFFFFB14AFFFFB14AFFFFB14AFFFFB1
+          4AFFFFB14AFFFFB24AFFFFB84FFFFFB84FFFFFB750FFC96200FFCA6100FFFFE5
+          B2FF313034FF312F32FFFFF2C9FFFFECC4FFFFECC4FFFFECC4FFFFECC4FFFFEC
+          C4FFFFECC4FFFFF2C9FF312F33FF313034FFFFE5B2FFCA6100FFFFFFFFFFC860
+          00FFFF9F00FFFF9F00FFC85E00FFC95F00FFC95F00FFC95F00FFC95F00FFC95F
+          00FFC95F00FFC85E00FFFF9F00FFFF9F00FFC86000FFFFFFFFFF
+        }
+      end
     end
     object SearchMenu: TMenuItem
       Caption = '&Search'
@@ -42873,7 +43674,7 @@ object MainForm: TMainForm
     left = 152
     top = 584
     Bitmap = {
-      4C69050000001000000010000000FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      4C69060000001000000010000000FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
       FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
       FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
       FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
@@ -42937,71 +43738,39 @@ object MainForm: TMainForm
       FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
       FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
       FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00AAAAAAFFAAAA
-      AAFFAAAAAAFFAAAAAAFFAAAAAAFFAAAAAAFFAAAAAAFFAAAAAAFFAAAAAA00AAAA
-      AA00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00AAAAAAFFFFFF
-      FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFAAAAAAFFFFFFFFFFAAAAAAFFAAAA
-      AA00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00AAAAAAFFFDFD
-      FDFFFDFDFDFFFDFDFDFFFDFDFDFFFDFDFDFFAAAAAAFFEDEDEDFFEDEDEDFFAAAA
-      AAFFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00AAAAAAFFFAFA
-      FAFFFAFAFAFFFAFAFAFFFAFAFAFFFAFAFAFFAAAAAAFFAAAAAAFFAAAAAAFFAAAA
-      AAFFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00AAAAAAFFF7F7
-      F7FFF7F7F7FFF7F7F7FFF7F7F7FFF7F7F7FFF7F7F7FFF7F7F7FFF7F7F7FFAAAA
-      AAFFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00AAAAAAFFF3F3
-      F3FFF3F3F3FFF3F3F3FFF3F3F3FFF3F3F3FFF3F3F3FFF3F3F3FFF3F3F3FFAAAA
-      AAFFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00AAAAAAFFEFEF
-      EFFFEFEFEFFFEFEFEFFFEFEFEFFFEFEFEFFFEFEFEFFFEFEFEFFFEFEFEFFFAAAA
-      AAFFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00AAAAAAFFEBEB
-      EBFFEBEBEBFFEBEBEBFFEBEBEBFFEBEBEBFFEBEBEBFFEBEBEBFFEBEBEBFFAAAA
-      AAFFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00AAAAAAFFEAEA
-      EAFFEAEAEAFFEAEAEAFFEAEAEAFFEAEAEAFFEAEAEAFFEAEAEAFFEAEAEAFFAAAA
-      AAFFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00AAAAAAFFE8E8
-      E8FFE8E8E8FFE8E8E8FFE8E8E8FFE8E8E8FFE8E8E8FFE8E8E8FFE8E8E8FFAAAA
-      AAFFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00AAAAAAFFEDED
-      EDFFEDEDEDFFEDEDEDFFEDEDEDFFEDEDEDFFEDEDEDFFEDEDEDFFEDEDEDFFAAAA
-      AAFFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00AAAAAAFFF8F8
-      F8FFF8F8F8FFF8F8F8FFF8F8F8FFF8F8F8FFF8F8F8FFF8F8F8FFF8F8F8FFAAAA
-      AAFFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00AAAAAAFFAAAA
-      AAFFAAAAAAFFAAAAAAFFAAAAAAFFAAAAAAFFAAAAAAFFAAAAAAFFAAAAAAFFAAAA
-      AAFFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00B1AAA400B1AAA400B1AA
-      A400B1AAA4FFB1AAA4FFB1AAA4FFB1AAA4FFB1AAA4FFB1AAA4FFB1AAA400B1AA
-      A400B1AAA400FFFFFF00FFFFFF00FFFFFF00FFFFFF00B1AAA400B1AAA400B1AA
-      A4FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFB1AAA4FFB1AA
-      A400B1AAA400FFFFFF00FFFFFF00FFFFFF00FFFFFF0037A3CA00B1AAA4FFFDF5
-      EEFFFDF5EEFFB1AAA4FFB1AAA4FFB1AAA4FFB1AAA4FFFDF5EEFFFDF5EEFFB1AA
-      A4FF37A3CA00FFFFFF00FFFFFF00FFFFFF00FFFFFF0037A3CA00B1AAA4FFE0CE
-      C4FFB1AAA4FF37A3CA0037A3CA0037A3CA0037A3CA00B1AAA4FFE0CEC4FFB1AA
-      A4FF37A3CA00FFFFFF00FFFFFF00FFFFFF00FFFFFF0037A3CA00B1AAA4FFB99A
-      8DFFB1AAA4FF37A3CA0037A3CA0037A3CA0037A3CA00B1AAA4FFB99A8DFFB1AA
-      A4FF37A3CA00FFFFFF00FFFFFF00FFFFFF00FFFFFF0037A3CA00B1AAA4FF9D75
-      65FFB1AAA4FF37A3CA0037A3CA0037A3CA0037A3CA00B1AAA4FF9D7565FFB1AA
-      A4FF37A3CA00FFFFFF00FFFFFF00FFFFFF00FFFFFF0037A3CA0037A3CAFF37A3
-      CAFF37A3CAFF37A3CAFF37A3CAFF37A3CAFF37A3CAFF37A3CAFF37A3CAFF37A3
-      CAFF37A3CA00FFFFFF00FFFFFF00FFFFFF00FFFFFF0037A3CAFFC1FFFFFFC1FF
-      FFFFC1FFFFFFC1FFFFFFC1FFFFFFC1FFFFFFC1FFFFFFC1FFFFFFC1FFFFFFC1FF
-      FFFF37A3CAFFFFFFFF00FFFFFF00FFFFFF00FFFFFF0037A3CAFFA2F0FBFF44E0
-      F6FF44E0F6FF44E0F6FF44E0F6FF44E0F6FF44E0F6FF44E0F6FF44E0F6FFA2F0
-      FBFF37A3CAFFFFFFFF00FFFFFF00FFFFFF00FFFFFF0037A3CAFF9BECF9FF36D9
-      F3FF36D9F3FF36D9F3FF36D9F3FF36D9F3FF36D9F3FF36D9F3FF36D9F3FF9BEC
-      F9FF37A3CAFFFFFFFF00FFFFFF00FFFFFF00FFFFFF0037A3CAFFA2F0FBFF45E1
-      F6FF45E1F6FF45E1F6FF45E1F6FF45E1F6FF45E1F6FF45E1F6FF45E1F6FFA2F0
-      FBFF37A3CAFFFFFFFF00FFFFFF00FFFFFF00FFFFFF0037A3CAFFAEF6FCFF5CEC
-      F9FF5CECF9FF5CECF9FF5CECF9FF5CECF9FF5CECF9FF5CECF9FF5CECF9FFAEF6
-      FCFF37A3CAFFFFFFFF00FFFFFF00FFFFFF00FFFFFF0037A3CAFFBAFCFEFF74F8
-      FDFF74F8FDFF74F8FDFF74F8FDFF74F8FDFF74F8FDFF74F8FDFF74F8FDFFBAFC
-      FEFF37A3CAFFFFFFFF00FFFFFF00FFFFFF00FFFFFF0037A3CAFFC1FFFFFFC1FF
-      FFFFC1FFFFFFC1FFFFFFC1FFFFFFC1FFFFFFC1FFFFFFC1FFFFFFC1FFFFFFC1FF
-      FFFF37A3CAFFFFFFFF00FFFFFF00FFFFFF00FFFFFF0037A3CA0037A3CAFF37A3
-      CAFF37A3CAFF37A3CAFF37A3CAFF37A3CAFF37A3CAFF37A3CAFF37A3CAFF37A3
-      CAFF37A3CA00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00ACAEADFF8C8E8DFF8C8E8DFF8C8E
+      8DFF8C8E8DFF8C8E8DFF8C8E8DFF8C8E8DFF8C8E8DFF8C8E8DFFACAEADFFFEFC
+      FB00FFFFFF00FFFFFF00FFFFFF00FFFFFF008C8E8DFFFDFDFDFFFDFDFDFFFDFD
+      FDFFFDFDFDFFFDFDFDFFFDFDFDFFFDFDFDFFFDFDFDFFFDFDFDFF8C8E8DFFACAE
+      ADFFFDFBFA00FFFFFF00FFFFFF00FFFFFF008C8E8DFFFDFDFDFFEEEEEEFFEEEE
+      EEFFEEEEEEFFEEEEEEFFEEEEEEFFEEEEEEFFEEEEEEFFFDFDFDFFECECECFF8C8E
+      8DFFACAEADFFFDFBFA00FFFFFF00FFFFFF008C8E8DFFFDFDFDFFEEEEEEFFEEEE
+      EEFFEEEEEEFFEEEEEEFFEEEEEEFFEEEEEEFFEEEEEEFFFDFDFDFFECECECFFECEC
+      ECFF8C8E8DFFACAEADFFFFFFFF00FFFFFF008C8E8DFFFDFDFDFFEEEEEEFFEEEE
+      EEFFEEEEEEFFEEEEEEFFEEEEEEFFEEEEEEFFEEEEEEFFFDFDFDFFFDFDFDFFFDFD
+      FDFFFDFDFDFF8C8E8DFFFFFFFF00FFFFFF008C8E8DFFFDFDFDFFEEEEEEFF6464
+      FFFF6464FFFF6464FFFFEEEEEEFFEEEEEEFFEEEEEEFFEEEEEEFFEEEEEEFFEEEE
+      EEFFFDFDFDFF8C8E8DFFFFFFFF00FFFFFF008C8E8DFFFDFDFDFFEEEEEEFFEEEE
+      EEFFEEEEEEFFEEEEEEFFEEEEEEFFEEEEEEFFACAEADFFACAEADFFACAEADFFEEEE
+      EEFFFDFDFDFF8C8E8DFFFFFFFF00FFFFFF008C8E8DFFFDFDFDFFEEEEEEFFEEEE
+      EEFFEEEEEEFFEEEEEEFFEEEEEEFFEEEEEEFFEEEEEEFFEEEEEEFFEEEEEEFFEEEE
+      EEFFFDFDFDFF8C8E8DFFFFFFFF00FFFFFF008C8E8DFFFDFDFDFFEEEEEEFFEEEE
+      EEFFEEEEEEFFEEEEEEFFEEEEEEFFEEEEEEFFACAEADFFACAEADFFACAEADFFEEEE
+      EEFFFDFDFDFF8C8E8DFFFFFFFF00FFFFFF008C8E8DFFFDFDFDFFEEEEEEFF6464
+      FFFF6464FFFF6464FFFFEEEEEEFFEEEEEEFFEEEEEEFFEEEEEEFFEEEEEEFFEEEE
+      EEFFFDFDFDFF8C8E8DFFFFFFFF00FFFFFF008C8E8DFFFDFDFDFFEEEEEEFFEEEE
+      EEFFEEEEEEFFEEEEEEFFEEEEEEFFEEEEEEFFACAEADFFACAEADFFACAEADFFEEEE
+      EEFFFDFDFDFF8C8E8DFFFFFFFF00FFFFFF008C8E8DFFFDFDFDFFEEEEEEFFEEEE
+      EEFFEEEEEEFFEEEEEEFFEEEEEEFFEEEEEEFFEEEEEEFFEEEEEEFFEEEEEEFFEEEE
+      EEFFFDFDFDFF8C8E8DFFFFFFFF00FFFFFF008C8E8DFFFDFDFDFFEEEEEEFFEEEE
+      EEFFEEEEEEFFEEEEEEFFEEEEEEFFEEEEEEFFACAEADFFACAEADFFACAEADFFEEEE
+      EEFFFDFDFDFF8C8E8DFFFFFFFF00FFFFFF008C8E8DFFFDFDFDFFEEEEEEFF6464
+      FFFF6464FFFF6464FFFFEEEEEEFFEEEEEEFFEEEEEEFFEEEEEEFFEEEEEEFFEEEE
+      EEFFFDFDFDFF8C8E8DFFFFFFFF00FFFFFF008C8E8DFFFDFDFDFFFDFDFDFFFDFD
+      FDFFFDFDFDFFFDFDFDFFFDFDFDFFFDFDFDFFFDFDFDFFFDFDFDFFFDFDFDFFFDFD
+      FDFFFDFDFDFF8C8E8DFFFFFFFF00FFFFFF00ACAEADFF8C8E8DFF8C8E8DFF8C8E
+      8DFF8C8E8DFF8C8E8DFF8C8E8DFF8C8E8DFF8C8E8DFF8C8E8DFF8C8E8DFF8C8E
+      8DFF8C8E8DFFACAEADFFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
       FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
       FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
       FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
@@ -43030,6 +43799,70 @@ object MainForm: TMainForm
       F6FFAAAAAAFFFFFFFF00FFFFFF00FFFFFF00FFFFFF00AAAAAAFFAAAAAAFFAAAA
       AAFFAAAAAAFFAAAAAAFFAAAAAAFFAAAAAAFFAAAAAAFFAAAAAAFFAAAAAAFFAAAA
       AAFFAAAAAAFFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00FFFFFF00FFFFFF00000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      00000000000000000000000000000000000000000000ADADADFF000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      00000000000000000000000000009B9B9CFF787879FF767676FF6B6B6BFF8E8E
+      8EFF000000000000000000000000000000000000000000000000000000000000
+      000000000000A2A2A3FF8B8C8DFF919191FF858585FF7A7A7AFF717171FF6868
+      68FF909090FF0000000000000000000000000000000000000000000000009FA0
+      A0FF939496FFA0A0A0FF9A9A9AFF929292FF898989FF7F7F7FFF777777FF7070
+      70FF6B6B6BFF949494FF00000000000000000000000098989AFF8D8F93FFA6A6
+      A6FFA6A6A6FFA2A2A2FF9B9B9BFF949494FF8B8B8BFF858585FF7D7D7DFF7676
+      76FF707070FF696969FFACACACFFBABABBFF9B9CA0FFB1B1B1FFABABABFFA5A5
+      A5FFA4A4A4FFA2A2A2FF9D9D9DFF969696FF8D8D8DFF878787FF828282FF7C7C
+      7CFF737373FF656565FF8F8F8FFFACACACFFBABABBFFB5B5B5FF939393FF8787
+      87FF9C9C9CFFA1A1A1FF9D9D9DFF989898FF909090FF898989FF828282FF7776
+      76FF7A7D83FF54637CFF969696FF999999FF9A9B9BFFB3B3B3FFA2A2A2FFA8A8
+      A8FFA8A8A8FF9F9F9FFF9A9A9AFF959595FF8E8E8EFF838383FF84878FFF5C6C
+      87FF81838CFF5B6F8EFF00000000ADADADFF858585FF8D8D8DFFA8A8A8FFA7A7
+      A7FFA0A0A0FF9B9B9BFF949494FF878787FF84878EFF616F85FF8C909AFF5C72
+      94FFB1B3B7FF8597B5FF0000000000000000A1A1A1FF747474FF767676FF9393
+      93FF919191FF808081FF828791FF5A6B88FF8F939EFF5C7092FFAFB1B6FF889C
+      BEFF0000000098A8C1FF0000000000000000000000009C9C9CFF606060FF6969
+      69FF858891FF455E89FF8A8F9BFF5D7295FFACAFB6FF899DBFFF000000009AAB
+      C9FF000000000000000000000000000000000000000000000000959595FF6060
+      60FF91939DFF486494FFA3A6ACFF8A9EC0FF0000000098AAC8FF000000000000
+      000000000000000000000000000000000000000000000000000000000000ABAB
+      ABFFAFB0B3FF859ABDFF00000000A0B0CDFF0000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000009DAECBFF00000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF005B9398005B9398005B93
+      980081A2A6FF81A2A6FF81A2A6FF81A2A6FF81A2A6FF5B9398005B9398005B93
+      9800FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF005B9398005B93980081A2
+      A6FF81A2A6FF9BE2EDFF9BE2EDFF9BE2EDFF81A2A6FF81A2A6FF5B9398005B93
+      9800FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF005B9398005B93980081A2
+      A6FF9BE2EDFFA7C6C9FFA7C6C9FFA7C6C9FF9BE2EDFF81A2A6FF5B9398005B93
+      9800FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF005B9398005B93980081A2
+      A6FF9FC3C6FF9FC3C6FFE3F3F4FF9FC3C6FF9FC3C6FF81A2A6FF5B9398005B93
+      9800FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF005B9398005B939800A7B1
+      B4FFD5EDEFFFD5EDEFFFD5EDEFFFD5EDEFFFD5EDEFFFA7B1B4FF5B9398005B93
+      9800FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF005B9398005B939800A7B1
+      B4FFA7B1B4FFD6EDEFFFD6EDEFFFD6EDEFFFA7B1B4FFA7B1B4FF5B9398005B93
+      9800FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00A7B1B400A7B1B400B8A1
+      64FFA7B1B4FFA7B1B4FFA7B1B4FFA7B1B4FFA7B1B4FFB8A164FFA7B1B400A7B1
+      B400FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00A7B1B400B8A164FFFFE2
+      7CFFCEBF8DFFFFFFFFFFFFFFFFFFFFFFFFFFCEBF8DFFFFE27CFFB8A164FFA7B1
+      B400FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00B8A164FFF9DA7BFFF9DA
+      7BFFF9DA7BFFCBBB8CFFEDEDEDFFCBBB8CFFF9DA7BFFF9DA7BFFF9DA7BFFB8A1
+      64FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00B8A164FFF1CE7AFFF1CE
+      7AFFF1CE7AFFF1CE7AFFC7B58CFFF1CE7AFFF1CE7AFFF1CE7AFFF1CE7AFFB8A1
+      64FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00B8A164FFEFD49AFFEAC5
+      78FFEAC578FFEAC578FFEAC578FFEAC578FFEAC578FFEAC578FFEFD49AFFB8A1
+      64FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00B8A164FFEFD4
+      9AFFEFD49AFFEFD49AFFEFD49AFFEFD49AFFEFD49AFFEFD49AFFB8A164FFFFFF
+      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00B8A1
+      64FFB8A164FFB8A164FFB8A164FFB8A164FFB8A164FFB8A164FFFFFFFF00FFFF
+      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
       FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
       FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
       FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
@@ -44151,16 +44984,210 @@ object MainForm: TMainForm
     left = 528
     top = 640
   end
-  object M_EdPrjCores: TPopupMenu
+  object PrjTreeMenu: TPopupMenu
+    Images = ImageList
     left = 448
     top = 528
-    object EdPrjCores: TMenuItem
-      Action = ProjectCoresEdit
+    object MI_AddCore: TMenuItem
+      Action = ProjectEditCoreList
+      Bitmap.Data = {
+        36040000424D3604000000000000360000002800000010000000100000000100
+        2000000000000004000064000000640000000000000000000000C0C0C000C0C0
+        C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0
+        C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0
+        C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0
+        C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0
+        C000C0C0C000800000FFC0C0C000800000FFC0C0C000800000FFC0C0C0008000
+        00FFC0C0C000800000FFC0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0
+        C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0
+        C000C0C0C000800000FFC0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0
+        C000C0C0C000800000FFC0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0
+        C000800000FF800000FF800000FFC0C0C000C0C0C000C0C0C000C0C0C000C0C0
+        C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0
+        C000C0C0C000800000FFC0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0
+        C000C0C0C000800000FFC0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0
+        C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000000000FF0000
+        00FF000000FF000000FF000000FF000000FFC0C0C000C0C0C000000000FF0000
+        00FF000000FF000000FF000000FF000000FFC0C0C000C0C0C000000000FF00FF
+        FFFFFFFFFFFF00FFFFFFFFFFFFFF000000FF000000FF000000FF000000FF00FF
+        FFFFFFFFFFFF00FFFFFFFFFFFFFF000000FF000000FF000000FF000000FF0000
+        00FF000000FF000000FF000000FF000000FFFFFFFFFF000000FF000000FF0000
+        00FF000000FF000000FF000000FF000000FFFFFFFFFF000000FFC0C0C0000000
+        00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000FFC0C0C0000000
+        00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000FFC0C0C0000000
+        00FFFFFFFFFF808080FF808080FF808080FFFFFFFFFF000000FFC0C0C0000000
+        00FFFFFFFFFF808080FF808080FF808080FFFFFFFFFF000000FFC0C0C0000000
+        00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000FFC0C0C0000000
+        00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000FFC0C0C0000000
+        00FFFFFFFFFF808080FF808080FF808080FFFFFFFFFF000000FFC0C0C0000000
+        00FFFFFFFFFF808080FF808080FF808080FFFFFFFFFF000000FFC0C0C0000000
+        00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000FFC0C0C0000000
+        00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000FFC0C0C0000000
+        00FF000000FF000000FF000000FF000000FF000000FF000000FFC0C0C0000000
+        00FF000000FF000000FF000000FF000000FF000000FF000000FF
+      }
+    end
+    object MI_RemCore: TMenuItem
+      Action = ProjectRemCore
+      Bitmap.Data = {
+        36040000424D3604000000000000360000002800000010000000100000000100
+        2000000000000004000064000000640000000000000000000000FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00D5BA94FFD5BA94FFD5BA94FFD5BA94FFD5BA94FFD5BA94FFD5BA94FFD5BA
+        94FFD5BA94FFD5BA94FFD5BA94FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00D5BA94FFF8EBC5FFF8EBC5FFF8EBC5FFF8EBC5FFF8EBC5FFF8EBC5FFF8EB
+        C5FFF8EBC5FFF8EBC5FFD5BA94FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00D5BA94FFF6E9C4FFECD289FFECD289FFECD289FFECD289FFECD289FFECD2
+        89FFECD289FFF6E9C4FFD5BA94FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00D5BA94FFF3E5C2FFE7CA84FFE7CA84FFE7CA84FFE7CA84FFE7CA84FFE7CA
+        84FFE7CA84FFF3E5C2FFD5BA94FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00D5BA94FFF0E1C0FFE1C280FFE1C280FFE1C280FFE1C280FFE1C280FFE1C2
+        80FFE1C280FFF0E1C0FFD5BA94FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00D5BA94FFEEDDBEFFDCBA7CFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+        FFFFDCBA7CFFEEDDBEFFD5BA94FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00D5BA94FFECD9BCFFD8B379FFD8B379FFD8B379FFD8B379FFD8B379FFD8B3
+        79FFD8B379FFECD9BCFFD5BA94FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00D5BA94FFEBD8BBFFD6B177FFD6B177FFD6B177FFD6B177FFD6B177FFD6B1
+        77FFD6B177FFEBD8BBFFD5BA94FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00D5BA94FFF0E0C0FFE1C180FFE1C180FFE1C180FFE1C180FFE1C180FFE1C1
+        80FFE1C180FFF0E0C0FFD5BA94FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00D5BA94FFF8EBC5FFF8EBC5FFF8EBC5FFF8EBC5FFF8EBC5FFF8EBC5FFF8EB
+        C5FFF8EBC5FFF8EBC5FFD5BA94FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00D5BA94FFD5BA94FFD5BA94FFD5BA94FFD5BA94FFD5BA94FFD5BA94FFD5BA
+        94FFD5BA94FFD5BA94FFD5BA94FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00
+      }
+    end
+    object MI_AddInstance: TMenuItem
+      Action = ProjectCoresAddInst
+      Bitmap.Data = {
+        36040000424D3604000000000000360000002800000010000000100000000100
+        2000000000000004000064000000640000000000000000000000C0C0C000C0C0
+        C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0
+        C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0
+        C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0
+        C000000000FF000000FF000000FF000000FF000000FF000000FFC0C0C000C0C0
+        C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0
+        C000000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000FFC0C0C000C0C0
+        C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0
+        C000000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000FFC0C0C000C0C0
+        C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0
+        C000000000FF000000FF000000FF000000FF000000FF000000FFC0C0C000C0C0
+        C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0
+        C000000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000FFC0C0C000C0C0
+        C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0
+        C000000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000FF000000FF0000
+        00FF000000FF000000FF000000FF000000FFC0C0C000800000FFC0C0C000C0C0
+        C000000000FF000000FF000000FF000000FF000000FF000000FF000000FFFFFF
+        FFFFFFFF00FFFFFFFFFFFFFF00FF000000FFC0C0C000800000FF800000FFC0C0
+        C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000000000FFFFFF
+        00FFFFFFFFFFFFFF00FFFFFFFFFF000000FF800000FF800000FF800000FF8000
+        00FFC0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000000000FF0000
+        00FF000000FF000000FF000000FF000000FFC0C0C000800000FF800000FFC0C0
+        C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0
+        C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000800000FFC0C0C000C0C0
+        C000000000FF000000FF000000FF000000FF000000FF000000FFC0C0C000C0C0
+        C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0
+        C000000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000FFC0C0C000C0C0
+        C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0
+        C000000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000FFC0C0C000C0C0
+        C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0
+        C000000000FF000000FF000000FF000000FF000000FF000000FFC0C0C000C0C0
+        C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0
+        C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000C0C0C000
+      }
+    end
+    object MI_AddUserFile: TMenuItem
+      Action = ProjectAddUserFiles
+      Bitmap.Data = {
+        36040000424D3604000000000000360000002800000010000000100000000100
+        2000000000000004000064000000640000000000000000000000FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00D5BA94FFD5BA94FFD5BA94FFD5BA94FFD5BA94FFD5BA94FFD5BA94FFD5BA
+        94FFD5BA94FFD5BA94FFD5BA94FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00D5BA94FFF8EBC5FFF8EBC5FFF8EBC5FFF8EBC5FFF8EBC5FFF8EBC5FFF8EB
+        C5FFF8EBC5FFF8EBC5FFD5BA94FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00D5BA94FFF6E9C4FFECD289FFECD289FFECD289FFECD289FFECD289FFECD2
+        89FFECD289FFF6E9C4FFD5BA94FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00D5BA94FFF3E5C2FFE7CA84FFE7CA84FFE7CA84FFFFFFFFFFE7CA84FFE7CA
+        84FFE7CA84FFF3E5C2FFD5BA94FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00D5BA94FFF0E1C0FFE1C280FFE1C280FFE1C280FFFFFFFFFFE1C280FFE1C2
+        80FFE1C280FFF0E1C0FFD5BA94FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00D5BA94FFEEDDBEFFDCBA7CFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+        FFFFDCBA7CFFEEDDBEFFD5BA94FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00D5BA94FFECD9BCFFD8B379FFD8B379FFD8B379FFFFFFFFFFD8B379FFD8B3
+        79FFD8B379FFECD9BCFFD5BA94FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00D5BA94FFEBD8BBFFD6B177FFD6B177FFD6B177FFFFFFFFFFD6B177FFD6B1
+        77FFD6B177FFEBD8BBFFD5BA94FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00D5BA94FFF0E0C0FFE1C180FFE1C180FFE1C180FFE1C180FFE1C180FFE1C1
+        80FFE1C180FFF0E0C0FFD5BA94FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00D5BA94FFF8EBC5FFF8EBC5FFF8EBC5FFF8EBC5FFF8EBC5FFF8EBC5FFF8EB
+        C5FFF8EBC5FFF8EBC5FFD5BA94FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00D5BA94FFD5BA94FFD5BA94FFD5BA94FFD5BA94FFD5BA94FFD5BA94FFD5BA
+        94FFD5BA94FFD5BA94FFD5BA94FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00
+      }
+    end
+    object MI_RemUserFile: TMenuItem
+      Action = ProjectRemUserFile
+      Bitmap.Data = {
+        36040000424D3604000000000000360000002800000010000000100000000100
+        2000000000000004000064000000640000000000000000000000FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00D5BA94FFD5BA94FFD5BA94FFD5BA94FFD5BA94FFD5BA94FFD5BA94FFD5BA
+        94FFD5BA94FFD5BA94FFD5BA94FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00D5BA94FFF8EBC5FFF8EBC5FFF8EBC5FFF8EBC5FFF8EBC5FFF8EBC5FFF8EB
+        C5FFF8EBC5FFF8EBC5FFD5BA94FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00D5BA94FFF6E9C4FFECD289FFECD289FFECD289FFECD289FFECD289FFECD2
+        89FFECD289FFF6E9C4FFD5BA94FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00D5BA94FFF3E5C2FFE7CA84FFE7CA84FFE7CA84FFE7CA84FFE7CA84FFE7CA
+        84FFE7CA84FFF3E5C2FFD5BA94FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00D5BA94FFF0E1C0FFE1C280FFE1C280FFE1C280FFE1C280FFE1C280FFE1C2
+        80FFE1C280FFF0E1C0FFD5BA94FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00D5BA94FFEEDDBEFFDCBA7CFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+        FFFFDCBA7CFFEEDDBEFFD5BA94FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00D5BA94FFECD9BCFFD8B379FFD8B379FFD8B379FFD8B379FFD8B379FFD8B3
+        79FFD8B379FFECD9BCFFD5BA94FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00D5BA94FFEBD8BBFFD6B177FFD6B177FFD6B177FFD6B177FFD6B177FFD6B1
+        77FFD6B177FFEBD8BBFFD5BA94FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00D5BA94FFF0E0C0FFE1C180FFE1C180FFE1C180FFE1C180FFE1C180FFE1C1
+        80FFE1C180FFF0E0C0FFD5BA94FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00D5BA94FFF8EBC5FFF8EBC5FFF8EBC5FFF8EBC5FFF8EBC5FFF8EBC5FFF8EB
+        C5FFF8EBC5FFF8EBC5FFD5BA94FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00D5BA94FFD5BA94FFD5BA94FFD5BA94FFD5BA94FFD5BA94FFD5BA94FFD5BA
+        94FFD5BA94FFD5BA94FFD5BA94FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00
+      }
     end
   end
   object SynIniSyn: TSynIniSyn
     DefaultFilter = 'INI Files (*.ini)|*.ini'
+    Enabled = False
     left = 224
-    top = 592
+    top = 584
   end
 end

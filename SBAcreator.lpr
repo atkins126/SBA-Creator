@@ -7,10 +7,11 @@ uses
   cthreads,
   {$ENDIF}{$ENDIF}
   Interfaces, // this includes the LCL widgetset
-  Forms, HistoryLazarus, uecontrols, MainFormU, synhighlighterverilog,
-  synhighlightersba, uSynEditPopupEdit, versionsupportu, SBAProgContrlrU,
-  AboutFormU, sbasnippetu, configformu, PrjWizU, dwfileU, DebugFormU,
-  SBAProjectU, floatformu, CoresPrjEdFormU;
+  Forms, lazcontrols, runtimetypeinfocontrols, HistoryLazarus, uecontrols,
+  MainFormU, synhighlighterverilog, synhighlightersba, uSynEditPopupEdit,
+  versionsupportu, SBAProgContrlrU, AboutFormU, sbasnippetu, configformu,
+  PrjWizU, dwfileU, DebugFormU, SBAProjectU, floatformu, CoresPrjEdFormU,
+  LibraryFormU, UtilsU;
 
 {$R *.res}
 
@@ -23,6 +24,7 @@ begin
   Application.CreateForm(TprjWizForm, prjWizForm);
   Application.CreateForm(TFloatForm, FloatForm);
   Application.CreateForm(TCoresPrjEdForm, CoresPrjEdForm);
+  Application.CreateForm(TLibraryForm, LibraryForm);
   Application.Run;
 end.
 

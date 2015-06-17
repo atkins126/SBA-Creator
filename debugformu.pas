@@ -27,6 +27,8 @@ var
   DebugForm: TDebugForm=nil;
 
 function infoln(M:String):boolean;
+function infoln(I:integer):boolean;
+function infoln(b:boolean):boolean;
 
 implementation
 
@@ -41,6 +43,16 @@ begin
 {$ENDIF}
   DebugForm.Memo.Append(M);
   result:=true;
+end;
+
+function infoln(I: integer): boolean;
+begin
+  result:=infoln(inttostr(i));
+end;
+
+function infoln(b: boolean): boolean;
+begin
+  if b then result:=infoln('true') else result:=infoln('false');
 end;
 
 { TDebugForm }

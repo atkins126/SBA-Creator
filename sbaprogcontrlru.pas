@@ -44,7 +44,7 @@ type
 
 implementation
 
-uses ConfigFormU;
+uses ConfigFormU, UtilsU;
 
 { TSBAContrlrProg }
 

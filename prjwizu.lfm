@@ -2,11 +2,11 @@ object prjWizForm: TprjWizForm
   Left = 1049
   Height = 407
   Top = 255
-  Width = 400
+  Width = 413
   BorderStyle = bsDialog
   Caption = 'New Project Wizard'
   ClientHeight = 407
-  ClientWidth = 400
+  ClientWidth = 413
   OnShow = FormShow
   Position = poMainFormCenter
   LCLVersion = '1.4.0.4'
@@ -14,18 +14,18 @@ object prjWizForm: TprjWizForm
     Left = 0
     Height = 42
     Top = 365
-    Width = 400
+    Width = 413
     Align = alBottom
     BorderSpacing.CellAlignHorizontal = ccaCenter
     BorderSpacing.CellAlignVertical = ccaCenter
     BevelOuter = bvNone
     ClientHeight = 42
-    ClientWidth = 400
+    ClientWidth = 413
     Color = clBlack
     ParentColor = False
     TabOrder = 1
     object B_Ok: TBitBtn
-      Left = 230
+      Left = 243
       Height = 32
       Top = 5
       Width = 80
@@ -34,7 +34,7 @@ object prjWizForm: TprjWizForm
       Caption = 'Create It'
       Kind = bkOK
       ModalResult = 1
-      TabOrder = 0
+      TabOrder = 2
       Visible = False
     end
     object B_Previous: TBitBtn
@@ -82,7 +82,7 @@ object prjWizForm: TprjWizForm
         FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00
       }
       OnClick = B_PreviousClick
-      TabOrder = 1
+      TabOrder = 0
       Visible = False
     end
     object B_Cancel: TBitBtn
@@ -91,7 +91,7 @@ object prjWizForm: TprjWizForm
       AnchorSideTop.Control = NavPanel
       AnchorSideRight.Control = NavPanel
       AnchorSideRight.Side = asrCenter
-      Left = 160
+      Left = 166
       Height = 32
       Top = 5
       Width = 80
@@ -138,10 +138,10 @@ object prjWizForm: TprjWizForm
         FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00
       }
       ModalResult = 2
-      TabOrder = 2
+      TabOrder = 1
     end
     object B_Next: TBitBtn
-      Left = 315
+      Left = 328
       Height = 32
       Top = 5
       Width = 80
@@ -194,36 +194,13 @@ object prjWizForm: TprjWizForm
     Left = 0
     Height = 330
     Top = 35
-    Width = 400
-    PageIndex = 2
+    Width = 413
+    PageIndex = 3
     Align = alClient
     TabOrder = 0
     TabStop = True
     object StartPage: TPage
       OnBeforeShow = PageBeforeShow
-      object Ed_PrjLocation: TDirectoryEdit
-        Left = 24
-        Height = 23
-        Top = 80
-        Width = 351
-        DialogTitle = 'Choose Project location'
-        ShowHidden = False
-        ButtonWidth = 23
-        NumGlyphs = 1
-        Flat = True
-        Anchors = [akTop, akLeft, akRight]
-        MaxLength = 0
-        TabOrder = 1
-        OnChange = Ed_PrjNameChange
-      end
-      object Label3: TLabel
-        Left = 24
-        Height = 15
-        Top = 64
-        Width = 89
-        Caption = 'Project Location:'
-        ParentColor = False
-      end
       object Ed_PrjName: TLabeledEdit
         Left = 24
         Height = 23
@@ -244,6 +221,29 @@ object prjWizForm: TprjWizForm
         OnChange = Ed_PrjNameChange
         OnEditingDone = Ed_PrjNameEditingDone
       end
+      object Ed_PrjLocation: TDirectoryEdit
+        Left = 24
+        Height = 23
+        Top = 80
+        Width = 364
+        DialogTitle = 'Choose Project location'
+        ShowHidden = False
+        ButtonWidth = 23
+        NumGlyphs = 1
+        Flat = True
+        Anchors = [akTop, akLeft, akRight]
+        MaxLength = 0
+        TabOrder = 1
+        OnChange = Ed_PrjNameChange
+      end
+      object Label3: TLabel
+        Left = 24
+        Height = 15
+        Top = 64
+        Width = 89
+        Caption = 'Project Location:'
+        ParentColor = False
+      end
       object Image1: TImage
         Left = 228
         Height = 23
@@ -255,13 +255,13 @@ object prjWizForm: TprjWizForm
         Left = 24
         Height = 72
         Top = 240
-        Width = 351
+        Width = 365
         Anchors = [akTop, akLeft, akRight]
         BorderStyle = sbsSingle
         Caption = 'Project names can only start with a character ''a''..''z'' or ''A''..''Z''. A valid project name can contain alphanumeric chars and underscore ''_''. You can change the location for your project with the folder button that is at right of "Project location" edit box.'
         Color = clCream
         ParentColor = False
-        TabOrder = 2
+        TabOrder = 4
         Transparent = False
       end
       object CB_CreateSubDir: TCheckBox
@@ -273,7 +273,7 @@ object prjWizForm: TprjWizForm
         Checked = True
         OnChange = Ed_PrjNameChange
         State = cbChecked
-        TabOrder = 3
+        TabOrder = 2
       end
       object Label5: TLabel
         Left = 24
@@ -296,7 +296,8 @@ object prjWizForm: TprjWizForm
         Left = 24
         Height = 30
         Top = 184
-        Width = 351
+        Width = 365
+        Anchors = [akTop, akLeft, akRight]
         Caption = 'Create Project from Template'
         Glyph.Data = {
           36040000424D3604000000000000360000002800000010000000100000000100
@@ -335,7 +336,7 @@ object prjWizForm: TprjWizForm
           FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00
         }
         OnClick = B_PrjLoadFromTemplateClick
-        TabOrder = 4
+        TabOrder = 3
       end
     end
     object Page2: TPage
@@ -344,7 +345,7 @@ object prjWizForm: TprjWizForm
         Left = 16
         Height = 23
         Top = 80
-        Width = 365
+        Width = 380
         Anchors = [akTop, akLeft, akRight]
         EditLabel.AnchorSideLeft.Control = Ed_PrjAuthor
         EditLabel.AnchorSideRight.Control = Ed_PrjAuthor
@@ -353,7 +354,7 @@ object prjWizForm: TprjWizForm
         EditLabel.Left = 16
         EditLabel.Height = 15
         EditLabel.Top = 62
-        EditLabel.Width = 365
+        EditLabel.Width = 380
         EditLabel.Caption = 'Author:'
         EditLabel.ParentColor = False
         MaxLength = 60
@@ -364,7 +365,7 @@ object prjWizForm: TprjWizForm
         Left = 16
         Height = 23
         Top = 32
-        Width = 365
+        Width = 380
         Anchors = [akTop, akLeft, akRight]
         EditLabel.AnchorSideLeft.Control = Ed_PrjTitle
         EditLabel.AnchorSideRight.Control = Ed_PrjTitle
@@ -373,7 +374,7 @@ object prjWizForm: TprjWizForm
         EditLabel.Left = 16
         EditLabel.Height = 15
         EditLabel.Top = 14
-        EditLabel.Width = 365
+        EditLabel.Width = 380
         EditLabel.Caption = 'Title:'
         EditLabel.ParentColor = False
         MaxLength = 60
@@ -448,7 +449,7 @@ object prjWizForm: TprjWizForm
         Left = 16
         Height = 58
         Top = 178
-        Width = 365
+        Width = 380
         Anchors = [akTop, akLeft, akRight]
         Lines.Strings = (
           'Line1'
@@ -470,7 +471,7 @@ object prjWizForm: TprjWizForm
         Left = 16
         Height = 56
         Top = 256
-        Width = 365
+        Width = 380
         Anchors = [akTop, akLeft, akRight]
         BorderStyle = sbsSingle
         Caption = 'Please fill the data in this form, It will be placed as comments in the Top file of your project. The title is used as a short description of 60 characters max,  the description field is constrain to 240 chars.'
@@ -510,14 +511,14 @@ object prjWizForm: TprjWizForm
         Left = 8
         Height = 128
         Top = 26
-        Width = 384
+        Width = 398
         AlternateColor = clCream
-        Anchors = [akTop]
+        Anchors = [akTop, akLeft, akRight]
         AutoFillColumns = True
         Columns = <        
           item
             Title.Caption = 'PortName'
-            Width = 193
+            Width = 207
           end        
           item
             ButtonStyle = cbsPickList
@@ -557,7 +558,7 @@ object prjWizForm: TprjWizForm
         OnEditingDone = Ed_TopInterfaceEditingDone
         OnPrepareCanvas = Ed_TopInterfacePrepareCanvas
         ColWidths = (
-          193
+          207
           60
           30
           50
@@ -568,7 +569,7 @@ object prjWizForm: TprjWizForm
         Left = 8
         Height = 144
         Top = 176
-        Width = 144
+        Width = 152
         ItemHeight = 0
         OnDblClick = LibIpCoreListDblClick
         OnMouseLeave = ListMouseLeave
@@ -577,10 +578,10 @@ object prjWizForm: TprjWizForm
         TabOrder = 1
       end
       object PrjIpCoreList: TListBox
-        Left = 248
+        Left = 250
         Height = 144
         Top = 176
-        Width = 144
+        Width = 156
         Anchors = [akTop, akRight]
         ItemHeight = 0
         OnDblClick = PrjIpCoreListDblClick
@@ -590,10 +591,11 @@ object prjWizForm: TprjWizForm
         TabOrder = 2
       end
       object B_CoreAdd: TBitBtn
-        Left = 160
+        Left = 168
         Height = 30
         Top = 208
-        Width = 80
+        Width = 73
+        Anchors = [akTop, akLeft, akRight]
         Caption = 'Add'
         Glyph.Data = {
           36040000424D3604000000000000360000002800000010000000100000000100
@@ -635,10 +637,11 @@ object prjWizForm: TprjWizForm
         TabOrder = 3
       end
       object B_CoreDel: TBitBtn
-        Left = 160
+        Left = 168
         Height = 30
         Top = 256
-        Width = 80
+        Width = 73
+        Anchors = [akTop, akLeft, akRight]
         Caption = 'Remove'
         Glyph.Data = {
           36040000424D3604000000000000360000002800000010000000100000000100
@@ -681,13 +684,152 @@ object prjWizForm: TprjWizForm
         TabOrder = 4
       end
       object Label8: TLabel
-        Left = 248
+        Left = 250
         Height = 15
         Top = 160
         Width = 76
         Anchors = [akTop, akRight]
         Caption = 'Project library:'
         ParentColor = False
+      end
+    end
+    object Page4: TPage
+      OnBeforeShow = PageBeforeShow
+      object B_AddFile: TBitBtn
+        Left = 322
+        Height = 30
+        Top = 288
+        Width = 75
+        Caption = 'Add'
+        Glyph.Data = {
+          36040000424D3604000000000000360000002800000010000000100000000100
+          20000000000000040000640000006400000000000000000000000000000D0000
+          002A00000055000000710000007F0000007F0000007F0000007F0000007F0000
+          007F000000730000005F0000003F0000002000000006FFFFFF00000000132C2C
+          2CAD333333FF333333FF333333FF333333FF333333FF333333FF333333FF3333
+          33FF2F2F2FFF272727FD1B1B1BC30000004C00000015FFFFFF00000000153333
+          33FFE6E6E6FFE6E6E6FFE7E7E7FFE7E7E7FFE7E7E7FFE7E7E7FFE3E3E3FFD9D9
+          D9FFBFBFBFFF959595FF1C1C1CFC000000690000003100000014000000153333
+          33FFE7E7E7FFE8E8E8FFE8E8E8FFEAEAEAFFEAEAEAFFEBEBEBFFDCDCDCFFBBBB
+          BBFF9C9C9CFF333333FF333333FF333333FF0000005B0000003C000000153333
+          33FFE9E9E9FFCFCFCFFFD0D0D0FFD1D1D1FFD2D2D2FFD3D3D3FFC0C0C0FF9696
+          96FF7A7A7AFF333333FF2B2BFFFF333333FF0000007000000050000000153333
+          33FFECECECFF9B9B9BFF9B9B9BFF9B9B9BFF9B9B9BFF9B9B9BFF909090FF3333
+          33FF333333FF333333FF2B2BFFFF333333FF333333FF333333FF000000153333
+          33FFEFEFEFFFF1F1F1FFF4F4F4FFF6F6F6FFF8F8F8FFFAFAFAFFF6F6F6FF3333
+          33FF4646FFFF4545FFFF4646FFFF4646FFFF4646FFFF333333FF000000153333
+          33FFF2F2F2FFD6D6D6FFD8D8D8FFDADADAFFDBDBDBFFDCDCDCFFDCDCDCFF3333
+          33FF333333FF333333FF5C5CFFFF333333FF333333FF333333FF000000153333
+          33FFF7F7F7FF9B9B9BFF9B9B9BFF9B9B9BFF9B9B9BFF9B9B9BFF9B9B9BFF9B9B
+          9BFF979797FF333333FF5C5CFFFF333333FF00000007FFFFFF00000000153333
+          33FFFAFAFAFFFCFCFCFFFDFDFDFFFEFEFEFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFF333333FF333333FF333333FF00000000FFFFFF00000000153333
+          33FFFDFDFDFFDCDCDCFFDCDCDCFFDDDDDDFFDDDDDDFFDDDDDDFFDDDDDDFFDDDD
+          DDFFDDDDDDFFFCFCFCFF333333FE0000000700000000FFFFFF00000000133333
+          33FFFEFEFEFF9B9B9BFF9B9B9BFF9B9B9BFF9B9B9BFF444444FF3B3B3BFF3C3C
+          3CFF3C3C3CFF5E5E5EFF333333EE0000000300000000FFFFFF000000000D3333
+          33FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF3D3D3DFFFAC138FFFECB
+          3BFFE1BF49FF565654FF323232860000000000000000FFFFFF00000000073333
+          33FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF424242FFFFCC3CFFE3C3
+          4AFF585854FF32323286000000000000000000000000FFFFFF00000000023333
+          33FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF353535FFD8BC4DFF5858
+          55FF3333338500000000000000000000000000000000FFFFFF00000000003333
+          3396333333FF333333FF333333FF333333FF333333FF333333FF343433EE3333
+          33840000000000000000000000000000000000000000FFFFFF00
+        }
+        OnClick = B_AddFileClick
+        TabOrder = 0
+      end
+      object B_RemoveFile: TBitBtn
+        Left = 232
+        Height = 30
+        Top = 288
+        Width = 75
+        Caption = 'Remove'
+        Glyph.Data = {
+          36040000424D3604000000000000360000002800000010000000100000000100
+          2000000000000004000064000000640000000000000000000000000000000000
+          000E0000002B00000055000000710000007F0000007F0000007F0000007F0000
+          007F0000007F00000070000000540000002A0000000D00000000000000000000
+          00132C2C2CAD333333FF333333FF333333FF333333FF333333FF333333FF3333
+          33FF333333FF333333FF323232FC2C2C2CA80000001300000000000000000000
+          0015333333FFE6E6E6FFE6E6E6FFE7E7E7FFE7E7E7FFE7E7E7FFE0E0E0FFD2D2
+          D2FFCBCBCBFFCCCCCCFFC8C8C8FF2D2D2DFB0000003200000018000000000000
+          0015333333FFE7E7E7FFE8E8E8FFE8E8E8FFEAEAEAFFEAEAEAFFD5D5D5FFA9A9
+          A9FF949494FF949494FF929292FF202020FC0000006D00000048000000000000
+          0015333333FFE9E9E9FFCFCFCFFFD0D0D0FFD1D1D1FFD2D2D2FFB9B9B9FF8484
+          84FF6A6A6AFF6B6B6BFF797979FF191919FE0000008A00000060000000000000
+          0015333333FFECECECFF9B9B9BFF9B9B9BFF9B9B9BFF9B9B9BFF888888FF3333
+          33FF333333FF333333FF333333FF333333FF333333FF333333FF000000000000
+          0015333333FFEFEFEFFFF1F1F1FFF4F4F4FFF6F6F6FFF8F8F8FFE2E2E2FF3333
+          33FF4646FFFF4545FFFF4646FFFF4646FFFF4646FFFF333333FF000000000000
+          0015333333FFF2F2F2FFD6D6D6FFD8D8D8FFDADADAFFDBDBDBFFD5D5D5FF3333
+          33FF5C5CFFFF5C5CFFFF5C5CFFFF5C5CFFFF5C5CFFFF333333FF000000000000
+          0015333333FFF7F7F7FF9B9B9BFF9B9B9BFF9B9B9BFF9B9B9BFF9B9B9BFF3333
+          33FF333333FF333333FF333333FF333333FF333333FF333333FF000000000000
+          0015333333FFFAFAFAFFFCFCFCFFFDFDFDFFFEFEFEFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFCFCFCFF333333FE0000000E00000000000000000000
+          0015333333FFFDFDFDFFDCDCDCFFDCDCDCFFDDDDDDFFDDDDDDFFDDDDDDFFDDDD
+          DDFFDDDDDDFFDDDDDDFFFCFCFCFF333333FE0000000800000000000000000000
+          0013333333FFFEFEFEFF9B9B9BFF9B9B9BFF9B9B9BFF9B9B9BFF444444FF3B3B
+          3BFF3C3C3CFF3C3C3CFF5E5E5EFF333333EE0000000300000000000000000000
+          000E333333FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF3D3D3DFFFAC1
+          38FFFECB3BFFE1BF49FF565654FF323232860000000100000000000000000000
+          0007333333FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF424242FFFFCC
+          3CFFE3C34AFF585854FF32323286000000010000000000000000000000000000
+          0002333333FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF353535FFD8BC
+          4DFF585855FF3333338500000001000000000000000000000000000000000000
+          000033333396333333FF333333FF333333FF333333FF333333FF333333FF3434
+          33EE333333840000000000000000000000000000000000000000
+        }
+        OnClick = B_RemoveFileClick
+        TabOrder = 1
+      end
+      object UserFileList: TValueListEditor
+        Left = 16
+        Height = 248
+        Top = 32
+        Width = 381
+        AutoEdit = False
+        DefaultColWidth = 120
+        ExtendedSelect = False
+        FixedCols = 0
+        ParentShowHint = False
+        RowCount = 2
+        ScrollBars = ssAutoVertical
+        ShowHint = True
+        TabOrder = 2
+        KeyOptions = [keyUnique]
+        Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goColSizing, goRowSelect, goThumbTracking, goDblClickAutoSize, goTruncCellHints, goCellEllipsis]
+        Strings.Strings = (
+          ''
+        )
+        TitleCaptions.Strings = (
+          'Name'
+          'Path'
+        )
+        ColWidths = (
+          120
+          257
+        )
+      end
+      object Label9: TLabel
+        Left = 16
+        Height = 15
+        Top = 16
+        Width = 50
+        Caption = 'User files:'
+        ParentColor = False
+      end
+      object CheckBox1: TCheckBox
+        Left = 16
+        Height = 19
+        Top = 296
+        Width = 214
+        Caption = 'Copy files to project "user" subfolder'
+        Enabled = False
+        TabOrder = 3
+        Visible = False
       end
     end
     object EndPage: TPage
@@ -706,7 +848,7 @@ object prjWizForm: TprjWizForm
         Left = 16
         Height = 255
         Top = 24
-        Width = 368
+        Width = 379
         Anchors = [akTop, akLeft, akRight, akBottom]
         Color = clCream
         Lines.Strings = (
@@ -719,9 +861,9 @@ object prjWizForm: TprjWizForm
       object B_PrjSaveAsTemplate: TBitBtn
         Left = 16
         Height = 30
-        Top = 287
-        Width = 368
-        Anchors = [akLeft, akBottom]
+        Top = 288
+        Width = 379
+        Anchors = [akLeft, akRight, akBottom]
         Caption = 'Save Project as Template'
         Glyph.Data = {
           36040000424D3604000000000000360000002800000010000000100000000100
@@ -768,20 +910,20 @@ object prjWizForm: TprjWizForm
     Left = 0
     Height = 35
     Top = 0
-    Width = 400
+    Width = 413
     Align = alTop
     BevelOuter = bvNone
     ChildSizing.EnlargeHorizontal = crsHomogenousSpaceResize
     ChildSizing.ShrinkHorizontal = crsHomogenousSpaceResize
     ChildSizing.Layout = cclLeftToRightThenTopToBottom
-    ChildSizing.ControlsPerLine = 4
+    ChildSizing.ControlsPerLine = 5
     ClientHeight = 35
-    ClientWidth = 400
+    ClientWidth = 413
     Color = clCream
     ParentColor = False
     TabOrder = 2
     object TB_Start: TToggleBox
-      Left = 29
+      Left = 16
       Height = 24
       Top = 5
       Width = 64
@@ -798,7 +940,7 @@ object prjWizForm: TprjWizForm
       TabStop = False
     end
     object TB_Step2: TToggleBox
-      Left = 122
+      Left = 96
       Height = 24
       Top = 5
       Width = 64
@@ -808,11 +950,11 @@ object prjWizForm: TprjWizForm
       Constraints.MinHeight = 24
       Constraints.MinWidth = 64
       Enabled = False
-      TabOrder = 2
+      TabOrder = 4
       TabStop = False
     end
     object TB_Step3: TToggleBox
-      Left = 215
+      Left = 176
       Height = 24
       Top = 5
       Width = 64
@@ -822,11 +964,40 @@ object prjWizForm: TprjWizForm
       Constraints.MinHeight = 24
       Constraints.MinWidth = 64
       Enabled = False
-      TabOrder = 0
+      TabOrder = 1
       TabStop = False
     end
+    object TB_Step4: TToggleBox
+      Left = 256
+      Height = 24
+      Top = 5
+      Width = 64
+      BorderSpacing.Around = 5
+      Caption = 'Step4'
+      Constraints.MaxWidth = 64
+      Constraints.MinHeight = 24
+      Constraints.MinWidth = 64
+      Enabled = False
+      TabOrder = 2
+      TabStop = False
+    end
+    object Shape1: TShape
+      Left = 45
+      Height = 2
+      Top = 16
+      Width = 319
+      Anchors = [akTop, akLeft, akRight, akBottom]
+      Brush.Color = clBlack
+    end
+    object Shape2: TShape
+      Left = 0
+      Height = 1
+      Top = 34
+      Width = 413
+      Align = alBottom
+    end
     object TB_End: TToggleBox
-      Left = 308
+      Left = 336
       Height = 24
       Top = 5
       Width = 64
@@ -836,23 +1007,8 @@ object prjWizForm: TprjWizForm
       Constraints.MinHeight = 24
       Constraints.MinWidth = 64
       Enabled = False
-      TabOrder = 1
+      TabOrder = 0
       TabStop = False
-    end
-    object Shape1: TShape
-      Left = 45
-      Height = 2
-      Top = 16
-      Width = 306
-      Anchors = [akTop, akLeft, akRight, akBottom]
-      Brush.Color = clBlack
-    end
-    object Shape2: TShape
-      Left = 0
-      Height = 1
-      Top = 34
-      Width = 400
-      Align = alBottom
     end
   end
   object ImageList1: TImageList
@@ -959,12 +1115,12 @@ object prjWizForm: TprjWizForm
     }
   end
   object OpenDialog1: TOpenDialog
-    Options = [ofShowHelp, ofPathMustExist, ofFileMustExist, ofNoTestFileCreate, ofEnableSizing, ofViewDetail]
+    Options = [ofShowHelp, ofPathMustExist, ofFileMustExist, ofNoTestFileCreate, ofEnableSizing]
     left = 344
     top = 128
   end
   object SaveDialog1: TSaveDialog
-    Options = [ofShowHelp, ofEnableSizing, ofViewDetail]
+    Options = [ofOverwritePrompt, ofShowHelp, ofPathMustExist, ofEnableSizing]
     left = 344
     top = 192
   end

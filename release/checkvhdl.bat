@@ -1,19 +1,20 @@
 @echo off
 REM Check VHDL Syntax using GHDL
 REM (c) Miguel Risco-Castillo
-REM v1.3 2015-04-27
+REM v1.4 2015-06-15
 
 echo Cleaning previous check...
 "%~dp0ghdl\bin\ghdl.exe" --remove
 
-echo Importing sources from vhdl files in: %cd% ...
-if exist lib\ goto use_lib 
-"%~dp0ghdl\bin\ghdl.exe" -i *.vhd "%1"
+echo Importing sources from vhdl files...
+if [%2]==[] goto nouse_path 
+
+"%~dp0ghdl\bin\ghdl.exe" -i "%2" "%1"
 if %ERRORLEVEL% NEQ 0 goto error
 goto chech_syntax
 
-:use_lib
-"%~dp0ghdl\bin\ghdl.exe" -i lib\*.vhd *.vhd "%1"
+:nouse_path
+"%~dp0ghdl\bin\ghdl.exe" -i *.vhd "%1"
 if %ERRORLEVEL% NEQ 0 goto error
 goto chech_syntax
 

@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, ExtCtrls,
-  StdCtrls, Buttons, EditBtn, ButtonPanel, Zipper;
+  StdCtrls, Buttons, EditBtn, ButtonPanel;
 
 type
 
@@ -15,6 +15,7 @@ type
   TConfigForm = class(TForm)
     ButtonPanel1: TButtonPanel;
     CB_LibAsReadOnly: TCheckBox;
+    CB_AutoOpenPrjF: TCheckBox;
     Ed_LibraryDir: TDirectoryEdit;
     Ed_SnippetDir: TDirectoryEdit;
     Ed_ProjectsDir: TDirectoryEdit;
@@ -35,19 +36,15 @@ var
   ConfigDir,LibraryDir,SnippetDir,ProjectsDir,SBAbaseDir:string;
   DefAuthor:string;
   LibAsReadOnly:Boolean;
+  AutoOpenPrjF:Boolean;
   IpCoreList:Tstringlist;
 
 function GetConfigValues:boolean;
 function SetConfigValues:boolean;
-function PopulateDirList(const directory : string; list : TStrings): boolean;
-function PopulateFileList(const directory : string; list : TStrings): boolean;
-function UnZip(f,p:string):boolean;
-function IsDirectoryEmpty(const directory : string) : boolean;
-function GetPosList(s: string; list: Tstrings; start:integer=0): integer;
 
 implementation
 
-uses MainFormU, SBAProgContrlrU, SBAProjectU;
+uses MainFormU, SBAProgContrlrU, SBAProjectU, UtilsU;
 
 {$R *.lfm}
 
@@ -64,6 +61,7 @@ begin
     ProjectsDir:=ReadString('ProjectsDir',GetUserDir+'sbaprojects'+PathDelim);
     DefAuthor:=ReadString('DefAuthor','Author');
     LibAsReadOnly:=ReadBoolean('LibAsReadOnly',true);
+    AutoOpenPrjF:=ReadBoolean('AutoOpenPrjF',true);
   end;
   If Not DirectoryExistsUTF8(ConfigDir) then
     If Not CreateDirUTF8(ConfigDir) Then
@@ -93,78 +91,35 @@ begin
   result:=true;
 end;
 
-function PopulateFileList(const directory: string; list: TStrings): boolean;
-var
-  sr : TSearchRec;
-begin
-  result:=false;
-  try
-    if FindFirstUTF8(IncludeTrailingPathDelimiter(directory) + '*.*', faAnyFile, sr) < 0 then Exit
-    else
-    repeat
-      if (sr.Attr and faDirectory = 0) then List.Add(sr.Name);
-    until FindNextUTF8(sr) <> 0;
-  finally
-    FindCloseUTF8(sr);
-  end;
-  result:=true;
-end;
-
-function UnZip(f,p:string):boolean;
-var
-  UnZipper: TUnZipper;
-begin
-  result:=false;
-  UnZipper := TUnZipper.Create;
-  try
-    UnZipper.FileName := f;
-    UnZipper.OutputPath := p;
-    UnZipper.Examine;
-    UnZipper.UnZipAllFiles;
-    result:=true;
-  finally
-    UnZipper.Free;
-  end;
-end;
-
 function SetConfigValues:boolean;
 begin
   result:=false;
   with ConfigForm, MainForm.IniStor do
   begin
     WriteString('ConfigDir',ConfigDir);
+    //
     if DirectoryExistsUTF8(Ed_LibraryDir.text) then LibraryDir:=AppendPathDelim(TrimFilename(Ed_LibraryDir.text))
     else raise exception.create('Library folder could not be changed');
     WriteString('LibraryDir',LibraryDir);
+    //
     if DirectoryExistsUTF8(Ed_SnippetDir.text) then SnippetDir:=AppendPathDelim(TrimFilename(Ed_SnippetDir.text))
     else raise exception.create('Snippet folder could not be changed');
     WriteString('SnippetDir',SnippetDir);
+    //
     if DirectoryExistsUTF8(Ed_ProjectsDir.text) then ProjectsDir:=AppendPathDelim(TrimFilename(Ed_ProjectsDir.text))
     else raise exception.create('SBA Projects folder could not be changed');
-    WriteString('SBAbaseDir',SBAbaseDir);
     WriteString('ProjectsDir',ProjectsDir);
+    //
     DefAuthor:=Ed_DefAuthor.Text;
     WriteString('DefAuthor',DefAuthor);
+    //
+    LibAsReadOnly:=CB_LibAsReadOnly.Checked;
     WriteBoolean('LibAsReadOnly',LibAsReadOnly);
-  end;
-  result:=true;
-end;
-
-function PopulateDirList(const directory : string; list : TStrings): boolean;
-var
-  sr : TSearchRec;
-begin
-  result:=false;
-  try
-    if FindFirstUTF8(IncludeTrailingPathDelimiter(directory) + '*.*', faDirectory, sr) < 0 then Exit
-    else
-    repeat
-      if ((sr.Attr and faDirectory <> 0) AND (sr.Name <> '.') AND (sr.Name <> '..')) then
-//        List.Add(IncludeTrailingPathDelimiter(directory) + sr.Name);
-        List.Add(sr.Name);
-    until FindNextUTF8(sr) <> 0;
-  finally
-    FindCloseUTF8(sr);
+    //
+    AutoOpenPrjF:=CB_AutoOpenPrjF.Checked;
+    WriteBoolean('AutoOpenPrjF',AutoOpenPrjF);
+    //
+    WriteString('SBAbaseDir',SBAbaseDir);
   end;
   result:=true;
 end;
@@ -181,27 +136,6 @@ begin
   CB_LibAsReadOnly.checked:=LibAsReadOnly;
 end;
 
-function IsDirectoryEmpty(const directory : string) : boolean;
-var
-  searchRec :TSearchRec;
-begin
-  try
-    result := (FindFirstUTF8(directory+'\*.*', faAnyFile, searchRec) = 0) AND
-              (FindNextUTF8(searchRec) = 0) AND
-              (FindNextUTF8(searchRec) <> 0);
-  finally
-    FindCloseUTF8(searchRec);
-  end;
-end;
-
-function GetPosList(s: string; list: Tstrings; start: integer=0): integer;
-var
-  i: integer;
-begin
-  if start<0 then begin result:=-1; exit; end;
-  For i:=start to list.Count-1 do if pos(s,list[i])<>0 then break;
-  if pos(s,list[i])<>0 then Result:=i else Result:=-1;
-end;
 
 end.
 
