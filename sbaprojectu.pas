@@ -5,12 +5,11 @@ unit SBAProjectU;
 interface
 
 uses
-  Classes, SysUtils, Dialogs,
+  Classes, SysUtils, Dialogs, Controls,
   fpjson, jsonparser,
   fileutil, strutils, Inifiles;
 
 const
-  cSBABaseZipFile='sbamaster.zip';
   cSBADefaultPrjName='NewProject';
   cSBAPrjExt='.sba';
   cSBATop='Top.vhd';
@@ -162,18 +161,6 @@ begin
     result:=true;
   finally
     if assigned(J) then FreeAndNil(J);
-  end;
-end;
-
-function TSBAPrj.EditLib: boolean;
-var Prj:TSBAPrj;
-begin
-  result:=false;
-  Prj:=Self;
-  if CoresPrjEdForm.CoresEdit(Prj) then
-  begin
-    CleanUpLibCores(CoresPrjEdForm.PrjIpCoreList.Items);
-    result:=true;
   end;
 end;
 
@@ -402,24 +389,23 @@ begin
     if fileexistsUTF8(f) then
     try
       INI:=TIniFile.Create(f);
-      INI.ReadSectionRaw('Generic',GL);
-      INI.ReadSectionRaw('Config',CL);
-      INI.ReadSectionRaw('Address',AL);
-      INI.ReadSectionRaw('Interface',IL);
-      INI.ReadSectionRaw('Signals',SL);
-      if StrToIntDef(CL.Values['SBAPORTS'],1)=1 then
+      if INI.ReadInteger('Config','SBAPORTS',1)=1 then
       begin
-        WE:=StrToIntDef(CL.Values['WE'],1)=1;
-        STB:=StrToIntDef(CL.Values['STB'],1)=1;
-        ADL:=StrToIntDef(CL.Values['ADRLINES'],1);
-        DIL:=StrToIntDef(CL.Values['DATILINES'],16);
-        DOL:=StrToIntDef(CL.Values['DATOLINES'],16);
+        WE:=INI.ReadInteger('Config','WE',1)=1;
+        STB:=INI.ReadInteger('Config','STB',1)=1;
+        ADL:=INI.ReadInteger('Config','ADRLINES',1);
+        DIL:=INI.ReadInteger('Config','DATILINES',16);
+        DOL:=INI.ReadInteger('Config','DATOLINES',16);
       end else
       begin
         ADL:=1;
         DIL:=16;
         DOL:=16;
       end;
+      INI.ReadSectionRaw('Generic',GL);
+      INI.ReadSectionRaw('Address',AL);
+      INI.ReadSectionRaw('Interface',IL);
+      INI.ReadSectionRaw('Signals',SL);
     finally
       if assigned(INI) then FreeAndNil(INI);
     end;
@@ -539,6 +525,19 @@ end;
 //  Save;
 //  result:=true;
 //end;
+
+
+function TSBAPrj.EditLib: boolean;
+var Prj:TSBAPrj;
+begin
+  result:=false;
+  Prj:=Self;
+  if CoresPrjEdForm.CoresEdit(Prj) then
+  begin
+    CleanUpLibCores(CoresPrjEdForm.PrjIpCoreList.Items);
+    result:=true;
+  end;
+end;
 
 function TSBAPrj.CleanUpLibCores(CL:TStrings): boolean;
 var

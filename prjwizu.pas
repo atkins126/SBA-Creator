@@ -6,8 +6,8 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, ExtCtrls,
-  Buttons, EditBtn, StdCtrls, Spin, Grids, ValEdit, fpjson, jsonparser,
-  strutils;
+  Buttons, EditBtn, StdCtrls, Spin, Grids, ValEdit, Menus, fpjson, jsonparser,
+  strutils, IniFiles, types;
 
 const
   CDefPrjTitle='Short title or description of the project';
@@ -41,8 +41,11 @@ type
     Label9: TLabel;
     LibIpCoreList: TListBox;
     LabelX: TLabel;
+    InsertRow: TMenuItem;
+    RowDelete: TMenuItem;
     OpenDialog1: TOpenDialog;
     Page4: TPage;
+    PopupMenu1: TPopupMenu;
     SaveDialog1: TSaveDialog;
     Summary: TMemo;
     PrjIpCoreList: TListBox;
@@ -89,10 +92,14 @@ type
     procedure Ed_PrjNameEditingDone(Sender: TObject);
     procedure Ed_TopInterfaceCheckboxToggled(sender: TObject; aCol,
       aRow: Integer; aState: TCheckboxState);
+    procedure Ed_TopInterfaceContextPopup(Sender: TObject; MousePos: TPoint;
+      var Handled: Boolean);
     procedure Ed_TopInterfaceEditingDone(Sender: TObject);
+    procedure Ed_TopInterfaceExit(Sender: TObject);
     procedure Ed_TopInterfacePrepareCanvas(sender: TObject; aCol,
       aRow: Integer; aState: TGridDrawState);
     procedure FormShow(Sender: TObject);
+    procedure InsertRowClick(Sender: TObject);
     procedure LibIpCoreListDblClick(Sender: TObject);
     procedure ListMouseLeave(Sender: TObject);
     procedure ListMouseMove(Sender: TObject; Shift: TShiftState; X,
@@ -100,13 +107,18 @@ type
     procedure PageBeforeShow(ASender: TObject; ANewPage: TPage;
       ANewIndex: Integer);
     procedure PrjIpCoreListDblClick(Sender: TObject);
+    procedure RowDeleteClick(Sender: TObject);
   private
+    Editing:boolean;
     procedure SummarizeData(SData: String);
     function ValidateSBAName(s: string): boolean;
+    function ValidateName(s: string): boolean;
     { private declarations }
   public
     { public declarations }
     PrjData:String;
+    function NewPrj: TModalResult;
+    function EditPrj(SData: string): TModalResult;
     function CollectData: string;
     procedure FillPrjWizValues(SData: String);
     procedure ResetFormData;
@@ -143,14 +155,20 @@ begin
   1://if ANewPage=Page2 then
   begin
     B_Previous.Visible:=true;
+    B_Next.visible:=true;
+    B_Next.Default:=true;
     TB_Step2.Checked:=true;
   end;
   2://if ANewPage=Page3 then
   begin
+    B_Previous.Visible:=true;
+    B_Next.visible:=true;
+    B_Next.Default:=true;
     TB_Step3.Checked:=true;
   end;
   3://if ANewPage=Page4 then
   begin
+    B_Previous.Visible:=true;
     B_Next.visible:=true;
     B_Next.Default:=true;
     B_Ok.visible:=false;
@@ -223,7 +241,7 @@ begin
   except
     on E:Exception do
     begin
-      ShowMessage('The is an error in the project data, exiting...');
+      ShowMessage('The is an error in the project data. '+E.Message);
       exit;
     end;
   end;
@@ -274,7 +292,7 @@ procedure TprjWizForm.B_NextClick(Sender: TObject);
 begin
   case WizPages.PageIndex of
     0: begin
-      If DirectoryExistsUTF8(L_PrjFinalLoc.caption) and not IsDirectoryEmpty(L_PrjFinalLoc.caption) then
+      If not Editing and DirectoryExistsUTF8(L_PrjFinalLoc.caption) and not IsDirectoryEmpty(L_PrjFinalLoc.caption) then
       begin
         ShowMessage('The project folder '+L_PrjFinalLoc.caption+' already exist, Empty or delete it first');
         exit;
@@ -290,15 +308,37 @@ end;
 
 procedure TprjWizForm.B_CoreAddClick(Sender: TObject);
 var
-  i: integer;
+  i,j:integer;
+  f,ipname,s:string;
+  Ini:TIniFile;
+  EL:TStringList;
 begin
   if LibIpCoreList.SelCount > 0 then
   begin
     LibIpCoreList.Items.BeginUpdate;
     For i:=LibIpCoreList.Items.Count-1 downto 0 do if LibIpCoreList.Selected[i] then
     begin
-      PrjIpCoreList.Items.Add(LibIpCoreList.Items[i]);
+      ipname:=LibIpCoreList.Items[i];
+      PrjIpCoreList.Items.Add(ipname);
       LibIpCoreList.Items.Delete(i);
+      f:=LibraryDir+ipname+PathDelim+ipname+'.ini';
+      if fileexistsUTF8(f) then
+      try
+        EL:=TStringList.Create;
+        INI:=TIniFile.Create(f);
+        INI.ReadSectionRaw('External',EL);
+        for j:=0 to EL.Count-1 do with Ed_TopInterface do
+        begin
+          RowCount:=RowCount+1;
+          s:=EL.ValueFromIndex[j];
+          s:=IfThen(Pos(':',s)=0,s+',0',StringsReplace(s,['(',':',')'],[',1,',',',''],[rfReplaceAll]));
+          s:=EL.Names[j]+','+s;
+          Ed_TopInterface.Rows[RowCount-1].CommaText:=s;
+        end;
+      finally
+        if assigned(EL) then FreeAndNil(EL);
+        if assigned(INI) then FreeAndNil(INI);
+      end;
     end;
     LibIpCoreList.Items.EndUpdate;
   end else
@@ -330,20 +370,39 @@ end;
 
 procedure TprjWizForm.B_CoreDelClick(Sender: TObject);
 var
-  i: integer;
+  i,j,k:integer;
+  f,ipname:string;
+  Ini:TIniFile;
+  EL:TStringList;
 begin
   if PrjIpCoreList.SelCount > 0 then
   begin
     PrjIpCoreList.Items.BeginUpdate;
     For i:=PrjIpCoreList.Items.Count-1 downto 0 do if PrjIpCoreList.Selected[i] then
     begin
-      LibIpCoreList.Items.Add(PrjIpCoreList.Items[i]);
+      ipname:=PrjIpCoreList.Items[i];
+      LibIpCoreList.Items.Add(ipname);
       PrjIpCoreList.Items.Delete(i);
+      f:=LibraryDir+ipname+PathDelim+ipname+'.ini';
+      if fileexistsUTF8(f) then
+      try
+        EL:=TStringList.Create;
+        INI:=TIniFile.Create(f);
+        INI.ReadSectionRaw('External',EL);
+        for j:=0 to EL.Count-1 do with Ed_TopInterface do
+        begin
+          k:=Ed_TopInterface.Cols[0].IndexOf(EL.Names[j]);
+          if k>0 then Ed_TopInterface.DeleteColRow(False,k);
+        end;
+      finally
+        if assigned(EL) then FreeAndNil(EL);
+        if assigned(INI) then FreeAndNil(INI);
+      end;
     end;
     PrjIpCoreList.Items.EndUpdate;
   end else
   begin
-      ShowMessage('Please select an item first!');
+    ShowMessage('Please select an item first!');
   end;
 end;
 
@@ -394,7 +453,7 @@ begin
   if UserFileList.RowCount>1 then UserFileList.DeleteRow(UserFileList.Row);
 end;
 
-procedure TPrjWizForm.FillPrjWizValues(SData:String);
+procedure TprjWizForm.FillPrjWizValues(SData: String);
 var
   h,i:Integer;
   J:TJSONData;
@@ -502,56 +561,130 @@ begin
   end;
 end;
 
-procedure TprjWizForm.Ed_TopInterfaceEditingDone(Sender: TObject);
-var
-  S:String;
-  V:Boolean;
+procedure TprjWizForm.Ed_TopInterfaceContextPopup(Sender: TObject;
+  MousePos: TPoint; var Handled: Boolean);
+var NewCell: TPoint;
 begin
-  V:=true;
+  NewCell:=Ed_TopInterface.MouseToCell(MousePos);
+  Ed_TopInterface.Col:=NewCell.X;
+  Ed_TopInterface.Row:=NewCell.Y;
+end;
+
+procedure TprjWizForm.RowDeleteClick(Sender: TObject);
+begin
+  if Ed_TopInterface.Row=0 then exit;
+  Ed_TopInterface.DeleteColRow(False, Ed_TopInterface.Row);
+end;
+
+procedure TprjWizForm.InsertRowClick(Sender: TObject);
+begin
+  Ed_TopInterface.InsertColRow(False, Ed_TopInterface.Row);
+end;
+
+procedure TprjWizForm.Ed_TopInterfaceEditingDone(Sender: TObject);
+begin
   with Ed_TopInterface do
   begin
+    Ed_TopInterface.BeginUpdate;
     if (Col=0) then
     begin
       if Cells[1,Row]='' then Cells[1,Row]:='in';
       if Cells[2,Row]='' then Cells[2,Row]:='0';
     end;
-    if Col<>0 then exit;
-    For S in Cols[0] do V:=V and ((S='') or ValidateSBAName(S));
+    Ed_TopInterface.EndUpdate(true);
+  end;
+  B_Next.Enabled:=True;
+  B_Previous.Enabled:=True;
+end;
+
+procedure TprjWizForm.Ed_TopInterfaceExit(Sender: TObject);
+var
+  i,j:integer;
+  s:string;
+  V:boolean;
+begin
+  With Ed_TopInterface do
+  begin
+    For i:=RowCount-1 downto 1 do if (i<RowCount-1) and (Cells[0,i]='') then DeleteColRow(False,i);
+    V:=true;
+    For i:=1 to RowCount-1 do
+    begin
+      S:=Cells[0,i];
+      If S='' then break;
+      V:=V and ValidateName(S);
+      for j:=1 to RowCount-1 do V:=V and ((j=i) or (CompareText(S,Cells[0,j])<>0));
+    end;
   end;
   B_Next.Enabled:=V;
+  B_Previous.Enabled:=V;
 end;
 
 procedure TprjWizForm.Ed_TopInterfacePrepareCanvas(sender: TObject; aCol,
   aRow: Integer; aState: TGridDrawState);
 var
   S:String;
+  V:Boolean;
+  i:integer;
 begin
-  If (gdFixed in aState) or (aCol<>0) then exit;
-  S:=Ed_TopInterface.Cells[0,aRow];
-  if (S<>'') and not ValidateSBAName(S) then Ed_TopInterface.canvas.Brush.Color:=$008080FF;
+  If (gdFixed in aState) or (aCol<>0) or (aRow=0) then exit;
+  With Ed_TopInterface do
+  begin
+    S:=Cells[0,aRow];
+    if S<>'' then
+    begin
+      V:=ValidateName(S);
+      for i:=1 to RowCount-1 do V:=V and ((i=aRow) or (CompareText(Cells[0,i],S)<>0));
+    end;
+    if not V then Ed_TopInterface.canvas.Brush.Color:=$008080FF;
+  end;
+end;
+
+procedure TprjWizForm.FormShow(Sender: TObject);
+begin
+  Ed_Prjname.SetFocus;
 end;
 
 function TprjWizForm.ValidateSBAName(s:string):boolean;
-var
-  i:integer;
 begin
   result:=false;
   if s='' then exit;
   Image1.Picture.Bitmap:= nil;
   ImageList1.GetBitmap(1, Image1.Picture.Bitmap);
+  if ValidateName(s) then
+  begin
+    Image1.Picture.Bitmap:= nil;
+    ImageList1.GetBitmap(2, Image1.Picture.Bitmap);
+    result:=true;
+  end;
+end;
+
+function TprjWizForm.ValidateName(s: string): boolean;
+var i:integer;
+begin
+  result:=false;
+  if s='' then exit;
   if not(upcase(s[1]) in ['A'..'Z']) then exit;
   for i:=2 to Length(s) do if not (upcase(s[i]) in ['0'..'9','A'..'Z','_']) then exit;
-  Image1.Picture.Bitmap:= nil;
-  ImageList1.GetBitmap(2, Image1.Picture.Bitmap);
   result:=true;
 end;
 
-procedure TprjWizForm.FormShow(Sender: TObject);
+function TprjWizForm.NewPrj: TModalResult;
 begin
   WizPages.PageIndex:=0;
   ResetFormData;
-  Ed_Prjname.SetFocus;
+  Editing:=false;
+  result:=ShowModal;
 end;
+
+function TprjWizForm.EditPrj(SData: string): TModalResult;
+begin
+  Editing:=true;
+  WizPages.PageIndex:=0;
+  ResetFormData;
+  FillPrjWizValues(SData);
+  result:=ShowModal;
+end;
+
 
 procedure TprjWizForm.ResetFormData;
 begin
@@ -568,7 +701,7 @@ begin
   Ed_Date.Date:=Now;
   Ed_Description.Clear;
   Ed_TopInterface.Clean;
-  UserFileList.Clear;
+  Ed_TopInterface.RowCount:=3;
   with Ed_TopInterface do
   begin
     Cells[0, 1]:='CLK_I';
@@ -578,9 +711,9 @@ begin
     Cells[1, 2]:='in';
     Cells[2, 2]:='0';
   end;
-//  LibIpCoreList.Clear;
   LibIpCoreList.Items.Assign(IpCoreList);
   PrjIpCoreList.Clear;
+  UserFileList.Clear;
   PrjData:='';
 end;
 

@@ -15,18 +15,18 @@ object MainForm: TMainForm
   OnDestroy = FormDestroy
   OnDropFiles = FormDropFiles
   OnResize = FormResize
-  SessionProperties = 'Height;Left;Log.Height;Top;Width;WindowState;P_ProgLabels.Height;SnippetsList.Height'
+  SessionProperties = 'CoreImage.Height;Height;Left;Log.Height;P_ProgAddress.Height;P_ProgLabels.Height;SnippetsList.Height;Top;Width;WindowState;P_Project.Width'
   LCLVersion = '1.4.0.4'
   object MainPages: TPageControl
     Left = 0
     Height = 726
     Top = 0
     Width = 765
-    ActivePage = SystemTab
+    ActivePage = ProgEditTab
     Align = alClient
     ParentShowHint = False
     ShowHint = True
-    TabIndex = 0
+    TabIndex = 2
     TabOrder = 0
     TabPosition = tpBottom
     OnChange = MainPagesChange
@@ -38920,21 +38920,21 @@ object MainForm: TMainForm
       ImageIndex = 1
       OnContextPopup = EditorsTabContextPopup
       object P_Editors: TPanel
-        Left = 160
+        Left = 152
         Height = 698
         Top = 0
-        Width = 597
+        Width = 605
         Align = alClient
         BevelOuter = bvNone
         ClientHeight = 698
-        ClientWidth = 597
+        ClientWidth = 605
         TabOrder = 0
         object Splitter1: TSplitter
           Cursor = crVSplit
           Left = 0
           Height = 6
           Top = 597
-          Width = 597
+          Width = 605
           Align = alBottom
           ResizeAnchor = akBottom
         end
@@ -38942,7 +38942,7 @@ object MainForm: TMainForm
           Left = 0
           Height = 95
           Top = 603
-          Width = 597
+          Width = 605
           Align = alBottom
           ItemHeight = 0
           OnDblClick = LogDblClick
@@ -38955,7 +38955,7 @@ object MainForm: TMainForm
           Left = 0
           Height = 558
           Top = 39
-          Width = 466
+          Width = 474
           Align = alClient
           ParentShowHint = False
           TabOrder = 2
@@ -38965,7 +38965,7 @@ object MainForm: TMainForm
           Left = 0
           Height = 35
           Top = 0
-          Width = 597
+          Width = 605
           AutoSize = True
           BorderSpacing.Bottom = 4
           ButtonHeight = 35
@@ -39089,7 +39089,7 @@ object MainForm: TMainForm
           end
         end
         object P_AuxEditor: TPanel
-          Left = 466
+          Left = 474
           Height = 558
           Top = 39
           Width = 131
@@ -39230,22 +39230,22 @@ object MainForm: TMainForm
         Left = 0
         Height = 698
         Top = 0
-        Width = 155
+        Width = 147
         Align = alLeft
         BevelOuter = bvNone
         ClientHeight = 698
-        ClientWidth = 155
+        ClientWidth = 147
         TabOrder = 1
         Visible = False
         object GroupBox1: TGroupBox
           Left = 0
-          Height = 540
+          Height = 544
           Top = 0
-          Width = 155
+          Width = 147
           Align = alClient
           Caption = 'Project Info'
-          ClientHeight = 520
-          ClientWidth = 151
+          ClientHeight = 524
+          ClientWidth = 143
           Color = clWhite
           ParentColor = False
           TabOrder = 0
@@ -39253,7 +39253,7 @@ object MainForm: TMainForm
             Left = 0
             Height = 24
             Top = 0
-            Width = 151
+            Width = 143
             AutoSize = True
             ButtonHeight = 23
             ButtonWidth = 22
@@ -39308,9 +39308,9 @@ object MainForm: TMainForm
           end
           object PrjTree: TTreeView
             Left = 0
-            Height = 496
+            Height = 500
             Top = 24
-            Width = 151
+            Width = 143
             Align = alClient
             AutoExpand = True
             BackgroundColor = clCream
@@ -39349,9 +39349,9 @@ object MainForm: TMainForm
         end
         object CoreImage: TImage
           Left = 0
-          Height = 152
-          Top = 546
-          Width = 155
+          Height = 148
+          Top = 550
+          Width = 147
           AntialiasingMode = amOn
           Align = alBottom
           Center = True
@@ -39362,15 +39362,15 @@ object MainForm: TMainForm
           Cursor = crVSplit
           Left = 0
           Height = 6
-          Top = 540
-          Width = 155
+          Top = 544
+          Width = 147
           Align = alBottom
           ParentColor = False
           ResizeAnchor = akBottom
         end
       end
       object Splitter4: TSplitter
-        Left = 155
+        Left = 147
         Height = 698
         Top = 0
         Width = 5
@@ -39615,10 +39615,10 @@ object MainForm: TMainForm
             AutoSize = False
             MaxLength = 0
             TabOrder = 3
-            FilteredListview = SnippetsList
+            FilteredListview = LV_Snippets
             ByAllFields = False
           end
-          object SnippetsList: TListView
+          object LV_Snippets: TListView
             Left = 3
             Height = 118
             Top = 26
@@ -39643,7 +39643,7 @@ object MainForm: TMainForm
             SortType = stText
             TabOrder = 4
             ViewStyle = vsReport
-            OnClick = SnippetsListClick
+            OnClick = LV_SnippetsClick
           end
         end
         object P_ProgLabels: TGroupBox

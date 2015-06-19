@@ -5,16 +5,39 @@ unit UtilsU;
 interface
 
 uses
-  Classes, SysUtils, FileUtil, Zipper;
+  Classes, SysUtils, Dialogs, FileUtil, Zipper, DebugFormU;
 
 function SearchForFiles(const dir,mask: string; Onfind:TFileFoundEvent):boolean;
 function PopulateDirList(const directory : string; list : TStrings): boolean;
 function PopulateFileList(const directory,mask : string; list : TStrings): boolean;
+procedure GetAllFileNames(const dir,mask:string; list:TStrings);
+procedure GetAllFileNamesAndPaths(const dir,mask:string; list:TStrings);
 function UnZip(f,p:string):boolean;
 function IsDirectoryEmpty(const directory : string) : boolean;
 function GetPosList(s: string; list: Tstrings; start:integer=0): integer;
+function DirDelete(d:string):boolean;
 
 implementation
+
+procedure GetAllFileNames(const dir,mask:string; list:TStrings);
+var
+  L:TStringList;
+  s:String;
+begin
+  L:=FindAllFiles(dir,mask);
+  For s in L do list.Add(ExtractFileNameOnly(S));
+  L.Free;
+end;
+
+procedure GetAllFileNamesAndPaths(const dir,mask:string; list:TStrings);
+var
+  L:TStringList;
+  s:String;
+begin
+  L:=FindAllFiles(dir,mask);
+  For s in L do list.Add(ExtractFileNameOnly(s)+'='+s);
+  L.Free;
+end;
 
 function SearchForFiles(const dir,mask: string; Onfind:TFileFoundEvent):boolean;
 var
@@ -57,8 +80,16 @@ begin
   try
     UnZipper.FileName := f;
     UnZipper.OutputPath := p;
-    UnZipper.Examine;
-    UnZipper.UnZipAllFiles;
+    try
+      UnZipper.Examine;
+      UnZipper.UnZipAllFiles;
+    except
+      ON E:Exception do
+      begin
+        ShowMessage(E.Message);
+        exit;
+      end;
+    end;
     result:=true;
   finally
     UnZipper.Free;
@@ -103,6 +134,14 @@ begin
   if start<0 then begin result:=-1; exit; end;
   For i:=start to list.Count-1 do if pos(s,list[i])<>0 then break;
   if pos(s,list[i])<>0 then Result:=i else Result:=-1;
+end;
+
+function DirDelete(d: string): boolean;
+begin
+  Result:=DeleteDirectory(d,True);
+  if Result then begin
+     Result:=RemoveDirUTF8(d);
+  end;
 end;
 
 

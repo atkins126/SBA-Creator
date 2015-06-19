@@ -126,7 +126,7 @@ type
     MenuItem53: TMenuItem;
     MenuItem59: TMenuItem;
     SnippetsFilter: TListViewFilterEdit;
-    SnippetsList: TListView;
+    LV_Snippets: TListView;
     Splitter3: TSplitter;
     Splitter4: TSplitter;
     Splitter5: TSplitter;
@@ -331,7 +331,7 @@ type
     procedure FileCloseExecute(Sender: TObject);
     procedure SBA_InsertTemplateExecute(Sender: TObject);
     procedure SBA_NewPrgExecute(Sender: TObject);
-    procedure SnippetsListClick(Sender: TObject);
+    procedure LV_SnippetsClick(Sender: TObject);
     procedure TFindDialogFind(Sender: TObject);
     procedure ToolsFileObfExecute(Sender: TObject);
     procedure ToolsFileReformatExecute(Sender: TObject);
@@ -622,6 +622,7 @@ end;
 procedure TMainForm.B_SBALibraryClick(Sender: TObject);
 begin
   ShowLibraryForm;
+  SBASnippet.UpdateSnippetsFilter(SnippetsFilter);
 end;
 
 procedure TMainForm.B_ConfigClick(Sender: TObject);
@@ -780,7 +781,7 @@ var
   TN:TTreeNode;
 begin
   TN:=PrjTree.Selected;
-  if (TN<>nil) and (TN.Parent<>nil) and (TN.Parent.Text='Lib') then
+  if (TN<>nil) and (TN.Parent<>nil) and (TN.GetParentNodeOfAbsoluteLevel(0).Text='Lib') then
   try
     CoreImage.Picture.LoadFromFile(LibraryDir+TN.Text+PathDelim+'image.png');
   except
@@ -812,7 +813,7 @@ begin
     MI_AddUserFile.Visible:=true;
     MI_RemUserFile.Visible:=true;
   end;
-  if ((TN.Parent<>nil) and (TN.Parent.text='Lib')) or
+  if ((TN.Parent<>nil) and (TN.GetParentNodeOfAbsoluteLevel(0).text='Lib')) or
      ((TN.Parent=nil) and (TN.text='Lib')) then
   begin
     MI_AddCore.Visible:=true;
@@ -866,7 +867,7 @@ begin
   TN := PrjTree.GetNodeAt(X, Y);
   HitTestInfo := PrjTree.GetHitTestInfoAt(X, Y) ;
   if (htOnItem in HitTestInfo) and (TN<>nil) and
-     (TN.Parent<>nil) and (TN.Parent.text='Lib') then
+     (TN.Parent<>nil) and (TN.GetParentNodeOfAbsoluteLevel(0).text='Lib') then
   begin
     FloatForm.ShowCoreImage(TN.Text);
   end else begin
@@ -889,7 +890,7 @@ var
   iname:string;
 begin
   TN:=PrjTree.Selected;
-  if (TN<>nil) and (TN.Parent<>nil) and (TN.Parent.Text='Lib') then
+  if (TN<>nil) and (TN.Parent<>nil) and (TN.GetParentNodeOfAbsoluteLevel(0).Text='Lib') then
   try
     IP:=TStringList.Create;
     IPS:=TStringList.Create;
@@ -994,7 +995,7 @@ end;
 
 procedure TMainForm.ProjectNewExecute(Sender: TObject);
 begin
-  if (PrjWizForm.showmodal=mrOk) and CloseProject and
+  if (PrjWizForm.NewPrj=mrOk) and CloseProject and
      SBAPrj.Fill(PrjWizForm.PrjData) and SBAPrj.PrepareNewFolder then
      OpenProject(SBAPrj.location+SBAPrj.name+cSBAPrjExt);
 end;
@@ -1027,10 +1028,10 @@ begin
 
     P_Project.Visible:=true;
     If MainPages.ActivePage=SystemTab then GotoEditor;
+    S:=SBAPrj.location+SBAPrj.name+'_Top.vhd';
+    OpenInEditor(S);
     if AutoOpenPrjF then
     begin
-     S:=SBAPrj.location+SBAPrj.name+'_Top.vhd';
-     OpenInEditor(S);
      S:=SBAPrj.location+SBAPrj.name+'_SBAcfg.vhd';
      OpenInEditor(S);
      S:=SBAPrj.location+SBAPrj.name+'_SBAdcdr.vhd';
@@ -1158,13 +1159,13 @@ begin
   ExtractSBALabels;
 end;
 
-procedure TMainForm.SnippetsListClick(Sender: TObject);
+procedure TMainForm.LV_SnippetsClick(Sender: TObject);
 var
   f:string;
   l:TListItem;
 begin
-  L:=SnippetsList.Selected;
-  if (L=nil) or (SnippetsList.Items.Count=0) then exit;
+  L:=LV_Snippets.Selected;
+  if (L=nil) or (LV_Snippets.Items.Count=0) then exit;
   f:=L.SubItems[0];
   if f<>'' then
   begin
@@ -1298,7 +1299,9 @@ begin
     SBASnippet.UpdateSnippetsFilter(SnippetsFilter);
     { TODO : Mejorar la lista de Snippets }
     IpCoreList:=TStringList.Create;
-    PopulateDirList(LibraryDir,IpCoreList);
+    SnippetsList:=TStringList.Create;
+    ProgramsList:=TStringList.Create;
+    UpdateLists;
     SetupPrgTmplMenu;
     SynSBASyn:= TSynSBASyn.Create(Self);
     SynVerilogSyn:= TSynVerilogSyn.Create(Self);
@@ -1372,6 +1375,8 @@ end;
 
 procedure TMainForm.FormDestroy(Sender: TObject);
 begin
+  if Assigned(ProgramsList) then FreeandNil(ProgramsList);
+  if Assigned(SnippetsList) then FreeandNil(SnippetsList);
   if Assigned(IPCoreList) then FreeandNil(IPCoreList);
   If Assigned(SynSBASyn) then FreeandNil(SynSBASyn);
   If Assigned(SynVerilogSyn) then FreeandNil(SynVerilogSyn);

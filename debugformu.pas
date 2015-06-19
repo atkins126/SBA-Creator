@@ -41,7 +41,7 @@ begin
 {$IFDEF DEBUG}
   DebugForm.Show;
 {$ENDIF}
-  DebugForm.Memo.Append(M);
+  DebugForm.Memo.Append(Format('%:3d: %s',[DebugForm.Memo.Lines.Count,M]));
   result:=true;
 end;
 

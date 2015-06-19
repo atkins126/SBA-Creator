@@ -13,6 +13,7 @@ object DebugForm: TDebugForm
     Top = 0
     Width = 504
     Align = alClient
+    ScrollBars = ssAutoBoth
     TabOrder = 0
   end
   object B_MemoClear: TBitBtn
@@ -60,6 +61,5 @@ object DebugForm: TDebugForm
     }
     OnClick = B_MemoClearClick
     TabOrder = 1
-    Visible = False
   end
 end

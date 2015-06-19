@@ -20,8 +20,8 @@
       <UseVersionInfo Value="True"/>
       <AutoIncrementBuild Value="True"/>
       <MinorVersionNr Value="1"/>
-      <RevisionNr Value="13"/>
-      <BuildNr Value="33"/>
+      <RevisionNr Value="14"/>
+      <BuildNr Value="35"/>
       <Attributes pvaPreRelease="True"/>
       <StringTable ProductVersion=""/>
     </VersionInfo>
@@ -158,13 +158,10 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="MainFormU"/>
-        <TopLine Value="2011"/>
-        <CursorPos X="33" Y="2047"/>
+        <IsVisibleTab Value="True"/>
+        <TopLine Value="588"/>
+        <CursorPos X="3" Y="592"/>
         <UsageCount Value="202"/>
-        <Bookmarks Count="2">
-          <Item0 X="42" Y="1837"/>
-          <Item1 Y="1396" ID="1"/>
-        </Bookmarks>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit1>
@@ -222,8 +219,7 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="SBASnippetU"/>
         <EditorIndex Value="1"/>
-        <TopLine Value="128"/>
-        <CursorPos X="28" Y="137"/>
+        <CursorPos X="20" Y="11"/>
         <UsageCount Value="217"/>
         <Loaded Value="True"/>
       </Unit8>
@@ -231,10 +227,9 @@
         <Filename Value="sbaprojectu.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="SBAProjectU"/>
-        <IsVisibleTab Value="True"/>
-        <EditorIndex Value="3"/>
-        <TopLine Value="541"/>
-        <CursorPos X="22" Y="561"/>
+        <EditorIndex Value="2"/>
+        <TopLine Value="234"/>
+        <CursorPos X="3" Y="239"/>
         <UsageCount Value="232"/>
         <Loaded Value="True"/>
       </Unit9>
@@ -245,11 +240,12 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="ConfigFormU"/>
-        <EditorIndex Value="4"/>
-        <TopLine Value="28"/>
-        <CursorPos X="25" Y="39"/>
+        <EditorIndex Value="3"/>
+        <TopLine Value="42"/>
+        <CursorPos Y="64"/>
         <UsageCount Value="205"/>
         <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
       </Unit10>
       <Unit11>
         <Filename Value="prjwizu.pas"/>
@@ -258,30 +254,34 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="315"/>
-        <CursorPos X="5" Y="327"/>
+        <TopLine Value="621"/>
+        <CursorPos X="3" Y="629"/>
         <UsageCount Value="200"/>
+        <Bookmarks Count="2">
+          <Item0 Y="586"/>
+          <Item1 Y="617" ID="1"/>
+        </Bookmarks>
       </Unit11>
       <Unit12>
         <Filename Value="C:\lazarus\lcl\forms.pp"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="584"/>
         <CursorPos X="15" Y="595"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="5"/>
       </Unit12>
       <Unit13>
         <Filename Value="C:\lazarus\fpc\2.6.4\source\packages\fcl-json\src\fpjson.pp"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="700"/>
         <CursorPos X="3" Y="703"/>
-        <UsageCount Value="20"/>
+        <UsageCount Value="16"/>
       </Unit13>
       <Unit14>
         <Filename Value="C:\lazarus\components\lazutils\fileutil.pas"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="106"/>
-        <CursorPos X="29" Y="83"/>
-        <UsageCount Value="23"/>
+        <TopLine Value="202"/>
+        <CursorPos X="18" Y="216"/>
+        <UsageCount Value="19"/>
       </Unit14>
       <Unit15>
         <Filename Value="dwfileu.pas"/>
@@ -298,28 +298,24 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="44"/>
-        <CursorPos X="28" Y="48"/>
+        <TopLine Value="34"/>
+        <CursorPos Y="34"/>
         <UsageCount Value="208"/>
       </Unit16>
       <Unit17>
-        <Filename Value="C:\lazarus\fpc\2.6.4\source\rtl\objpas\classes\classesh.inc"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="664"/>
-        <CursorPos X="15" Y="673"/>
-        <UsageCount Value="3"/>
-      </Unit17>
-      <Unit18>
         <Filename Value="floatformu.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="FloatForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <EditorIndex Value="-1"/>
-        <CursorPos X="31" Y="9"/>
-        <UsageCount Value="186"/>
-      </Unit18>
-      <Unit19>
+        <UnitName Value="FloatFormU"/>
+        <EditorIndex Value="4"/>
+        <TopLine Value="52"/>
+        <CursorPos X="30" Y="65"/>
+        <UsageCount Value="200"/>
+        <Loaded Value="True"/>
+      </Unit17>
+      <Unit18>
         <Filename Value="coresprjedformu.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="CoresPrjEdForm"/>
@@ -328,223 +324,173 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="20"/>
         <CursorPos X="45" Y="28"/>
-        <UsageCount Value="180"/>
-      </Unit19>
-      <Unit20>
+        <UsageCount Value="204"/>
+      </Unit18>
+      <Unit19>
         <Filename Value="C:\lazarus\fpc\2.6.4\source\rtl\objpas\sysutils\filutilh.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="38"/>
         <CursorPos X="12" Y="54"/>
-        <UsageCount Value="8"/>
-      </Unit20>
-      <Unit21>
+        <UsageCount Value="4"/>
+      </Unit19>
+      <Unit20>
         <Filename Value="C:\lazarus\fpc\2.6.4\source\packages\fcl-base\src\inifiles.pp"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="171"/>
         <CursorPos X="3" Y="165"/>
-        <UsageCount Value="8"/>
-      </Unit21>
-      <Unit22>
+        <UsageCount Value="4"/>
+      </Unit20>
+      <Unit21>
         <Filename Value="libraryformu.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="LibraryForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="LibraryFormU"/>
-        <EditorIndex Value="2"/>
-        <TopLine Value="93"/>
-        <CursorPos X="37" Y="102"/>
-        <UsageCount Value="93"/>
-        <Loaded Value="True"/>
-        <LoadedDesigner Value="True"/>
-      </Unit22>
-      <Unit23>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="145"/>
+        <CursorPos X="42" Y="163"/>
+        <UsageCount Value="146"/>
+        <Bookmarks Count="1">
+          <Item0 X="30" Y="360"/>
+        </Bookmarks>
+      </Unit21>
+      <Unit22>
         <Filename Value="C:\lazarus\components\lazcontrols\listviewfilteredit.pas"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="24" Y="12"/>
-        <UsageCount Value="25"/>
-      </Unit23>
-      <Unit24>
-        <Filename Value="C:\lazarus\components\lazutils\fileutil.inc"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="311"/>
-        <CursorPos X="35" Y="311"/>
-        <UsageCount Value="4"/>
-      </Unit24>
-      <Unit25>
-        <Filename Value="C:\lazarus\components\lazutils\lazfileutils.pas"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="252"/>
-        <CursorPos X="3" Y="257"/>
-        <UsageCount Value="4"/>
-      </Unit25>
-      <Unit26>
+        <UsageCount Value="21"/>
+      </Unit22>
+      <Unit23>
         <Filename Value="utilsu.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="-1"/>
-        <CursorPos Y="10"/>
-        <UsageCount Value="81"/>
-      </Unit26>
-      <Unit27>
+        <UnitName Value="UtilsU"/>
+        <EditorIndex Value="6"/>
+        <TopLine Value="5"/>
+        <CursorPos Y="14"/>
+        <UsageCount Value="134"/>
+        <Loaded Value="True"/>
+      </Unit23>
+      <Unit24>
         <Filename Value="C:\lazarus\lcl\editbtn.pas"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="13"/>
         <CursorPos X="3" Y="409"/>
-        <UsageCount Value="5"/>
-      </Unit27>
-      <Unit28>
+        <UsageCount Value="1"/>
+      </Unit24>
+      <Unit25>
         <Filename Value="C:\lazarus\lcl\controls.pp"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="177"/>
-        <CursorPos X="25" Y="186"/>
-        <UsageCount Value="13"/>
-      </Unit28>
-      <Unit29>
+        <TopLine Value="32"/>
+        <CursorPos X="3" Y="47"/>
+        <UsageCount Value="9"/>
+      </Unit25>
+      <Unit26>
         <Filename Value="C:\lazarus\lcl\comctrls.pp"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="2800"/>
-        <CursorPos X="3" Y="2809"/>
-        <UsageCount Value="6"/>
-      </Unit29>
-      <Unit30>
+        <UnitName Value="ComCtrls"/>
+        <EditorIndex Value="5"/>
+        <TopLine Value="902"/>
+        <CursorPos X="3" Y="914"/>
+        <UsageCount Value="21"/>
+        <Loaded Value="True"/>
+      </Unit26>
+      <Unit27>
         <Filename Value="C:\lazarus\lcl\dialogs.pp"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="168"/>
         <CursorPos X="3" Y="177"/>
-        <UsageCount Value="7"/>
-      </Unit30>
-      <Unit31>
+        <UsageCount Value="3"/>
+      </Unit27>
+      <Unit28>
         <Filename Value="W:\Lazarus\Libs\synalist\blcksock.pas"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="39"/>
         <CursorPos X="47" Y="4343"/>
-        <UsageCount Value="7"/>
+        <UsageCount Value="3"/>
+      </Unit28>
+      <Unit29>
+        <Filename Value="W:\Lazarus\Libs\ueControls\ueled.pas"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="31"/>
+        <CursorPos X="3" Y="81"/>
+        <UsageCount Value="8"/>
+      </Unit29>
+      <Unit30>
+        <Filename Value="W:\Lazarus\Libs\ueControls\uebase.pas"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="135"/>
+        <CursorPos X="3" Y="106"/>
+        <UsageCount Value="8"/>
+      </Unit30>
+      <Unit31>
+        <Filename Value="sbaprogramu.pas"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="-1"/>
+        <WindowIndex Value="-1"/>
+        <TopLine Value="-1"/>
+        <CursorPos X="-1" Y="-1"/>
+        <UsageCount Value="21"/>
       </Unit31>
     </Units>
     <CustomDefines Count="1">
       <Define0 Value="DEBUG"/>
     </CustomDefines>
-    <JumpHistory Count="30" HistoryIndex="29">
+    <JumpHistory Count="14" HistoryIndex="13">
       <Position1>
-        <Filename Value="sbaprojectu.pas"/>
-        <Caret Line="68" Column="43" TopLine="68"/>
+        <Filename Value="mainformu.pas"/>
+        <Caret Line="1175" Column="19" TopLine="1161"/>
       </Position1>
       <Position2>
-        <Filename Value="sbaprojectu.pas"/>
-        <Caret Line="4" Column="21"/>
+        <Filename Value="mainformu.pas"/>
+        <Caret Line="1060" Column="17" TopLine="1046"/>
       </Position2>
       <Position3>
-        <Filename Value="sbaprojectu.pas"/>
-        <Caret Line="10" Column="26"/>
+        <Filename Value="mainformu.pas"/>
+        <Caret Line="1048" Column="3" TopLine="1046"/>
       </Position3>
       <Position4>
-        <Filename Value="sbaprojectu.pas"/>
-        <Caret Line="5" Column="49"/>
+        <Filename Value="mainformu.pas"/>
+        <Caret Line="5" Column="41"/>
       </Position4>
       <Position5>
-        <Filename Value="sbaprojectu.pas"/>
-        <Caret Line="124" Column="18" TopLine="112"/>
+        <Filename Value="mainformu.pas"/>
+        <Caret Line="129" Column="16" TopLine="106"/>
       </Position5>
       <Position6>
-        <Filename Value="sbaprojectu.pas"/>
-        <Caret Line="197" Column="23" TopLine="185"/>
+        <Filename Value="mainformu.pas"/>
+        <Caret Line="334" Column="26" TopLine="311"/>
       </Position6>
       <Position7>
-        <Filename Value="sbaprojectu.pas"/>
-        <Caret Line="198" Column="19" TopLine="186"/>
+        <Filename Value="mainformu.pas"/>
+        <Caret Line="1162" Column="32" TopLine="1138"/>
       </Position7>
       <Position8>
-        <Filename Value="sbaprojectu.pas"/>
-        <Caret Line="219" Column="34" TopLine="207"/>
+        <Filename Value="mainformu.pas"/>
+        <Caret Line="1167" Column="17" TopLine="1143"/>
       </Position8>
       <Position9>
-        <Filename Value="sbaprojectu.pas"/>
-        <Caret Line="258" Column="16" TopLine="245"/>
+        <Filename Value="mainformu.pas"/>
+        <Caret Line="1168" Column="29" TopLine="1144"/>
       </Position9>
       <Position10>
-        <Filename Value="sbaprojectu.pas"/>
-        <Caret Line="510" Column="7" TopLine="502"/>
+        <Filename Value="mainformu.pas"/>
+        <Caret Line="129" Column="16" TopLine="116"/>
       </Position10>
       <Position11>
-        <Filename Value="sbaprojectu.pas"/>
-        <Caret Line="251" TopLine="246"/>
+        <Filename Value="mainformu.pas"/>
+        <Caret Column="21"/>
       </Position11>
       <Position12>
-        <Filename Value="sbaprojectu.pas"/>
-        <Caret Line="254" Column="42" TopLine="416"/>
+        <Filename Value="mainformu.pas"/>
+        <Caret Line="128" Column="19" TopLine="105"/>
       </Position12>
       <Position13>
         <Filename Value="mainformu.pas"/>
-        <Caret Line="8" Column="3"/>
+        <Caret Line="1289" Column="38" TopLine="1275"/>
       </Position13>
       <Position14>
         <Filename Value="mainformu.pas"/>
-        <Caret Line="34" Column="12" TopLine="21"/>
+        <Caret Line="634" Column="24" TopLine="622"/>
       </Position14>
-      <Position15>
-        <Filename Value="mainformu.pas"/>
-        <Caret Line="279" Column="12" TopLine="267"/>
-      </Position15>
-      <Position16>
-        <Filename Value="mainformu.pas"/>
-        <Caret Line="306" Column="22" TopLine="294"/>
-      </Position16>
-      <Position17>
-        <Filename Value="mainformu.pas"/>
-        <Caret Line="307" Column="22" TopLine="295"/>
-      </Position17>
-      <Position18>
-        <Filename Value="mainformu.pas"/>
-        <Caret Line="309" Column="22" TopLine="297"/>
-      </Position18>
-      <Position19>
-        <Filename Value="mainformu.pas"/>
-        <Caret Line="310" Column="22" TopLine="298"/>
-      </Position19>
-      <Position20>
-        <Filename Value="mainformu.pas"/>
-        <Caret Line="312" Column="22" TopLine="300"/>
-      </Position20>
-      <Position21>
-        <Filename Value="mainformu.pas"/>
-        <Caret Line="313" Column="22" TopLine="301"/>
-      </Position21>
-      <Position22>
-        <Filename Value="mainformu.pas"/>
-        <Caret Line="2014" Column="25" TopLine="2006"/>
-      </Position22>
-      <Position23>
-        <Filename Value="mainformu.pas"/>
-        <Caret Line="2016" Column="50" TopLine="2006"/>
-      </Position23>
-      <Position24>
-        <Filename Value="mainformu.pas"/>
-        <Caret Line="2039" Column="2" TopLine="2024"/>
-      </Position24>
-      <Position25>
-        <Filename Value="mainformu.pas"/>
-        <Caret Line="14" Column="36"/>
-      </Position25>
-      <Position26>
-        <Filename Value="mainformu.pas"/>
-        <Caret Line="2022" Column="27" TopLine="2015"/>
-      </Position26>
-      <Position27>
-        <Filename Value="mainformu.pas"/>
-        <Caret Line="2018" Column="11" TopLine="2013"/>
-      </Position27>
-      <Position28>
-        <Filename Value="mainformu.pas"/>
-        <Caret Line="2028" Column="12" TopLine="2017"/>
-      </Position28>
-      <Position29>
-        <Filename Value="sbaprojectu.pas"/>
-        <Caret Line="568" TopLine="537"/>
-      </Position29>
-      <Position30>
-        <Filename Value="sbaprojectu.pas"/>
-        <Caret Line="560" TopLine="542"/>
-      </Position30>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>

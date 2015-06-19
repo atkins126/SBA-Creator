@@ -1,4 +1,4 @@
-unit SBASnippetU;
+unit SBAProgramU;
 
 {$mode objfpc}{$H+}
 
@@ -8,20 +8,20 @@ uses
   Dialogs, Classes, SysUtils, SBAProgContrlrU, ListViewFilterEdit, FileUtil;
 
 const
-  cSBADefaultSnippetName='NewSnippet.snp';
+  cSBADefaultProgramName='NewProgram.prg';
 
 type
 
-  { TSBASnippet }
+  { TSBAProgram }
 
-  TSBASnippet = class(TSBAContrlrProg)
+  TSBAProgram = class(TSBAContrlrProg)
   private
     FData: TStrings;
     FCode: Tstrings;
     FDescription: Tstrings;
     FRegisters: Tstrings;
     FFilter:TListViewFilterEdit;
-    procedure AddItemToSnippetsFilter(FileIterator: TFileIterator);
+    procedure AddItemToProgramsFilter(FileIterator: TFileIterator);
     procedure Setfilename(AValue: string);
   public
     constructor Create;
@@ -29,7 +29,7 @@ type
     function CpyProgDetails(Prog,Src:TStrings):boolean;
     function CpyUserProg(Prog,Src:TStrings):boolean;
     function CpyProgUReg(Prog,Src:TStrings):boolean;
-    procedure UpdateSnippetsFilter(Filter: TListViewFilterEdit);
+    procedure UpdateProgramsFilter(Filter: TListViewFilterEdit);
   published
     property Filename:string read Ffilename write Setfilename;
     property Code:Tstrings read Fcode;
@@ -42,15 +42,15 @@ implementation
 
 uses ConfigFormU,UtilsU;
 
-{ TSBASnippet }
+{ TSBAProgram }
 
-procedure TSBASnippet.Setfilename(AValue: string);
+procedure TSBAProgram.Setfilename(AValue: string);
 begin
   if Ffilename=AValue then Exit;
   try
     FData.LoadFromFile(AValue);
   except
-    showmessage('Code snippet could not be loaded');
+    showmessage('Code Program could not be loaded');
     exit;
   end;
   CpyUserProg(FData,FCode);
@@ -59,17 +59,17 @@ begin
   Ffilename:=AValue;
 end;
 
-constructor TSBASnippet.Create;
+constructor TSBAProgram.Create;
 begin
   inherited Create;
-  FFileName:=cSBADefaultSnippetName;
+  FFileName:=cSBADefaultProgramName;
   FData:=TStringList.Create;
   FCode:=TStringList.Create;
   FDescription:=TStringList.Create;
   FRegisters:=TStringList.Create;
 end;
 
-destructor TSBASnippet.Destroy;
+destructor TSBAProgram.Destroy;
 begin
   if assigned(FData) then FreeAndNil(FData);
   if assigned(FCode) then FreeAndNil(FCode);
@@ -78,7 +78,7 @@ begin
   inherited Destroy;
 end;
 
-function TSBASnippet.CpyProgDetails(Prog, Src: TStrings): boolean;
+function TSBAProgram.CpyProgDetails(Prog, Src: TStrings): boolean;
 Var I:Integer;
 begin
   Src.Clear;
@@ -93,7 +93,7 @@ begin
   end;
 end;
 
-function TSBASnippet.CpyUserProg(Prog, Src: TStrings): boolean;
+function TSBAProgram.CpyUserProg(Prog, Src: TStrings): boolean;
 begin
   Src.Clear;
   Src.Add(cSBAStartUserProg);
@@ -106,7 +106,7 @@ begin
   end;
 end;
 
-function TSBASnippet.CpyProgUReg(Prog, Src: TStrings): boolean;
+function TSBAProgram.CpyProgUReg(Prog, Src: TStrings): boolean;
 begin
   Src.Clear;
   Src.Add(cSBAStartProgUReg);
@@ -119,7 +119,7 @@ begin
   end;
 end;
 
-procedure TSBASnippet.AddItemToSnippetsFilter(FileIterator: TFileIterator);
+procedure TSBAProgram.AddItemToProgramsFilter(FileIterator: TFileIterator);
 var
   Data:TStringArray;
 begin
@@ -129,12 +129,12 @@ begin
   FFilter.Items.Add(Data);
 end;
 
-procedure TSBASnippet.UpdateSnippetsFilter(Filter:TListViewFilterEdit);
+procedure TSBAProgram.UpdateProgramsFilter(Filter:TListViewFilterEdit);
 begin
   FFilter:=Filter;
   FFilter.Items.Clear;
-  SearchForFiles(SnippetsDir,'*.snp',@AddItemToSnippetsFilter);
-  SearchForFiles(LibraryDir,'*.snp',@AddItemToSnippetsFilter);
+  SearchForFiles(ProgramsDir,'*.prg',@AddItemToProgramsFilter);
+  SearchForFiles(LibraryDir,'*.prg',@AddItemToProgramsFilter);
   FFilter.InvalidateFilter;
 end;
 

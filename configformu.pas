@@ -17,12 +17,14 @@ type
     CB_LibAsReadOnly: TCheckBox;
     CB_AutoOpenPrjF: TCheckBox;
     Ed_LibraryDir: TDirectoryEdit;
-    Ed_SnippetDir: TDirectoryEdit;
+    Ed_SnippetsDir: TDirectoryEdit;
     Ed_ProjectsDir: TDirectoryEdit;
+    Ed_ProgramsDir: TDirectoryEdit;
     Label1: TLabel;
     Label2: TLabel;
     Label3: TLabel;
     Ed_DefAuthor: TLabeledEdit;
+    Label4: TLabel;
     L_ConfigDir: TStaticText;
     procedure FormShow(Sender: TObject);
   private
@@ -31,22 +33,37 @@ type
     { public declarations }
   end;
 
+const
+  DefSBAbaseDir='SBA-master';
+  DefLibraryDir='SBA-Library-master';
+  DefSnippetsDir='SBA-Snippets-master';
+  DefProgramsDir='SBA-Programs-master';
+  DefProjectsDir='sbaprojects';
+
 var
   ConfigForm: TConfigForm;
-  ConfigDir,LibraryDir,SnippetDir,ProjectsDir,SBAbaseDir:string;
+  ConfigDir,LibraryDir,SnippetsDir,ProgramsDir,ProjectsDir,SBAbaseDir:string;
   DefAuthor:string;
   LibAsReadOnly:Boolean;
   AutoOpenPrjF:Boolean;
-  IpCoreList:Tstringlist;
+  IpCoreList,SnippetsList,ProgramsList:Tstringlist;
 
 function GetConfigValues:boolean;
 function SetConfigValues:boolean;
+procedure UpdateLists;
 
 implementation
 
-uses MainFormU, SBAProgContrlrU, SBAProjectU, UtilsU;
+uses MainFormU, SBAProgContrlrU, UtilsU, LibraryFormU;
 
 {$R *.lfm}
+
+procedure UpdateLists;
+begin
+  GetAllFileNames(LibraryDir,'*.ini',IpCoreList);
+  GetAllFileNames(SnippetsDir,'*.snp',SnippetsList);
+  GetAllFileNames(ProgramsDir,'*.prg',ProgramsList);
+end;
 
 function GetConfigValues: boolean;
 begin
@@ -55,10 +72,11 @@ begin
   With MainForm.IniStor do
   begin
     ConfigDir:=ReadString('ConfigDir',GetAppConfigDir(false));
-    SBAbaseDir:=ReadString('SBAbaseDir',ConfigDir+'SBA-master'+PathDelim);
-    LibraryDir:=ReadString('LibraryDir',ConfigDir+'sbalibrary'+PathDelim);
-    SnippetDir:=ReadString('SnippetDir',ConfigDir+'snippets'+PathDelim);
-    ProjectsDir:=ReadString('ProjectsDir',GetUserDir+'sbaprojects'+PathDelim);
+    SBAbaseDir:=ReadString('SBAbaseDir',ConfigDir+DefSBAbaseDir+PathDelim);
+    LibraryDir:=ReadString('LibraryDir',ConfigDir+DefLibraryDir+PathDelim);
+    SnippetsDir:=ReadString('SnippetsDir',ConfigDir+DefSnippetsDir+PathDelim);
+    ProgramsDir:=ReadString('ProgramsDir',ConfigDir+DefProgramsDir+PathDelim);
+    ProjectsDir:=ReadString('ProjectsDir',GetUserDir+DefProjectsDir+PathDelim);
     DefAuthor:=ReadString('DefAuthor','Author');
     LibAsReadOnly:=ReadBoolean('LibAsReadOnly',true);
     AutoOpenPrjF:=ReadBoolean('AutoOpenPrjF',true);
@@ -66,15 +84,40 @@ begin
   If Not DirectoryExistsUTF8(ConfigDir) then
     If Not CreateDirUTF8(ConfigDir) Then
       raise exception.create('Failed to create config folder!');
-  If Not DirectoryExistsUTF8(LibraryDir) then
-    If Not CreateDirUTF8(LibraryDir) Then
-      raise exception.create('Failed to create SBA library folder!');
-  If Not DirectoryExistsUTF8(SnippetDir) then
-    If Not CreateDirUTF8(SnippetDir) Then
-      raise exception.create('Failed to create code snippets folder!');
+
   If Not DirectoryExistsUTF8(ProjectsDir) then
     If Not CreateDirUTF8(ProjectsDir) Then
       raise exception.create('Failed to create SBA projects folder!');
+
+  If Not DirectoryExistsUTF8(LibraryDir) then
+  begin
+    CopyFile(Application.location+cSBAlibraryZipFile,ConfigDir+cSBAlibraryZipFile);
+    if not Unzip(ConfigDir+cSBAlibraryZipFile,ConfigDir) then
+    begin
+      ShowMessage('Failed to create SBA library folder!');
+      halt(1);
+    end;
+  end;
+
+  If Not DirectoryExistsUTF8(SnippetsDir) then
+  begin
+    CopyFile(Application.location+cSBAsnippetsZipFile,ConfigDir+cSBAsnippetsZipFile);
+    if not Unzip(ConfigDir+cSBAsnippetsZipFile,ConfigDir) then
+    begin
+      ShowMessage('Failed to create code snippets folder!');
+      halt(1);
+    end;
+  end;
+
+  If Not DirectoryExistsUTF8(ProgramsDir) then
+  begin
+    CopyFile(Application.location+cSBAprogramsZipFile,ConfigDir+cSBAprogramsZipFile);
+    if not Unzip(ConfigDir+cSBAprogramsZipFile,ConfigDir) then
+    begin
+      ShowMessage('Failed to create code programs folder!');
+      halt(1);
+    end;
+  end;
 
   If Not DirectoryExistsUTF8(SBAbaseDir) then
   begin
@@ -102,9 +145,13 @@ begin
     else raise exception.create('Library folder could not be changed');
     WriteString('LibraryDir',LibraryDir);
     //
-    if DirectoryExistsUTF8(Ed_SnippetDir.text) then SnippetDir:=AppendPathDelim(TrimFilename(Ed_SnippetDir.text))
+    if DirectoryExistsUTF8(Ed_SnippetsDir.text) then SnippetsDir:=AppendPathDelim(TrimFilename(Ed_SnippetsDir.text))
     else raise exception.create('Snippet folder could not be changed');
-    WriteString('SnippetDir',SnippetDir);
+    WriteString('SnippetsDir',SnippetsDir);
+    //
+    if DirectoryExistsUTF8(Ed_ProgramsDir.text) then ProgramsDir:=AppendPathDelim(TrimFilename(Ed_ProgramsDir.text))
+    else raise exception.create('Snippet folder could not be changed');
+    WriteString('ProgramsDir',ProgramsDir);
     //
     if DirectoryExistsUTF8(Ed_ProjectsDir.text) then ProjectsDir:=AppendPathDelim(TrimFilename(Ed_ProjectsDir.text))
     else raise exception.create('SBA Projects folder could not be changed');
@@ -130,7 +177,8 @@ procedure TConfigForm.FormShow(Sender: TObject);
 begin
   L_ConfigDir.caption:='Config Dir: '+ConfigDir;
   Ed_LibraryDir.Text:=LibraryDir;
-  Ed_SnippetDir.Text:=SnippetDir;
+  Ed_SnippetsDir.Text:=SnippetsDir;
+  Ed_ProgramsDir.Text:=ProgramsDir;
   Ed_ProjectsDir.Text:=ProjectsDir;
   Ed_DefAuthor.Text:=DefAuthor;
   CB_LibAsReadOnly.checked:=LibAsReadOnly;
