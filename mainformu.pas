@@ -594,24 +594,33 @@ begin
   Y:=ActiveEditor.CaretY;
   try
     sblk:=GetPosList(cSBAStartUserProg,ActiveEditor.Lines)+1;
-    eblk:=GetPosList(cSBAEndUserProg,ActiveEditor.Lines,sblk)-1;
+    eblk:=GetPosList(cSBAEndUserProg,ActiveEditor.Lines,sblk);
     if (sblk=-1) or (eblk=-1) then
     begin
      ShowMessage('Error in User program block definitions, check "-- /SBA:" keywords');
      Exit;
     end;
-    if (ActiveEditor.CaretY<sblk+1) or (ActiveEditor.CaretY>eblk+1) then ActiveEditor.CaretY:=sblk+1;
+    if (ActiveEditor.CaretY<sblk+1) or (ActiveEditor.CaretY>eblk+1) then
+    begin
+      while ActiveEditor.Lines[eblk-1]='' do dec(eblk);
+      ActiveEditor.CaretY:=eblk+1;
+      ActiveEditor.InsertTextAtCaret(LineEnding);
+    end;
     ActiveEditor.InsertTextAtCaret(SBASnippet.code.Text);
 
     ActiveEditor.CaretY:=Y;
     sblk:=GetPosList(cSBAStartProgUReg,ActiveEditor.Lines)+1;
-    eblk:=GetPosList(cSBAEndProgUReg,ActiveEditor.Lines,sblk)-1;
+    eblk:=GetPosList(cSBAEndProgUReg,ActiveEditor.Lines,sblk);
     if (sblk=-1) or (eblk=-1) then
     begin
       ShowMessage('Error in User registers block definitions, check "-- /SBA:" keywords');
       Exit;
     end;
-    if (ActiveEditor.CaretY<sblk+1) or (ActiveEditor.CaretY>eblk+1) then ActiveEditor.CaretY:=sblk+1;
+    if (ActiveEditor.CaretY<sblk+1) or (ActiveEditor.CaretY>eblk+1) then
+    begin
+      while ActiveEditor.Lines[eblk-1]='' do dec(eblk);
+      ActiveEditor.CaretY:=eblk+1;
+    end;
     ActiveEditor.InsertTextAtCaret(SBASnippet.registers.Text);
   finally
     ActiveEditor.EndUpdate;

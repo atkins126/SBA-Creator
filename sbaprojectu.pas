@@ -554,7 +554,7 @@ begin
     for s in l do
     begin
       n:=extractfilenameonly(s);
-      if not AnsiMatchText(n,[cSBApkg,cSyscon,cDataIntf]) and (CL.IndexOf(n)=-1) then
+      if not AnsiMatchText(n+'.vhd',[cSBApkg,cSyscon,cDataIntf]) and (CL.IndexOf(n)=-1) then
       begin
         FileSetAttr(s,faArchive);
 infoln('Borrando: '+s);
