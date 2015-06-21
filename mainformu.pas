@@ -1079,6 +1079,7 @@ begin
     MainForm.Menu := MainMenu;
     StatusBar1.Panels[0].Text:='';
     StatusBar1.Panels[1].Text:='';
+    Log.Clear;
   end else MainForm.Menu := nil;
 end;
 

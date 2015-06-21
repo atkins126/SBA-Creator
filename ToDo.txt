@@ -1,4 +1,9 @@
+listo: Borrar log al abrir nuevo proyecto o entrar en editor o puede ser borrado al salir a la pestaña de sistema.
+
+Para monitorear cambios en los archivos:
+http://forum.codecall.net/topic/76318-monitor-a-folder-for-changes/
+
+Colocar un save all en el editor hdl.
+
+
 Arreglar las excepciones al validar el código del PRG (el programa se cierra si se presiona Cancel)
-
-Ruta New Projects
-

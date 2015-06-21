@@ -289,14 +289,13 @@ begin
 end;
 
 procedure TprjWizForm.B_NextClick(Sender: TObject);
+var r:integer;
 begin
   case WizPages.PageIndex of
     0: begin
-      If not Editing and DirectoryExistsUTF8(L_PrjFinalLoc.caption) and not IsDirectoryEmpty(L_PrjFinalLoc.caption) then
-      begin
-        ShowMessage('The project folder '+L_PrjFinalLoc.caption+' already exist, Empty or delete it first');
-        exit;
-      end;
+      If not Editing and DirectoryExistsUTF8(L_PrjFinalLoc.caption) and not IsDirectoryEmpty(L_PrjFinalLoc.caption) and
+        (MessageDlg('Overwrite Files?','The project folder "'+L_PrjFinalLoc.caption+
+                    '" already exist.', mtConfirmation, [mbYes, mbCancel],0)<>mrYes) then exit;
     end;
     3: begin
       PrjData:=CollectData;
