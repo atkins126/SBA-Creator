@@ -430,6 +430,7 @@ begin
   begin
     SB.SimpleText:='';
     ShowMessage('The new IPCore library files are ready.');
+    UpdateLists;
   end;
   PB_SBAlibrary.Style:=pbstNormal;
 end;
@@ -441,6 +442,7 @@ begin
   begin
     SB.SimpleText:='';
     ShowMessage('The new programs files are ready.');
+    UpdateLists;
   end;
   PB_SBAprograms.Style:=pbstNormal;
 end;
@@ -452,6 +454,7 @@ begin
   begin
     SB.SimpleText:='';
     ShowMessage('The new Snippets library files are ready.');
+    UpdateLists;
   end;
   PB_SBAsnippets.Style:=pbstNormal;
 end;
