@@ -15,15 +15,10 @@ object LibraryForm: TLibraryForm
     Left = 0
     Height = 501
     Top = 0
-<<<<<<< .mine
     Width = 543
     ActivePage = UpdateRep
-=======
-    Width = 543
-    ActivePage = Snippets
->>>>>>> .theirs
     Align = alClient
-    TabIndex = 3
+    TabIndex = 0
     TabOrder = 0
     object UpdateRep: TTabSheet
       Caption = 'Update repositories'
