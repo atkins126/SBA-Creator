@@ -2,11 +2,11 @@ object LibraryForm: TLibraryForm
   Left = 1055
   Height = 501
   Top = 261
-  Width = 527
+  Width = 543
   BorderStyle = bsDialog
   Caption = 'LibraryForm'
   ClientHeight = 501
-  ClientWidth = 527
+  ClientWidth = 543
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   Position = poMainFormCenter
@@ -15,7 +15,7 @@ object LibraryForm: TLibraryForm
     Left = 0
     Height = 501
     Top = 0
-    Width = 527
+    Width = 543
     ActivePage = UpdateRep
     Align = alClient
     TabIndex = 0
@@ -23,23 +23,23 @@ object LibraryForm: TLibraryForm
     object UpdateRep: TTabSheet
       Caption = 'Update repositories'
       ClientHeight = 473
-      ClientWidth = 519
+      ClientWidth = 535
       object GB_SBAbase: TGroupBox
         Left = 5
         Height = 105
         Top = 5
-        Width = 509
+        Width = 525
         Align = alTop
         BorderSpacing.Around = 5
         Caption = 'SBA Official Base files repository:'
         ClientHeight = 85
-        ClientWidth = 505
+        ClientWidth = 521
         TabOrder = 0
         object PB_SBAbase: TProgressBar
           Left = 184
           Height = 22
           Top = 41
-          Width = 311
+          Width = 327
           Anchors = [akTop, akLeft, akRight]
           TabOrder = 0
         end
@@ -135,7 +135,7 @@ object LibraryForm: TLibraryForm
           Left = 8
           Height = 23
           Top = 8
-          Width = 487
+          Width = 503
           AutoSize = False
           Anchors = [akTop, akLeft, akRight]
           ButtonWidth = 23
@@ -188,18 +188,18 @@ object LibraryForm: TLibraryForm
         Left = 5
         Height = 105
         Top = 115
-        Width = 509
+        Width = 525
         Align = alTop
         BorderSpacing.Around = 5
         Caption = 'SBA IP Cores Library repository:'
         ClientHeight = 85
-        ClientWidth = 505
+        ClientWidth = 521
         TabOrder = 1
         object PB_SBAlibrary: TProgressBar
           Left = 184
           Height = 22
           Top = 41
-          Width = 311
+          Width = 327
           Anchors = [akTop, akLeft, akRight]
           TabOrder = 0
         end
@@ -295,7 +295,7 @@ object LibraryForm: TLibraryForm
           Left = 8
           Height = 23
           Top = 8
-          Width = 487
+          Width = 503
           AutoSize = False
           Anchors = [akTop, akLeft, akRight]
           ButtonWidth = 23
@@ -347,18 +347,18 @@ object LibraryForm: TLibraryForm
         Left = 5
         Height = 105
         Top = 225
-        Width = 509
+        Width = 525
         Align = alTop
         BorderSpacing.Around = 5
         Caption = 'SBA Programs repository:'
         ClientHeight = 85
-        ClientWidth = 505
+        ClientWidth = 521
         TabOrder = 2
         object PB_SBAprograms: TProgressBar
           Left = 184
           Height = 22
           Top = 41
-          Width = 311
+          Width = 327
           Anchors = [akTop, akLeft, akRight]
           TabOrder = 0
         end
@@ -454,7 +454,7 @@ object LibraryForm: TLibraryForm
           Left = 8
           Height = 23
           Top = 8
-          Width = 487
+          Width = 503
           AutoSize = False
           Anchors = [akTop, akLeft, akRight]
           ButtonWidth = 23
@@ -506,18 +506,18 @@ object LibraryForm: TLibraryForm
         Left = 5
         Height = 105
         Top = 335
-        Width = 509
+        Width = 525
         Align = alTop
         BorderSpacing.Around = 5
         Caption = 'SBA Snippets Library repository:'
         ClientHeight = 85
-        ClientWidth = 505
+        ClientWidth = 521
         TabOrder = 3
         object PB_SBAsnippets: TProgressBar
           Left = 184
           Height = 22
           Top = 41
-          Width = 311
+          Width = 327
           Anchors = [akTop, akLeft, akRight]
           TabOrder = 0
         end
@@ -613,7 +613,7 @@ object LibraryForm: TLibraryForm
           Left = 8
           Height = 23
           Top = 8
-          Width = 487
+          Width = 503
           AutoSize = False
           Anchors = [akTop, akLeft, akRight]
           ButtonWidth = 23
@@ -665,14 +665,14 @@ object LibraryForm: TLibraryForm
         Left = 0
         Height = 23
         Top = 450
-        Width = 519
+        Width = 535
         Panels = <>
       end
     end
     object IPCores: TTabSheet
       Caption = 'IPCores'
       ClientHeight = 473
-      ClientWidth = 519
+      ClientWidth = 535
       object Panel2: TPanel
         Left = 0
         Height = 473
@@ -711,7 +711,7 @@ object LibraryForm: TLibraryForm
               AutoSize = True
               Caption = 'Snippet'
               MinWidth = 100
-              Width = 160
+              Width = 140
             end          
             item
               Caption = 'Path'
@@ -731,17 +731,17 @@ object LibraryForm: TLibraryForm
         Left = 150
         Height = 473
         Top = 0
-        Width = 369
+        Width = 385
         Align = alClient
         BevelOuter = bvNone
         ClientHeight = 473
-        ClientWidth = 369
+        ClientWidth = 385
         TabOrder = 1
         object Label5: TLabel
           Left = 5
           Height = 18
           Top = 307
-          Width = 364
+          Width = 380
           Align = alTop
           AutoSize = False
           BorderSpacing.Left = 5
@@ -753,7 +753,7 @@ object LibraryForm: TLibraryForm
           Left = 3
           Height = 67
           Top = 325
-          Width = 363
+          Width = 379
           Align = alTop
           BorderSpacing.Left = 3
           BorderSpacing.Right = 3
@@ -772,7 +772,7 @@ object LibraryForm: TLibraryForm
           Left = 3
           Height = 275
           Top = 29
-          Width = 363
+          Width = 379
           AntialiasingMode = amOn
           Align = alTop
           BorderSpacing.Around = 3
@@ -784,7 +784,7 @@ object LibraryForm: TLibraryForm
           Left = 0
           Height = 26
           Top = 0
-          Width = 369
+          Width = 385
           Align = alTop
           Alignment = taCenter
           AutoSize = False
@@ -852,7 +852,7 @@ object LibraryForm: TLibraryForm
     object Programs: TTabSheet
       Caption = 'Programs'
       ClientHeight = 473
-      ClientWidth = 519
+      ClientWidth = 535
       object Panel3: TPanel
         Left = 0
         Height = 473
@@ -891,7 +891,7 @@ object LibraryForm: TLibraryForm
               AutoSize = True
               Caption = 'Snippet'
               MinWidth = 100
-              Width = 160
+              Width = 140
             end          
             item
               Caption = 'Path'
@@ -911,17 +911,17 @@ object LibraryForm: TLibraryForm
         Left = 150
         Height = 473
         Top = 0
-        Width = 369
+        Width = 385
         Align = alClient
         BevelOuter = bvNone
         ClientHeight = 473
-        ClientWidth = 369
+        ClientWidth = 385
         TabOrder = 1
         object Label6: TLabel
           Left = 5
           Height = 18
           Top = 0
-          Width = 364
+          Width = 380
           Align = alTop
           AutoSize = False
           BorderSpacing.Left = 5
@@ -933,7 +933,7 @@ object LibraryForm: TLibraryForm
           Left = 3
           Height = 382
           Top = 18
-          Width = 363
+          Width = 379
           Align = alTop
           BorderSpacing.Left = 3
           BorderSpacing.Right = 3
@@ -995,7 +995,7 @@ object LibraryForm: TLibraryForm
     object Snippets: TTabSheet
       Caption = 'Snippets'
       ClientHeight = 473
-      ClientWidth = 519
+      ClientWidth = 535
       object Panel1: TPanel
         Left = 0
         Height = 473
@@ -1034,7 +1034,7 @@ object LibraryForm: TLibraryForm
               AutoSize = True
               Caption = 'Snippet'
               MinWidth = 100
-              Width = 160
+              Width = 140
             end          
             item
               Caption = 'Path'
@@ -1054,17 +1054,17 @@ object LibraryForm: TLibraryForm
         Left = 150
         Height = 473
         Top = 0
-        Width = 369
+        Width = 385
         Align = alClient
         BevelOuter = bvNone
         ClientHeight = 473
-        ClientWidth = 369
+        ClientWidth = 385
         TabOrder = 1
         object Label7: TLabel
           Left = 5
           Height = 18
           Top = 0
-          Width = 364
+          Width = 380
           Align = alTop
           AutoSize = False
           BorderSpacing.Left = 5
@@ -1076,7 +1076,7 @@ object LibraryForm: TLibraryForm
           Left = 3
           Height = 382
           Top = 18
-          Width = 363
+          Width = 379
           Align = alTop
           BorderSpacing.Left = 3
           BorderSpacing.Right = 3
