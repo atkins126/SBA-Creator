@@ -270,9 +270,7 @@ object prjWizForm: TprjWizForm
         Top = 120
         Width = 128
         Caption = 'Create project folder'
-        Checked = True
         OnChange = Ed_PrjNameChange
-        State = cbChecked
         TabOrder = 2
       end
       object Label5: TLabel
@@ -1019,8 +1017,8 @@ object prjWizForm: TprjWizForm
     end
   end
   object ImageList1: TImageList
-    left = 24
-    top = 136
+    left = 376
+    top = 40
     Bitmap = {
       4C69030000001000000010000000FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
       FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
@@ -1123,17 +1121,17 @@ object prjWizForm: TprjWizForm
   end
   object OpenDialog1: TOpenDialog
     Options = [ofShowHelp, ofPathMustExist, ofFileMustExist, ofNoTestFileCreate, ofEnableSizing]
-    left = 112
-    top = 152
+    left = 376
+    top = 168
   end
   object SaveDialog1: TSaveDialog
     Options = [ofOverwritePrompt, ofShowHelp, ofPathMustExist, ofEnableSizing]
-    left = 112
-    top = 72
+    left = 376
+    top = 104
   end
   object PopupMenu1: TPopupMenu
-    left = 24
-    top = 72
+    left = 376
+    top = 224
     object RowDelete: TMenuItem
       Caption = 'Delete Row'
       OnClick = RowDeleteClick

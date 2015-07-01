@@ -8,7 +8,7 @@ uses
   Classes, SysUtils, FileUtil, ListViewFilterEdit, Forms,
   Controls, Graphics, Dialogs, ComCtrls, Buttons, ExtCtrls,
   ActnList, AsyncProcess, lclintf, StdCtrls, EditBtn,
-  IniFiles, SBASnippetU, SBAProgramU;
+  IniFilesUTF8, SBASnippetU, SBAProgramU;
 
 type
   tProcessStatus=(Idle,GetBase, GetLibrary, GetPrograms, GetSnippets);

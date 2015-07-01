@@ -1,7 +1,7 @@
 object MainForm: TMainForm
   Left = 1057
   Height = 769
-  Top = 101
+  Top = 10
   Width = 765
   AllowDropFiles = True
   ClientHeight = 749
@@ -15,18 +15,18 @@ object MainForm: TMainForm
   OnDestroy = FormDestroy
   OnDropFiles = FormDropFiles
   OnResize = FormResize
-  SessionProperties = 'CoreImage.Height;Height;Left;Log.Height;P_ProgAddress.Height;P_ProgLabels.Height;SnippetsList.Height;Top;Width;WindowState;P_Project.Width'
+  SessionProperties = 'CoreImage.Height;Height;Left;Log.Height;P_ProgAddress.Height;P_ProgLabels.Height;P_Project.Width;SnippetsList.Height;Top;Width;WindowState'
   LCLVersion = '1.4.0.4'
   object MainPages: TPageControl
     Left = 0
     Height = 726
     Top = 0
     Width = 765
-    ActivePage = SystemTab
+    ActivePage = EditorsTab
     Align = alClient
     ParentShowHint = False
     ShowHint = True
-    TabIndex = 0
+    TabIndex = 1
     TabOrder = 0
     TabPosition = tpBottom
     OnChange = MainPagesChange

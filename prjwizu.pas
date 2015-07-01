@@ -7,7 +7,7 @@ interface
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, ExtCtrls,
   Buttons, EditBtn, StdCtrls, Spin, Grids, ValEdit, Menus, fpjson, jsonparser,
-  strutils, IniFiles, types;
+  strutils, IniFilesUTF8, StringListUTF8, types;
 
 const
   CDefPrjTitle='Short title or description of the project';
@@ -289,7 +289,6 @@ begin
 end;
 
 procedure TprjWizForm.B_NextClick(Sender: TObject);
-var r:integer;
 begin
   case WizPages.PageIndex of
     0: begin
@@ -690,6 +689,7 @@ begin
   Ed_Prjname.text:=cSBADefaultPrjName;
   Ed_PrjLocation.Directory:=ProjectsDir;
   Ed_PrjLocation.RootDir:=ProjectsDir;
+  CB_CreateSubDir.Checked:=false;
   Image1.Picture.Bitmap:= nil;
   ImageList1.GetBitmap(0, Image1.Picture.Bitmap);
   Ed_PrjAuthor.Text:=DefAuthor;

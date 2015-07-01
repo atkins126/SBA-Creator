@@ -11,7 +11,7 @@ uses
   MainFormU, synhighlighterverilog, synhighlightersba, uSynEditPopupEdit,
   versionsupportu, SBAProgContrlrU, AboutFormU, sbasnippetu, configformu,
   PrjWizU, dwfileU, DebugFormU, SBAProjectU, floatformu, CoresPrjEdFormU,
-  LibraryFormU, UtilsU, sbaprogramu;
+  LibraryFormU, UtilsU, sbaprogramu, IniFilesUTF8;
 
 {$R *.res}
 

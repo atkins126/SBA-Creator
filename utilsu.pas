@@ -78,8 +78,8 @@ begin
   result:=false;
   UnZipper := TUnZipper.Create;
   try
-    UnZipper.FileName := f;
-    UnZipper.OutputPath := p;
+    UnZipper.FileName := Utf8ToAnsi(f);
+    UnZipper.OutputPath := Utf8ToAnsi(p);
     try
       UnZipper.Examine;
       UnZipper.UnZipAllFiles;

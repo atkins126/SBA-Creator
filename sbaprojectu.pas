@@ -7,7 +7,7 @@ interface
 uses
   Classes, SysUtils, Dialogs, Controls,
   fpjson, jsonparser,
-  fileutil, strutils, Inifiles;
+  fileutil, strutils, IniFilesUTF8,StringListUTF8;
 
 const
   cSBADefaultPrjName='NewProject';
@@ -216,21 +216,47 @@ function TSBAPrj.GetAllFileNames(vhdonly: boolean): string;
 var
   S,R:string;
   i:integer;
+  l:tstringlist;
 begin
-  S:=loclib+cSBApkg+' ';
-  S+=loclib+cSyscon+' ';
-  S+=loclib+cDataIntf+' ';
+  l:=tstringlist.create;
+  l.add(loclib+cSBApkg);
+  l.add(loclib+cSyscon);
+  l.add(loclib+cDataIntf);
   if libcores.Count>0 then for R in libcores do
-    S+=loclib+R+'.vhd ';
+    l.add(loclib+R+'.vhd');
   if userfiles.Count>0 then for i:=0 to userfiles.Count-1 do
     if not vhdonly or (extractfileext(userfiles.names[i])='.vhd') then
-      S+=userfiles.ValueFromIndex[i]+userfiles.names[i]+' ';
-  S+=location+name+'_'+cSBAcfg+' ';
-  S+=location+name+'_'+cSBAdcdr+' ';
-  S+=location+name+'_'+cSBActrlr+' ';
-  S+=location+name+'_'+cSBATop;
-  Result:=S;
+      l.add(userfiles.ValueFromIndex[i]+userfiles.names[i]);
+  l.add(location+name+'_'+cSBAcfg);
+  l.add(location+name+'_'+cSBAdcdr);
+  l.add(location+name+'_'+cSBActrlr);
+  l.add(location+name+'_'+cSBATop);
+  Result:='';
+  for S in l do Result+=CreateRelativePath(s,location)+' ';
+  Result:=LeftStr(Result,length(Result)-1);
+  l.free;{ TODO : Sería mejor devolver la lista y luego armar el comando sin el .bat }
 end;
+
+//function TSBAPrj.GetAllFileNames(vhdonly: boolean): string;
+//var
+//  S,R:string;
+//  i:integer;
+//begin
+//  S:=loclib+cSBApkg+' ';
+//  S+=loclib+cSyscon+' ';
+//  S+=loclib+cDataIntf+' ';
+//  if libcores.Count>0 then for R in libcores do
+//    S+=loclib+R+'.vhd ';
+//  if userfiles.Count>0 then for i:=0 to userfiles.Count-1 do
+//    if not vhdonly or (extractfileext(userfiles.names[i])='.vhd') then
+//      S+=userfiles.ValueFromIndex[i]+userfiles.names[i]+' ';
+//  S+=location+name+'_'+cSBAcfg+' ';
+//  S+=location+name+'_'+cSBAdcdr+' ';
+//  S+=location+name+'_'+cSBActrlr+' ';
+//  S+=location+name+'_'+cSBATop;
+//  Result:=S;
+//end;
+
 
 function TSBAPrj.PrepareNewFolder:boolean;
 var
@@ -238,7 +264,7 @@ var
 begin
   result:=false;
   if name='' then exit;
-  If (not DirectoryExistsUTF8(Location)) and (not CreateDirUTF8(Location)) Then
+  If not ForceDirectoriesUTF8(Location) Then
   begin
     ShowMessage('Failed to create SBA project folder: '+Location);
     exit;
@@ -261,9 +287,9 @@ begin
     CopyFile(SBAbaseDir+cDataIntf,LocLib+cDataIntf);
     if LibAsReadOnly then
     begin
-      FileSetAttr(LocLib+cSBApkg,faReadOnly);
-      FileSetAttr(LocLib+cSyscon,faReadOnly);
-      FileSetAttr(LocLib+cDataIntf,faReadOnly);
+      FileSetAttrUTF8(LocLib+cSBApkg,faReadOnly);
+      FileSetAttrUTF8(LocLib+cSyscon,faReadOnly);
+      FileSetAttrUTF8(LocLib+cDataIntf,faReadOnly);
     end;
     CopyIPCoreFiles(libcores);
     CreateDirUTF8(Location+'user');
@@ -491,7 +517,7 @@ begin
     begin
 infoln('Copiando: '+LibraryDir+S+PathDelim+s+'.vhd');
       CopyFile(LibraryDir+S+PathDelim+s+'.vhd',LocLib+s+'.vhd');
-      if LibAsReadOnly then FileSetAttr(LocLib+s+'.vhd',faReadOnly);
+      if LibAsReadOnly then FileSetAttrUTF8(LocLib+s+'.vhd',faReadOnly);
     end;
     try
       Ini:=TIniFile.Create(LibraryDir+S+PathDelim+s+'.ini');
@@ -550,13 +576,13 @@ begin
   prjWizForm.PrjIpCoreList.Items.Assign(CL);
   NewData:=prjWizForm.CollectData;
   try
-    l:=FindAllFiles(LocLib,'*.vhd');
+    l:=TStringList(FindAllFiles(LocLib,'*.vhd'));
     for s in l do
     begin
       n:=extractfilenameonly(s);
       if not AnsiMatchText(n+'.vhd',[cSBApkg,cSyscon,cDataIntf]) and (CL.IndexOf(n)=-1) then
       begin
-        FileSetAttr(s,faArchive);
+        FileSetAttrUTF8(s,faArchive);
 infoln('Borrando: '+s);
         DeleteFileUTF8(s);
       end;

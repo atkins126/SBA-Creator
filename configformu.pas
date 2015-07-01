@@ -54,7 +54,7 @@ procedure UpdateLists;
 
 implementation
 
-uses MainFormU, SBAProgContrlrU, UtilsU, LibraryFormU;
+uses MainFormU, SBAProgContrlrU, UtilsU, LibraryFormU, DebugFormU;
 
 {$R *.lfm}
 
@@ -68,10 +68,10 @@ end;
 function GetConfigValues: boolean;
 begin
   result:=false;
-  MainForm.IniStor.IniFileName:=GetAppConfigFile(false);
   With MainForm.IniStor do
   begin
-    ConfigDir:=ReadString('ConfigDir',GetAppConfigDir(false));
+    IniFileName:=GetAppConfigFile(false);
+    ConfigDir:=ReadString('ConfigDir',GetAppConfigDirUTF8(false));
     SBAbaseDir:=ReadString('SBAbaseDir',ConfigDir+DefSBAbaseDir+PathDelim);
     LibraryDir:=ReadString('LibraryDir',ConfigDir+DefLibraryDir+PathDelim);
     SnippetsDir:=ReadString('SnippetsDir',ConfigDir+DefSnippetsDir+PathDelim);
@@ -83,7 +83,11 @@ begin
   end;
   If Not DirectoryExistsUTF8(ConfigDir) then
     If Not CreateDirUTF8(ConfigDir) Then
-      raise exception.create('Failed to create config folder!');
+    begin
+      ShowMessage('Failed to create config folder!: '+ConfigDir);
+      MainForm.Close;
+      Exit;
+    end;
 
   If Not DirectoryExistsUTF8(ProjectsDir) then
     If Not CreateDirUTF8(ProjectsDir) Then
@@ -95,7 +99,8 @@ begin
     if not Unzip(ConfigDir+cSBAlibraryZipFile,ConfigDir) then
     begin
       ShowMessage('Failed to create SBA library folder!');
-      halt(1);
+      MainForm.Close;
+      Exit;
     end;
   end;
 
@@ -105,7 +110,8 @@ begin
     if not Unzip(ConfigDir+cSBAsnippetsZipFile,ConfigDir) then
     begin
       ShowMessage('Failed to create code snippets folder!');
-      halt(1);
+      MainForm.Close;
+      Exit;
     end;
   end;
 
@@ -115,7 +121,8 @@ begin
     if not Unzip(ConfigDir+cSBAprogramsZipFile,ConfigDir) then
     begin
       ShowMessage('Failed to create code programs folder!');
-      halt(1);
+      MainForm.Close;
+      Exit;
     end;
   end;
 
@@ -125,7 +132,8 @@ begin
     if not Unzip(ConfigDir+cSBABaseZipFile,ConfigDir) then
     begin
       ShowMessage('Failed to create SBA base folder!');
-      halt(1);
+      MainForm.Close;
+      Exit;
     end;
   end;
 
@@ -140,22 +148,50 @@ begin
   with ConfigForm, MainForm.IniStor do
   begin
     WriteString('ConfigDir',ConfigDir);
+    //{ TODO : Forzar la creación de directorios}
+    Ed_LibraryDir.text:=AppendPathDelim(TrimFilename(Ed_LibraryDir.text));
+    if LibraryDir<>Ed_LibraryDir.text then
+    begin
+      if DirectoryExistsUTF8(Ed_LibraryDir.text) then LibraryDir:=Ed_LibraryDir.text
+      else begin
+        showmessage('Library folder could not be changed');
+        exit;
+      end;
+      WriteString('LibraryDir',LibraryDir);
+    end;
     //
-    if DirectoryExistsUTF8(Ed_LibraryDir.text) then LibraryDir:=AppendPathDelim(TrimFilename(Ed_LibraryDir.text))
-    else raise exception.create('Library folder could not be changed');
-    WriteString('LibraryDir',LibraryDir);
+    Ed_SnippetsDir.text:=AppendPathDelim(TrimFilename(Ed_SnippetsDir.text));
+    if SnippetsDir<>Ed_SnippetsDir.text then
+    begin
+      if DirectoryExistsUTF8(Ed_SnippetsDir.text) then SnippetsDir:=Ed_SnippetsDir.text
+      else begin
+        showmessage('Snippet folder could not be changed');
+        exit;
+      end;
+      WriteString('SnippetsDir',SnippetsDir);
+    end;
     //
-    if DirectoryExistsUTF8(Ed_SnippetsDir.text) then SnippetsDir:=AppendPathDelim(TrimFilename(Ed_SnippetsDir.text))
-    else raise exception.create('Snippet folder could not be changed');
-    WriteString('SnippetsDir',SnippetsDir);
+    Ed_ProgramsDir.text:=AppendPathDelim(TrimFilename(Ed_ProgramsDir.text));
+    if ProgramsDir<>Ed_ProgramsDir.text then
+    begin
+      if DirectoryExistsUTF8(Ed_ProgramsDir.text) then ProgramsDir:=Ed_ProgramsDir.text
+      else begin
+        showmessage('Snippet folder could not be changed');
+        exit;
+      end;
+      WriteString('ProgramsDir',ProgramsDir);
+    end;
     //
-    if DirectoryExistsUTF8(Ed_ProgramsDir.text) then ProgramsDir:=AppendPathDelim(TrimFilename(Ed_ProgramsDir.text))
-    else raise exception.create('Snippet folder could not be changed');
-    WriteString('ProgramsDir',ProgramsDir);
-    //
-    if DirectoryExistsUTF8(Ed_ProjectsDir.text) then ProjectsDir:=AppendPathDelim(TrimFilename(Ed_ProjectsDir.text))
-    else raise exception.create('SBA Projects folder could not be changed');
-    WriteString('ProjectsDir',ProjectsDir);
+    Ed_ProjectsDir.text:=AppendPathDelim(TrimFilename(Ed_ProjectsDir.text));
+    if ProjectsDir<>Ed_ProjectsDir.text then
+    begin
+      if ForceDirectoriesUTF8(Ed_ProjectsDir.text) then ProjectsDir:=Ed_ProjectsDir.text
+      else begin
+        showmessage('SBA Projects folder could not be changed');
+        exit;
+      end;
+      WriteString('ProjectsDir',ProjectsDir);
+    end;
     //
     DefAuthor:=Ed_DefAuthor.Text;
     WriteString('DefAuthor',DefAuthor);
@@ -182,8 +218,8 @@ begin
   Ed_ProjectsDir.Text:=ProjectsDir;
   Ed_DefAuthor.Text:=DefAuthor;
   CB_LibAsReadOnly.checked:=LibAsReadOnly;
+  CB_AutoOpenPrjF.Checked:=AutoOpenPrjF;
 end;
-
 
 end.
 

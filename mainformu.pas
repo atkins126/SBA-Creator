@@ -11,7 +11,7 @@ uses
   uSynEditPopupEdit, SynPluginSyncroEdit, SynHighlighterIni, FileUtil,
   ListViewFilterEdit, strutils, Clipbrd, IniPropStorage, StdActns,
   BGRASpriteAnimation, uebutton, uETilePanel, versionsupportu, types, lclintf,
-  LCLType, HistoryFiles, IniFiles, Math;
+  LCLType, HistoryFiles, IniFilesUTF8, StringListUTF8, Math;
 
 type
   thdltype=(vhdl, prg, verilog, systemverilog, ini, other);
@@ -555,7 +555,7 @@ begin
   sl.SaveToFile(wdir+mapfile);
   freeandnil(sl);
   freeandnil(om);
-  Ofuscate(s,hdltype);
+  Ofuscate(EditorPages.ActivePage.Hint,hdltype);
   ToolsFileObf.Enabled:=true;
 end;
 
@@ -985,7 +985,7 @@ begin
 end;
 
 procedure TMainForm.ProjectGotoPrgExecute(Sender: TObject);
-var tmp:TStrings;
+var tmp:TStringList;
 begin
   PrgReturnTab:=SystemTab;
   SBA_ReturnToEditor.Enabled:=false;
@@ -1151,7 +1151,7 @@ end;
 
 procedure TMainForm.SBA_NewPrgExecute(Sender: TObject);
 var
-  tmp:Tstrings;
+  tmp:TstringList;
 begin
   if ActiveEditor.Modified then
   case MessageDlg('File was modified', 'Save File? ', mtConfirmation, [mbYes, mbNo, mbCancel],0) of
@@ -1727,7 +1727,7 @@ begin
   OpenDialog.InitialDir:=wdir;
   if OpenDialog.Execute then
   begin
-    L_RsvWord.Items.LoadFromFile(OpenDialog.FileName);
+    L_RsvWord.Items.LoadFromFile(UTF8toSys(OpenDialog.FileName));
     HighLightReservedWords(L_RsvWord.Items);
   end;
 end;
@@ -1765,7 +1765,7 @@ end;
 
 procedure TMainForm.RW_SavelistExecute(Sender: TObject);
 begin
-  if fileexists(wdir+'rsvwords.txt') and (MessageDlg('File of reserved words found', 'Replace File?', mtConfirmation, [mbYes, mbNo],0)<>mrYes) then exit;
+  if fileexistsUTF8(wdir+'rsvwords.txt') and (MessageDlg('File of reserved words found', 'Replace File?', mtConfirmation, [mbYes, mbNo],0)<>mrYes) then exit;
   L_RsvWord.Items.SaveToFile(wdir+'rsvwords.txt');
 end;
 
@@ -1831,7 +1831,7 @@ begin
 
   ActiveEditor.Lines.LoadFromFile(f);
   ActiveEditor.Modified:=false;
-  ActiveEditor.ReadOnly:=(FileGetAttr(f) and faReadOnly)<>0;
+  ActiveEditor.ReadOnly:=(FileGetAttrUTF8(f) and faReadOnly)<>0;
   StatusBar1.Panels[1].Text:=f;
   EditorHistory.UpdateList(f);
 end;
@@ -1972,6 +1972,7 @@ begin
   else process1.Parameters.Add('""'+Application.Location+checkbat+'" '+fname+'"');
   Log.Clear;
   process1.Execute;
+  { TODO : Pensar en eliminar el .bat y usar una lista para crear los parámetros debido a las posibles rutas con espacios. }
 end;
 
 procedure TMainForm.ExtractSBALabels;
@@ -1983,9 +1984,9 @@ end;
 
 procedure TMainForm.LoadRsvWordsFile;
 begin
-  if not fileexists(wdir+'rsvwords.txt') then copyfile(application.Location+'rsvwords.txt', wdir+'rsvwords.txt');
+  if not fileexistsutf8(wdir+'rsvwords.txt') then copyfile(application.Location+'rsvwords.txt', wdir+'rsvwords.txt');
   L_RsvWord.Clear;
-  L_RsvWord.Items.LoadFromFile(wdir+'rsvwords.txt');
+  L_RsvWord.Items.LoadFromFile(UTF8toSys(wdir+'rsvwords.txt'));
   HighLightReservedWords(L_RsvWord.Items);
 end;
 

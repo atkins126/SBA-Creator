@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, StdCtrls,
-  lclintf, LCLType, ExtCtrls, INIFiles;
+  lclintf, LCLType, ExtCtrls, INIFilesUTF8;
 
 type
 
