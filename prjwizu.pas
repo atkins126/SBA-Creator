@@ -6,11 +6,8 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, ExtCtrls,
-  Buttons, EditBtn, StdCtrls, Spin, Grids, ValEdit, Menus, fpjson, jsonparser,
-  strutils, IniFilesUTF8, StringListUTF8, types;
-
-const
-  CDefPrjTitle='Short title or description of the project';
+  Buttons, EditBtn, StdCtrls, Spin, Grids, ValEdit, Menus, strutils, types,
+  IniFilesUTF8, StringListUTF8, SBAProjectU;
 
 type
 
@@ -110,17 +107,16 @@ type
     procedure RowDeleteClick(Sender: TObject);
   private
     Editing:boolean;
-    procedure SummarizeData(SData: String);
+    procedure SummarizeData(Prj:TSBAPrj);
     function ValidateSBAName(s: string): boolean;
     function ValidateName(s: string): boolean;
     { private declarations }
   public
     { public declarations }
-    PrjData:String;
     function NewPrj: TModalResult;
-    function EditPrj(SData: string): TModalResult;
-    function CollectData: string;
-    procedure FillPrjWizValues(SData: String);
+    function EditPrj(Prj:TSBAPrj): TModalResult;
+    procedure CollectData(Prj:TSBAPrj);
+    procedure FillPrjWizValues(Prj:TSBAPrj);
     procedure ResetFormData;
   end;
 
@@ -131,7 +127,7 @@ implementation
 
 {$R *.lfm}
 
-uses ConfigFormU, UtilsU, SBAProjectU, DebugFormU, FloatFormU;
+uses ConfigFormU, UtilsU, DebugFormU, FloatFormU;
 
 { TprjWizForm }
 
@@ -189,102 +185,71 @@ begin
   B_CoreDelClick(nil);
 end;
 
-function TprjWizForm.CollectData:string;
+procedure TprjWizForm.CollectData(Prj:TSBAPrj);
 var
   i:integer;
-  S,SData:String;
 begin
-  SData:='{'#10+
-            '"name": "'+Ed_PrjName.text+'",'#10+
-            '"location": "'+AppendPathDelim(L_PrjFinalLoc.caption)+'",'#10+
-            '"title": "'+Ed_Prjtitle.text+'",'#10+
-            '"author": "'+Ed_PrjAuthor.text+'",'#10+
-            '"version": "'+L_PrjVersion.caption+'",'#10+
-            '"date": "'+Ed_Date.text+'",'#10+
-            '"description": "'+Ed_Description.text+'"';
-  S:='';
-  with Ed_TopInterface do for i:=1 to RowCount-1 do
+  With Prj do
   begin
-    if Cells[0, i]<>'' then
-    begin
-      S+=#9'{"portname": "'+Cells[0, i]+'", '+
-               '"dir": "'+Cells[1, i]+'", '+
-               '"bus": '+Cells[2, i];
-      if Cells[2, i]='1' then S+=', '+
-               '"msb": '+Cells[3, i]+', '+
-               '"lsb": '+Cells[4, i];
-      S+='},'#10;
-    end;
+    name:=Ed_PrjName.text;
+    location:=AppendPathDelim(L_PrjFinalLoc.caption);
+    loclib:=location+'lib'+PathDelim;
+    title:=Ed_Prjtitle.text;
+    author:=Ed_PrjAuthor.text;
+    version:=L_PrjVersion.caption;
+    date:=Ed_Date.text;
+    description:=Ed_Description.text;
+    ports.Clear;
+    with Ed_TopInterface do for i:=1 to RowCount-1 do
+      if Cells[0, i]<>'' then ports.Append(Rows[i].CommaText);
+    libcores.Assign(PrjIpCoreList.Items);
+    userfiles.Assign(UserFileList.Strings);
+    modified:=true;
   end;
-  if S<>'' then SData+=','#10'"interface": ['#10+LeftStr(S, length(S)-2)+#10']'
-    else SData+=','#10'"interface": null';
-  S:='';
-  if PrjIpCoreList.Count>0 then for i:=0 to PrjIpCoreList.Count-1 do S+=#9'"'+PrjIpCoreList.Items[i]+'",'#10;
-  if S<>'' then SData+=','#10'"ipcores": ['#10+LeftStr(S, length(S)-2)+#10']'
-    else SData+=','#10'"ipcores": null';
-  S:='';
-  if UserFileList.Strings.Count>0 then for i:=0 to UserFileList.Strings.Count-1 do S+=#9'"'+UserFileList.Strings[i]+'",'#10;
-  if S<>'' then SData+=','#10'"userfiles": ['#10+LeftStr(S, length(S)-2)+#10']'#10
-    else SData+=','#10'"userfiles": null'#10;
-  SData+='}';
-  result:=SData;
 end;
 
-procedure TprjWizForm.SummarizeData(SData:String);
+procedure TprjWizForm.SummarizeData(Prj: TSBAPrj);
 var
-  J:TJSONData;
   S:String;
   i:integer;
 begin
-  try
-    J:=GetJSON(ReplaceStr(SData,'\','/'));
-  except
-    on E:Exception do
+  S:='Name: '+Prj.name+LineEnding+
+     'Filename: '+Prj.name+cSBAPrjExt+LineEnding+
+     'Location: '+Prj.location+LineEnding+
+     LineEnding+
+     'Title: '+Prj.title+LineEnding+
+     'Author: '+Prj.author+LineEnding+
+     'Version: '+Prj.version+LineEnding+
+     'Date: '+Prj.date+LineEnding+
+     'Description: '+Prj.description+LineEnding+
+     LineEnding;
+  Summary.Text:=S;
+
+  if Prj.ports.Count>0 then
+  begin
+    Summary.Append('Top entity ports:');
+    with Prj do For i:=0 to ports.count-1 do
     begin
-      ShowMessage('The is an error in the project data. '+E.Message);
-      exit;
+      S:=ExtractDelimited(1,ports[i],[','])+#09+
+         ExtractDelimited(2,ports[i],[','])+#09;
+      if ExtractDelimited(3,ports[i],[','])='1' then S+='bus('+
+         ExtractDelimited(4,ports[i],[','])+':'+
+         ExtractDelimited(5,ports[i],[','])+')' else S+='pin';
+      Summary.Append(S);
     end;
   end;
-  try
-    S:='Name: '+J.FindPath('name').AsString+LineEnding+
-       'Filename: '+J.FindPath('name').AsString+cSBAPrjExt+LineEnding+
-       'Location: '+J.FindPath('location').AsString+LineEnding+
-       LineEnding+
-       'Title: '+J.FindPath('title').AsString+LineEnding+
-       'Author: '+J.FindPath('author').AsString+LineEnding+
-       'Version: '+J.FindPath('version').AsString+LineEnding+
-       'Date: '+J.FindPath('date').AsString+LineEnding+
-       'Description: '+J.FindPath('description').AsString+LineEnding+
-       LineEnding;
-    Summary.Text:=S;
+  Summary.Append('');
 
-    if not J.FindPath('interface').IsNull then
-    begin
-      Summary.Append('Top entity ports:');
-      with J.FindPath('interface') do For i:=0 to count-1 do with Items[i] do
-      begin
-        S:=FindPath('portname').AsString+#09+
-           FindPath('dir').AsString+#09;
-        if FindPath('bus').AsInteger=1 then S+='bus('+FindPath('msb').AsString+':'+FindPath('lsb').AsString+')' else S+='pin';
-        Summary.Append(S);
-      end;
-    end;
+  if Prj.libcores.Count>0 then
+  begin
+    Summary.Append('IP Cores added to Project:');
+    Summary.Append(Prj.libcores.Text);
+  end;
 
-    if not J.FindPath('ipcores').IsNull then
-    begin
-      Summary.Append(LineEnding+'IP Cores added to Project:');
-      Summary.Append(J.FindPath('ipcores').AsJSON);
-    end;
-
-    if not J.FindPath('userfiles').IsNull then
-    begin
-      Summary.Append(LineEnding+'User files added to Project:');
-      For i:=0 to J.FindPath('userfiles').Count-1 do
-        Summary.Append(J.FindPath('userfiles').Items[i].AsString);
-    end;
-
-  finally
-    if assigned(J) then FreeAndNil(J);
+  if Prj.userfiles.Count>0 then
+  begin
+    Summary.Append('User files added to Project:');
+    For i:=0 to Prj.userfiles.Count-1 do Summary.Append(Prj.userfiles.Names[i]);
   end;
 end;
 
@@ -297,8 +262,8 @@ begin
                     '" already exist.', mtConfirmation, [mbYes, mbCancel],0)<>mrYes) then exit;
     end;
     3: begin
-      PrjData:=CollectData;
-      SummarizeData(PrjData);
+      CollectData(SBAPrj);
+      SummarizeData(SBAPrj);
     end;
   end;
   WizPages.PageIndex:=WizPages.PageIndex+1;
@@ -422,12 +387,12 @@ begin
     begin
       S.LoadFromFile(OpenDialog1.FileName);
       ResetFormData;
-      PrjData:=S.Text;
+      SBAPrj.Fill(S.Text);
     end;
   finally
     S.Free;
   end;
-  if PrjData<>'' then FillPrjWizValues(PrjData);
+  if SBAPrj.name<>'' then FillPrjWizValues(SBAPrj);
   Ed_prjLocation.Text:=ProjectsDir;
 end;
 
@@ -439,7 +404,7 @@ begin
   SaveDialog1.Filter:='SBA Project|*.sba';
   try
     S:=TStringList.Create;
-    S.Text:=PrjData;
+    S.Text:=SBAPrj.Collect;
     if SaveDialog1.Execute then S.SaveToFile(SaveDialog1.FileName);
   finally
     S.Free;
@@ -451,80 +416,63 @@ begin
   if UserFileList.RowCount>1 then UserFileList.DeleteRow(UserFileList.Row);
 end;
 
-procedure TprjWizForm.FillPrjWizValues(SData: String);
+procedure TprjWizForm.FillPrjWizValues(Prj: TSBAPrj);
 var
   h,i:Integer;
-  J:TJSONData;
   s:string;
 begin
-  try
-    J:=GetJSON(ReplaceStr(SData,'\','/'));
-  except
-    on E:Exception do
-    begin
-      ShowMessage('The is an error in the project data, exiting...');
-      exit;
-    end;
-  end;
-  try
-    Ed_PrjName.text:=J.FindPath('name').AsString;
-    s:=ChompPathDelim(TrimFileName(J.FindPath('location').AsString));
+  With Prj do
+  begin
+    Ed_PrjName.text:=name;
+    s:=ChompPathDelim(TrimFileName(location));
     if AnsiEndsText(Ed_PrjName.text,s) then
       Ed_PrjLocation.text:=LeftStr(s,pos(Ed_PrjName.text,s)-1)
     else
       Ed_PrjLocation.text:=s;
-    Ed_PrjTitle.Text:=J.FindPath('title').AsString;
-    Ed_PrjAuthor.Text:=J.FindPath('author').AsString;
-    Ed_Description.Text:=J.FindPath('description').AsString;
-    s:=J.FindPath('version').AsString;
+    Ed_PrjTitle.Text:=title;
+    Ed_PrjAuthor.Text:=author;
+    Ed_Description.Text:=description;
+    s:=version;
     Ed_MayorVer.Value:=StrtoIntDef(ExtractDelimited(1,s,['.']),0);
     Ed_MinVer.Value:=StrtoIntDef(ExtractDelimited(2,s,['.']),1);
     Ed_RevVer.Value:=StrtoIntDef(ExtractDelimited(3,s,['.']),1);
     L_PrjVersion.Caption:=s;
-    Ed_Date.Text:=J.FindPath('date').AsString;
-    if not J.FindPath('interface').IsNull then
+    Ed_Date.Text:=date;
+    if ports.Count>0 then
     begin
-      Ed_TopInterface.RowCount:=J.FindPath('interface').count+2;
-      with Ed_TopInterface,J.FindPath('interface') do For i:=0 to count-1 do with Items[i] do
+      Ed_TopInterface.RowCount:=ports.count+2;
+      with Ed_TopInterface do For i:=0 to ports.count-1 do
       begin
-        Cells[0, i+1]:=FindPath('portname').AsString;
-        Cells[1, i+1]:=FindPath('dir').AsString;
-        Cells[2, i+1]:=FindPath('bus').AsString;
-        if FindPath('bus').AsInteger=1 then
+        s:=ports[i];
+        Cells[0, i+1]:=ExtractDelimited(1,s,[',']);
+        Cells[1, i+1]:=ExtractDelimited(2,s,[',']);
+        Cells[2, i+1]:=ExtractDelimited(3,s,[',']);
+        if Cells[2, i+1]='1' then
         begin
-          Cells[3, i+1]:=FindPath('msb').AsString;
-          Cells[4, i+1]:=FindPath('lsb').AsString;
+          Cells[3, i+1]:=ExtractDelimited(4,s,[',']);
+          Cells[4, i+1]:=ExtractDelimited(5,s,[',']);
         end;
       end;
     end;
-    if not J.FindPath('ipcores').IsNull then
+    if libcores.count>0 then
     begin
-      with J.FindPath('ipcores') do For i:=0 to count-1 do
+      For i:=0 to libcores.count-1 do
       begin
-        h:=LibIpCoreList.Items.IndexOf(Items[i].AsString);
+        h:=LibIpCoreList.Items.IndexOf(libcores[i]);
         if h<>-1 then
         begin
           LibIpCoreList.Items.Delete(h);
-          PrjIpCoreList.Items.Add(Items[i].AsString);
+          PrjIpCoreList.Items.Add(libcores[i]);
         end else
         begin
-          ShowMessage('The IP Core: '+Items[i].AsString+' is not available in your library.');
+          ShowMessage('The IP Core: '+libcores[i]+' is not available in your library.');
         end;
       end;
     end;
-    try if not J.FindPath('userfiles').IsNull then
-      with J.FindPath('userfiles') do For i:=0 to count-1 do
-      begin
-        s:=Items[i].AsString;
-        UserFileList.Strings.Add(s);
-      end;
-    except
-      ON E:Exception do UserFileList.Clear;
-    end;
-  finally
-    if assigned(J) then FreeAndNil(J);
+    UserFileList.Strings.Assign(userfiles);
   end;
 end;
+
 
 procedure TprjWizForm.Ed_MayorVerChange(Sender: TObject);
 begin
@@ -674,15 +622,14 @@ begin
   result:=ShowModal;
 end;
 
-function TprjWizForm.EditPrj(SData: string): TModalResult;
+function TprjWizForm.EditPrj(Prj: TSBAPrj): TModalResult;
 begin
   Editing:=true;
   WizPages.PageIndex:=0;
   ResetFormData;
-  FillPrjWizValues(SData);
+  FillPrjWizValues(Prj);
   result:=ShowModal;
 end;
-
 
 procedure TprjWizForm.ResetFormData;
 begin
@@ -713,7 +660,6 @@ begin
   LibIpCoreList.Items.Assign(IpCoreList);
   PrjIpCoreList.Clear;
   UserFileList.Clear;
-  PrjData:='';
 end;
 
 procedure TprjWizForm.LibIpCoreListDblClick(Sender: TObject);

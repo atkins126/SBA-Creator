@@ -90,7 +90,7 @@ begin
     end;
 
   If Not DirectoryExistsUTF8(ProjectsDir) then
-    If Not CreateDirUTF8(ProjectsDir) Then
+    If Not ForceDirectoriesUTF8(ProjectsDir) Then
       raise exception.create('Failed to create SBA projects folder!');
 
   If Not DirectoryExistsUTF8(LibraryDir) then

@@ -1,7 +1,7 @@
 object prjWizForm: TprjWizForm
-  Left = 908
+  Left = 1093
   Height = 431
-  Top = 281
+  Top = 226
   Width = 420
   BorderStyle = bsDialog
   Caption = 'Project Wizard'

@@ -11,7 +11,7 @@ uses
   uSynEditPopupEdit, SynPluginSyncroEdit, SynHighlighterIni, FileUtil,
   ListViewFilterEdit, strutils, Clipbrd, IniPropStorage, StdActns,
   BGRASpriteAnimation, uebutton, uETilePanel, versionsupportu, types, lclintf,
-  LCLType, HistoryFiles, IniFilesUTF8, StringListUTF8, Math;
+  LCLType, HistoryFiles, IniFilesUTF8, StringListUTF8;
 
 type
   thdltype=(vhdl, prg, verilog, systemverilog, ini, other);
@@ -949,8 +949,8 @@ begin
   begin
     CanClose:=false;
     case MessageDlg('The Project was modified', 'Save Project? ', mtConfirmation, [mbYes, mbNo, mbCancel],0) of
-      mrCancel: exit;
-      mrYes: SBAPrj.Save;
+      mrCancel:exit;
+      mrYes:CanClose:=SBAPrj.Save;
       mrNo:CanClose:=True;
     end;
   end;
@@ -1004,8 +1004,8 @@ end;
 
 procedure TMainForm.ProjectNewExecute(Sender: TObject);
 begin
-  if (PrjWizForm.NewPrj=mrOk) and CloseProject and
-     SBAPrj.Fill(PrjWizForm.PrjData) and SBAPrj.PrepareNewFolder then
+  if CloseProject and (PrjWizForm.NewPrj=mrOk) and
+     SBAPrj.PrepareNewFolder then
      OpenProject(SBAPrj.location+SBAPrj.name+cSBAPrjExt);
 end;
 
@@ -1031,10 +1031,21 @@ begin
     SL:=TStringList.create;
     SL.LoadFromFile(f);
     if not SBAPrj.Fill(SL.Text) then exit;
-
+    //
+    {Detecta que el path del archivo es diferente a SBAPrj.location lo cual significa que el proyecto fue movido o copiado e intenta corregir location.}
+    if CompareText(TrimFileName(SBAPrj.location),TrimFileName(ExtractFilePath(f)))<>0 then
+    begin
+      if (MessageDlg('The project has been copied or moved', 'Do you want to update the references? ', mtConfirmation, [mbYes, mbNo],0)=mrYes) and
+          fileexistsUTF8(ExtractFilePath(f)+SBAPrj.name+'_'+cSBATop) then
+      begin
+        SBAPrj.location:=ExtractFilePath(f);
+        SBAPrj.loclib:=SBAPrj.location+'lib'+PathDelim;
+        SBAPrj.Modified:=true;
+      end else ShowMessage('The project files can not be found');
+    end;
+    //
     UpdatePrjTree;
     PrjHistory.UpdateList(f);
-
     P_Project.Visible:=true;
     If MainPages.ActivePage=SystemTab then GotoEditor;
     S:=SBAPrj.location+SBAPrj.name+'_Top.vhd';
@@ -1059,7 +1070,6 @@ begin
   begin
     if P_Project.visible then
     begin
-      //MainForm.Menu := ProjectMenu
       MainForm.Menu := EditorMenu;
       ProjectMenuEd.Visible:=true;
     end else
@@ -1307,7 +1317,6 @@ begin
     SBAContrlrProg:=TSBAContrlrProg.Create;
     SBASnippet:=TSBASnippet.Create;
     SBASnippet.UpdateSnippetsFilter(SnippetsFilter);
-    { TODO : Mejorar la lista de Snippets }
     IpCoreList:=TStringList.Create;
     SnippetsList:=TStringList.Create;
     ProgramsList:=TStringList.Create;

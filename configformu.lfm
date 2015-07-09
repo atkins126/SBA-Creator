@@ -1,7 +1,7 @@
 object ConfigForm: TConfigForm
-  Left = 1078
+  Left = 1107
   Height = 361
-  Top = 259
+  Top = 269
   Width = 452
   BorderStyle = bsDialog
   Caption = 'ConfigForm'

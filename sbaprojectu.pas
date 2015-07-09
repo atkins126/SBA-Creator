@@ -6,11 +6,12 @@ interface
 
 uses
   Classes, SysUtils, Dialogs, Controls,
-  fpjson, jsonparser,
-  fileutil, strutils, IniFilesUTF8,StringListUTF8;
+  fpjson, jsonparser, fileutil, strutils,
+  IniFilesUTF8,StringListUTF8;
 
 const
   cSBADefaultPrjName='NewProject';
+  CDefPrjTitle='Short title or description of the project';
   cSBAPrjExt='.sba';
   cSBATop='Top.vhd';
   cSBAcfg='SBAcfg.vhd';
@@ -50,16 +51,15 @@ type
     userfiles:tstringlist;
     ports:tstringlist;
     Modified:boolean;
-    PrjData:string;
-    //UserTreeNode:ttreenode;
     constructor Create;
     destructor Destroy; override;
-    function Fill(Data: string): boolean;
   public
+    function Fill(Data: string): boolean;
+    function Collect:string;
     function PrepareNewFolder: boolean;
     function CustomizeFiles:boolean;
-    procedure SaveAs(f: String);
-    procedure Save;
+    function SaveAs(f: String):boolean;
+    function Save:boolean;
     procedure LoadIPData(ipname,instance:String; IP,IPS,STL,AML,DCL:TStrings);
     procedure LoadIPData(ipname: String; IP,IPS,STL,AML,DCL:TStrings);
     function GetConfigConst(sl: TStrings): string;
@@ -79,7 +79,7 @@ var
 
 implementation
 
-uses DebugFormU, prjWizU, ConfigFormU, CoresPrjEdFormU, UtilsU;
+uses DebugFormU, ConfigFormU, CoresPrjEdFormU;
 
 var AM:integer=0; //Address Map
 
@@ -89,7 +89,6 @@ constructor TSBAPrj.Create;
 begin
   inherited Create;
   name:='';
-  PrjData:='';
   libcores:=TStringList.create;
   userfiles:=TStringList.create;
   ports:=tstringlist.create;
@@ -112,9 +111,10 @@ var
 begin
   result:=false;
   name:='';
+  modified:=true;
+  ports.Clear;
   libcores.Clear;
   userfiles.Clear;
-  ports.Clear;
   try
     J:=GetJSON(ReplaceStr(Data,'\','/'));
   except
@@ -133,52 +133,87 @@ begin
     version:=J.FindPath('version').AsString;
     date:=J.FindPath('date').AsString;
     description:=J.FindPath('description').AsString;
-    description:=wraptext(description,LineEnding+'-- ',[' '],60);
     if not J.FindPath('interface').IsNull then
-      For i:=0 to J.FindPath('interface').count-1 do with J.FindPath('interface').Items[i] do
+    begin
+      with J.FindPath('interface') do For i:=0 to count-1 do with Items[i] do
       begin
+        S:=FindPath('portname').AsString+',';
+        S+=FindPath('dir').AsString+',';
+        S+=FindPath('bus').AsString+',';
         if FindPath('bus').AsInteger=1 then
-          S:='std_logic_vector('+FindPath('msb').AsString+' downto '+FindPath('lsb').AsString+')'
-        else
-          S:='std_logic';
-        S:=Format('  %0:-10s: %1:-3s %s',[FindPath('portname').AsString,FindPath('dir').AsString,S]);
-        if (i<J.FindPath('interface').count-1) then S+=';';
-        ports.Add(S);
+        begin
+          S+=FindPath('msb').AsString+',';
+          S+=FindPath('lsb').AsString;
+        end;
+        ports.Append(S);
       end;
+    end;
     try if not J.FindPath('ipcores').IsNull then
       with J.FindPath('ipcores') do For i:=0 to J.FindPath('ipcores').count-1 do
-        libcores.Add(Items[i].AsString);
+        libcores.Append(Items[i].AsString);
     except
       ON E:Exception do libcores.Clear;
     end;
     try if not J.FindPath('userfiles').IsNull then
       with J.FindPath('userfiles') do For i:=0 to J.FindPath('userfiles').count-1 do
-        userfiles.Add(Items[i].AsString);
+        userfiles.Append(Items[i].AsString);
     except
       ON E:Exception do userfiles.Clear;
     end;
-    PrjData:=Data;
     result:=true;
   finally
     if assigned(J) then FreeAndNil(J);
   end;
 end;
 
+function TSBAPrj.Collect:string;
+var
+  i:integer;
+  S,SData:String;
+begin
+  SData:='{'#10+
+            '"name": "'+name+'",'#10+
+            '"location": "'+AppendPathDelim(location)+'",'#10+
+            '"title": "'+title+'",'#10+
+            '"author": "'+author+'",'#10+
+            '"version": "'+version+'",'#10+
+            '"date": "'+date+'",'#10+
+            '"description": "'+description+'"';
+  S:='';
+  for i:=0 to ports.Count-1 do
+  begin
+    S+=#9'{"portname": "'+ExtractDelimited(1,ports[i],[','])+'", '+
+               '"dir": "'+ExtractDelimited(2,ports[i],[','])+'", '+
+               '"bus": '+ExtractDelimited(3,ports[i],[',']);
+    if ExtractDelimited(3,ports[i],[','])='1' then S+=', '+
+               '"msb": '+ExtractDelimited(4,ports[i],[','])+', '+
+               '"lsb": '+ExtractDelimited(5,ports[i],[',']);
+    S+='},'#10;
+  end;
+  if S<>'' then SData+=','#10'"interface": ['#10+LeftStr(S, length(S)-2)+#10']'
+    else SData+=','#10'"interface": null';
+  S:='';
+  if libcores.Count>0 then for i:=0 to libcores.Count-1 do S+=#9'"'+libcores[i]+'",'#10;
+  if S<>'' then SData+=','#10'"ipcores": ['#10+LeftStr(S, length(S)-2)+#10']'
+    else SData+=','#10'"ipcores": null';
+  S:='';
+  if userfiles.Count>0 then for i:=0 to userfiles.Count-1 do S+=#9'"'+userfiles[i]+'",'#10;
+  if S<>'' then SData+=','#10'"userfiles": ['#10+LeftStr(S, length(S)-2)+#10']'#10
+    else SData+=','#10'"userfiles": null'#10;
+  SData+='}';
+  result:=SData;
+end;
+
+
 { TODO : Falta la copia y borrado de archivos de usuario de folder user}
 function TSBAPrj.AddUserFile(f: string): boolean;
-var
-  NewData:string;
 begin
   result:=false;
   if fileexistsUTF8(f) then
   if UserFiles.IndexOfName(ExtractFileName(f))=-1 then
   begin
     UserFiles.Append(ExtractFileName(f)+'='+extractfilepath(f));
-    prjWizForm.ResetFormData;
-    prjWizForm.FillPrjWizValues(PrjData);
-    prjWizForm.UserFileList.Strings.Assign(UserFiles);
-    NewData:=prjWizForm.CollectData;
-    PrjData:=NewData;
+    Modified:=true;
     Save;
     result:=true;
   end else ShowMessage('The file is already in the list')
@@ -188,18 +223,13 @@ end;
 function TSBAPrj.RemUserFile(f: string): boolean;
 var
   i:integer;
-  NewData:string;
 begin
   result:=false;
   i:=UserFiles.IndexOfName(f);
   if i<>-1 then
   try
     UserFiles.Delete(i);
-    prjWizForm.ResetFormData;
-    prjWizForm.FillPrjWizValues(PrjData);
-    prjWizForm.UserFileList.Strings.Assign(UserFiles);
-    NewData:=prjWizForm.CollectData;
-    PrjData:=NewData;
+    Modified:=true;
     Save;
     result:=true;
   except
@@ -237,30 +267,7 @@ begin
   l.free;{ TODO : Sería mejor devolver la lista y luego armar el comando sin el .bat }
 end;
 
-//function TSBAPrj.GetAllFileNames(vhdonly: boolean): string;
-//var
-//  S,R:string;
-//  i:integer;
-//begin
-//  S:=loclib+cSBApkg+' ';
-//  S+=loclib+cSyscon+' ';
-//  S+=loclib+cDataIntf+' ';
-//  if libcores.Count>0 then for R in libcores do
-//    S+=loclib+R+'.vhd ';
-//  if userfiles.Count>0 then for i:=0 to userfiles.Count-1 do
-//    if not vhdonly or (extractfileext(userfiles.names[i])='.vhd') then
-//      S+=userfiles.ValueFromIndex[i]+userfiles.names[i]+' ';
-//  S+=location+name+'_'+cSBAcfg+' ';
-//  S+=location+name+'_'+cSBAdcdr+' ';
-//  S+=location+name+'_'+cSBActrlr+' ';
-//  S+=location+name+'_'+cSBATop;
-//  Result:=S;
-//end;
-
-
 function TSBAPrj.PrepareNewFolder:boolean;
-var
-  SL:TStringList;
 begin
   result:=false;
   if name='' then exit;
@@ -270,13 +277,7 @@ begin
     exit;
   end;
   try
-    try
-      SL:=TStringList.Create;
-      SL.Text:=PrjData;
-      SL.SaveToFile(Location+Name+cSBAPrjExt);
-    finally
-      if assigned(SL) then FreeAndNil(SL);
-    end;
+    Save;
     CopyFile(SBAbaseDir+cSBATop,Location+Name+'_'+cSBATop);
     CopyFile(SBAbaseDir+cSBAcfg,Location+Name+'_'+cSBAcfg);
     CopyFile(SBAbaseDir+cSBAdcdr,Location+Name+'_'+cSBAdcdr);
@@ -305,19 +306,31 @@ end;
 
 function TSBAPrj.CustomizeFiles: boolean;
 var
-  FL,SL,IP,IPS,STL,AML,DCL:TStringList;
+  S:String;
+  FL,SL,PL,IP,IPS,STL,AML,DCL:TStringList;
   i:integer;
 begin
   result:=false;
   try
     FL:=TStringList.Create;
     SL:=TStringList.Create;
+    PL:=TStringList.Create;
     IP:=TStringList.Create;
     IPS:=TStringList.Create;
     STL:=TStringList.Create;
     AML:=TStringList.Create;
     DCL:=TStringList.Create;
     for i:=0 to libcores.Count-1 do LoadIPData(libcores[i],IP,IPS,STL,AML,DCL);
+    for i:=0 to ports.count-1 do
+    begin
+      if ExtractDelimited(3,ports[i],[','])='1' then
+        S:='std_logic_vector('+ExtractDelimited(4,ports[i],[','])+' downto '+ExtractDelimited(5,ports[i],[','])+')'
+      else
+        S:='std_logic';
+      S:=Format('  %0:-10s: %1:-3s %s',[ExtractDelimited(1,ports[i],[',']),ExtractDelimited(2,ports[i],[',']),S]);
+      if (i<ports.count-1) then S+=';';
+      PL.Add(S);
+    end;
     FL.Add(location+name+'_'+cSBATop);
     FL.Add(location+name+'_'+cSBAcfg);
     FL.Add(location+name+'_'+cSBAdcdr);
@@ -330,10 +343,11 @@ begin
       SL.text:=StringReplace(SL.text, cPrjAuthor, author, []);
       SL.text:=StringReplace(SL.text, cPrjVersion, version, []);
       SL.text:=StringReplace(SL.text, cPrjDate, date, []);
-      SL.text:=StringReplace(SL.text, cPrjDescrip, description, []);
+      S:=wraptext(description,LineEnding+'-- ',[' '],60);
+      SL.text:=StringReplace(SL.text, cPrjDescrip, S, []);
       case i of
         0:begin //Top
-          SL.text:=StringReplace(SL.text, cPrjInterface, ports.text, []);
+          SL.text:=StringReplace(SL.text, cPrjInterface, PL.text, []);
           SL.text:=StringReplace(SL.text, cPrjIpcores, IP.text, []);
           SL.text:=StringReplace(SL.text, cPrjIpCSgnls, IPS.text, []);
         end;
@@ -354,6 +368,7 @@ begin
     if assigned(STL) then FreeAndNil(STL);
     if assigned(IPS) then FreeAndNil(IPS);
     if assigned(IP) then FreeAndNil(IP);
+    if assigned(PL) then FreeAndNil(PL);
     if assigned(SL) then FreeAndNil(SL);
     if assigned(FL) then FreeAndNil(FL);
   end;
@@ -531,28 +546,6 @@ infoln('Copiando: '+LibraryDir+S+PathDelim+s+'.vhd');
   end;
 end;
 
-//function TSBAPrj.CleanUpLibCores(CL:TStrings): boolean;
-//var
-//  s,NewData:string;
-//begin
-//  result:=false;
-//  prjWizForm.ResetFormData;
-//  prjWizForm.FillPrjWizValues(PrjData);
-//  prjWizForm.PrjIpCoreList.Items.Assign(CL);
-//  NewData:=prjWizForm.CollectData;
-//  for s in libcores do if CL.IndexOf(s)=-1 then
-//  begin
-//    FileSetAttr(LocLib+s+'.vhd',faArchive);
-//    DeleteFileUTF8(loclib+s+'.vhd');
-//  end;
-//  CopyIPCoreFiles(CL);
-//  libcores.Assign(CL);
-//  PrjData:=NewData;
-//  Save;
-//  result:=true;
-//end;
-
-
 function TSBAPrj.EditLib: boolean;
 var Prj:TSBAPrj;
 begin
@@ -567,14 +560,10 @@ end;
 
 function TSBAPrj.CleanUpLibCores(CL:TStrings): boolean;
 var
-  s,n,NewData:string;
+  s,n:string;
   l:TStringList;
 begin
   result:=false;
-  prjWizForm.ResetFormData;
-  prjWizForm.FillPrjWizValues(PrjData);
-  prjWizForm.PrjIpCoreList.Items.Assign(CL);
-  NewData:=prjWizForm.CollectData;
   try
     l:=TStringList(FindAllFiles(LocLib,'*.vhd'));
     for s in l do
@@ -592,29 +581,30 @@ infoln('Borrando: '+s);
   end;
   CopyIPCoreFiles(CL);
   libcores.Assign(CL);
-  PrjData:=NewData;
   Save;
   result:=true;
 end;
 
 
-procedure TSBAPrj.SaveAs(f: String);
+function TSBAPrj.SaveAs(f: String): boolean;
 var
   SL:TStringList;
 begin
+  result:=false;
   try
     SL:=TStringList.Create;
-    SL.Text:=PrjData;
+    SL.Text:=Collect;
     SL.SaveToFile(f);
     Modified:=false;
+    result:=true;
   finally
     if assigned(SL) then FreeAndNil(SL);
   end;
 end;
 
-procedure TSBAPrj.Save;
+function TSBAPrj.Save: boolean;
 begin
-  SaveAs(Location+Name+cSBAPrjExt);
+  result:=SaveAs(Location+Name+cSBAPrjExt);
 end;
 
 end.

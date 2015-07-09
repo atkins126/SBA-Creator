@@ -12,16 +12,16 @@ type
   { TIniFileUTF8 }
   ParentClass = TIniFile;
   TIniFile = class(ParentClass)
-    constructor Create(f:string);
+    constructor Create(const AFileName: string; AEscapeLineFeeds : Boolean = False); override;
   end;
 
 implementation
 
 { TIniFileUTF8 }
 
-constructor TIniFile.Create(f: string);
+constructor TIniFile.Create(const AFileName: string; AEscapeLineFeeds: Boolean);
 begin
-  inherited Create(Utf8ToAnsi(f));
+  inherited Create(Utf8ToAnsi(AFileName),AEscapeLineFeeds);
 end;
 
 end.
