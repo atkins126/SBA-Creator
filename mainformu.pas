@@ -1031,6 +1031,7 @@ begin
     SL:=TStringList.create;
     SL.LoadFromFile(f);
     if not SBAPrj.Fill(SL.Text) then exit;
+    SBAPrj.Modified:=false;
     //
     {Detecta que el path del archivo es diferente a SBAPrj.location lo cual significa que el proyecto fue movido o copiado e intenta corregir location.}
     if CompareText(TrimFileName(SBAPrj.location),TrimFileName(ExtractFilePath(f)))<>0 then

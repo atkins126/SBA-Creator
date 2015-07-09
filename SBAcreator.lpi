@@ -21,7 +21,7 @@
       <AutoIncrementBuild Value="True"/>
       <MinorVersionNr Value="2"/>
       <RevisionNr Value="6"/>
-      <BuildNr Value="50"/>
+      <BuildNr Value="51"/>
       <Attributes pvaPreRelease="True"/>
       <StringTable CompanyName="uE Peru" FileDescription="SBA System Creator" LegalCopyright="(c) Miguel A. Risco-Castillo" ProductVersion="Public Beta"/>
     </VersionInfo>
@@ -160,11 +160,11 @@
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="MainFormU"/>
         <IsVisibleTab Value="True"/>
-        <TopLine Value="869"/>
-        <CursorPos X="30" Y="919"/>
+        <TopLine Value="1020"/>
+        <CursorPos X="7" Y="1048"/>
         <UsageCount Value="202"/>
         <Bookmarks Count="1">
-          <Item0 X="27" Y="1038" ID="9"/>
+          <Item0 X="27" Y="1039" ID="9"/>
         </Bookmarks>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -202,7 +202,6 @@
       <Unit6>
         <Filename Value="sbaprogcontrlru.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="SBAProgContrlrU"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="229"/>
         <CursorPos X="63" Y="5"/>
@@ -221,7 +220,6 @@
       <Unit8>
         <Filename Value="sbasnippetu.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="SBASnippetU"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="108"/>
         <CursorPos X="42" Y="116"/>
@@ -230,7 +228,6 @@
       <Unit9>
         <Filename Value="sbaprojectu.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="SBAProjectU"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="48"/>
         <CursorPos X="18" Y="52"/>
@@ -245,7 +242,6 @@
         <ComponentName Value="ConfigForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="ConfigFormU"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="35" Y="96"/>
         <UsageCount Value="205"/>
@@ -256,7 +252,6 @@
         <ComponentName Value="prjWizForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="PrjWizU"/>
         <EditorIndex Value="-1"/>
         <CursorPos Y="419"/>
         <UsageCount Value="200"/>
@@ -314,7 +309,6 @@
         <ComponentName Value="LibraryForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="LibraryFormU"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="83"/>
         <CursorPos X="53" Y="99"/>
@@ -343,7 +337,6 @@
       <Unit21>
         <Filename Value="sbaprogramu.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="SBAProgramU"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="108"/>
         <UsageCount Value="193"/>
@@ -351,7 +344,6 @@
       <Unit22>
         <Filename Value="inifilesutf8.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="IniFilesUTF8"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="58" Y="24"/>
         <UsageCount Value="187"/>
@@ -387,7 +379,6 @@
       </Unit26>
       <Unit27>
         <Filename Value="C:\lazarus\fpc\2.6.4\source\packages\fcl-base\src\inifiles.pp"/>
-        <UnitName Value="IniFiles"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="160"/>
         <CursorPos Y="179"/>
@@ -397,39 +388,43 @@
     <CustomDefines Count="1">
       <Define0 Value="DEBUG"/>
     </CustomDefines>
-    <JumpHistory Count="8" HistoryIndex="7">
+    <JumpHistory Count="9" HistoryIndex="8">
       <Position1>
         <Filename Value="mainformu.pas"/>
-        <Caret Line="1825" Column="50" TopLine="2123"/>
+        <Caret Line="923" Column="5" TopLine="914"/>
       </Position1>
       <Position2>
         <Filename Value="mainformu.pas"/>
-        <Caret Line="923" Column="5" TopLine="914"/>
+        <Caret Line="957" Column="16" TopLine="940"/>
       </Position2>
       <Position3>
         <Filename Value="mainformu.pas"/>
-        <Caret Line="957" Column="16" TopLine="940"/>
+        <Caret Line="774" Column="5" TopLine="756"/>
       </Position3>
       <Position4>
         <Filename Value="mainformu.pas"/>
-        <Caret Line="774" Column="5" TopLine="756"/>
+        <Caret Line="931" TopLine="909"/>
       </Position4>
       <Position5>
         <Filename Value="mainformu.pas"/>
-        <Caret Line="931" TopLine="909"/>
+        <Caret Line="1044" Column="48" TopLine="1016"/>
       </Position5>
       <Position6>
         <Filename Value="mainformu.pas"/>
-        <Caret Line="1044" Column="48" TopLine="1016"/>
+        <Caret Line="1039" Column="33" TopLine="1017"/>
       </Position6>
       <Position7>
         <Filename Value="mainformu.pas"/>
-        <Caret Line="1039" Column="33" TopLine="1017"/>
+        <Caret Line="923" Column="6" TopLine="899"/>
       </Position7>
       <Position8>
         <Filename Value="mainformu.pas"/>
-        <Caret Line="923" Column="6" TopLine="899"/>
+        <Caret Line="919" Column="30" TopLine="869"/>
       </Position8>
+      <Position9>
+        <Filename Value="mainformu.pas"/>
+        <Caret Line="1017" Column="48" TopLine="1012"/>
+      </Position9>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
