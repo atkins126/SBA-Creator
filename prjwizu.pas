@@ -134,6 +134,7 @@ uses ConfigFormU, UtilsU, DebugFormU, FloatFormU;
 procedure TprjWizForm.PageBeforeShow(ASender: TObject; ANewPage: TPage;
   ANewIndex: Integer);
 begin
+  { TODO : Linux BUG, Mejorar la apariencia de los indicadores de pasos (steps) usar paneles en vez de TToggle }
   TB_Start.Checked:=false;
   TB_Step2.Checked:=false;
   TB_Step3.Checked:=false;

@@ -16,16 +16,24 @@ type
     ButtonPanel1: TButtonPanel;
     CB_LibAsReadOnly: TCheckBox;
     CB_AutoOpenPrjF: TCheckBox;
+    Ed_EditorFontSize: TComboBox;
+    Ed_EditorFontName: TComboBox;
     Ed_LibraryDir: TDirectoryEdit;
     Ed_SnippetsDir: TDirectoryEdit;
     Ed_ProjectsDir: TDirectoryEdit;
     Ed_ProgramsDir: TDirectoryEdit;
+    FontDialog1: TFontDialog;
     Label1: TLabel;
     Label2: TLabel;
     Label3: TLabel;
     Ed_DefAuthor: TLabeledEdit;
     Label4: TLabel;
+    Label5: TLabel;
+    Label6: TLabel;
     L_ConfigDir: TStaticText;
+    B_FontSelect: TSpeedButton;
+    procedure B_FontSelectClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
   private
     { private declarations }
@@ -33,17 +41,25 @@ type
     { public declarations }
   end;
 
-const
+const  //based in sub dirs in zip file from Github
   DefSBAbaseDir='SBA-master';
   DefLibraryDir='SBA-Library-master';
   DefSnippetsDir='SBA-Snippets-master';
   DefProgramsDir='SBA-Programs-master';
+
   DefProjectsDir='sbaprojects';
+
+  cSBAbaseZipFile='sbamaster.zip';
+  cSBAlibraryZipFile='sbalibrary.zip';
+  cSBAprogramsZipFile='sbaprograms.zip';
+  cSBAsnippetsZipFile='sbasnippets.zip';
+  cSBARepoZipFile='/archive/master.zip';
 
 var
   ConfigForm: TConfigForm;
   ConfigDir,LibraryDir,SnippetsDir,ProgramsDir,ProjectsDir,SBAbaseDir:string;
-  DefAuthor:string;
+  DefAuthor,EditorFontName:string;
+  EditorFontSize:integer;
   LibAsReadOnly:Boolean;
   AutoOpenPrjF:Boolean;
   IpCoreList,SnippetsList,ProgramsList:Tstringlist;
@@ -54,7 +70,7 @@ procedure UpdateLists;
 
 implementation
 
-uses MainFormU, SBAProgContrlrU, UtilsU, LibraryFormU, DebugFormU;
+uses MainFormU, SBAProgContrlrU, UtilsU, DebugFormU;
 
 {$R *.lfm}
 
@@ -78,6 +94,9 @@ begin
     ProgramsDir:=ReadString('ProgramsDir',ConfigDir+DefProgramsDir+PathDelim);
     ProjectsDir:=ReadString('ProjectsDir',GetUserDir+DefProjectsDir+PathDelim);
     DefAuthor:=ReadString('DefAuthor','Author');
+    EditorFontName:=ReadString('EditorFontName','Courier New');
+    EditorFontSize:=ReadInteger('EditorFontSize',10);
+    if Screen.Fonts.IndexOf(EditorFontName)=-1 then EditorFontName:='Courier New';
     LibAsReadOnly:=ReadBoolean('LibAsReadOnly',true);
     AutoOpenPrjF:=ReadBoolean('AutoOpenPrjF',true);
   end;
@@ -148,7 +167,7 @@ begin
   with ConfigForm, MainForm.IniStor do
   begin
     WriteString('ConfigDir',ConfigDir);
-    //{ TODO : Forzar la creación de directorios}
+    { TODO : Forzar la creación de directorios}
     Ed_LibraryDir.text:=AppendPathDelim(TrimFilename(Ed_LibraryDir.text));
     if LibraryDir<>Ed_LibraryDir.text then
     begin
@@ -159,7 +178,6 @@ begin
       end;
       WriteString('LibraryDir',LibraryDir);
     end;
-    //
     Ed_SnippetsDir.text:=AppendPathDelim(TrimFilename(Ed_SnippetsDir.text));
     if SnippetsDir<>Ed_SnippetsDir.text then
     begin
@@ -202,6 +220,14 @@ begin
     AutoOpenPrjF:=CB_AutoOpenPrjF.Checked;
     WriteBoolean('AutoOpenPrjF',AutoOpenPrjF);
     //
+    EditorFontName:=Ed_EditorFontName.Text;
+    WriteString('EditorFontName',EditorFontName);
+    MainForm.SynEdit_X.Font.Name:=EditorFontName;
+    //
+    EditorFontSize:=StrToIntDef(Ed_EditorFontSize.Text,10);
+    WriteInteger('EditorFontSize',EditorFontSize);
+    MainForm.SynEdit_X.Font.Size:=EditorFontSize;
+    //
     WriteString('SBAbaseDir',SBAbaseDir);
   end;
   result:=true;
@@ -219,6 +245,23 @@ begin
   Ed_DefAuthor.Text:=DefAuthor;
   CB_LibAsReadOnly.checked:=LibAsReadOnly;
   CB_AutoOpenPrjF.Checked:=AutoOpenPrjF;
+  Ed_EditorFontName.Text:=EditorFontName;
+end;
+
+procedure TConfigForm.FormCreate(Sender: TObject);
+begin
+  Ed_EditorFontName.items.assign(screen.fonts);
+end;
+
+procedure TConfigForm.B_FontSelectClick(Sender: TObject);
+begin
+  FontDialog1.Font.Name:=EditorFontName;
+  FontDialog1.Font.Size:=EditorFontSize;
+  if FontDialog1.Execute then
+  begin
+    Ed_EditorFontName.Text:=FontDialog1.Font.Name;
+    Ed_EditorFontSize.Text:=IntToStr(FontDialog1.Font.Size);
+  end;
 end;
 
 end.

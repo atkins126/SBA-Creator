@@ -9,7 +9,7 @@ object prjWizForm: TprjWizForm
   ClientWidth = 420
   OnShow = FormShow
   Position = poMainFormCenter
-  LCLVersion = '1.4.0.4'
+  LCLVersion = '1.4.2.0'
   object NavPanel: TPanel
     Left = 0
     Height = 42
@@ -935,7 +935,6 @@ object prjWizForm: TprjWizForm
       BorderSpacing.Around = 5
       Caption = 'Start'
       Checked = True
-      Color = clCream
       Constraints.MaxWidth = 64
       Constraints.MinHeight = 24
       Constraints.MinWidth = 64

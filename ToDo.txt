@@ -6,4 +6,4 @@ http://forum.codecall.net/topic/76318-monitor-a-folder-for-changes/
 Colocar un save all en el editor hdl.
 
 
-Arreglar las excepciones al validar el código del PRG (el programa se cierra si se presiona Cancel)
+Listo: Arreglar las excepciones al validar el código del PRG (el programa se cierra si se presiona Cancel)

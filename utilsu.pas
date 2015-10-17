@@ -5,7 +5,7 @@ unit UtilsU;
 interface
 
 uses
-  Classes, SysUtils, Dialogs, FileUtil, Zipper, DebugFormU;
+  Classes, SysUtils, Dialogs, FileUtil, StrUtils, Zipper, DebugFormU;
 
 function SearchForFiles(const dir,mask: string; Onfind:TFileFoundEvent):boolean;
 function PopulateDirList(const directory : string; list : TStrings): boolean;
@@ -16,6 +16,7 @@ function UnZip(f,p:string):boolean;
 function IsDirectoryEmpty(const directory : string) : boolean;
 function GetPosList(s: string; list: Tstrings; start:integer=0): integer;
 function DirDelete(d:string):boolean;
+function VCmpr(v1,v2:string):integer;
 
 implementation
 
@@ -141,6 +142,26 @@ begin
   Result:=DeleteDirectory(d,True);
   if Result then begin
      Result:=RemoveDirUTF8(d);
+  end;
+end;
+
+function VCmpr(v1, v2: string): integer;
+var i:integer;
+  function nl(s:string;l:integer):integer;
+  begin
+    result:=StrtoIntDef(ExtractDelimited(l,s,['.']),0)
+  end;
+
+begin
+  i:=nl(v1,1)-nl(v2,1);
+  if i<>0 then result:=i else
+  begin
+    i:=nl(v1,2)-nl(v2,2);
+    if i<>0 then result:=i else
+    begin
+      i:=nl(v1,3)-nl(v2,3);
+      result:=i
+    end;
   end;
 end;
 

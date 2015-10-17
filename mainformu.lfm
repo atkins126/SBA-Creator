@@ -1,7 +1,7 @@
 object MainForm: TMainForm
-  Left = 1062
+  Left = 1146
   Height = 769
-  Top = 100
+  Top = 41
   Width = 765
   AllowDropFiles = True
   ClientHeight = 749
@@ -16,17 +16,17 @@ object MainForm: TMainForm
   OnDropFiles = FormDropFiles
   OnResize = FormResize
   SessionProperties = 'CoreImage.Height;Height;Left;Log.Height;P_ProgAddress.Height;P_ProgLabels.Height;P_Project.Width;SnippetsList.Height;Top;Width;WindowState'
-  LCLVersion = '1.4.0.4'
+  LCLVersion = '1.4.4.0'
   object MainPages: TPageControl
     Left = 0
     Height = 726
     Top = 0
     Width = 765
-    ActivePage = EditorsTab
+    ActivePage = SystemTab
     Align = alClient
     ParentShowHint = False
     ShowHint = True
-    TabIndex = 1
+    TabIndex = 0
     TabOrder = 0
     TabPosition = tpBottom
     OnChange = MainPagesChange
@@ -38974,9 +38974,7 @@ object MainForm: TMainForm
           EdgeBorders = []
           EdgeInner = esNone
           EdgeOuter = esNone
-          Font.Height = 13
           Images = ImageList
-          ParentFont = False
           ParentShowHint = False
           ShowCaptions = True
           ShowHint = True
@@ -38984,17 +38982,17 @@ object MainForm: TMainForm
           Transparent = True
           Wrapable = False
           object ToolButton6: TToolButton
-            Left = 37
+            Left = 38
             Top = 0
             Action = FileNew
           end
           object ToolButton7: TToolButton
-            Left = 69
+            Left = 70
             Top = 0
             Action = FileOpen
           end
           object ToolButton9: TToolButton
-            Left = 106
+            Left = 107
             Top = 0
             Action = FileSave
           end
@@ -39004,24 +39002,24 @@ object MainForm: TMainForm
             Action = FileClose
           end
           object ToolButton12: TToolButton
-            Left = 382
+            Left = 387
             Top = 0
             Action = ToolsFileObf
             Marked = True
             Style = tbsCheck
           end
           object ToolButton13: TToolButton
-            Left = 443
+            Left = 449
             Top = 0
             Action = ToolsFileReformat
           end
           object ToolButton14: TToolButton
-            Left = 498
+            Left = 506
             Top = 0
             Action = ToolsFileSyntaxCheck
           end
           object ToolButton11: TToolButton
-            Left = 597
+            Left = 608
             Height = 35
             Top = 0
             Width = 7
@@ -39029,7 +39027,7 @@ object MainForm: TMainForm
             Style = tbsDivider
           end
           object ToolButton17: TToolButton
-            Left = 138
+            Left = 139
             Height = 35
             Top = 0
             Width = 5
@@ -39037,12 +39035,12 @@ object MainForm: TMainForm
             Style = tbsDivider
           end
           object ToolButton18: TToolButton
-            Left = 539
+            Left = 548
             Top = 0
             Action = SBA_EditProgram
           end
           object ToolButton25: TToolButton
-            Left = 377
+            Left = 382
             Height = 35
             Top = 0
             Width = 5
@@ -39050,37 +39048,37 @@ object MainForm: TMainForm
             Style = tbsDivider
           end
           object ToolButton26: TToolButton
-            Left = 143
+            Left = 144
             Top = 0
             Action = EditUndo
           end
           object ToolButton39: TToolButton
-            Left = 180
+            Left = 181
             Top = 0
             Action = EditCut
           end
           object ToolButton41: TToolButton
-            Left = 212
+            Left = 213
             Top = 0
             Action = EditCopy
           end
           object ToolButton42: TToolButton
-            Left = 246
+            Left = 249
             Top = 0
             Action = EditPaste
           end
           object ToolButton44: TToolButton
-            Left = 286
+            Left = 290
             Top = 0
             Action = SearchFind
           end
           object ToolButton45: TToolButton
-            Left = 329
+            Left = 333
             Top = 0
             Action = SearchReplace
           end
           object ToolButton19: TToolButton
-            Left = 281
+            Left = 285
             Height = 35
             Top = 0
             Width = 5
@@ -39392,30 +39390,28 @@ object MainForm: TMainForm
         ButtonWidth = 32
         Caption = 'ToolBar3'
         EdgeBorders = []
-        Font.Height = 13
         Images = ImageList
-        ParentFont = False
         ShowCaptions = True
         TabOrder = 0
         Transparent = True
         Wrapable = False
         object ToolButton20: TToolButton
-          Left = 43
+          Left = 45
           Top = 0
           Action = SBA_ReturnToEditor
         end
         object ToolButton21: TToolButton
-          Left = 123
+          Left = 125
           Top = 0
           Action = SBA_Open
         end
         object ToolButton22: TToolButton
-          Left = 160
+          Left = 162
           Top = 0
           Action = SBA_Save
         end
         object ToolButton23: TToolButton
-          Left = 192
+          Left = 194
           Top = 0
           Action = SBA_SaveAs
         end
@@ -39425,7 +39421,7 @@ object MainForm: TMainForm
           Action = SBA_cancel
         end
         object ToolButton28: TToolButton
-          Left = 86
+          Left = 88
           Height = 35
           Top = 0
           Width = 5
@@ -39433,7 +39429,7 @@ object MainForm: TMainForm
           Style = tbsDivider
         end
         object ToolButton29: TToolButton
-          Left = 238
+          Left = 242
           Height = 35
           Top = 0
           Width = 5
@@ -39441,17 +39437,17 @@ object MainForm: TMainForm
           Style = tbsDivider
         end
         object ToolButton30: TToolButton
-          Left = 243
+          Left = 247
           Top = 0
           Action = EditUndo
         end
         object ToolButton31: TToolButton
-          Left = 280
+          Left = 284
           Top = 0
           Action = EditRedo
         end
         object ToolButton32: TToolButton
-          Left = 315
+          Left = 319
           Height = 35
           Top = 0
           Width = 5
@@ -39459,22 +39455,22 @@ object MainForm: TMainForm
           Style = tbsDivider
         end
         object ToolButton34: TToolButton
-          Left = 320
+          Left = 324
           Top = 0
           Action = EditCut
         end
         object ToolButton35: TToolButton
-          Left = 352
+          Left = 356
           Top = 0
           Action = EditCopy
         end
         object ToolButton36: TToolButton
-          Left = 386
+          Left = 392
           Top = 0
           Action = EditPaste
         end
         object ToolButton37: TToolButton
-          Left = 421
+          Left = 428
           Height = 35
           Top = 0
           Width = 5
@@ -39482,28 +39478,28 @@ object MainForm: TMainForm
           Style = tbsDivider
         end
         object ToolButton38: TToolButton
-          Left = 426
+          Left = 433
           Top = 0
           Action = SearchFind
         end
         object ToolButton40: TToolButton
-          Left = 469
+          Left = 476
           Top = 0
           Action = SearchReplace
         end
         object ToolButton43: TToolButton
-          Left = 91
+          Left = 93
           Top = 0
           Action = SBA_NewPrg
         end
         object ToolButton46: TToolButton
-          Left = 522
+          Left = 530
           Top = 0
           Caption = '&Templates'
           DropdownMenu = PrgTemplates
         end
         object ToolButton47: TToolButton
-          Left = 517
+          Left = 525
           Height = 35
           Top = 0
           Width = 5
@@ -39616,7 +39612,6 @@ object MainForm: TMainForm
             MaxLength = 0
             TabOrder = 3
             FilteredListview = LV_Snippets
-            ByAllFields = False
           end
           object LV_Snippets: TListView
             Left = 3
@@ -39818,16 +39813,15 @@ object MainForm: TMainForm
         Top = 39
         Width = 627
         Align = alClient
-        Font.CharSet = ANSI_CHARSET
         Font.Height = -13
-        Font.Name = 'Consolas'
+        Font.Name = 'Courier New'
         Font.Pitch = fpFixed
         Font.Quality = fqDraft
         ParentColor = False
         ParentFont = False
         TabOrder = 2
         BookMarkOptions.BookmarkImages = MarkImages
-        Gutter.Width = 54
+        Gutter.Width = 57
         Gutter.MouseActions = <>
         RightGutter.Width = 0
         RightGutter.MouseActions = <>
@@ -40289,7 +40283,7 @@ object MainForm: TMainForm
             MouseActions = <>
           end
           object SynGutterLineNumber1: TSynGutterLineNumber
-            Width = 22
+            Width = 25
             MouseActions = <>
             MarkupInfo.Background = clBtnFace
             MarkupInfo.Foreground = clNone
@@ -40324,6 +40318,7 @@ object MainForm: TMainForm
       Caption = 'HidenPage'
       ClientHeight = 698
       ClientWidth = 757
+      ParentFont = False
       inline SynEdit1: TSynEdit
         Left = 0
         Height = 648
@@ -40333,7 +40328,7 @@ object MainForm: TMainForm
         Font.Height = -13
         Font.Name = 'Courier New'
         Font.Pitch = fpFixed
-        Font.Quality = fqNonAntialiased
+        Font.Quality = fqDraft
         ParentColor = False
         ParentFont = False
         TabOrder = 0
@@ -40766,7 +40761,7 @@ object MainForm: TMainForm
         MouseTextActions = <>
         MouseSelActions = <>
         Lines.Strings = (
-          'SynEdit1'
+          'Esto es una prueba'
         )
         VisibleSpecialChars = [vscSpace, vscTabAtLast]
         SelectedColor.BackPriority = 50
@@ -45221,5 +45216,11 @@ object MainForm: TMainForm
     Enabled = False
     left = 224
     top = 584
+  end
+  object IdleTimer1: TIdleTimer
+    AutoEnabled = True
+    OnTimer = IdleTimer1Timer
+    left = 600
+    top = 640
   end
 end

@@ -7,24 +7,24 @@ interface
 uses
   Classes, SysUtils, FileUtil, ListViewFilterEdit, Forms,
   Controls, Graphics, Dialogs, ComCtrls, Buttons, ExtCtrls,
-  ActnList, AsyncProcess, lclintf, StdCtrls, EditBtn,
-  IniFilesUTF8, SBASnippetU, SBAProgramU;
+  AsyncProcess, lclintf, StdCtrls, EditBtn,
+  SBASnippetU, SBAProgramU, IniFilesUTF8, StringListUTF8;
 
 type
-  tProcessStatus=(Idle,GetBase, GetLibrary, GetPrograms, GetSnippets);
 
   { TLibraryForm }
-
   TLibraryForm = class(TForm)
     B_AddtoLibrary: TBitBtn;
     B_AddtoPrograms: TBitBtn;
     B_AddtoSnippets: TBitBtn;
-    B_SBAlibraryGet: TSpeedButton;
-    B_SBAprogramsGet: TSpeedButton;
-    B_SBAsnippetsGet: TSpeedButton;
-    B_SBAlibrarySurf: TSpeedButton;
-    B_SBAprogramsSurf: TSpeedButton;
-    B_SBAsnippetsSurf: TSpeedButton;
+    B_SBAbaseGet: TBitBtn;
+    B_SBAbaseSurf: TBitBtn;
+    B_SBAlibraryGet: TBitBtn;
+    B_SBAlibrarySurf: TBitBtn;
+    B_SBAprogramsGet: TBitBtn;
+    B_SBAprogramsSurf: TBitBtn;
+    B_SBAsnippetsGet: TBitBtn;
+    B_SBAsnippetsSurf: TBitBtn;
     Ed_SBAbase: TEditButton;
     Ed_SBAlibrary: TEditButton;
     Ed_SBAprograms: TEditButton;
@@ -33,10 +33,12 @@ type
     GB_SBAlibrary: TGroupBox;
     GB_SBAprograms: TGroupBox;
     GB_SBAsnippets: TGroupBox;
+    IdleTimer1: TIdleTimer;
     IPCoreImage: TImage;
     Label1: TLabel;
     Label2: TLabel;
     Label3: TLabel;
+    Label4: TLabel;
     L_TitleIPCore: TLabel;
     ProgramDescription: TMemo;
     Label5: TLabel;
@@ -65,8 +67,6 @@ type
     Snippets: TTabSheet;
     LV_IPCores: TListView;
     LV_Programs: TListView;
-    B_SBAbaseSurf: TSpeedButton;
-    B_SBAbaseGet: TSpeedButton;
     SB: TStatusBar;
     URL_IpCore: TStaticText;
     UpdateRep: TTabSheet;
@@ -86,6 +86,7 @@ type
     procedure Ed_SBAsnippetsButtonClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
+    procedure IdleTimer1Timer(Sender: TObject);
     procedure LV_IPCoresClick(Sender: TObject);
     procedure LV_IPCoresCustomDrawItem(Sender: TCustomListView;
       Item: TListItem; State: TCustomDrawState; var DefaultDraw: Boolean);
@@ -106,7 +107,7 @@ type
     procedure EndGetLibrary;
     procedure EndGetPrograms;
     procedure EndGetSnippets;
-    procedure ProcessWGET(url, f: string; Status: TProcessStatus);
+    function GetVersion(f: string): string;
     { private declarations }
   public
     { public declarations }
@@ -117,14 +118,6 @@ type
 
 var
   LibraryForm: TLibraryForm;
-  ProcessStatus:TProcessStatus=Idle;
-
-const
-  cSBAbaseZipFile='sbamaster.zip';
-  cSBAlibraryZipFile='sbalibrary.zip';
-  cSBAprogramsZipFile='sbaprograms.zip';
-  cSBAsnippetsZipFile='sbasnippets.zip';
-
 
 function ShowLibraryForm:TModalResult;
 
@@ -134,11 +127,60 @@ implementation
 
 uses ConfigFormU, UtilsU, DebugFormU;
 
+type
+  tProcessStatus=(Idle,GetBase, GetLibrary, GetPrograms, GetSnippets);
+
+var
+  ProcessStatus:TProcessStatus=Idle;
+
 function ShowLibraryForm: TModalResult;
 begin
   LibraryForm.UpdateLists;
   result:=LibraryForm.ShowModal;
 end;
+
+procedure ProcessWGET(url,f:string;Status:TProcessStatus);
+begin
+  While ProcessStatus<>idle do
+  begin
+    sleep(300);
+    application.ProcessMessages;
+  end;
+
+infoln('');
+infoln('');
+infoln('source: '+url);
+infoln('destination: '+f);
+infoln('--------------------------------------');
+infoln('');
+
+  With LibraryForm do
+  begin
+    process1.Parameters.Clear;
+    {$IFDEF WINDOWS}
+    process1.Executable:=Application.Location+'tools'+PathDelim+'wget.exe';
+    {$ENDIF}
+    {$IFDEF LINUX}
+    process1.Executable:='wget';
+    {$ENDIF}
+    process1.CurrentDirectory:=ConfigDir;
+    {$IFNDEF DEBUG}
+    process1.Parameters.Add('-q');
+    {$ENDIF}
+    process1.Parameters.Add('-O');
+    {$IFDEF WINDOWS}
+    process1.Parameters.Add('"'+f+'"');
+    {$ENDIF}
+    {$IFDEF LINUX}
+    process1.Parameters.Add(f);
+    {$ENDIF}
+    process1.Parameters.Add('--no-check-certificate');
+    process1.Parameters.Add(url);
+    ProcessStatus:=Status;
+    process1.Execute;
+  end;
+end;
+
 
 { TLibraryForm }
 
@@ -163,7 +205,7 @@ procedure TLibraryForm.LV_SnippetsCustomDrawItem(Sender: TCustomListView;
   Item: TListItem; State: TCustomDrawState; var DefaultDraw: Boolean);
 var Icolor:TColor;
 begin
-  if SnippetsList.IndexOf(Item.Caption)<>-1 then Icolor:=clGreen else Icolor:=clBlack;
+  if SnippetsList.IndexOf(Item.Caption)=-1 then Icolor:=clGreen else Icolor:=clBlack;
   Sender.Canvas.Font.Color:=Icolor;
 end;
 
@@ -181,7 +223,7 @@ procedure TLibraryForm.B_SBAlibraryGetClick(Sender: TObject);
 begin
   PB_SBALibrary.Style:=pbstMarquee;
   SB.SimpleText:='Downloading file '+cSBAlibraryZipFile;
-  ProcessWGET(Ed_SBAlibrary.Text+'/archive/master.zip',ConfigDir+cSBAlibraryZipFile,GetLibrary);
+  ProcessWGET(Ed_SBAlibrary.Text+cSBARepoZipFile,ConfigDir+cSBAlibraryZipFile,GetLibrary);
 end;
 
 procedure TLibraryForm.B_SBAlibrarySurfClick(Sender: TObject);
@@ -193,7 +235,7 @@ procedure TLibraryForm.B_SBAprogramsGetClick(Sender: TObject);
 begin
   PB_SBAprograms.Style:=pbstMarquee;
   SB.SimpleText:='Downloading file '+cSBAprogramsZipFile;
-  ProcessWGET(Ed_SBAprograms.Text+'/archive/master.zip',ConfigDir+cSBAprogramsZipFile,Getprograms);
+  ProcessWGET(Ed_SBAprograms.Text+cSBARepoZipFile,ConfigDir+cSBAprogramsZipFile,Getprograms);
 end;
 
 procedure TLibraryForm.B_SBAprogramsSurfClick(Sender: TObject);
@@ -205,7 +247,7 @@ procedure TLibraryForm.B_SBAsnippetsGetClick(Sender: TObject);
 begin
   PB_SBAsnippets.Style:=pbstMarquee;
   SB.SimpleText:='Downloading file '+cSBAsnippetsZipFile;
-  ProcessWGET(Ed_SBAsnippets.Text+'/archive/master.zip',ConfigDir+cSBAsnippetsZipFile,Getsnippets);
+  ProcessWGET(Ed_SBAsnippets.Text+cSBARepoZipFile,ConfigDir+cSBAsnippetsZipFile,Getsnippets);
 end;
 
 procedure TLibraryForm.B_SBAsnippetsSurfClick(Sender: TObject);
@@ -232,12 +274,22 @@ procedure TLibraryForm.FormCreate(Sender: TObject);
 begin
   SBASnippet:=TSBASnippet.Create;
   SBAProgram:=TSBAProgram.Create;
+  {$IFDEF LINUX}
+  //BUG:Workaround to correct an exception when the focus return to "update repositories" page-
+  Ed_SBAbase.Enabled:=false;
+  {$ENDIF}
 end;
 
 procedure TLibraryForm.FormDestroy(Sender: TObject);
 begin
   if assigned(SBASnippet) then FreeAndNil(SBASnippet);
   if assigned(SBAProgram) then FreeAndNil(SBAProgram);
+end;
+
+procedure TLibraryForm.IdleTimer1Timer(Sender: TObject);
+begin
+  if (not Process1.Running) and (ProcessStatus<>Idle) then
+    Process1Terminate(Sender);
 end;
 
 procedure TLibraryForm.LV_IPCoresClick(Sender: TObject);
@@ -249,7 +301,7 @@ begin
   IpCoreDescription.Clear;
   L:=LV_IPCores.Selected;
   if (L=nil) or (LV_IPCores.Items.Count=0) then exit;
-  B_AddtoLibrary.Enabled:=IpCoreList.IndexOf(L.Caption)=-1;
+  B_AddtoLibrary.Enabled:=(L.SubItems[1]='N') or (L.SubItems[1]='U');
   f:=L.SubItems[0];
   if f<>'' then
   try
@@ -271,8 +323,22 @@ procedure TLibraryForm.LV_IPCoresCustomDrawItem(Sender: TCustomListView;
   Item: TListItem; State: TCustomDrawState; var DefaultDraw: Boolean);
 var Icolor:TColor;
 begin
-  if IpCoreList.IndexOf(Item.Caption)<>-1 then Icolor:=clGreen else Icolor:=clBlack;
+  case Item.SubItems[1] of
+    'U': Icolor:=clBlue;
+    '=': Icolor:=clBlack;
+    'N': Icolor:=clGreen;
+  else Icolor:=clRed;
+  end;
   Sender.Canvas.Font.Color:=Icolor;
+{$IFDEF LINUX}
+//Workaround to ListView.Canvas.Font in GTK
+  if Item.SubItems[1]<>'=' then
+  begin
+    DefaultDraw:=False;
+    Sender.Canvas.Brush.Style:=bsClear;
+    Sender.Canvas.TextOut(Item.Left+5, Item.Top+3, Item.Caption);
+  end;
+{$ENDIF}
 end;
 
 procedure TLibraryForm.LV_ProgramsClick(Sender: TObject);
@@ -293,49 +359,36 @@ begin
 end;
 
 procedure TLibraryForm.Process1ReadData(Sender: TObject);
-var s:TMemoryStream;
-    t:TStringList;
-    b:DWord;
-    l:string;
+var
+  t:TStringList;
 begin
-   s:=TMemoryStream.Create;
    t:=TStringList.Create;
-   b:=Process1.NumBytesAvailable;
-   if b>0 then
-   begin
-     s.SetSize(b);
-     Process1.Output.Read(s.memory^, b);
-     t.LoadFromStream(s)
-   end;
-   For l in t do infoln(l);
-   s.free;
+   t.LoadFromStream(Process1.Output);
+   infoln(t.Text);
    t.free;
 end;
 
 procedure TLibraryForm.Process1Terminate(Sender: TObject);
+var PS:TProcessStatus;
 begin
-  Process1ReadData(Sender);
-  case ProcessStatus of
+  PS:=ProcessStatus;
+  ProcessStatus:=Idle;
+  if Process1.NumBytesAvailable>0 then Process1ReadData(Sender);
+  case PS of
     GetBase: EndGetBase;
     GetLibrary: EndGetLibrary;
     GetPrograms: EndGetPrograms;
     GetSnippets: EndGetSnippets;
   end;
-  ProcessStatus:=Idle;
-
-infoln('');
-infoln('');
-infoln('-----------------------------');
-infoln('');
-infoln('');
-
+  infoln('');
+  infoln('End of process');
 end;
 
 procedure TLibraryForm.LV_ProgramsCustomDrawItem(Sender: TCustomListView;
   Item: TListItem; State: TCustomDrawState; var DefaultDraw: Boolean);
 var Icolor:TColor;
 begin
-  if ProgramsList.IndexOf(Item.Caption)<>-1 then Icolor:=clGreen else Icolor:=clBlack;
+  if ProgramsList.IndexOf(Item.Caption)=-1 then Icolor:=clGreen else Icolor:=clBlack;
   Sender.Canvas.Font.Color:=Icolor;
 end;
 
@@ -343,7 +396,7 @@ procedure TLibraryForm.B_SBAbaseGetClick(Sender: TObject);
 begin
   PB_SBABase.Style:=pbstMarquee;
   SB.SimpleText:='Downloading file '+cSBABaseZipFile;
-  ProcessWGET(Ed_SBAbase.Text+'/archive/master.zip',ConfigDir+cSBABaseZipFile,GetBase);
+  ProcessWGET(Ed_SBAbase.Text+cSBARepoZipFile,ConfigDir+cSBABaseZipFile,GetBase);
 end;
 
 procedure TLibraryForm.B_AddtoLibraryClick(Sender: TObject);
@@ -356,7 +409,8 @@ begin
   f:=ExtractFilePath(L.SubItems[0]);
   d:=AppendPathDelim(LibraryDir+L.Caption);
   try
-    if DirectoryExistsUTF8(d) or not CopyDirTree(f,d,[cffCreateDestDirectory,cffPreserveTime]) then
+    if DirectoryExistsUTF8(d) then DirDelete(d);
+    if not CopyDirTree(f,d,[cffCreateDestDirectory,cffPreserveTime]) then
       ShowMessage('The IPCore folder could not be copied to the local library.');
   except
     on E:Exception do ShowMessage(E.Message);
@@ -412,20 +466,22 @@ begin
   SB.SimpleText:='Unziping file '+cSBABaseZipFile;
   if UnZip(ConfigDir+cSBABaseZipFile,ConfigDir+'temp') then
   begin
+    infoln('Unziping file and copy '+cSBABaseZipFile);
     SB.SimpleText:='';
     DirDelete(SBAbaseDir);
     Sleep(300);
     result:=(not DirectoryExistsUTF8(SBAbaseDir)) and
-            RenameFile(ConfigDir+'temp'+PathDelim+'SBA-master'+PathDelim,SBAbaseDir);
+            RenameFile(ConfigDir+'temp'+PathDelim+DefSBAbaseDir+PathDelim,SBAbaseDir);
   end;
+  PB_SBABase.Style:=pbstNormal;
   if result then ShowMessage('The new main base files are ready.')
   else ShowMessage('There was an error trying to copy base folder.');
-  PB_SBABase.Style:=pbstNormal;
 end;
 
 procedure TLibraryForm.EndGetLibrary;
 begin
   SB.SimpleText:='Unziping file '+cSBAlibraryZipFile;
+  DirDelete(ConfigDir+'temp'+PathDelim+DefLibraryDir);
   if UnZip(ConfigDir+cSBAlibraryZipFile,ConfigDir+'temp') then
   begin
     SB.SimpleText:='';
@@ -438,6 +494,7 @@ end;
 procedure TLibraryForm.EndGetPrograms;
 begin
   SB.SimpleText:='Unziping file '+cSBAprogramsZipFile;
+  DirDelete(ConfigDir+'temp'+PathDelim+DefProgramsDir);
   if UnZip(ConfigDir+cSBAprogramsZipFile,ConfigDir+'temp') then
   begin
     SB.SimpleText:='';
@@ -450,6 +507,7 @@ end;
 procedure TLibraryForm.EndGetSnippets;
 begin
   SB.SimpleText:='Unziping file '+cSBAsnippetsZipFile;
+  DirDelete(ConfigDir+'temp'+PathDelim+DefSnippetsDir);
   if UnZip(ConfigDir+cSBAsnippetsZipFile,ConfigDir+'temp') then
   begin
     SB.SimpleText:='';
@@ -459,43 +517,28 @@ begin
   PB_SBAsnippets.Style:=pbstNormal;
 end;
 
-procedure TLibraryForm.ProcessWGET(url,f:string;Status:TProcessStatus);
+function TLibraryForm.GetVersion(f:string):string;
+var ini:TIniFile;
 begin
-  While ProcessStatus<>idle do
-  begin
-    sleep(300);
-    application.ProcessMessages;
-  end;
-
-infoln('');
-infoln('');
-infoln(url);
-infoln(f);
-infoln('-----------------------------');
-infoln('');
-infoln('');
-
-  process1.Parameters.Clear;
-  process1.Executable:=Application.Location+'tools'+PathDelim+'wget.exe';
-  process1.CurrentDirectory:=ConfigDir;
-  {$IFNDEF DEBUG}
-  process1.Parameters.Add('-q');
-  {$ENDIF}
-  process1.Parameters.Add('-O');
-  process1.Parameters.Add('"'+f+'"');
-  process1.Parameters.Add('--no-check-certificate');
-  process1.Parameters.Add(url);
-  ProcessStatus:=Status;
-  process1.Execute;
+  if FileExistsUTF8(f) then
+  try
+    ini:=TIniFile.Create(f);
+    result:=ini.ReadString('MAIN', 'Version', '0.0.1');
+  finally
+    if assigned(ini) then FreeAndNil(ini);
+  end else result:='0.0.0';
 end;
 
 procedure TLibraryForm.AddItemToIPCoresFilter(FileIterator: TFileIterator);
 var
   Data:TStringArray;
+  v:integer;
 begin
-  SetLength(Data,2);
+  SetLength(Data,3);
   Data[0]:=ExtractFileNameWithoutExt(FileIterator.FileInfo.Name);
   Data[1]:=FileIterator.FileName;
+  v:=VCmpr(GetVersion(FileIterator.FileName),GetVersion(LibraryDir+Data[0]+PathDelim+Data[0]+'.ini'));
+  if IpCoreList.IndexOf(Data[0])=-1 then Data[2]:='N' else if v>0 then Data[2]:='U' else if v=0 then Data[2]:='=';
   IPCoresFilter.Items.Add(Data);
 end;
 
@@ -522,15 +565,15 @@ end;
 procedure TLibraryForm.UpdateLists;
 begin
   IpCoresFilter.Items.Clear;
-  SearchForFiles(ConfigDir+'temp'+PathDelim+'SBA-Library-master', '*.ini',@AddItemToIpCoresFilter);
+  SearchForFiles(ConfigDir+'temp'+PathDelim+DefLibraryDir, '*.ini',@AddItemToIpCoresFilter);
   IpCoresFilter.InvalidateFilter;
 //
   ProgramsFilter.Items.Clear;
-  SearchForFiles(ConfigDir+'temp'+PathDelim+'SBA-Programs-master', '*.prg',@AddItemToProgramsFilter);
+  SearchForFiles(ConfigDir+'temp'+PathDelim+DefProgramsDir, '*.prg',@AddItemToProgramsFilter);
   ProgramsFilter.InvalidateFilter;
 //
   SnippetsFilter.Items.Clear;
-  SearchForFiles(ConfigDir+'temp'+PathDelim+'SBA-Snippets-master', '*.snp',@AddItemToSnippetsFilter);
+  SearchForFiles(ConfigDir+'temp'+PathDelim+DefSnippetsDir, '*.snp',@AddItemToSnippetsFilter);
   SnippetsFilter.InvalidateFilter;
 end;
 

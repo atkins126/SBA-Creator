@@ -18,6 +18,7 @@ const
   cSBAEndProgLabels='-- /SBA: End';
   cSBAStartUserProg='-- /SBA: User Program';
   cSBAEndUserProg='-- /SBA: End';
+  cSBASTPTypedef='subtype STP_type';
   cSBADefaultPrgName='NewProgram.prg';
   cSBADefaultPrgTemplate='PrgTemplate.prg';
 
@@ -27,6 +28,7 @@ type
 
   TSBAContrlrProg = class(TObject)
     FFileName : string;
+    STPCnt : integer;
   private
     procedure SetFilename(AValue: String);
   public
@@ -44,7 +46,7 @@ type
 
 implementation
 
-uses ConfigFormU, UtilsU;
+uses ConfigFormU, UtilsU, DebugformU;
 
 { TSBAContrlrProg }
 
@@ -193,19 +195,6 @@ begin
   Result:=true;
 end;
 
-function TSBAContrlrProg.CpyProgLabels(Labels, Src: TStrings): boolean;
-var i,iPos:integer;
-begin
-  Result:=false;
-  iPos:=GetPosList(cSBAStartProgLabels,Src);
-  if iPos=-1 then exit;
-  Inc(iPos);
-  while (pos(cSBAEndProgLabels,Src[iPos])=0) and (Src.Count>iPos) do Src.Delete(iPos);
-  if (pos(cSBAEndProgLabels,Src[iPos])=0) then exit;
-  For i:=Labels.Count-1 downto 0 do Src.Insert(iPos,Labels[i]);
-  Result:=true;
-end;
-
 // Extract Labels and complete steps numbers
 function TSBAContrlrProg.GenLblandProgFormat(Prog,Labels:TStrings):boolean;
 const
@@ -235,7 +224,24 @@ begin
     if LeftStr(Prog[i],2)<>'--' then Prog[i]:=S+Prog[i];
     if (pos(cSBAEndUserProg,Prog[i])<>0) then break;
   end;
+  STPCnt:=cnt-1;
   Result:=pos(cSBAEndUserProg,Prog[i])<>0;
+end;
+
+function TSBAContrlrProg.CpyProgLabels(Labels, Src: TStrings): boolean;
+var i,iPos:integer;
+begin
+  Result:=false;
+  iPos:=GetPosList(cSBAStartProgLabels,Src);
+  if iPos=-1 then exit;
+  Inc(iPos);
+  while (pos(cSBAEndProgLabels,Src[iPos])=0) and (Src.Count>iPos) do Src.Delete(iPos);
+  if (pos(cSBAEndProgLabels,Src[iPos])=0) then exit;
+  For i:=Labels.Count-1 downto 0 do Src.Insert(iPos,Labels[i]);
+  iPos:=GetPosList(cSBASTPTypedef,Src);
+  infoln(iPos);
+  if iPos<>-1 then Src[iPos]:='  subtype STP_type is integer range 0 to '+inttostr(STPCnt)+';';
+  Result:=true;
 end;
 
 // Copy User program

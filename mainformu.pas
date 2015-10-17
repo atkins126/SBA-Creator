@@ -11,7 +11,7 @@ uses
   uSynEditPopupEdit, SynPluginSyncroEdit, SynHighlighterIni, FileUtil,
   ListViewFilterEdit, strutils, Clipbrd, IniPropStorage, StdActns,
   BGRASpriteAnimation, uebutton, uETilePanel, versionsupportu, types, lclintf,
-  LCLType, HistoryFiles, IniFilesUTF8, StringListUTF8;
+  LCLType, HistoryFiles, StringListUTF8;
 
 type
   thdltype=(vhdl, prg, verilog, systemverilog, ini, other);
@@ -21,6 +21,7 @@ type
 
   TMainForm = class(TForm)
     B_SBAAdress: TBitBtn;
+    IdleTimer1: TIdleTimer;
     L_SBAAddress: TListBox;
     MI_RemUserFile: TMenuItem;
     MI_AddUserFile: TMenuItem;
@@ -298,6 +299,7 @@ type
     procedure EditUndoExecute(Sender: TObject);
     procedure FileSaveAsExecute(Sender: TObject);
     procedure FormResize(Sender: TObject);
+    procedure IdleTimer1Timer(Sender: TObject);
     procedure LogoImageDblClick(Sender: TObject);
     procedure L_SBALabelsDblClick(Sender: TObject);
     procedure MainPanelResize(Sender: TObject);
@@ -381,7 +383,7 @@ type
     procedure HighLightReservedWords(List:TStrings);
     procedure NewEditorPage;
     procedure Ofuscate(f: string; hdl: thdltype);
-    procedure Open(f:String);
+    function Open(f: String): boolean;
     procedure OpenInEditor(const f: string);
     procedure OpenProject(const f:string);
     procedure ProcessWGET(url, f: string; status: TProcessStatus);
@@ -759,6 +761,12 @@ begin
   LogoImage.Visible:=Self.Width>575;
 end;
 
+procedure TMainForm.IdleTimer1Timer(Sender: TObject);
+begin
+  if (not Process1.Running) and (ProcessStatus<>Idle) then
+    Process1Terminate(Sender);
+end;
+
 procedure TMainForm.LogoImageDblClick(Sender: TObject);
 begin
   MainPages.ActivePage:=HidenPage;
@@ -834,15 +842,18 @@ end;
 procedure TMainForm.PrjTreeDblClick(Sender: TObject);
 var
   TN:TTreeNode;
-  P:String;
+  S,P:String;
 begin
   TN:=PrjTree.Selected;
   if TN.Parent<>nil then
   begin
-    if TN.Parent.Text=SBAPrj.name then P:=SBAPrj.location+SBAPrj.name+'_'+TN.Text+'.vhd';
-    if TN.Parent.Text='Aux' then P:=SBAPrj.loclib+TN.Text+'.vhd';
-    if TN.Parent.Text='Lib' then P:=SBAPrj.loclib+TN.Text+'.vhd';
-    if TN.Parent.Text='User' then P:=SBAPrj.GetUserFilePath(TN.Text)+TN.Text;
+    S:=TN.GetParentNodeOfAbsoluteLevel(0).Text;
+    if S=SBAPrj.name then P:=SBAPrj.location+SBAPrj.name+'_'+TN.Text+'.vhd'
+    else case S of
+    'Aux' :P:=SBAPrj.loclib+TN.Text+'.vhd';
+    'Lib' :P:=SBAPrj.loclib+TN.Text+'.vhd';
+    'User':P:=SBAPrj.GetUserFilePath(TN.Text)+TN.Text;
+    end;
     OpenInEditor(P);
   end;
 end;
@@ -1242,9 +1253,11 @@ end;
 
 procedure TMainForm.FileRevertExecute(Sender: TObject);
 begin
-  Open(EditorPages.ActivePage.Hint);
-  ChangeEditorButtons(ActiveEditor);
-  DetectSBAController;
+  if Open(EditorPages.ActivePage.Hint) then
+  begin
+    ChangeEditorButtons(ActiveEditor);
+    DetectSBAController;
+  end;
 end;
 
 procedure TMainForm.FileSaveExecute(Sender: TObject);
@@ -1261,6 +1274,8 @@ end;
 procedure TMainForm.ToolsFileSyntaxCheckExecute(Sender: TObject);
 var s:string;
 begin
+  {$IFDEF WINDOWS}
+  { TODO : Completar la verificación en el caso de LINUX }
   case hdltype of
     vhdl : begin
       if not fileexistsUTF8(Application.Location+'ghdl\bin\ghdl.exe') then
@@ -1281,6 +1296,7 @@ begin
       exit;
     end;
   end;
+  {$ENDIF}
   s:=EditorPages.ActivePage.Hint;
   if ActiveEditor.Modified then
   case MessageDlg('File must be saved', 'Save File? '+s, mtConfirmation, [mbYes, mbNo],0) of
@@ -1289,7 +1305,6 @@ begin
   end;
   ToolsFileSyntaxCheck.Enabled:=false;
   if SBAPrj.name='' then SyntaxCheck(s,'',hdltype) else SyntaxCheck(s,SBAPrj.GetAllFileNames,hdltype);
-  ToolsFileSyntaxCheck.Enabled:=true;
 end;
 
 procedure TMainForm.FormCloseQuery(Sender: TObject; var CanClose: boolean);
@@ -1326,6 +1341,8 @@ begin
     SynSBASyn:= TSynSBASyn.Create(Self);
     SynVerilogSyn:= TSynVerilogSyn.Create(Self);
     SetupSynMarkup;
+    SynEdit_X.Font.Name:=EditorFontName;
+    SynEdit_X.Font.Size:=EditorFontSize;
     EditorHistory.IniFile:=ConfigDir+'FileHistory.ini';
     PrjHistory.IniFile:=ConfigDir+'FileHistory.ini';
     EditorHistory.UpdateParentMenu;
@@ -1419,9 +1436,11 @@ begin
     if fileexistsUTF8(f) then
     begin
       if not EditorEmpty(ActiveEditor) then NewEditorPage;
-      Open(f);
-      EditorPages.ActivePage.Hint:=f;
-      EditorPages.ActivePage.Caption:=ExtractFilename(f);
+      if Open(f) then
+      begin
+        EditorPages.ActivePage.Hint:=f;
+        EditorPages.ActivePage.Caption:=ExtractFilename(f);
+      end;
     end;
   end;
   ChangeEditorButtons(ActiveEditor);
@@ -1481,9 +1500,8 @@ begin
   OpenDialog.FileName:='';
   OpenDialog.DefaultExt:='.prg';
   OpenDialog.Filter:='PRG and SNP files|*.prg;*.snp|PRG file|*.prg|SNP file|*.snp';
-  if OpenDialog.Execute then
+  if OpenDialog.Execute and Open(OpenDialog.FileName) then
   begin
-    Open(OpenDialog.FileName);
     SBAContrlrProg.FileName:=OpenDialog.FileName;
     ExtractSBALabels;
   end;
@@ -1546,7 +1564,6 @@ begin
       ShowMessage('Error Copying User program to controller: Please verify "'+cSBAStartUserProg+'" signatures.');
       Exit;
     end;
-
     SynEdit_X.Modified:=false;
     MainPages.ActivePage:=EditorsTab;
     EditorPagesChange(nil);
@@ -1684,7 +1701,7 @@ begin
   Result:=(Editor.Lines.Count=0) or ((Editor.Lines.Count=1) and (Editor.Lines[1]=''));
 end;
 
-procedure TMainForm.Process1ReadData(Sender: TObject);
+{procedure TMainForm.Process1ReadData(Sender: TObject);
 var s:TMemoryStream;
     t:TStringList;
     b:DWord;
@@ -1701,16 +1718,32 @@ begin
    Log.Items.AddStrings(t);
    s.free;
    t.free;
+end;}
+
+procedure TMainForm.Process1ReadData(Sender: TObject);
+var
+  t:TStringList;
+begin
+   t:=TStringList.Create;
+   t.LoadFromStream(Process1.Output);
+   Log.Items.AddStrings(t);
+infoln(t.Text);
+   t.free;
 end;
 
+
 procedure TMainForm.Process1Terminate(Sender: TObject);
+var PS:TProcessStatus;
 begin
-  Process1ReadData(Sender);
-  Log.ItemIndex:=Log.Count-1;
-  case ProcessStatus of
-    GetBanner: LoadAnnouncement;
-  end;
+  PS:=ProcessStatus;
   ProcessStatus:=Idle;
+  if Process1.NumBytesAvailable>0 then Process1ReadData(Sender);
+  Log.ItemIndex:=Log.Count-1;
+  case PS of
+    GetBanner: LoadAnnouncement;
+    SyntaxChk: ToolsFileSyntaxCheck.Enabled:=true;
+  end;
+infoln('End of process');
 end;
 
 procedure TMainForm.RW_AddfromCBExecute(Sender: TObject);
@@ -1803,13 +1836,22 @@ begin
   wfile:=extractfilename(f);
   while ProcessStatus<>Idle do begin sleep(300); application.ProcessMessages; end;
   ProcessStatus:=Obfusct;
-  process1.Executable:='cmd.exe';
-  process1.CurrentDirectory:=wpath;
   process1.Parameters.Clear;
+  process1.CurrentDirectory:=wpath;
+
+  {$IFDEF WINDOWS}
+  process1.Executable:='cmd.exe';
   process1.Parameters.Add('/c');
   // Hay un bug en el CMD /C que no interpreta adecuadamente las rutas con paréntesis
   // La inclusión de los dobles "" ayuda en la solución temporal del bug
   process1.Parameters.Add('""'+Application.Location+'obfuscator.bat" '+wfile+' obfuscated_file.'+s+' '+s+' '+mapfile+'"');
+  {$ENDIF}
+  {$IFDEF LINUX}
+  process1.Executable:='/bin/bash';
+  process1.Parameters.Add('-c');
+  process1.Parameters.Add(Application.Location+'obfuscator.sh '+wfile+' obfuscated_file.'+s+' '+s+' '+mapfile);
+  {$ENDIF}
+
   Log.Clear;
   process1.Execute;
   while process1.Running do begin sleep(300); application.ProcessMessages; end;
@@ -1820,30 +1862,31 @@ begin
   end else
   begin
     NewEditorPage;
-    Open(wpath+'obfuscated_file.'+s);
-    EditorPages.ActivePage.Hint:=wpath+'obfuscated_file.'+s;
-    EditorPages.ActivePage.Caption:='obfuscated_file.'+s;
-    ChangeEditorButtons(ActiveEditor);
-    DetectSBAController;
+    if Open(wpath+'obfuscated_file.'+s) then
+    begin
+      EditorPages.ActivePage.Hint:=wpath+'obfuscated_file.'+s;
+      EditorPages.ActivePage.Caption:='obfuscated_file.'+s;
+      ChangeEditorButtons(ActiveEditor);
+      DetectSBAController;
+    end;
   end;
 end;
 
-procedure TMainForm.Open(f:String);
+function TMainForm.Open(f:String):boolean;
 begin
-  if not FileExistsUTF8(f) then
+  result:=false;
+  if FileExistsUTF8(f) then
   begin
-    showmessage('the file: '+f+' was not found.');
-    exit;
-  end;
-  wdir:=extractfilepath(f);
-  if wdir='' then wdir:='.\';
-  hdltypeselect(extractfileext(f));
-
-  ActiveEditor.Lines.LoadFromFile(f);
-  ActiveEditor.Modified:=false;
-  ActiveEditor.ReadOnly:=(FileGetAttrUTF8(f) and faReadOnly)<>0;
-  StatusBar1.Panels[1].Text:=f;
-  EditorHistory.UpdateList(f);
+    ActiveEditor.Lines.LoadFromFile(f);
+    ActiveEditor.ReadOnly:=(FileGetAttrUTF8(f) and faReadOnly)<>0;
+    wdir:=extractfilepath(f);
+    if wdir='' then wdir:='.\';
+    hdltypeselect(extractfileext(f));
+    StatusBar1.Panels[1].Text:=f;
+    EditorHistory.UpdateList(f);
+    ActiveEditor.Modified:=false;
+    result:=true;
+  end else showmessage('The file: '+f+' was not found.');
 end;
 
 procedure TMainForm.OpenInEditor(const f: string);
@@ -1860,9 +1903,11 @@ begin
   if EditorPages.ActivePage.Hint<>f then
   begin
     if not EditorEmpty(ActiveEditor) then NewEditorPage;
-    Open(f);
-    EditorPages.ActivePage.Hint:=f;
-    EditorPages.ActivePage.Caption:=ExtractFilename(f);
+    if Open(f) then
+    begin
+      EditorPages.ActivePage.Hint:=f;
+      EditorPages.ActivePage.Caption:=ExtractFilename(f);
+    end;
   end;
 
   ChangeEditorButtons(ActiveEditor);
@@ -1946,40 +1991,60 @@ begin
   f1:=editor.Modified;
   f2:=(editor.Lines.Count>0);
   f3:=not editor.ReadOnly;
-  FileRevert.Enabled:=f1;
-  FileSave.Enabled:=f1 and f2;
-  FileSaveAs.Enabled:=f2;
-  ToolsFileObf.Enabled:=f2;
-  ToolsFileReformat.Enabled:=f2 and f3;
-  ToolsFileSyntaxCheck.Enabled:=f2;
-  SearchReplace.Enabled:=f2 and f3;
-  if (MainPages.ActivePage=EditorsTab) then
-    if (EditorPages.ActivePage.Caption[1]<>'*') then
-    begin
-      if f1 then EditorPages.ActivePage.Caption:='*'+ExtractFileName(EditorPages.ActivePage.Hint);
-    end else if not f1 then EditorPages.ActivePage.Caption:=ExtractFileName(EditorPages.ActivePage.Hint);
+  if MainPages.ActivePage=EditorsTab then
+  begin
+   FileRevert.Enabled:=f1;
+   FileSave.Enabled:=f1 and f2;
+   FileSaveAs.Enabled:=f2;
+   ToolsFileObf.Enabled:=f2;
+   ToolsFileReformat.Enabled:=f2 and f3;
+   ToolsFileSyntaxCheck.Enabled:=f2;
+   SearchReplace.Enabled:=f2 and f3;
+
+   if (EditorPages.ActivePage.Caption='') then exit;
+   if (MainPages.ActivePage=EditorsTab) then
+     if (EditorPages.ActivePage.Caption[1]<>'*') then
+     begin
+       if f1 then EditorPages.ActivePage.Caption:='*'+ExtractFileName(EditorPages.ActivePage.Hint);
+     end else if not f1 then EditorPages.ActivePage.Caption:=ExtractFileName(EditorPages.ActivePage.Hint);
+  end;
 end;
 
 procedure TMainForm.SyntaxCheck(f, path: string; hdl: Thdltype);
 var
   wpath,fname,checkbat:string;
 begin
+  {$IFDEF WINDOWS}
   case hdl of
     vhdl : checkbat:='checkvhdl.bat';
     systemverilog,verilog : checkbat:='checkver.bat';
   end;
+  {$ENDIF}
+  {$IFDEF LINUX}
+  case hdl of
+    vhdl : checkbat:='checkvhdl.sh';
+    systemverilog,verilog : checkbat:='checkver.sh';
+  end;
+  {$ENDIF}
   wpath:=extractfilepath(f);
   fname:=extractfilename(f);
   while ProcessStatus<>Idle do begin sleep(300); application.ProcessMessages; end;
   ProcessStatus:=SyntaxChk;
-  process1.Executable:='cmd.exe';
-  process1.CurrentDirectory:=wpath;
   process1.Parameters.Clear;
+  process1.CurrentDirectory:=wpath;
+  {$IFDEF WINDOWS}
+  process1.Executable:='cmd.exe';
   process1.Parameters.Add('/c');
   // Hay un bug en el CMD /C que no interpreta adecuadamente las rutas con paréntesis
   // La inclusión de los dobles "" ayuda en la solución temporal del bug
   if path<>'' then process1.Parameters.Add('""'+Application.Location+checkbat+'" '+fname+' "'+path+'""')
   else process1.Parameters.Add('""'+Application.Location+checkbat+'" '+fname+'"');
+  {$ENDIF}
+  {$IFDEF LINUX}
+  process1.Executable:='/bin/bash';
+  process1.Parameters.Add('-c');
+  process1.Parameters.Add(Application.Location+checkbat+' '+fname+' "'+path+'"');
+  {$ENDIF}
   Log.Clear;
   process1.Execute;
   { TODO : Pensar en eliminar el .bat y usar una lista para crear los parámetros debido a las posibles rutas con espacios. }
@@ -2043,41 +2108,52 @@ var
   c:TTreeNode;
   s:string;
   l:TStringList;
-  Ini:TIniFile;
 begin
   if cl.Count=0 then exit;
+  if t.Level>5 then
+  begin
+    PrjTree.Items.AddChild(t,'...');
+    exit;
+  end;
   for s in cl do
   begin
     c:=PrjTree.Items.AddChild(t,s);
     c.StateIndex:=4;
-    try
-      Ini:=TIniFile.Create(LibraryDir+s+PathDelim+s+'.ini');
-      l:=TStringList.Create;
-      l.CommaText:=Ini.ReadString('Requirements','IPCores','');
-      AddIPCoresToTree(c,l);
-    finally
-      Ini.Free;
-      if assigned(l) then freeandnil(l);
-    end;
+    l:=SBAPrj.CoreGetReq(LibraryDir+s+PathDelim+s+'.ini');
+    AddIPCoresToTree(c,l);
+    if assigned(l) then freeandnil(l);
   end;
 end;
 
 procedure TMainForm.ProcessWGET(url,f:string;status:TProcessStatus);
 begin
-  Log.Clear;
-  process1.Parameters.Clear;
-  process1.Executable:=Application.Location+'tools'+PathDelim+'wget.exe';
-  process1.CurrentDirectory:=ConfigDir;
-  process1.Parameters.Add('-q');
-  process1.Parameters.Add('-O');
-  process1.Parameters.Add('"'+f+'"');
-  process1.Parameters.Add('--no-check-certificate');
-  process1.Parameters.Add(url);
+  { TODO : Encapsular el process en forma programática y enviar todo el procedimiento hacia la unidad de herramientas }
   While ProcessStatus<>idle do
   begin
     sleep(300);
     application.ProcessMessages;
   end;
+  Log.Clear;
+  process1.Parameters.Clear;
+  {$IFDEF WINDOWS}
+  process1.Executable:=Application.Location+'tools'+PathDelim+'wget.exe';
+  {$ENDIF}
+  {$IFDEF LINUX}
+  process1.Executable:='wget';
+  {$ENDIF}
+  process1.CurrentDirectory:=ConfigDir;
+  {$IFNDEF DEBUG}
+  process1.Parameters.Add('-q');
+  {$ENDIF}
+  process1.Parameters.Add('-O');
+  {$IFDEF WINDOWS}
+  process1.Parameters.Add('"'+f+'"');
+  {$ENDIF}
+  {$IFDEF LINUX}
+  process1.Parameters.Add(f);
+  {$ENDIF}
+  process1.Parameters.Add('--no-check-certificate');
+  process1.Parameters.Add(url);
   ProcessStatus:=status;
   process1.Execute;
 end;

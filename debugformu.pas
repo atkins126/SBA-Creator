@@ -1,7 +1,6 @@
 unit DebugFormU;
 
 {$mode objfpc}{$H+}
-
 interface
 
 uses
@@ -36,12 +35,12 @@ implementation
 
 function infoln(M:String):boolean;
 begin
+  {$IFDEF DEBUG}
   result:=false;
   if not assigned(DebugForm) then exit;
-{$IFDEF DEBUG}
-  DebugForm.Show;
-{$ENDIF}
   DebugForm.Memo.Append(Format('%:3d: %s',[DebugForm.Memo.Lines.Count,M]));
+  DebugForm.ShowOnTop;
+  {$ENDIF}
   result:=true;
 end;
 

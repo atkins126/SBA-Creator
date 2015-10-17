@@ -56,6 +56,7 @@ type
   public
     function Fill(Data: string): boolean;
     function Collect:string;
+    function CoreGetReq(const s: string): TStringList;
     function PrepareNewFolder: boolean;
     function CustomizeFiles:boolean;
     function SaveAs(f: String):boolean;
@@ -202,6 +203,26 @@ begin
     else SData+=','#10'"userfiles": null'#10;
   SData+='}';
   result:=SData;
+end;
+
+function TSBAPrj.CoreGetReq(const s: string): TStringList;
+var
+  ini: TIniFile;
+  k,l: TStringList;
+begin
+  k:=TStringList.Create;
+  l:=TStringList.Create;
+  try
+    ini:=TIniFile.Create(s);
+    k.DelimitedText:=ini.ReadString('REQUIREMENTS', 'IPCores', '');
+    l.AddStrings(k);
+    k.DelimitedText:=ini.ReadString('REQUIREMENTS', 'Packages', '');
+    l.AddStrings(k);
+  finally
+    if assigned(k) then FreeAndNil(k);
+    if assigned(ini) then FreeAndNil(ini);
+  end;
+  Result:=l;
 end;
 
 
@@ -517,32 +538,28 @@ end;
 
 procedure TSBAPrj.CopyIPCoreFiles(cl:TStrings);
 var
-  s:string;
-  Ini:TINIFile;
+  r,s:string;
   l:TStringList;
 begin
   if cl.Count=0 then exit;
-  for s in cl do if not fileExistsUTF8(LibraryDir+S+PathDelim+s+'.vhd') then
+  for s in cl do if not fileExistsUTF8(LibraryDir+s+PathDelim+s+'.ini') then
   begin
-    ShowMessage('The IP Core file: '+LibraryDir+S+PathDelim+s+'.vhd was not found.');
+    ShowMessage('The IP Core file: '+LibraryDir+S+' was not found.');
     exit;
-  end else
+  end else if not FileExistsUTF8(LocLib+s+'.vhd') then
   begin
-    if not FileExistsUTF8(LocLib+s+'.vhd') then
+infoln('Copiando: '+s+'.vhd');  //Copy IPCore
+    CopyFile(LibraryDir+s+PathDelim+s+'.vhd',LocLib+s+'.vhd');
+    if LibAsReadOnly then FileSetAttrUTF8(LocLib+s+'.vhd',faReadOnly);
+
+    l:=CoreGetReq(LibraryDir+s+PathDelim+s+'.ini');
+    for r in l do if FileExistsUTF8(LibraryDir+s+PathDelim+r+'.vhd') then
     begin
-infoln('Copiando: '+LibraryDir+S+PathDelim+s+'.vhd');
-      CopyFile(LibraryDir+S+PathDelim+s+'.vhd',LocLib+s+'.vhd');
-      if LibAsReadOnly then FileSetAttrUTF8(LocLib+s+'.vhd',faReadOnly);
-    end;
-    try
-      Ini:=TIniFile.Create(LibraryDir+S+PathDelim+s+'.ini');
-      l:=TStringList.Create;
-      l.CommaText:=Ini.ReadString('Requirements','IPCores','');
-      CopyIPCoreFiles(l);
-    finally
-      Ini.Free;
-      if assigned(l) then freeandnil(l);
-    end;
+infoln('Copiando: '+r+'.vhd'); //Copy Requirements
+      CopyFile(LibraryDir+s+PathDelim+r+'.vhd',LocLib+r+'.vhd');
+      if LibAsReadOnly then FileSetAttrUTF8(LocLib+r+'.vhd',faReadOnly);
+    end else CopyIPCoreFiles(l);  //If requirement is not in core folder get from lib
+    if assigned(l) then freeandnil(l);
   end;
 end;
 
@@ -561,15 +578,41 @@ end;
 function TSBAPrj.CleanUpLibCores(CL:TStrings): boolean;
 var
   s,n:string;
-  l:TStringList;
+  l,m:TStringList;
+  level:integer;
+
+  procedure FillRequeriments(list,m:TStrings);
+  var
+    r:string;
+    k:TStringList;
+  begin
+    if list.Count=0 then exit;
+    if level<10 then inc(level) else exit;
+    for r in list do if m.IndexOf(r)=-1 then
+    begin
+      m.Add(r);
+      try
+        k:=CoreGetReq(LibraryDir+r+PathDelim+r+'.ini');
+        FillRequeriments(k,m);
+      finally
+        if assigned(k) then FreeAndNil(k);
+      end;
+    end;
+  end;
+
 begin
   result:=false;
+  level:=0;
   try
+    //Fill the m stringlist with ipcore and requeriments files
+    m:=TStringList.Create;
+    FillRequeriments(cl,m);
+    //Delete all vhd files not in the m stringlist from the LocLib folder
     l:=TStringList(FindAllFiles(LocLib,'*.vhd'));
     for s in l do
     begin
       n:=extractfilenameonly(s);
-      if not AnsiMatchText(n+'.vhd',[cSBApkg,cSyscon,cDataIntf]) and (CL.IndexOf(n)=-1) then
+      if not AnsiMatchText(n+'.vhd',[cSBApkg,cSyscon,cDataIntf]) and (m.IndexOf(n)=-1) then
       begin
         FileSetAttrUTF8(s,faArchive);
 infoln('Borrando: '+s);
@@ -577,6 +620,7 @@ infoln('Borrando: '+s);
       end;
     end;
   finally
+    if assigned(m) then FreeAndNil(m);
     if assigned(l) then FreeAndNil(l);
   end;
   CopyIPCoreFiles(CL);
