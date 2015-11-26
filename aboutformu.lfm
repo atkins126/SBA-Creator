@@ -1,17 +1,17 @@
 object AboutForm: TAboutForm
   Left = 493
-  Height = 208
+  Height = 209
   Top = 423
   Width = 320
   BorderStyle = bsDialog
   Caption = 'About'
-  ClientHeight = 208
+  ClientHeight = 209
   ClientWidth = 320
   Position = poMainFormCenter
-  LCLVersion = '1.4.0.4'
+  LCLVersion = '1.4.4.0'
   object Image1: TImage
     Left = 0
-    Height = 208
+    Height = 209
     Top = 0
     Width = 320
     Align = alClient
@@ -1425,13 +1425,22 @@ object AboutForm: TAboutForm
     }
   end
   object BitBtn1: TBitBtn
-    Left = 110
+    Left = 32
     Height = 30
-    Top = 166
-    Width = 99
+    Top = 170
+    Width = 115
     DefaultCaption = True
     Kind = bkClose
     ModalResult = 11
     TabOrder = 0
+  end
+  object BitBtn2: TBitBtn
+    Left = 176
+    Height = 30
+    Top = 170
+    Width = 115
+    Caption = 'Check for updates'
+    OnClick = BitBtn2Click
+    TabOrder = 1
   end
 end

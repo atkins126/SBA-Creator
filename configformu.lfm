@@ -1,7 +1,7 @@
 object ConfigForm: TConfigForm
-  Left = 1107
+  Left = 1017
   Height = 416
-  Top = 269
+  Top = 451
   Width = 452
   BorderStyle = bsDialog
   Caption = 'ConfigForm'
@@ -15,8 +15,7 @@ object ConfigForm: TConfigForm
     Left = 8
     Height = 16
     Top = 10
-    Width = 57
-    AutoSize = True
+    Width = 433
     Caption = 'Config Dir:'
     TabOrder = 0
   end

@@ -39,7 +39,7 @@ begin
   result:=false;
   if not assigned(DebugForm) then exit;
   DebugForm.Memo.Append(Format('%:3d: %s',[DebugForm.Memo.Lines.Count,M]));
-  DebugForm.ShowOnTop;
+  DebugForm.Show;
   {$ENDIF}
   result:=true;
 end;

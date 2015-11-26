@@ -637,7 +637,7 @@ begin
   Ed_Prjname.text:=cSBADefaultPrjName;
   Ed_PrjLocation.Directory:=ProjectsDir;
   Ed_PrjLocation.RootDir:=ProjectsDir;
-  CB_CreateSubDir.Checked:=false;
+  CB_CreateSubDir.Checked:=true;
   Image1.Picture.Bitmap:= nil;
   ImageList1.GetBitmap(0, Image1.Picture.Bitmap);
   Ed_PrjAuthor.Text:=DefAuthor;

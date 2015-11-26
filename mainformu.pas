@@ -10,8 +10,8 @@ uses
   SynHighlighterVerilog, SynEditMarkupHighAll, SynEdit, SynEditTypes,
   uSynEditPopupEdit, SynPluginSyncroEdit, SynHighlighterIni, FileUtil,
   ListViewFilterEdit, strutils, Clipbrd, IniPropStorage, StdActns,
-  BGRASpriteAnimation, uebutton, uETilePanel, versionsupportu, types, lclintf,
-  LCLType, HistoryFiles, StringListUTF8;
+  BGRASpriteAnimation, uebutton, uETilePanel, ulazautoupdate, versionsupportu,
+  types, lclintf, LCLType, HistoryFiles, StringListUTF8;
 
 type
   thdltype=(vhdl, prg, verilog, systemverilog, ini, other);
@@ -22,6 +22,7 @@ type
   TMainForm = class(TForm)
     B_SBAAdress: TBitBtn;
     IdleTimer1: TIdleTimer;
+    LazAutoUpdate1: TLazAutoUpdate;
     L_SBAAddress: TListBox;
     MI_RemUserFile: TMenuItem;
     MI_AddUserFile: TMenuItem;
@@ -298,6 +299,7 @@ type
     procedure EditSelectAllExecute(Sender: TObject);
     procedure EditUndoExecute(Sender: TObject);
     procedure FileSaveAsExecute(Sender: TObject);
+    procedure FormActivate(Sender: TObject);
     procedure FormResize(Sender: TObject);
     procedure IdleTimer1Timer(Sender: TObject);
     procedure LogoImageDblClick(Sender: TObject);
@@ -386,7 +388,6 @@ type
     function Open(f: String): boolean;
     procedure OpenInEditor(const f: string);
     procedure OpenProject(const f:string);
-    procedure ProcessWGET(url, f: string; status: TProcessStatus);
     procedure Reformat(sl: Tstrings);
     function  SaveFile(f:String; Src:TStrings):Boolean;
     procedure SetupPrgTmplMenu;
@@ -396,11 +397,13 @@ type
     procedure LoadRsvWordsFile;
     procedure LoadAnnouncement;
     procedure GetAnnouncement;
-    procedure UpdatePrjTree;
   protected
   public
     { public declarations }
-  end; 
+    procedure UpdatePrjTree;
+    procedure AutoUpdate;
+    procedure ProcessWGET(url, f: string; status: TProcessStatus);
+  end;
 
 var
   MainForm: TMainForm;
@@ -410,7 +413,7 @@ implementation
 {$R *.lfm}
 
 uses DebugFormU, SBAProgContrlrU, SBAProjectU, ConfigFormU, AboutFormU, sbasnippetu, PrjWizU,
-     DwFileU, FloatFormU, LibraryFormU, UtilsU;
+     DwFileU, FloatFormU, LibraryFormU, ExportPrjFormU, UtilsU;
 
 var
   SynMarkup: TSynEditMarkupHighlightAllCaret;
@@ -426,6 +429,7 @@ var
   EditorCnt:integer=1;
   PrgReturnTab:TTabSheet=nil;
   ProcessStatus:TProcessStatus=Idle;
+  UpdtFlag:boolean=false;
 
 { TMainForm }
 
@@ -756,6 +760,40 @@ begin
   end;
 end;
 
+procedure TMainForm.FormActivate(Sender: TObject);
+begin
+  if not UpdtFlag then AutoUpdate;
+end;
+
+procedure TMainForm.AutoUpdate;
+begin
+  infoln('Search for new version');
+  lazautoupdate1.SFProjectName:='sbacreator';
+  lazautoupdate1.UpdatesFolder:='updates';
+{$IFDEF WINDOWS}
+  lazautoupdate1.VersionsININame:='sbamainexe.ini';
+  lazautoupdate1.ZipfileName:='sbamainexe.zip';
+{$ENDIF}
+{$IFDEF LCLGTK2}
+{$IFDEF CPUARM}
+  lazautoupdate1.VersionsININame:='sbamainarmgtk2.ini';
+  lazautoupdate1.ZipfileName:='sbamainarmgtk2.zip';
+{$ELSE}
+  lazautoupdate1.VersionsININame:='sbamaingtk2.ini';
+  lazautoupdate1.ZipfileName:='sbamaingtk2.zip';
+{$ENDIF}
+{$ENDIF}
+  If LazAutoUpdate1.NewVersionAvailable Then
+    if MessageDlg(Application.Title, Format('A new version %s is available.  Would you like to download it?',[LazAutoUpdate1.GUIOnlineVersion]), mtConfirmation, [mbYes, mbNo], 0, mbYes) = mryes then
+      If LazAutoUpdate1.DownloadNewVersion Then
+        If MessageDlg(Application.Title, 'Download Succeeded.  Click OK to update',
+          mtInformation, [mbOK], 0) = mrOK Then LazAutoUpdate1.UpdateToNewVersion
+        Else
+          ShowMessage('Sorry, download of new version failed');
+  UpdtFlag:=true;
+  infoln('End of search for new version');
+end;
+
 procedure TMainForm.FormResize(Sender: TObject);
 begin
   LogoImage.Visible:=Self.Width>575;
@@ -938,7 +976,7 @@ end;
 
 procedure TMainForm.ProjectCloseExecute(Sender: TObject);
 begin
-  if CloseProject then MainPages.ActivePage:=SystemTab;
+  CloseProject;
 end;
 
 procedure TMainForm.ProjectEditCoreListExecute(Sender: TObject);
@@ -968,6 +1006,8 @@ begin
   if CanClose then
   begin
     SBAPrj.name:='';
+    SBAPrj.Modified:=false;
+    MainPages.ActivePage:=SystemTab;
     result:=true;
   end;
 end;
@@ -976,7 +1016,18 @@ end;
 
 procedure TMainForm.ProjectExportExecute(Sender: TObject);
 begin
-  ShowMessage('Project export is not implemented');
+  ExportPrjForm.L_PrjDir.Caption:='Project folder: '+SBAPrj.location;
+  ExportPrjForm.Ed_TargetDir.Directory:=SBAPrj.exportpath;
+  ExportPrjForm.CB_ExpPrjMonolithic.Checked:=SBAPrj.expmonolithic;
+  ExportPrjForm.CB_ExpPrjAllLib.Checked:=SBAPrj.explibfiles;
+  if ExportPrjForm.Showmodal=mrOk then with ExportPrjForm, SBAPrj do
+  begin
+    exportpath:=AppendPathDelim(TrimFilename(Ed_TargetDir.Text));
+    expmonolithic:=CB_ExpPrjMonolithic.Checked;
+    explibfiles:=CB_ExpPrjAllLib.Checked;
+    Modified:=true;
+    SBAPrj.PrjExport;
+  end;
 end;
 
 procedure TMainForm.ProjectGotoEditorExecute(Sender: TObject);
@@ -1310,42 +1361,65 @@ end;
 procedure TMainForm.FormCloseQuery(Sender: TObject; var CanClose: boolean);
 begin
   CanClose:=false;
+  If LazAutoUpdate1.DownloadInProgress Then
+  Begin
+    ShowMessage('Please wait. Download is still in progress.');
+    exit;
+  End;
   if not CloseProg then exit else CanClose:=true;
   while EditorPages.PageCount>0 do
   begin
     CanClose:=CloseEditor(EditorPages.ActivePage);
     If not CanClose then break;
   end;
+  if SBAPrj.Modified then CanClose:=CloseProject;
 end;
 
 procedure TMainForm.FormCreate(Sender: TObject);
+var Success:Boolean;
 begin
   DebugForm:=TDebugForm.Create(Self);
-  if not GetConfigValues then application.Terminate
-  else begin
-    caption:='SBA Creator v'+GetFileVersion;
-    wdir:='.\';
-    LoadAnnouncement;
-    GetAnnouncement;
-    MainPages.ShowTabs:=false;
-    MainPages.ActivePage:=SystemTab;
-    SBAPrj:=TSBAPrj.Create;
-    SBAContrlrProg:=TSBAContrlrProg.Create;
-    SBASnippet:=TSBASnippet.Create;
-    SBASnippet.UpdateSnippetsFilter(SnippetsFilter);
-    IpCoreList:=TStringList.Create;
-    SnippetsList:=TStringList.Create;
-    ProgramsList:=TStringList.Create;
-    UpdateLists;
-    SetupPrgTmplMenu;
-    SynSBASyn:= TSynSBASyn.Create(Self);
-    SynVerilogSyn:= TSynVerilogSyn.Create(Self);
-    SetupSynMarkup;
-    SynEdit_X.Font.Name:=EditorFontName;
-    SynEdit_X.Font.Size:=EditorFontSize;
-    EditorHistory.IniFile:=ConfigDir+'FileHistory.ini';
-    PrjHistory.IniFile:=ConfigDir+'FileHistory.ini';
-    EditorHistory.UpdateParentMenu;
+  infoln('Start of create method');
+  Success:=false;
+  try
+    Success:=GetConfigValues;
+  finally
+    if not Success then
+    begin
+     infoln('There was an error in Create Method');
+     ShowMessage('Sorry, an unrecoverable error has occurred, the application is going to exit now');
+     While LazAutoUpdate1.DownloadInProgress do Application.ProcessMessages;
+     LazAutoUpdate1.Free;
+     Halt;
+    end else begin
+      infoln('Config values OK '+ConfigDir);
+      caption:='SBA Creator v'+GetFileVersion;
+      infoln(caption);
+      wdir:='.\';
+      LoadAnnouncement;
+      infoln('Banner loaded');
+      GetAnnouncement;
+      MainPages.ShowTabs:=false;
+      MainPages.ActivePage:=SystemTab;
+      SBAPrj:=TSBAPrj.Create;
+      SBAContrlrProg:=TSBAContrlrProg.Create;
+      SBASnippet:=TSBASnippet.Create;
+      SBASnippet.UpdateSnippetsFilter(SnippetsFilter);
+      IpCoreList:=TStringList.Create;
+      SnippetsList:=TStringList.Create;
+      ProgramsList:=TStringList.Create;
+      UpdateLists;
+      SetupPrgTmplMenu;
+      SynSBASyn:= TSynSBASyn.Create(Self);
+      SynVerilogSyn:= TSynVerilogSyn.Create(Self);
+      SetupSynMarkup;
+      SynEdit_X.Font.Name:=EditorFontName;
+      SynEdit_X.Font.Size:=EditorFontSize;
+      EditorHistory.IniFile:=ConfigDir+'FileHistory.ini';
+      PrjHistory.IniFile:=ConfigDir+'FileHistory.ini';
+      EditorHistory.UpdateParentMenu;
+      infoln('All FormCreate tasks finished');
+    end;
   end;
 end;
 
@@ -1579,7 +1653,7 @@ end;
 procedure TMainForm.SBA_SaveAsExecute(Sender: TObject);
 begin
   SaveDialog.FileName:=SBAContrlrProg.FileName;
-  SaveDialog.InitialDir:=ExtractFilePath(EditorPages.ActivePage.Hint);
+  If EditorPages.ActivePage<>nil then SaveDialog.InitialDir:=ExtractFilePath(EditorPages.ActivePage.Hint);
   SaveDialog.DefaultExt:='.prg';
   SaveDialog.Filter:='PRG and SNP files|*.prg;*.snp|PRG file|*.prg|SNP file|*.snp';
   if SaveDialog.Execute and SaveFile(SaveDialog.FileName, SynEdit_X.Lines) then

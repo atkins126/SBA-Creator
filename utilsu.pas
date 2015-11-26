@@ -25,6 +25,7 @@ var
   L:TStringList;
   s:String;
 begin
+  list.Clear;
   L:=FindAllFiles(dir,mask);
   For s in L do list.Add(ExtractFileNameOnly(S));
   L.Free;
@@ -35,6 +36,7 @@ var
   L:TStringList;
   s:String;
 begin
+  list.Clear;
   L:=FindAllFiles(dir,mask);
   For s in L do list.Add(ExtractFileNameOnly(s)+'='+s);
   L.Free;
@@ -60,6 +62,7 @@ var
   sr : TSearchRec;
 begin
   result:=false;
+  list.Clear;
   try
     if FindFirstUTF8(IncludeTrailingPathDelimiter(directory) + mask, faAnyFile, sr) < 0 then Exit
     else
@@ -102,6 +105,7 @@ var
   sr : TSearchRec;
 begin
   result:=false;
+  list.Clear;
   try
     if FindFirstUTF8(IncludeTrailingPathDelimiter(directory) + '*.*', faDirectory, sr) < 0 then Exit
     else

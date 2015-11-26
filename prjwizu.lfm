@@ -9,7 +9,7 @@ object prjWizForm: TprjWizForm
   ClientWidth = 420
   OnShow = FormShow
   Position = poMainFormCenter
-  LCLVersion = '1.4.2.0'
+  LCLVersion = '1.4.4.0'
   object NavPanel: TPanel
     Left = 0
     Height = 42
@@ -270,7 +270,9 @@ object prjWizForm: TprjWizForm
         Top = 120
         Width = 128
         Caption = 'Create project folder'
+        Checked = True
         OnChange = Ed_PrjNameChange
+        State = cbChecked
         TabOrder = 2
       end
       object Label5: TLabel

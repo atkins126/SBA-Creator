@@ -50,6 +50,9 @@ type
     libcores:tstringlist;
     userfiles:tstringlist;
     ports:tstringlist;
+    exportpath:string;
+    expmonolithic:boolean;
+    explibfiles:boolean;
     Modified:boolean;
     constructor Create;
     destructor Destroy; override;
@@ -61,6 +64,7 @@ type
     function CustomizeFiles:boolean;
     function SaveAs(f: String):boolean;
     function Save:boolean;
+    function PrjExport:boolean;
     procedure LoadIPData(ipname,instance:String; IP,IPS,STL,AML,DCL:TStrings);
     procedure LoadIPData(ipname: String; IP,IPS,STL,AML,DCL:TStrings);
     function GetConfigConst(sl: TStrings): string;
@@ -90,6 +94,9 @@ constructor TSBAPrj.Create;
 begin
   inherited Create;
   name:='';
+  exportpath:='';
+  expmonolithic:=false;
+  explibfiles:=true;
   libcores:=TStringList.create;
   userfiles:=TStringList.create;
   ports:=tstringlist.create;
@@ -161,6 +168,9 @@ begin
     except
       ON E:Exception do userfiles.Clear;
     end;
+    if J.FindPath('exportpath')=nil then exportpath:='' else exportpath:=J.FindPath('exportpath').AsString;
+    if J.FindPath('expmonolithic')=nil then expmonolithic:=false else expmonolithic:=J.FindPath('expmonolithic').AsBoolean;
+    if J.FindPath('explibfiles')=nil then explibfiles:=true else explibfiles:=J.FindPath('explibfiles').AsBoolean;
     result:=true;
   finally
     if assigned(J) then FreeAndNil(J);
@@ -179,7 +189,10 @@ begin
             '"author": "'+author+'",'#10+
             '"version": "'+version+'",'#10+
             '"date": "'+date+'",'#10+
-            '"description": "'+description+'"';
+            '"description": "'+description+'",'#10+
+            '"exportpath": "'+exportpath+'",'#10+
+            '"expmonolithic": "'+IfThen(expmonolithic,'true','false')+'",'#10+
+            '"explibfiles": "'+IfThen(explibfiles,'true','false')+'"';
   S:='';
   for i:=0 to ports.Count-1 do
   begin
@@ -649,6 +662,42 @@ end;
 function TSBAPrj.Save: boolean;
 begin
   result:=SaveAs(Location+Name+cSBAPrjExt);
+end;
+
+function TSBAPrj.PrjExport: boolean;
+var R,S:TStringList;
+begin
+  result:=false;
+  if not directoryexistsUTF8(ExportPath) then
+  begin
+    ShowMessage('The Project export path: '+ExportPath+'do not exists');
+    exit;
+  end;
+  if expmonolithic then
+  begin
+    S:=TStringList.Create;
+    R:=TStringList.Create;
+    R.LoadFromFile(location+Name+'_'+cSBATop);
+    S.AddStrings(R);
+    R.LoadFromFile(location+Name+'_'+cSBAcfg);
+    S.AddStrings(R);
+    R.LoadFromFile(location+Name+'_'+cSBAdcdr);
+    S.AddStrings(R);
+    R.LoadFromFile(location+Name+'_'+cSBActrlr);
+    S.AddStrings(R);
+    R.Free;
+    S.SaveToFile(ExportPath+Name+'.vhd');
+    S.Free;
+    ShowMessage('Monolithic Project file was create: '+ExportPath+Name+'.vhd');
+  end else
+  begin
+    CopyFile(location+Name+'_'+cSBATop,ExportPath+Name+'_'+cSBATop,true);
+    CopyFile(location+Name+'_'+cSBAcfg,ExportPath+Name+'_'+cSBAcfg,true);
+    CopyFile(location+Name+'_'+cSBAdcdr,ExportPath+Name+'_'+cSBAdcdr,true);
+    CopyFile(location+Name+'_'+cSBActrlr,ExportPath+Name+'_'+cSBActrlr,true);
+    if explibfiles then CopyDirTree(loclib,exportpath+'lib\');
+    ShowMessage('Project was export to: '+exportpath);
+  end;
 end;
 
 end.

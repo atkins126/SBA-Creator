@@ -10,6 +10,7 @@ object MainForm: TMainForm
   Constraints.MinWidth = 765
   KeyPreview = True
   Menu = MainMenu
+  OnActivate = FormActivate
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
   OnDestroy = FormDestroy
@@ -40761,7 +40762,7 @@ object MainForm: TMainForm
         MouseTextActions = <>
         MouseSelActions = <>
         Lines.Strings = (
-          'Esto es una prueba'
+          'Test editor'
         )
         VisibleSpecialChars = [vscSpace, vscTabAtLast]
         SelectedColor.BackPriority = 50
@@ -40824,7 +40825,6 @@ object MainForm: TMainForm
         Top = 0
         Width = 757
         Align = alTop
-        Caption = 'Panel1'
         ClientHeight = 50
         ClientWidth = 757
         TabOrder = 1
@@ -42395,12 +42395,14 @@ object MainForm: TMainForm
     object ProjectOpen: TAction
       Category = 'Project'
       Caption = '&Open Project'
+      Hint = 'Open project'
       ImageIndex = 6
       OnExecute = ProjectOpenExecute
     end
     object ProjectNew: TAction
       Category = 'Project'
       Caption = '&New Project'
+      Hint = 'Create a new project'
       ImageIndex = 5
       OnExecute = ProjectNewExecute
     end
@@ -42419,19 +42421,21 @@ object MainForm: TMainForm
     object ProjectSave: TAction
       Category = 'Project'
       Caption = '&Save Project'
-      Hint = 'Save All files in the project'
+      Hint = 'Save all files in the project'
       ImageIndex = 33
       OnExecute = ProjectSaveExecute
     end
     object ProjectClose: TAction
       Category = 'Project'
       Caption = '&Close Project'
+      Hint = 'Close all project files'
       ImageIndex = 11
       OnExecute = ProjectCloseExecute
     end
     object ProjectExport: TAction
       Category = 'Project'
       Caption = '&Export Project'
+      Hint = 'Export project files'
       ImageIndex = 26
       OnExecute = ProjectExportExecute
     end
@@ -45221,6 +45225,32 @@ object MainForm: TMainForm
     AutoEnabled = True
     OnTimer = IdleTimer1Timer
     left = 600
+    top = 640
+  end
+  object LazAutoUpdate1: TLazAutoUpdate
+    About.Description.Strings = (
+      'A component for updating your application'#13#10'Designed for projects hosted by SourceForge'#13#10#13#10'Main methods:'#13#10'Procedure AutoUpdate'#13#10'Function NewVersionAvailable: Boolean'#13#10'Function DownloadNewVersion: Boolean'#13#10'Function UpdateToNewVersion: Boolean'#13#10'Procedure ShowWhatsNewIfAvailable'#13#10'For troubleshooting, set DebugMode=TRUE'
+    )
+    About.Title = 'About LazAutoUpdate'
+    About.Height = 450
+    About.Width = 400
+    About.Font.Color = clNavy
+    About.Font.Height = -13
+    About.BackGroundColor = clWindow
+    About.Version = '0.1.22'
+    About.Authorname = 'Gordon Bamber'
+    About.Organisation = 'Public Domain'
+    About.AuthorEmail = 'minesadorada@gmail.com'
+    About.ComponentName = 'Laz Auto-update v0.1.22'
+    About.LicenseType = abLGPL
+    SFProjectName = 'sbacreator'
+    CopyTree = True
+    UpdatesFolder = 'updates'
+    VersionsININame = 'sbamainexe.ini'
+    VersionCountLimit = 1000000
+    DownloadCountLimit = 10000000
+    ZipfileName = 'sbamainexe.zip'
+    left = 688
     top = 640
   end
 end

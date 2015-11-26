@@ -100,57 +100,68 @@ begin
     LibAsReadOnly:=ReadBoolean('LibAsReadOnly',true);
     AutoOpenPrjF:=ReadBoolean('AutoOpenPrjF',true);
   end;
+
+  InfoLn('ConfigDir: '+ConfigDir);
   If Not DirectoryExistsUTF8(ConfigDir) then
-    If Not CreateDirUTF8(ConfigDir) Then
+    If Not ForceDirectoriesUTF8(ConfigDir) Then
     begin
       ShowMessage('Failed to create config folder!: '+ConfigDir);
       MainForm.Close;
       Exit;
     end;
 
+  InfoLn('ProjectsDir: '+ProjectsDir);
   If Not DirectoryExistsUTF8(ProjectsDir) then
     If Not ForceDirectoriesUTF8(ProjectsDir) Then
-      raise exception.create('Failed to create SBA projects folder!');
+    begin
+      ShowMessage('Failed to create SBA projects folder: '+ProjectsDir+#13#10' the system is going to try with the default path: '+GetUserDir+DefProjectsDir+PathDelim);
+      ProjectsDir:=GetUserDir+DefProjectsDir+PathDelim;
+      If Not ForceDirectoriesUTF8(ProjectsDir) Then Exit;
+    end;
 
+  InfoLn('LibraryDir: '+LibraryDir);
   If Not DirectoryExistsUTF8(LibraryDir) then
   begin
     CopyFile(Application.location+cSBAlibraryZipFile,ConfigDir+cSBAlibraryZipFile);
     if not Unzip(ConfigDir+cSBAlibraryZipFile,ConfigDir) then
     begin
-      ShowMessage('Failed to create SBA library folder!');
+      ShowMessage('Failed to create SBA library folder: '+LibraryDir);
       MainForm.Close;
       Exit;
     end;
   end;
 
+  InfoLn('SnippetsDir: '+SnippetsDir);
   If Not DirectoryExistsUTF8(SnippetsDir) then
   begin
     CopyFile(Application.location+cSBAsnippetsZipFile,ConfigDir+cSBAsnippetsZipFile);
     if not Unzip(ConfigDir+cSBAsnippetsZipFile,ConfigDir) then
     begin
-      ShowMessage('Failed to create code snippets folder!');
+      ShowMessage('Failed to create code snippets folder: '+SnippetsDir);
       MainForm.Close;
       Exit;
     end;
   end;
 
+  InfoLn('ProgramsDir: '+ProgramsDir);
   If Not DirectoryExistsUTF8(ProgramsDir) then
   begin
     CopyFile(Application.location+cSBAprogramsZipFile,ConfigDir+cSBAprogramsZipFile);
     if not Unzip(ConfigDir+cSBAprogramsZipFile,ConfigDir) then
     begin
-      ShowMessage('Failed to create code programs folder!');
+      ShowMessage('Failed to create code programs folder: '+ProgramsDir);
       MainForm.Close;
       Exit;
     end;
   end;
 
+  InfoLn('SBAbaseDir: '+SBAbaseDir);
   If Not DirectoryExistsUTF8(SBAbaseDir) then
   begin
     CopyFile(Application.location+cSBABaseZipFile,ConfigDir+cSBABaseZipFile);
     if not Unzip(ConfigDir+cSBABaseZipFile,ConfigDir) then
     begin
-      ShowMessage('Failed to create SBA base folder!');
+      ShowMessage('Failed to create SBA base folder: '+SBAbaseDir);
       MainForm.Close;
       Exit;
     end;
