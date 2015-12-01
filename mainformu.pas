@@ -7,8 +7,8 @@ interface
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, Buttons,
   ComCtrls, AsyncProcess, ExtCtrls, Menus, ActnList, SynHighlighterSBA,
-  SynHighlighterVerilog, SynEditMarkupHighAll, SynEdit, SynEditTypes,
-  uSynEditPopupEdit, SynPluginSyncroEdit, SynHighlighterIni, FileUtil,
+  SynHighlighterVerilog, SynEditMarkupHighAll, SynEdit, SynEditTypes,SynEditKeyCmds,
+  SynPluginSyncroEdit, SynHighlighterIni, FileUtil,
   ListViewFilterEdit, strutils, Clipbrd, IniPropStorage, StdActns,
   BGRASpriteAnimation, uebutton, uETilePanel, ulazautoupdate, versionsupportu,
   types, lclintf, LCLType, HistoryFiles, StringListUTF8;
@@ -20,13 +20,29 @@ type
   { TMainForm }
 
   TMainForm = class(TForm)
+    EditBlkUncomment: TAction;
+    EditBlkComment: TAction;
+    EditBlkUnindent: TAction;
+    EditBlkIndent: TAction;
     B_SBAAdress: TBitBtn;
     IdleTimer1: TIdleTimer;
     LazAutoUpdate1: TLazAutoUpdate;
     L_SBAAddress: TListBox;
+    MenuItem56: TMenuItem;
+    MenuItem57: TMenuItem;
+    MenuItem58: TMenuItem;
+    MenuItem62: TMenuItem;
+    MenuItem63: TMenuItem;
+    MenuItem64: TMenuItem;
+    MenuItem65: TMenuItem;
+    MenuItem66: TMenuItem;
+    MenuItem67: TMenuItem;
+    MenuItem68: TMenuItem;
+    MenuItem69: TMenuItem;
     MI_RemUserFile: TMenuItem;
     MI_AddUserFile: TMenuItem;
     MI_RemCore: TMenuItem;
+    EditorPopUp: TPopupMenu;
     ProjectRemUserFile: TAction;
     ProjectAddUserFiles: TAction;
     ProjectRemCore: TAction;
@@ -287,6 +303,10 @@ type
     procedure B_InsertSnippedClick(Sender: TObject);
     procedure B_SBALabelsClick(Sender: TObject);
     procedure B_SBAWebsiteClick(Sender: TObject);
+    procedure EditBlkCommentExecute(Sender: TObject);
+    procedure EditBlkIndentExecute(Sender: TObject);
+    procedure EditBlkUncommentExecute(Sender: TObject);
+    procedure EditBlkUnindentExecute(Sender: TObject);
     procedure EditCopyExecute(Sender: TObject);
     procedure EditCutExecute(Sender: TObject);
     procedure EditInsertDateExecute(Sender: TObject);
@@ -390,6 +410,7 @@ type
     procedure OpenProject(const f:string);
     procedure Reformat(sl: Tstrings);
     function  SaveFile(f:String; Src:TStrings):Boolean;
+    procedure SetupEditorPopupMenu;
     procedure SetupPrgTmplMenu;
     procedure SetupSynMarkup;
     procedure SyntaxCheck(f,path: string; hdl: Thdltype);
@@ -589,6 +610,80 @@ end;
 procedure TMainForm.B_SBAWebsiteClick(Sender: TObject);
 begin
   OpenUrl('http://sba.accesus.com');
+end;
+
+procedure TMainForm.EditBlkCommentExecute(Sender: TObject);
+Var
+  C:TPoint;
+  L:integer;
+begin
+  if ActiveEditor<>nil then With ActiveEditor do
+  begin
+    ActiveEditor.BeginUpdate(true);
+    C:=CaretXY;
+    if SelAvail then
+    begin
+      for L:=BlockBegin.y to BlockEnd.y do
+      begin
+        CaretY:=L;
+        CaretX:=0;
+        InsertTextAtCaret(commentstr);
+      end;
+      CaretY:=C.Y;
+    end else
+    begin
+      CaretX:=0;
+      InsertTextAtCaret(commentstr);
+    end;
+    CaretX:=C.X+length(commentstr);
+    ActiveEditor.EndUpdate;
+  end;
+end;
+
+procedure TMainForm.EditBlkIndentExecute(Sender: TObject);
+begin
+  if ActiveEditor<>nil then ActiveEditor.ExecuteCommand(ecBlockIndent,'',nil);
+end;
+
+procedure TMainForm.EditBlkUncommentExecute(Sender: TObject);
+Var
+  C:TPoint;
+  L:Integer;
+begin
+  if (ActiveEditor<>nil) then With ActiveEditor do
+  begin
+    ActiveEditor.BeginUpdate(true);
+    C:=CaretXY;
+    if SelAvail then
+    begin
+      for L:=BlockBegin.y to BlockEnd.y do
+      begin
+       CaretY:=L;
+       if (Pos(commentstr,ActiveEditor.LineText)=1) then
+       begin
+         CaretX:=length(commentstr)+1;
+         ExecuteCommand(ecDeleteBOL,'',nil);
+       end;
+      end;
+      CaretY:=C.Y;
+    end else if (Pos(commentstr,ActiveEditor.LineText)=1) then
+    begin
+      CaretX:=length(commentstr)+1;
+      ExecuteCommand(ecDeleteBOL,'',nil);
+    end;
+    CaretX:=C.X-length(commentstr);
+    ActiveEditor.EndUpdate;
+  end;
+end;
+
+//procedure TMainForm.EditBlkIndentUpdate(Sender: TObject);
+//begin
+//  TAction(Sender).Enabled :=ActiveEditor.SelAvail and not ActiveEditor.ReadOnly;
+//end;
+
+procedure TMainForm.EditBlkUnindentExecute(Sender: TObject);
+begin
+  if ActiveEditor<>nil then ActiveEditor.ExecuteCommand(ecBlockUnindent,'',nil);
 end;
 
 procedure TMainForm.B_InsertSnippedClick(Sender: TObject);
@@ -1413,6 +1508,7 @@ begin
       SynSBASyn:= TSynSBASyn.Create(Self);
       SynVerilogSyn:= TSynVerilogSyn.Create(Self);
       SetupSynMarkup;
+      SetupEditorPopupMenu;
       SynEdit_X.Font.Name:=EditorFontName;
       SynEdit_X.Font.Size:=EditorFontSize;
       EditorHistory.IniFile:=ConfigDir+'FileHistory.ini';
@@ -1420,6 +1516,21 @@ begin
       EditorHistory.UpdateParentMenu;
       infoln('All FormCreate tasks finished');
     end;
+  end;
+end;
+
+procedure TMainForm.SetupEditorPopupMenu;
+var
+  i:integer;
+  M:TMenuItem;
+begin
+  EditorPopUp.Items.Clear;
+  for i:=0 to EditMenu.Count-1 do
+  begin
+    M:=TMenuItem.Create(SynEdit_X.PopupMenu);
+    M.Caption:=EditMenu[i].Caption;
+    M.Action:=EditMenu[i].Action;
+    EditorPopUp.Items.Add(M);
   end;
 end;
 

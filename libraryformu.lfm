@@ -1,7 +1,7 @@
 object LibraryForm: TLibraryForm
-  Left = 1017
+  Left = 1016
   Height = 501
-  Top = 455
+  Top = 454
   Width = 543
   BorderStyle = bsDialog
   Caption = 'LibraryForm'
@@ -748,7 +748,7 @@ object LibraryForm: TLibraryForm
         object Label5: TLabel
           Left = 5
           Height = 18
-          Top = 304
+          Top = 287
           Width = 380
           Align = alTop
           AutoSize = False
@@ -760,7 +760,7 @@ object LibraryForm: TLibraryForm
         object IpCoreDescription: TMemo
           Left = 3
           Height = 67
-          Top = 322
+          Top = 305
           Width = 379
           Align = alTop
           BorderSpacing.Left = 3
@@ -778,7 +778,7 @@ object LibraryForm: TLibraryForm
         end
         object IPCoreImage: TImage
           Left = 3
-          Height = 275
+          Height = 258
           Top = 26
           Width = 379
           AntialiasingMode = amOn
@@ -834,13 +834,42 @@ object LibraryForm: TLibraryForm
           TabOrder = 1
         end
         object Label1: TLabel
-          Left = 5
-          Height = 36
-          Top = 426
-          Width = 107
-          AutoSize = False
-          Caption = 'The Items in green are new IPcores'
+          Left = 16
+          Height = 15
+          Top = 416
+          Width = 144
+          Caption = 'New IPcore in remote repo.'
           Font.Color = clGreen
+          ParentColor = False
+          ParentFont = False
+          WordWrap = True
+        end
+        object Label4: TLabel
+          Left = 16
+          Height = 15
+          Top = 448
+          Width = 129
+          Caption = 'IPCore update in remote'
+          Font.Color = clBlue
+          ParentColor = False
+          ParentFont = False
+          WordWrap = True
+        end
+        object Label8: TLabel
+          Left = 5
+          Height = 15
+          Top = 398
+          Width = 42
+          Caption = 'Legend:'
+          ParentColor = False
+        end
+        object Label9: TLabel
+          Left = 16
+          Height = 15
+          Top = 432
+          Width = 142
+          Caption = 'New IPCore in local library.'
+          Font.Color = clRed
           ParentColor = False
           ParentFont = False
           WordWrap = True
@@ -849,7 +878,7 @@ object LibraryForm: TLibraryForm
           Cursor = crHandPoint
           Left = 3
           Height = 20
-          Top = 392
+          Top = 375
           Width = 379
           Align = alTop
           Alignment = taRightJustify
@@ -863,18 +892,6 @@ object LibraryForm: TLibraryForm
           ParentFont = False
           ShowAccelChar = False
           TabOrder = 2
-        end
-        object Label4: TLabel
-          Left = 120
-          Height = 36
-          Top = 426
-          Width = 91
-          AutoSize = False
-          Caption = 'The Items in blue have updates.'
-          Font.Color = clBlue
-          ParentColor = False
-          ParentFont = False
-          WordWrap = True
         end
       end
     end

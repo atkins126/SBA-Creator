@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Dialogs, Controls,
-  fpjson, jsonparser, fileutil, strutils,
+  fpjson, jsonparser, fileutil, strutils,UtilsU,
   IniFilesUTF8,StringListUTF8;
 
 const
@@ -302,6 +302,9 @@ begin
 end;
 
 function TSBAPrj.PrepareNewFolder:boolean;
+var
+  l:TStringList;
+  S:String;
 begin
   result:=false;
   if name='' then exit;
@@ -309,6 +312,12 @@ begin
   begin
     ShowMessage('Failed to create SBA project folder: '+Location);
     exit;
+  end;
+  If not IsDirectoryEmpty(Location) then
+  begin
+    l:=TStringList(FindAllFiles(Location,'*.*'));
+    for s in l do FileSetAttrUTF8(s,faArchive);
+    if assigned(l) then FreeAndNil(l);
   end;
   try
     Save;
@@ -665,7 +674,9 @@ begin
 end;
 
 function TSBAPrj.PrjExport: boolean;
-var R,S:TStringList;
+var
+  R,S:TStringList;
+  T:String;
 begin
   result:=false;
   if not directoryexistsUTF8(ExportPath) then
@@ -685,6 +696,20 @@ begin
     S.AddStrings(R);
     R.LoadFromFile(location+Name+'_'+cSBActrlr);
     S.AddStrings(R);
+    if explibfiles then
+    begin
+      R.LoadFromFile(loclib+cSBApkg);
+      S.AddStrings(R);
+      R.LoadFromFile(loclib+cSyscon);
+      S.AddStrings(R);
+      R.LoadFromFile(loclib+cDataIntf);
+      S.AddStrings(R);
+      if libcores.Count>0 then for T in libcores do
+      begin
+        R.LoadFromFile(loclib+T+'.vhd');
+        S.AddStrings(R);
+      end;
+    end;
     R.Free;
     S.SaveToFile(ExportPath+Name+'.vhd');
     S.Free;

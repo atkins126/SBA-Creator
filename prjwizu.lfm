@@ -458,6 +458,7 @@ object prjWizForm: TprjWizForm
         )
         MaxLength = 180
         TabOrder = 6
+        WantReturns = False
       end
       object Label6: TLabel
         Left = 16
@@ -484,7 +485,7 @@ object prjWizForm: TprjWizForm
         Left = 16
         Height = 15
         Top = 112
-        Width = 42
+        Width = 41
         Caption = 'Version:'
         ParentColor = False
       end

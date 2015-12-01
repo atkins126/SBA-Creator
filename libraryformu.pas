@@ -39,6 +39,8 @@ type
     Label2: TLabel;
     Label3: TLabel;
     Label4: TLabel;
+    Label8: TLabel;
+    Label9: TLabel;
     L_TitleIPCore: TLabel;
     ProgramDescription: TMemo;
     Label5: TLabel;
@@ -68,8 +70,8 @@ type
     LV_IPCores: TListView;
     LV_Programs: TListView;
     SB: TStatusBar;
-    URL_IpCore: TStaticText;
     UpdateRep: TTabSheet;
+    URL_IpCore: TStaticText;
     procedure B_AddtoSnippetsClick(Sender: TObject);
     procedure B_AddtoProgramsClick(Sender: TObject);
     procedure B_AddtoLibraryClick(Sender: TObject);
@@ -108,6 +110,7 @@ type
     procedure EndGetPrograms;
     procedure EndGetSnippets;
     function GetVersion(f: string): string;
+    function LookupFilterItem(S: string; LV: TListViewDataList): integer;
     { private declarations }
   public
     { public declarations }
@@ -538,7 +541,10 @@ begin
   Data[0]:=ExtractFileNameWithoutExt(FileIterator.FileInfo.Name);
   Data[1]:=FileIterator.FileName;
   v:=VCmpr(GetVersion(FileIterator.FileName),GetVersion(LibraryDir+Data[0]+PathDelim+Data[0]+'.ini'));
-  if IpCoreList.IndexOf(Data[0])=-1 then Data[2]:='N' else if v>0 then Data[2]:='U' else if v=0 then Data[2]:='=';
+  if IpCoreList.IndexOf(Data[0])=-1 then
+    Data[2]:='N'  // The item is new do not exists in local library
+  else if v>0 then Data[2]:='U' // the item is a new version of the one in the local library
+    else if v=0 then Data[2]:='=';  // the item is the same as local library
   IPCoresFilter.Items.Add(Data);
 end;
 
@@ -562,18 +568,56 @@ begin
   SnippetsFilter.Items.Add(Data);
 end;
 
+function TLibraryForm.LookupFilterItem(S:string; LV:TListViewDataList):integer;
+Var
+  i:Integer;
+  Data:TStringArray;
+begin
+  result:=-1; i:=0;
+  while (result=-1) and (i<LV.Count) do
+  begin
+    Data:=LV[i];
+    if Data[0]=S then result:=i else inc(i);
+  end;
+end;
+
 procedure TLibraryForm.UpdateLists;
+var
+  S:String;
+  Data:TStringArray;
 begin
   IpCoresFilter.Items.Clear;
   SearchForFiles(ConfigDir+'temp'+PathDelim+DefLibraryDir, '*.ini',@AddItemToIpCoresFilter);
+  For S in IpCoreList do if LookupFilterItem(S,IPCoresFilter.Items)=-1 then
+  begin
+    SetLength(Data,3);
+    Data[0]:=S;
+    Data[1]:=LibraryDir+S+PathDelim+S+'.ini';
+    Data[2]:='L'; //The item in library is local and do not exist into the repository
+    IPCoresFilter.Items.Add(Data);
+  end;
   IpCoresFilter.InvalidateFilter;
 //
   ProgramsFilter.Items.Clear;
   SearchForFiles(ConfigDir+'temp'+PathDelim+DefProgramsDir, '*.prg',@AddItemToProgramsFilter);
+  For S in ProgramsList do if LookupFilterItem(S,ProgramsFilter.Items)=-1 then
+  begin
+    SetLength(Data,2);
+    Data[0]:=S;
+    Data[1]:=ProgramsDir+S+'.vhd';
+    ProgramsFilter.Items.Add(Data);
+  end;
   ProgramsFilter.InvalidateFilter;
 //
   SnippetsFilter.Items.Clear;
   SearchForFiles(ConfigDir+'temp'+PathDelim+DefSnippetsDir, '*.snp',@AddItemToSnippetsFilter);
+  For S in SnippetsList do if LookupFilterItem(S,SnippetsFilter.Items)=-1 then
+  begin
+    SetLength(Data,2);
+    Data[0]:=S;
+    Data[1]:=SnippetsDir+S+'.vhd';
+    SnippetsFilter.Items.Add(Data);
+  end;
   SnippetsFilter.InvalidateFilter;
 end;
 

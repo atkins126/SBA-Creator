@@ -18,7 +18,7 @@ type
     CB_ExpPrjAllLib: TCheckBox;
     Ed_TargetDir: TDirectoryEdit;
     Label3: TLabel;
-    L_PrjDir: TStaticText;
+    L_PrjDir: TLabel;
   private
     { private declarations }
   public

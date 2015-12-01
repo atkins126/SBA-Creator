@@ -17,7 +17,7 @@ uses
   {$ELSE}
   Interfaces, // this includes the LCL widgetset
   Forms, lazcontrols, runtimetypeinfocontrols, HistoryLazarus, uecontrols,
-  MainFormU, synhighlighterverilog, synhighlightersba, uSynEditPopupEdit,
+  MainFormU, synhighlighterverilog, synhighlightersba,
   versionsupportu, SBAProgContrlrU, AboutFormU, sbasnippetu, configformu,
   PrjWizU, dwfileU, DebugFormU, SBAProjectU, floatformu, CoresPrjEdFormU,
   LibraryFormU, UtilsU, sbaprogramu, IniFilesUTF8, exportprjformu
