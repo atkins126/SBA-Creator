@@ -6,8 +6,8 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, ExtCtrls,
-  Buttons, EditBtn, StdCtrls, Spin, Grids, ValEdit, Menus, strutils, types,
-  IniFilesUTF8, StringListUTF8, SBAProjectU;
+  Buttons, EditBtn, StdCtrls, Clipbrd, Spin, Grids, ValEdit, Menus, strutils,
+  types, IniFilesUTF8, StringListUTF8, SBAProjectU;
 
 type
 
@@ -15,6 +15,7 @@ type
 
   TprjWizForm = class(TForm)
     B_AddFile: TBitBtn;
+    B_PrjLoadFromClip: TBitBtn;
     B_RemoveFile: TBitBtn;
     B_PrjSaveAsTemplate: TBitBtn;
     B_PrjLoadFromTemplate: TBitBtn;
@@ -65,11 +66,11 @@ type
     StaticText1: TStaticText;
     Ed_TopInterface: TStringGrid;
     StaticText2: TStaticText;
-    TB_Start: TToggleBox;
-    TB_Step2: TToggleBox;
-    TB_Step3: TToggleBox;
-    TB_Step4: TToggleBox;
-    TB_End: TToggleBox;
+    TB_End: TPanel;
+    TB_Start: TPanel;
+    TB_Step2: TPanel;
+    TB_Step3: TPanel;
+    TB_Step4: TPanel;
     UserFileList: TValueListEditor;
     WizPages: TNotebook;
     StartPage: TPage;
@@ -81,6 +82,7 @@ type
     procedure B_CoreDelClick(Sender: TObject);
     procedure B_NextClick(Sender: TObject);
     procedure B_PreviousClick(Sender: TObject);
+    procedure B_PrjLoadFromClipClick(Sender: TObject);
     procedure B_PrjLoadFromTemplateClick(Sender: TObject);
     procedure B_PrjSaveAsTemplateClick(Sender: TObject);
     procedure B_RemoveFileClick(Sender: TObject);
@@ -107,13 +109,15 @@ type
     procedure RowDeleteClick(Sender: TObject);
   private
     Editing:boolean;
+    TmpPrj:TSBAPrj;
+    procedure ProgressPanelUpdate;
     procedure SummarizeData(Prj:TSBAPrj);
     function ValidateSBAName(s: string): boolean;
     function ValidateName(s: string): boolean;
     { private declarations }
   public
     { public declarations }
-    function NewPrj: TModalResult;
+    function NewPrj(Prj:TSBAPrj): TModalResult;
     function EditPrj(Prj:TSBAPrj): TModalResult;
     procedure CollectData(Prj:TSBAPrj);
     procedure FillPrjWizValues(Prj:TSBAPrj);
@@ -129,17 +133,43 @@ implementation
 
 uses ConfigFormU, UtilsU, DebugFormU, FloatFormU;
 
+
 { TprjWizForm }
+
+Procedure TprjWizForm.ProgressPanelUpdate;
+  procedure StepEnable(S:TPanel);
+  begin
+    S.Color:=$00FFE8C0;
+    S.Font.Color:=clNavy;
+  end;
+  procedure StepDisable(S:TPanel);
+  begin
+    S.Color:=clCream;
+    S.Font.Color:=clBlack;
+  end;
+
+begin
+  { TODO : Linux BUG, Mejorar la apariencia de los indicadores de pasos (steps) usar paneles en vez de TToggle }
+  StepDisable(TB_Start);
+  StepDisable(TB_Step2);
+  StepDisable(TB_Step3);
+  StepDisable(TB_Step4);
+  StepDisable(TB_End);
+  Case WizPages.PageIndex of
+    0: StepEnable(TB_Start);
+    1: StepEnable(TB_Step2);
+    2: StepEnable(TB_Step3);
+    3: StepEnable(TB_Step4);
+    4: StepEnable(TB_End);
+  end;
+end;
+
+
+
 
 procedure TprjWizForm.PageBeforeShow(ASender: TObject; ANewPage: TPage;
   ANewIndex: Integer);
 begin
-  { TODO : Linux BUG, Mejorar la apariencia de los indicadores de pasos (steps) usar paneles en vez de TToggle }
-  TB_Start.Checked:=false;
-  TB_Step2.Checked:=false;
-  TB_Step3.Checked:=false;
-  TB_Step4.Checked:=false;
-  TB_End.Checked:=false;
   case ANewIndex of
   0://if ANewPage=StartPage then
   begin
@@ -147,21 +177,18 @@ begin
     B_Next.visible:=true;
     B_Next.Default:=true;
     B_Ok.visible:=false;
-    TB_Start.Checked:=true;
   end;
   1://if ANewPage=Page2 then
   begin
     B_Previous.Visible:=true;
     B_Next.visible:=true;
     B_Next.Default:=true;
-    TB_Step2.Checked:=true;
   end;
   2://if ANewPage=Page3 then
   begin
     B_Previous.Visible:=true;
     B_Next.visible:=true;
     B_Next.Default:=true;
-    TB_Step3.Checked:=true;
   end;
   3://if ANewPage=Page4 then
   begin
@@ -169,16 +196,15 @@ begin
     B_Next.visible:=true;
     B_Next.Default:=true;
     B_Ok.visible:=false;
-    TB_Step4.Checked:=true;
   end;
   4://if ANewPage=EndPage then
   begin
     B_Next.visible:=false;
     B_Ok.visible:=true;
     B_Ok.Default:=true;
-    TB_End.Checked:=true;
   end;
   end;
+  ProgressPanelUpdate;
 end;
 
 procedure TprjWizForm.PrjIpCoreListDblClick(Sender: TObject);
@@ -263,8 +289,8 @@ begin
                     '" already exist.', mtConfirmation, [mbYes, mbCancel],0)<>mrYes) then exit;
     end;
     3: begin
-      CollectData(SBAPrj);
-      SummarizeData(SBAPrj);
+      CollectData(TmpPrj);
+      SummarizeData(TmpPrj);
     end;
   end;
   WizPages.PageIndex:=WizPages.PageIndex+1;
@@ -375,10 +401,27 @@ begin
   WizPages.PageIndex:=WizPages.PageIndex-1;
 end;
 
+procedure TprjWizForm.B_PrjLoadFromClipClick(Sender: TObject);
+var
+  S:String;
+begin
+  if not assigned(TmpPrj) then exit;
+  S:=Clipboard.AsText;
+  If S='' then exit;
+  ResetFormData;
+  TmpPrj.Fill(S);
+  If TmpPrj.name<>'' then
+  begin
+    FillPrjWizValues(TmpPrj);
+    Ed_prjLocation.Text:=ProjectsDir;
+  end;
+end;
+
 procedure TprjWizForm.B_PrjLoadFromTemplateClick(Sender: TObject);
 var
   S:TStringList;
 begin
+  if not assigned(TmpPrj) then exit;
   OpenDialog1.Options:=OpenDialog1.Options-[ofAllowMultiSelect];
   OpenDialog1.DefaultExt:='.sba';
   OpenDialog1.Filter:='SBA Project|*.sba';
@@ -388,13 +431,16 @@ begin
     begin
       S.LoadFromFile(OpenDialog1.FileName);
       ResetFormData;
-      SBAPrj.Fill(S.Text);
+      TmpPrj.Fill(S.Text);
+      if TmpPrj.name<>'' then
+      begin
+        FillPrjWizValues(TmpPrj);
+        Ed_prjLocation.Text:=ProjectsDir;
+      end;
     end;
   finally
     S.Free;
   end;
-  if SBAPrj.name<>'' then FillPrjWizValues(SBAPrj);
-  Ed_prjLocation.Text:=ProjectsDir;
 end;
 
 procedure TprjWizForm.B_PrjSaveAsTemplateClick(Sender: TObject);
@@ -405,7 +451,7 @@ begin
   SaveDialog1.Filter:='SBA Project|*.sba';
   try
     S:=TStringList.Create;
-    S.Text:=SBAPrj.Collect;
+    S.Text:=TmpPrj.Collect;
     if SaveDialog1.Execute then S.SaveToFile(SaveDialog1.FileName);
   finally
     S.Free;
@@ -615,9 +661,10 @@ begin
   result:=true;
 end;
 
-function TprjWizForm.NewPrj: TModalResult;
+function TprjWizForm.NewPrj(Prj: TSBAPrj): TModalResult;
 begin
   WizPages.PageIndex:=0;
+  TmpPrj:=Prj;
   ResetFormData;
   Editing:=false;
   result:=ShowModal;
@@ -627,6 +674,7 @@ function TprjWizForm.EditPrj(Prj: TSBAPrj): TModalResult;
 begin
   Editing:=true;
   WizPages.PageIndex:=0;
+  TmpPrj:=Prj;
   ResetFormData;
   FillPrjWizValues(Prj);
   result:=ShowModal;

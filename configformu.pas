@@ -43,9 +43,9 @@ type
 
 const  //based in sub dirs in zip file from Github
   DefSBAbaseDir='SBA-master';
-  DefLibraryDir='SBA-Library-master';
-  DefSnippetsDir='SBA-Snippets-master';
-  DefProgramsDir='SBA-Programs-master';
+  DefLibraryDir='SBA-Library';
+  DefSnippetsDir='SBA-Snippets';
+  DefProgramsDir='SBA-Programs';
 
   DefProjectsDir='sbaprojects';
 
@@ -57,7 +57,7 @@ const  //based in sub dirs in zip file from Github
 
 var
   ConfigForm: TConfigForm;
-  ConfigDir,LibraryDir,SnippetsDir,ProgramsDir,ProjectsDir,SBAbaseDir:string;
+  AppDir,ConfigDir,LibraryDir,SnippetsDir,ProgramsDir,ProjectsDir,SBAbaseDir:string;
   DefAuthor,EditorFontName:string;
   EditorFontSize:integer;
   LibAsReadOnly:Boolean;
@@ -84,9 +84,20 @@ end;
 function GetConfigValues: boolean;
 begin
   result:=false;
+  AppDir:=Application.location;
+  InfoLn('Application folder: '+AppDir);
+  {$IFDEF Darwin}
+  AppDir := AppendPathDelim(copy(AppDir,1,Pos('/SBAcreator.app',AppDir)-1));
+  {$ENDIF}
+  If not FileExistsUTF8(GetAppConfigFile(false)) then
+  begin
+    MainForm.Top:=0;
+    MainForm.Left:=0;
+  end;
   With MainForm.IniStor do
   begin
     IniFileName:=GetAppConfigFile(false);
+    InfoLn('Config File: '+IniFileName);
     ConfigDir:=ReadString('ConfigDir',GetAppConfigDirUTF8(false));
     SBAbaseDir:=ReadString('SBAbaseDir',ConfigDir+DefSBAbaseDir+PathDelim);
     LibraryDir:=ReadString('LibraryDir',ConfigDir+DefLibraryDir+PathDelim);
@@ -106,7 +117,6 @@ begin
     If Not ForceDirectoriesUTF8(ConfigDir) Then
     begin
       ShowMessage('Failed to create config folder!: '+ConfigDir);
-      MainForm.Close;
       Exit;
     end;
 
@@ -121,54 +131,38 @@ begin
 
   InfoLn('LibraryDir: '+LibraryDir);
   If Not DirectoryExistsUTF8(LibraryDir) then
-  begin
-    CopyFile(Application.location+cSBAlibraryZipFile,ConfigDir+cSBAlibraryZipFile);
-    if not Unzip(ConfigDir+cSBAlibraryZipFile,ConfigDir) then
+    If not Unzip(AppDir+cSBAlibraryZipFile,ConfigDir) then
     begin
       ShowMessage('Failed to create SBA library folder: '+LibraryDir);
-      MainForm.Close;
       Exit;
     end;
-  end;
 
   InfoLn('SnippetsDir: '+SnippetsDir);
   If Not DirectoryExistsUTF8(SnippetsDir) then
-  begin
-    CopyFile(Application.location+cSBAsnippetsZipFile,ConfigDir+cSBAsnippetsZipFile);
-    if not Unzip(ConfigDir+cSBAsnippetsZipFile,ConfigDir) then
+    If not Unzip(AppDir+cSBAsnippetsZipFile,ConfigDir) then
     begin
       ShowMessage('Failed to create code snippets folder: '+SnippetsDir);
-      MainForm.Close;
       Exit;
     end;
-  end;
 
   InfoLn('ProgramsDir: '+ProgramsDir);
   If Not DirectoryExistsUTF8(ProgramsDir) then
-  begin
-    CopyFile(Application.location+cSBAprogramsZipFile,ConfigDir+cSBAprogramsZipFile);
-    if not Unzip(ConfigDir+cSBAprogramsZipFile,ConfigDir) then
+    If not Unzip(AppDir+cSBAprogramsZipFile,ConfigDir) then
     begin
       ShowMessage('Failed to create code programs folder: '+ProgramsDir);
-      MainForm.Close;
       Exit;
     end;
-  end;
 
   InfoLn('SBAbaseDir: '+SBAbaseDir);
   If Not DirectoryExistsUTF8(SBAbaseDir) then
-  begin
-    CopyFile(Application.location+cSBABaseZipFile,ConfigDir+cSBABaseZipFile);
-    if not Unzip(ConfigDir+cSBABaseZipFile,ConfigDir) then
+    If not Unzip(AppDir+cSBABaseZipFile,ConfigDir) then
     begin
       ShowMessage('Failed to create SBA base folder: '+SBAbaseDir);
-      MainForm.Close;
       Exit;
     end;
-  end;
 
-  if not FileExistsUTF8(ConfigDir+cSBADefaultPrgTemplate) then CopyFile(Application.location+cSBADefaultPrgTemplate,ConfigDir+cSBADefaultPrgTemplate);
-  if not FileExistsUTF8(ConfigDir+'newbanner.gif') then CopyFile(Application.location+'banner.gif',ConfigDir+'newbanner.gif');
+  if not FileExistsUTF8(ConfigDir+cSBADefaultPrgTemplate) then CopyFile(AppDir+cSBADefaultPrgTemplate,ConfigDir+cSBADefaultPrgTemplate);
+  if not FileExistsUTF8(ConfigDir+'newbanner.gif') then CopyFile(AppDir+'banner.gif',ConfigDir+'newbanner.gif');
   result:=true;
 end;
 
@@ -205,7 +199,7 @@ begin
     begin
       if DirectoryExistsUTF8(Ed_ProgramsDir.text) then ProgramsDir:=Ed_ProgramsDir.text
       else begin
-        showmessage('Snippet folder could not be changed');
+        showmessage('Programs folder could not be changed');
         exit;
       end;
       WriteString('ProgramsDir',ProgramsDir);

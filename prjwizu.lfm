@@ -1,7 +1,7 @@
 object prjWizForm: TprjWizForm
-  Left = 1093
+  Left = 1042
   Height = 431
-  Top = 226
+  Top = 510
   Width = 420
   BorderStyle = bsDialog
   Caption = 'Project Wizard'
@@ -296,7 +296,7 @@ object prjWizForm: TprjWizForm
         Left = 24
         Height = 30
         Top = 184
-        Width = 372
+        Width = 185
         Anchors = [akTop, akLeft, akRight]
         Caption = 'Create Project from Template'
         Glyph.Data = {
@@ -337,6 +337,52 @@ object prjWizForm: TprjWizForm
         }
         OnClick = B_PrjLoadFromTemplateClick
         TabOrder = 3
+      end
+      object B_PrjLoadFromClip: TBitBtn
+        Left = 211
+        Height = 30
+        Top = 184
+        Width = 185
+        Anchors = [akTop, akLeft, akRight]
+        Caption = 'Paste Project from Clipboard'
+        Glyph.Data = {
+          36040000424D3604000000000000360000002800000010000000100000000100
+          2000000000000004000064000000640000000000000000000000FFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF60554BFF42372BFF42362BFF4236
+          2BFF42362BFF42362BFF42362BFF42362BFF42372BFF5E544BFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF73665CFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF756A62FF00547EFF003C
+          5DFF003C5DFF003C5DFF003C5DFF003B5FFF716258FFFFFFFFFFF1EBE6FFF2EC
+          E6FFF2ECE6FFF2ECE6FFF2ECE6FFF1EBE6FFFFFFFFFF776C63FF006296FF07DA
+          FFFF08D7FFFF08D7FFFF08D7FFFF02DCFFFF715E52FFFFFFFFFFF5EFEAFFF5F0
+          EBFFF5F0EBFFF5F0EBFFF5F0EBFFF5EFEAFFFFFFFFFF7B7067FF006093FF18D6
+          FFFF0095C8FF0098CBFF0098CBFF009BD1FF715E53FFFFFFFFFFF7F2EEFFF7F3
+          EFFFF7F3EFFFF7F3EFFFF7F3EFFFF7F2EEFFFFFFFFFF80766BFF006093FF28D7
+          FFFF009FD2FF00A1D4FF00A1D4FF00A4DAFF715E53FFFFFFFFFFF9F6F2FFF9F6
+          F3FFF9F6F3FFF9F6F3FFF9F6F3FFFAF7F3FFFFFFFFFF84796FFF006093FF38D9
+          FFFF00A4D7FF00A6D9FF00A6D9FF00A9E0FF715E52FFFFFFFFFFFAF8F6FFFAF8
+          F6FFFAF8F6FFFAF9F7FFFEFDFCFFF2EEEAFFD5CFC9FF9F9286FF006093FF48DA
+          FFFF00A9DCFF00ABDEFF00ABDEFF00AFE5FF715E52FFFFFFFFFFFCFBFAFFFCFB
+          FAFFFCFBFAFFFFFFFEFFBE9E9DFF625A51FF675E56FF94887DFF006093FF58DC
+          FFFF00AEE1FF00B0E3FF00B0E3FF00B4EAFF715E52FFFFFFFFFFFEFEFDFFFEFE
+          FDFFFEFEFDFFFFFFFFFFC88F8FFFFFFFFFFFFFFFFFFFAB9F94FF006093FF67DD
+          FFFF00B3E7FF00B5E8FF00B5E8FF00B9F0FF735E53FFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFCC9293FFFFFFFFFFAB9F94FFFFFFFFFF006093FF77DE
+          FFFF00B8ECFF00BAEDFF00BAEDFF00BEF4FF7E6052FF735E52FF715D51FF715D
+          51FF6D5C51FF6E6055FFA19688FFAB9F94FFFFFFFFFFFFFFFFFF006093FF88E0
+          FFFF00BEF2FF00C4FAFF00C6FDFF00C7FEFF00CAFFFF00CBFFFF00C9FFFF00C3
+          FAFF86E5FFFF005E97FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF006093FF97E1
+          FFFF00C8FEFF6C4D3CFF463122FF463122FF463122FF463122FF6A4B3BFF00C8
+          FFFF97E1FFFF005F93FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF006094FFAEE7
+          FFFF00D3FFFF897567FFFFEAE8FFFFE3E1FFFFE3E1FFFFEAE8FF897567FF00D3
+          FFFFAEE7FFFF006094FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF006598FF0060
+          94FF005F95FF897567FFC8B5B0FFFFFFFFFFFFFFFFFFC8B5B0FF897567FF005F
+          95FF006094FF006598FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFF988C80FF988C80FF988C80FF988C80FFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+        }
+        OnClick = B_PrjLoadFromClipClick
+        TabOrder = 5
       end
     end
     object Page2: TPage
@@ -382,10 +428,13 @@ object prjWizForm: TprjWizForm
         Text = 'Short title or description of the project'
       end
       object L_PrjVersion: TLabel
+        AnchorSideLeft.Control = LabelX
+        AnchorSideLeft.Side = asrBottom
         Left = 62
         Height = 15
         Top = 112
         Width = 24
+        BorderSpacing.Left = 5
         Caption = '0.1.1'
         ParentColor = False
       end
@@ -470,8 +519,8 @@ object prjWizForm: TprjWizForm
       end
       object StaticText2: TStaticText
         Left = 16
-        Height = 56
-        Top = 276
+        Height = 68
+        Top = 272
         Width = 387
         Anchors = [akLeft, akRight, akBottom]
         BorderStyle = sbsSingle
@@ -927,74 +976,17 @@ object prjWizForm: TprjWizForm
     ChildSizing.ControlsPerLine = 5
     ClientHeight = 35
     ClientWidth = 420
-    Color = clCream
+    Color = clBlack
     ParentColor = False
     TabOrder = 2
-    object TB_Start: TToggleBox
-      Left = 17
-      Height = 24
-      Top = 5
-      Width = 64
-      BorderSpacing.Around = 5
-      Caption = 'Start'
-      Checked = True
-      Constraints.MaxWidth = 64
-      Constraints.MinHeight = 24
-      Constraints.MinWidth = 64
-      Enabled = False
-      State = cbChecked
-      TabOrder = 3
-      TabStop = False
-    end
-    object TB_Step2: TToggleBox
-      Left = 98
-      Height = 24
-      Top = 5
-      Width = 64
-      BorderSpacing.Around = 5
-      Caption = 'Step2'
-      Constraints.MaxWidth = 64
-      Constraints.MinHeight = 24
-      Constraints.MinWidth = 64
-      Enabled = False
-      TabOrder = 4
-      TabStop = False
-    end
-    object TB_Step3: TToggleBox
-      Left = 179
-      Height = 24
-      Top = 5
-      Width = 64
-      BorderSpacing.Around = 5
-      Caption = 'Step3'
-      Constraints.MaxWidth = 64
-      Constraints.MinHeight = 24
-      Constraints.MinWidth = 64
-      Enabled = False
-      TabOrder = 1
-      TabStop = False
-    end
-    object TB_Step4: TToggleBox
-      Left = 260
-      Height = 24
-      Top = 5
-      Width = 64
-      BorderSpacing.Around = 5
-      Caption = 'Step4'
-      Constraints.MaxWidth = 64
-      Constraints.MinHeight = 24
-      Constraints.MinWidth = 64
-      Enabled = False
-      TabOrder = 2
-      TabStop = False
-    end
     object Shape1: TShape
       Left = 45
       Height = 2
       Top = 16
       Width = 326
       Anchors = [akTop, akLeft, akRight, akBottom]
-      Brush.Color = clBlack
+      Brush.Style = bsClear
+      Pen.Color = clCream
     end
     object Shape2: TShape
       Left = 0
@@ -1003,19 +995,82 @@ object prjWizForm: TprjWizForm
       Width = 420
       Align = alBottom
     end
-    object TB_End: TToggleBox
+    object TB_Start: TPanel
+      Left = 17
+      Height = 24
+      Top = 5
+      Width = 64
+      BorderSpacing.Around = 5
+      BevelOuter = bvNone
+      Caption = 'Start'
+      Color = 16771264
+      Constraints.MaxWidth = 64
+      Constraints.MinHeight = 24
+      Constraints.MinWidth = 64
+      Font.Color = clNavy
+      ParentColor = False
+      ParentFont = False
+      TabOrder = 0
+    end
+    object TB_Step2: TPanel
+      Left = 98
+      Height = 24
+      Top = 5
+      Width = 64
+      BorderSpacing.Around = 5
+      BevelOuter = bvNone
+      Caption = 'Step2'
+      Color = clCream
+      Constraints.MaxWidth = 64
+      Constraints.MinHeight = 24
+      Constraints.MinWidth = 64
+      ParentColor = False
+      TabOrder = 1
+    end
+    object TB_Step3: TPanel
+      Left = 179
+      Height = 24
+      Top = 5
+      Width = 64
+      BorderSpacing.Around = 5
+      BevelOuter = bvNone
+      Caption = 'Step3'
+      Color = clCream
+      Constraints.MaxWidth = 64
+      Constraints.MinHeight = 24
+      Constraints.MinWidth = 64
+      ParentColor = False
+      TabOrder = 2
+    end
+    object TB_Step4: TPanel
+      Left = 260
+      Height = 24
+      Top = 5
+      Width = 64
+      BorderSpacing.Around = 5
+      BevelOuter = bvNone
+      Caption = 'Step4'
+      Color = clCream
+      Constraints.MaxWidth = 64
+      Constraints.MinHeight = 24
+      Constraints.MinWidth = 64
+      ParentColor = False
+      TabOrder = 3
+    end
+    object TB_End: TPanel
       Left = 341
       Height = 24
       Top = 5
       Width = 64
       BorderSpacing.Around = 5
+      BevelOuter = bvNone
       Caption = 'End'
+      Color = clCream
       Constraints.MaxWidth = 64
       Constraints.MinHeight = 24
       Constraints.MinWidth = 64
-      Enabled = False
-      TabOrder = 0
-      TabStop = False
+      ParentColor = False
+      TabOrder = 4
     end
   end
   object ImageList1: TImageList

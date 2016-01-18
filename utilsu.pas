@@ -13,8 +13,11 @@ function PopulateFileList(const directory,mask : string; list : TStrings): boole
 procedure GetAllFileNames(const dir,mask:string; list:TStrings);
 procedure GetAllFileNamesAndPaths(const dir,mask:string; list:TStrings);
 function UnZip(f,p:string):boolean;
+function GetZipMainFolder(f:string):string;
 function IsDirectoryEmpty(const directory : string) : boolean;
 function GetPosList(s: string; list: Tstrings; start:integer=0): integer;
+function DirReplace(s,d:string): boolean;
+function DeleteDirectoryEx(DirectoryName: string): boolean;
 function DirDelete(d:string):boolean;
 function VCmpr(v1,v2:string):integer;
 
@@ -78,6 +81,9 @@ end;
 function UnZip(f,p:string):boolean;
 var
   UnZipper: TUnZipper;
+{$ifdef debug}
+  i:integer;
+{$endif}
 begin
   result:=false;
   UnZipper := TUnZipper.Create;
@@ -86,6 +92,9 @@ begin
     UnZipper.OutputPath := Utf8ToAnsi(p);
     try
       UnZipper.Examine;
+{$ifdef debug}
+      for i:=0 to UnZipper.Entries.Count-1 do infoln(UnZipper.Entries.Entries[i].ArchiveFileName);
+{$endif}
       UnZipper.UnZipAllFiles;
     except
       ON E:Exception do
@@ -94,7 +103,30 @@ begin
         exit;
       end;
     end;
-    result:=true;
+  finally
+    UnZipper.Free;
+  end;
+  Result:=true;
+end;
+
+function GetZipMainFolder(f:string):string;
+var
+  UnZipper: TUnZipper;
+begin
+  result:='';
+  UnZipper := TUnZipper.Create;
+  try
+    UnZipper.FileName := Utf8ToAnsi(f);
+    try
+      UnZipper.Examine;
+      Result:=UnZipper.Entries.Entries[0].ArchiveFileName;
+    except
+      ON E:Exception do
+      begin
+        ShowMessage(E.Message);
+        exit;
+      end;
+    end;
   finally
     UnZipper.Free;
   end;
@@ -141,13 +173,68 @@ begin
   if pos(s,list[i])<>0 then Result:=i else Result:=-1;
 end;
 
-function DirDelete(d: string): boolean;
+function DirReplace(s,d:string): boolean;
 begin
-  Result:=DeleteDirectory(d,True);
-  if Result then begin
-     Result:=RemoveDirUTF8(d);
-  end;
+  Result:= DirDelete(d) and RenameFileUTF8(s,d);
 end;
+
+function DirDelete(d: string): boolean;
+var i:integer;
+begin
+  infoln('Deleting: '+d);
+  if not DirectoryExistsUTF8(d) then
+  begin
+    infoln('The folder '+d+' do not exists.');
+    Result:=true;
+    exit;
+  end;
+  Result:=DeleteDirectoryEx(d);
+  for i:=0 to 10 do if DirectoryExistsUTF8(d) then sleep(300) else break;
+end;
+
+function DeleteDirectoryEx(DirectoryName: string): boolean;
+// Lazarus fileutil.DeleteDirectory on steroids, works like
+// deltree <directory>, rmdir /s /q <directory> or rm -rf <directory>
+// - removes read-only files/directories (DeleteDirectory doesn't)
+// - removes directory itself
+// Adapted from fileutil.DeleteDirectory, thanks to Paweł Dmitruk
+var
+  FileInfo: TSearchRec;
+  CurSrcDir: String;
+  CurFilename: String;
+begin
+  Result:=false;
+  CurSrcDir:=CleanAndExpandDirectory(DirectoryName);
+  if FindFirstUTF8(CurSrcDir+GetAllFilesMask,faAnyFile,FileInfo)=0 then
+  begin
+    repeat
+      // Ignore directories and files without name:
+      if (FileInfo.Name<>'.') and (FileInfo.Name<>'..') and (FileInfo.Name<>'') then
+      begin
+        // Remove all files and directories in this directory:
+        CurFilename:=CurSrcDir+FileInfo.Name;
+        // Remove read-only file attribute so we can delete it:
+        if (FileInfo.Attr and faReadOnly)>0 then
+          FileSetAttrUTF8(CurFilename, FileInfo.Attr-faReadOnly);
+        if (FileInfo.Attr and faDirectory)>0 then
+        begin
+          // Directory; exit with failure on error
+          if not DeleteDirectoryEx(CurFilename) then exit;
+        end
+        else
+        begin
+          // File; exit with failure on error
+          if not DeleteFileUTF8(CurFilename) then exit;
+        end;
+      end;
+    until FindNextUTF8(FileInfo)<>0;
+  end;
+  FindCloseUTF8(FileInfo);
+  // Remove "root" directory; exit with failure on error:
+  if (not RemoveDirUTF8(CurSrcDir)) then exit;
+  Result:=true;
+end;
+
 
 function VCmpr(v1, v2: string): integer;
 var i:integer;

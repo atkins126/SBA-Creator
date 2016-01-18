@@ -118,55 +118,74 @@ var
   S:string;
 begin
   result:=false;
-  name:='';
-  modified:=true;
-  ports.Clear;
-  libcores.Clear;
-  userfiles.Clear;
   try
     J:=GetJSON(ReplaceStr(Data,'\','/'));
+    if J=nil then exit;
   except
     on E:Exception do
     begin
-      ShowMessage('The is an error in the project data, exiting...');
+      ShowMessage('The is an error in the SBA project data, exiting the parse process...');
       exit;
     end;
   end;
   try
-    name:=J.FindPath('name').AsString;
-    location:=AppendPathDelim(TrimFilename(J.FindPath('location').AsString));
-    loclib:=AppendPathDelim(TrimFilename(location+'lib'));
-    title:=J.FindPath('title').AsString;
-    author:=J.FindPath('author').AsString;
-    version:=J.FindPath('version').AsString;
-    date:=J.FindPath('date').AsString;
-    description:=J.FindPath('description').AsString;
-    if not J.FindPath('interface').IsNull then
-    begin
-      with J.FindPath('interface') do For i:=0 to count-1 do with Items[i] do
+    name:='';
+    modified:=true;
+    ports.Clear;
+    libcores.Clear;
+    userfiles.Clear;
+    try
+      name:=J.FindPath('name').AsString;
+      location:=AppendPathDelim(TrimFilename(J.FindPath('location').AsString));
+      loclib:=AppendPathDelim(TrimFilename(location+'lib'));
+      title:=J.FindPath('title').AsString;
+      author:=J.FindPath('author').AsString;
+      version:=J.FindPath('version').AsString;
+      date:=J.FindPath('date').AsString;
+      description:=J.FindPath('description').AsString;
+      if not J.FindPath('interface').IsNull then
       begin
-        S:=FindPath('portname').AsString+',';
-        S+=FindPath('dir').AsString+',';
-        S+=FindPath('bus').AsString+',';
-        if FindPath('bus').AsInteger=1 then
+        with J.FindPath('interface') do For i:=0 to count-1 do with Items[i] do
         begin
-          S+=FindPath('msb').AsString+',';
-          S+=FindPath('lsb').AsString;
+          S:=FindPath('portname').AsString+',';
+          S+=FindPath('dir').AsString+',';
+          S+=FindPath('bus').AsString+',';
+          if FindPath('bus').AsInteger=1 then
+          begin
+            S+=FindPath('msb').AsString+',';
+            S+=FindPath('lsb').AsString;
+          end;
+          ports.Append(S);
         end;
-        ports.Append(S);
+      end;
+    except
+      on E:Exception do
+      begin
+        ShowMessage('There is invalid data in the SBA project definition: '+E.Message);
+        exit;
       end;
     end;
     try if not J.FindPath('ipcores').IsNull then
       with J.FindPath('ipcores') do For i:=0 to J.FindPath('ipcores').count-1 do
         libcores.Append(Items[i].AsString);
     except
-      ON E:Exception do libcores.Clear;
+      ON E:Exception do
+      begin
+        libcores.Clear;
+        ShowMessage('The list of cores definitions is invalid.');
+        exit;
+      end;
     end;
     try if not J.FindPath('userfiles').IsNull then
       with J.FindPath('userfiles') do For i:=0 to J.FindPath('userfiles').count-1 do
         userfiles.Append(Items[i].AsString);
     except
-      ON E:Exception do userfiles.Clear;
+      ON E:Exception do
+      begin
+        userfiles.Clear;
+        ShowMessage('The list of user files is invalid.');
+        exit;
+      end;
     end;
     if J.FindPath('exportpath')=nil then exportpath:='' else exportpath:=J.FindPath('exportpath').AsString;
     if J.FindPath('expmonolithic')=nil then expmonolithic:=false else expmonolithic:=J.FindPath('expmonolithic').AsBoolean;

@@ -7,7 +7,7 @@ interface
 uses
   Classes, SysUtils, FileUtil, ListViewFilterEdit, Forms,
   Controls, Graphics, Dialogs, ComCtrls, Buttons, ExtCtrls,
-  AsyncProcess, lclintf, StdCtrls, EditBtn,
+  AsyncProcess, lclintf, StdCtrls, EditBtn, IniPropStorage,
   SBASnippetU, SBAProgramU, IniFilesUTF8, StringListUTF8;
 
 type
@@ -28,20 +28,24 @@ type
     Ed_SBAbase: TEditButton;
     Ed_SBAlibrary: TEditButton;
     Ed_SBAprograms: TEditButton;
+    Ed_SBARepoZipFile: TComboBox;
     Ed_SBAsnippets: TEditButton;
     GB_SBAbase: TGroupBox;
     GB_SBAlibrary: TGroupBox;
     GB_SBAprograms: TGroupBox;
     GB_SBAsnippets: TGroupBox;
     IdleTimer1: TIdleTimer;
+    IniPS: TIniPropStorage;
     IPCoreImage: TImage;
     Label1: TLabel;
+    Label10: TLabel;
     Label2: TLabel;
     Label3: TLabel;
     Label4: TLabel;
     Label8: TLabel;
     Label9: TLabel;
     L_TitleIPCore: TLabel;
+    Panel7: TPanel;
     ProgramDescription: TMemo;
     Label5: TLabel;
     Label6: TLabel;
@@ -105,6 +109,7 @@ type
     procedure AddItemToIPCoresFilter(FileIterator: TFileIterator);
     procedure AddItemToProgramsFilter(FileIterator: TFileIterator);
     procedure AddItemToSnippetsFilter(FileIterator: TFileIterator);
+    function EndGet(zfile, defdir: string): boolean;
     function EndGetBase: boolean;
     procedure EndGetLibrary;
     procedure EndGetPrograms;
@@ -142,45 +147,66 @@ begin
   result:=LibraryForm.ShowModal;
 end;
 
-procedure ProcessWGET(url,f:string;Status:TProcessStatus);
+function ProcessWGET(url,f:string;status:TProcessStatus):boolean;
 begin
+  { TODO : Encapsular el process en forma programática y enviar todo el procedimiento hacia la unidad de herramientas }
+  result:=false;
   While ProcessStatus<>idle do
   begin
     sleep(300);
     application.ProcessMessages;
   end;
-
-infoln('');
-infoln('');
-infoln('source: '+url);
-infoln('destination: '+f);
-infoln('--------------------------------------');
-infoln('');
-
+  infoln('');
+  infoln('');
+  infoln('source: '+url);
+  infoln('destination: '+f);
+  infoln('--------------------------------------');
+  infoln('');
   With LibraryForm do
   begin
     process1.Parameters.Clear;
+    process1.CurrentDirectory:=ConfigDir;
     {$IFDEF WINDOWS}
-    process1.Executable:=Application.Location+'tools'+PathDelim+'wget.exe';
+    process1.Executable:=AppDir+'tools'+PathDelim+'wget.exe';
     {$ENDIF}
     {$IFDEF LINUX}
     process1.Executable:='wget';
     {$ENDIF}
-    process1.CurrentDirectory:=ConfigDir;
+    {$IFDEF DARWIN}
+    process1.Executable:='curl';
+    {$ENDIF}
     {$IFNDEF DEBUG}
+    {$IFDEF DARWIN}
+    process1.Parameters.Add('-s');
+    {$ELSE}
     process1.Parameters.Add('-q');
     {$ENDIF}
-    process1.Parameters.Add('-O');
+    {$ENDIF}
     {$IFDEF WINDOWS}
+    process1.Parameters.Add('-O');
     process1.Parameters.Add('"'+f+'"');
-    {$ENDIF}
-    {$IFDEF LINUX}
-    process1.Parameters.Add(f);
-    {$ENDIF}
     process1.Parameters.Add('--no-check-certificate');
     process1.Parameters.Add(url);
-    ProcessStatus:=Status;
-    process1.Execute;
+    {$ENDIF}
+    {$IFDEF LINUX}
+    process1.Parameters.Add('-O');
+    process1.Parameters.Add(f);
+    process1.Parameters.Add('--no-check-certificate');
+    process1.Parameters.Add(url);
+    {$ENDIF}
+    {$IFDEF DARWIN}
+    process1.Parameters.Add('-L');
+    process1.Parameters.Add(url);
+    process1.Parameters.Add('-o');
+    process1.Parameters.Add(f);
+    {$ENDIF}
+    ProcessStatus:=status;
+    try
+      process1.Execute;
+      result:=true;
+    except
+      On E:Exception do ShowMessage('The web download tool can not be used: '+E.Message);
+    end;
   end;
 end;
 
@@ -226,7 +252,7 @@ procedure TLibraryForm.B_SBAlibraryGetClick(Sender: TObject);
 begin
   PB_SBALibrary.Style:=pbstMarquee;
   SB.SimpleText:='Downloading file '+cSBAlibraryZipFile;
-  ProcessWGET(Ed_SBAlibrary.Text+cSBARepoZipFile,ConfigDir+cSBAlibraryZipFile,GetLibrary);
+  ProcessWGET(Ed_SBAlibrary.Text+Ed_SBARepoZipFile.Text,ConfigDir+cSBAlibraryZipFile,GetLibrary);
 end;
 
 procedure TLibraryForm.B_SBAlibrarySurfClick(Sender: TObject);
@@ -238,7 +264,7 @@ procedure TLibraryForm.B_SBAprogramsGetClick(Sender: TObject);
 begin
   PB_SBAprograms.Style:=pbstMarquee;
   SB.SimpleText:='Downloading file '+cSBAprogramsZipFile;
-  ProcessWGET(Ed_SBAprograms.Text+cSBARepoZipFile,ConfigDir+cSBAprogramsZipFile,Getprograms);
+  ProcessWGET(Ed_SBAprograms.Text+Ed_SBARepoZipFile.Text,ConfigDir+cSBAprogramsZipFile,Getprograms);
 end;
 
 procedure TLibraryForm.B_SBAprogramsSurfClick(Sender: TObject);
@@ -250,7 +276,7 @@ procedure TLibraryForm.B_SBAsnippetsGetClick(Sender: TObject);
 begin
   PB_SBAsnippets.Style:=pbstMarquee;
   SB.SimpleText:='Downloading file '+cSBAsnippetsZipFile;
-  ProcessWGET(Ed_SBAsnippets.Text+cSBARepoZipFile,ConfigDir+cSBAsnippetsZipFile,Getsnippets);
+  ProcessWGET(Ed_SBAsnippets.Text+Ed_SBARepoZipFile.Text,ConfigDir+cSBAsnippetsZipFile,Getsnippets);
 end;
 
 procedure TLibraryForm.B_SBAsnippetsSurfClick(Sender: TObject);
@@ -275,6 +301,7 @@ end;
 
 procedure TLibraryForm.FormCreate(Sender: TObject);
 begin
+  IniPS.IniFileName:=GetAppConfigFile(false);
   SBASnippet:=TSBASnippet.Create;
   SBAProgram:=TSBAProgram.Create;
   {$IFDEF LINUX}
@@ -399,7 +426,7 @@ procedure TLibraryForm.B_SBAbaseGetClick(Sender: TObject);
 begin
   PB_SBABase.Style:=pbstMarquee;
   SB.SimpleText:='Downloading file '+cSBABaseZipFile;
-  ProcessWGET(Ed_SBAbase.Text+cSBARepoZipFile,ConfigDir+cSBABaseZipFile,GetBase);
+  ProcessWGET(Ed_SBAbase.Text+Ed_SBARepoZipFile.Text,ConfigDir+cSBABaseZipFile,GetBase);
 end;
 
 procedure TLibraryForm.B_AddtoLibraryClick(Sender: TObject);
@@ -472,7 +499,6 @@ begin
     infoln('Unziping file and copy '+cSBABaseZipFile);
     SB.SimpleText:='';
     DirDelete(SBAbaseDir);
-    Sleep(300);
     result:=(not DirectoryExistsUTF8(SBAbaseDir)) and
             RenameFile(ConfigDir+'temp'+PathDelim+DefSBAbaseDir+PathDelim,SBAbaseDir);
   end;
@@ -483,41 +509,54 @@ end;
 
 procedure TLibraryForm.EndGetLibrary;
 begin
-  SB.SimpleText:='Unziping file '+cSBAlibraryZipFile;
-  DirDelete(ConfigDir+'temp'+PathDelim+DefLibraryDir);
-  if UnZip(ConfigDir+cSBAlibraryZipFile,ConfigDir+'temp') then
+  if EndGet(cSBAlibraryZipFile,DefLibraryDir) then
   begin
-    SB.SimpleText:='';
     ShowMessage('The new IPCore library files are ready.');
-    UpdateLists;
   end;
   PB_SBAlibrary.Style:=pbstNormal;
 end;
 
 procedure TLibraryForm.EndGetPrograms;
 begin
-  SB.SimpleText:='Unziping file '+cSBAprogramsZipFile;
-  DirDelete(ConfigDir+'temp'+PathDelim+DefProgramsDir);
-  if UnZip(ConfigDir+cSBAprogramsZipFile,ConfigDir+'temp') then
+  if EndGet(cSBAprogramsZipFile,DefProgramsDir) then
   begin
-    SB.SimpleText:='';
     ShowMessage('The new programs files are ready.');
-    UpdateLists;
   end;
   PB_SBAprograms.Style:=pbstNormal;
 end;
 
 procedure TLibraryForm.EndGetSnippets;
 begin
-  SB.SimpleText:='Unziping file '+cSBAsnippetsZipFile;
-  DirDelete(ConfigDir+'temp'+PathDelim+DefSnippetsDir);
-  if UnZip(ConfigDir+cSBAsnippetsZipFile,ConfigDir+'temp') then
+  if EndGet(cSBAsnippetsZipFile,DefSnippetsDir) then
   begin
-    SB.SimpleText:='';
     ShowMessage('The new Snippets library files are ready.');
-    UpdateLists;
   end;
   PB_SBAsnippets.Style:=pbstNormal;
+end;
+
+function TLibraryForm.EndGet(zfile,defdir:string):boolean;
+var ZipMainFolder:String;
+begin
+  result:=false;
+  SB.SimpleText:='Unziping file '+zfile;
+{ TODO : Extraer la ruta principal del zip para ser usado al extraer librerías de diferentes fuentes o ramas (branchs) establecer un criterio: Siempre las librerías deben empaquetarse en el zip dentro de un directorio.}
+  ZipMainFolder:=GetZipMainFolder(ConfigDir+zfile);
+  if UnZip(ConfigDir+zFile,ConfigDir+'temp') then
+  begin
+    SB.SimpleText:='Unziping successful';
+    if DirReplace(ConfigDir+'temp'+PathDelim+ZipMainFolder,ConfigDir+'temp'+PathDelim+DefDir) then
+    begin
+      UpdateLists;
+      SB.SimpleText:='New items loaded from remote repository';
+      if (Trim(Ed_SBARepoZipFile.Text)<>'') and (Ed_SBARepoZipFile.Items.IndexOf(Ed_SBARepoZipFile.Text)=-1) then
+      begin
+        if Ed_SBARepoZipFile.Items.Count=10 then
+        Ed_SBARepoZipFile.Items.Delete(Ed_SBARepoZipFile.Items.Count-1);
+        Ed_SBARepoZipFile.Items.Insert(0,Ed_SBARepoZipFile.Text);
+      end;
+      result:=true;
+    end else SB.SimpleText:='There was an error updating folders';
+  end else SB.SimpleText:='There was an error unziping';
 end;
 
 function TLibraryForm.GetVersion(f:string):string;

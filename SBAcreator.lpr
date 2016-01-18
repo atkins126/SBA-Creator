@@ -7,20 +7,16 @@ uses
   cthreads,
   {$ENDIF}{$ENDIF}
 
+  Interfaces, // this includes the LCL widgetset
+  Forms, HistoryLazarus, MainFormU, synhighlighterverilog, synhighlightersba,
+  versionsupportu, SBAProgContrlrU, AboutFormU, sbasnippetu, configformu,
+  PrjWizU, dwfileU, DebugFormU, SBAProjectU, floatformu, CoresPrjEdFormU,
+  LibraryFormU, UtilsU, sbaprogramu, IniFilesUTF8, exportprjformu, UScaleDPI,
+
   {$IFDEF CODETYPHON}
-  Interfaces, // this includes the LCL widgetset
-  Forms, bs_controls, lz_rtticontrols, HistoryLazarus, pl_bgrauecontrols,
-  MainFormU, synhighlighterverilog, synhighlightersba, uSynEditPopupEdit,
-  versionsupportu, SBAProgContrlrU, AboutFormU, sbasnippetu, configformu,
-  PrjWizU, dwfileU, DebugFormU, SBAProjectU, floatformu, CoresPrjEdFormU,
-  LibraryFormU, UtilsU, sbaprogramu, IniFilesUTF8;
+  bs_controls, lz_rtticontrols, pl_bgrauecontrols
   {$ELSE}
-  Interfaces, // this includes the LCL widgetset
-  Forms, lazcontrols, runtimetypeinfocontrols, HistoryLazarus, uecontrols,
-  MainFormU, synhighlighterverilog, synhighlightersba,
-  versionsupportu, SBAProgContrlrU, AboutFormU, sbasnippetu, configformu,
-  PrjWizU, dwfileU, DebugFormU, SBAProjectU, floatformu, CoresPrjEdFormU,
-  LibraryFormU, UtilsU, sbaprogramu, IniFilesUTF8, exportprjformu
+  lazcontrols, runtimetypeinfocontrols, uecontrols
   {$ENDIF}
   {$IFDEF debug}
   , SysUtils
@@ -48,6 +44,7 @@ begin
   Application.CreateForm(TLibraryForm, LibraryForm);
   Application.CreateForm(TprjWizForm, prjWizForm);
   Application.CreateForm(TExportPrjForm, ExportPrjForm);
+  HighDPI(96);
   Application.Run;
 end.
 

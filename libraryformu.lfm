@@ -1,19 +1,20 @@
 object LibraryForm: TLibraryForm
-  Left = 1016
-  Height = 501
-  Top = 454
+  Left = 1026
+  Height = 550
+  Top = 345
   Width = 543
   BorderStyle = bsDialog
   Caption = 'LibraryForm'
-  ClientHeight = 501
+  ClientHeight = 550
   ClientWidth = 543
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   Position = poMainFormCenter
+  SessionProperties = 'Ed_SBAbase.Text;Ed_SBAlibrary.Text;Ed_SBAprograms.Text;Ed_SBARepoZipFile.Text;Ed_SBAsnippets.Text;Ed_SBARepoZipFile.Items;Ed_SBARepoZipFile.ItemIndex'
   LCLVersion = '1.4.4.0'
   object LibraryPages: TPageControl
     Left = 0
-    Height = 501
+    Height = 550
     Top = 0
     Width = 543
     ActivePage = UpdateRep
@@ -22,12 +23,12 @@ object LibraryForm: TLibraryForm
     TabOrder = 0
     object UpdateRep: TTabSheet
       Caption = 'Update repositories'
-      ClientHeight = 473
+      ClientHeight = 522
       ClientWidth = 535
       object GB_SBAbase: TGroupBox
         Left = 5
         Height = 105
-        Top = 5
+        Top = 53
         Width = 525
         Align = alTop
         BorderSpacing.Around = 5
@@ -50,43 +51,18 @@ object LibraryForm: TLibraryForm
           Width = 503
           AutoSize = False
           Anchors = [akTop, akLeft, akRight]
+          ButtonHint = 'Restore default'
           ButtonWidth = 23
           DirectInput = False
           Glyph.Data = {
-            36040000424D3604000000000000360000002800000010000000100000000100
-            2000000000000004000064000000640000000000000000000000FFFFFFFFFFFF
-            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFFFFFFFFFFFFFFFFFF7F7F7FFBCBCBCFFB4B4B4FFFFFFFFFFFFFFFFFF7A7A
-            7AFF7A7A7AFF7A7A7AFF7A7A7AFF939393FFF7F7F7FFFFFFFFFFFFFFFFFFFFFF
-            FFFFFFFFFFFFE6E6E6FF8A8A8AFF7A7A7AFF828282FFFFFFFFFFFFFFFFFF7A7A
-            7AFF7A7A7AFF7A7A7AFF939393FFF7F7F7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFF7F7F7FF8A8A8AFF7A7A7AFF8A8A8AFFCDCDCDFFFFFFFFFFFFFFFFFF7A7A
-            7AFF7A7A7AFF7A7A7AFF8A8A8AFFF7F7F7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFBCBCBCFF7A7A7AFF8A8A8AFFF7F7F7FFFFFFFFFFFFFFFFFFFFFFFFFF7A7A
-            7AFFACACACFF8A8A8AFF7A7A7AFFBCBCBCFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFF939393FF7A7A7AFFCDCDCDFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFACAC
-            ACFFFFFFFFFFCDCDCDFF7A7A7AFF939393FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFF7A7A7AFF7A7A7AFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFFFFFFFFFF7F7F7FF7A7A7AFF7A7A7AFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFF7A7A7AFF7A7A7AFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFFFFFFFFFFFFFFFFF7A7A7AFF7A7A7AFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFF939393FF7A7A7AFFCDCDCDFFF7F7F7FF939393FFFFFFFFFFFFFFFFFFFFFF
-            FFFFFFFFFFFFCDCDCDFF7A7A7AFF939393FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFBCBCBCFF7A7A7AFF8A8A8AFF939393FF7A7A7AFFFFFFFFFFFFFFFFFFFFFF
-            FFFFF7F7F7FF8A8A8AFF7A7A7AFFBCBCBCFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFF7F7F7FF8A8A8AFF7A7A7AFF7A7A7AFF7A7A7AFFFFFFFFFFFFFFFFFFCDCD
-            CDFF8A8A8AFF7A7A7AFF8A8A8AFFF7F7F7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFF7F7F7FF939393FF7A7A7AFF7A7A7AFF7A7A7AFFFFFFFFFFFFFFFFFF8282
-            82FF7A7A7AFF8A8A8AFFE6E6E6FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF7F7
-            F7FF939393FF7A7A7AFF7A7A7AFF7A7A7AFF7A7A7AFFFFFFFFFFFFFFFFFFB4B4
-            B4FFBCBCBCFFF7F7F7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            F6000000424DF600000000000000760000002800000010000000100000000100
+            0400000000008000000000000000000000001000000010000000000000000000
+            BF0000BF000000BFBF00BF000000BF00BF00BFBF0000C0C0C000808080000000
+            FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00777777777777
+            7777777777777777777777777777777777777777777777777777777777777777
+            7777777777777778477777444447777748777744447777777477774447777777
+            7477774474777777747777477744777748777777777744448777777777777777
+            7777777777777777777777777777777777777777777777777777
           }
           MaxLength = 0
           NumGlyphs = 1
@@ -190,7 +166,7 @@ object LibraryForm: TLibraryForm
       object GB_SBAlibrary: TGroupBox
         Left = 5
         Height = 105
-        Top = 115
+        Top = 163
         Width = 525
         Align = alTop
         BorderSpacing.Around = 5
@@ -213,42 +189,17 @@ object LibraryForm: TLibraryForm
           Width = 503
           AutoSize = False
           Anchors = [akTop, akLeft, akRight]
+          ButtonHint = 'Restore default'
           ButtonWidth = 23
           Glyph.Data = {
-            36040000424D3604000000000000360000002800000010000000100000000100
-            2000000000000004000064000000640000000000000000000000FFFFFFFFFFFF
-            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFFFFFFFFFFFFFFFFFF7F7F7FFBCBCBCFFB4B4B4FFFFFFFFFFFFFFFFFF7A7A
-            7AFF7A7A7AFF7A7A7AFF7A7A7AFF939393FFF7F7F7FFFFFFFFFFFFFFFFFFFFFF
-            FFFFFFFFFFFFE6E6E6FF8A8A8AFF7A7A7AFF828282FFFFFFFFFFFFFFFFFF7A7A
-            7AFF7A7A7AFF7A7A7AFF939393FFF7F7F7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFF7F7F7FF8A8A8AFF7A7A7AFF8A8A8AFFCDCDCDFFFFFFFFFFFFFFFFFF7A7A
-            7AFF7A7A7AFF7A7A7AFF8A8A8AFFF7F7F7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFBCBCBCFF7A7A7AFF8A8A8AFFF7F7F7FFFFFFFFFFFFFFFFFFFFFFFFFF7A7A
-            7AFFACACACFF8A8A8AFF7A7A7AFFBCBCBCFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFF939393FF7A7A7AFFCDCDCDFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFACAC
-            ACFFFFFFFFFFCDCDCDFF7A7A7AFF939393FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFF7A7A7AFF7A7A7AFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFFFFFFFFFF7F7F7FF7A7A7AFF7A7A7AFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFF7A7A7AFF7A7A7AFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFFFFFFFFFFFFFFFFF7A7A7AFF7A7A7AFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFF939393FF7A7A7AFFCDCDCDFFF7F7F7FF939393FFFFFFFFFFFFFFFFFFFFFF
-            FFFFFFFFFFFFCDCDCDFF7A7A7AFF939393FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFBCBCBCFF7A7A7AFF8A8A8AFF939393FF7A7A7AFFFFFFFFFFFFFFFFFFFFFF
-            FFFFF7F7F7FF8A8A8AFF7A7A7AFFBCBCBCFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFF7F7F7FF8A8A8AFF7A7A7AFF7A7A7AFF7A7A7AFFFFFFFFFFFFFFFFFFCDCD
-            CDFF8A8A8AFF7A7A7AFF8A8A8AFFF7F7F7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFF7F7F7FF939393FF7A7A7AFF7A7A7AFF7A7A7AFFFFFFFFFFFFFFFFFF8282
-            82FF7A7A7AFF8A8A8AFFE6E6E6FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF7F7
-            F7FF939393FF7A7A7AFF7A7A7AFF7A7A7AFF7A7A7AFFFFFFFFFFFFFFFFFFB4B4
-            B4FFBCBCBCFFF7F7F7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            F6000000424DF600000000000000760000002800000010000000100000000100
+            0400000000008000000000000000000000001000000010000000000000000000
+            BF0000BF000000BFBF00BF000000BF00BF00BFBF0000C0C0C000808080000000
+            FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00777777777777
+            7777777777777777777777777777777777777777777777777777777777777777
+            7777777777777778477777444447777748777744447777777477774447777777
+            7477774474777777747777477744777748777777777744448777777777777777
+            7777777777777777777777777777777777777777777777777777
           }
           MaxLength = 0
           NumGlyphs = 1
@@ -351,7 +302,7 @@ object LibraryForm: TLibraryForm
       object GB_SBAprograms: TGroupBox
         Left = 5
         Height = 105
-        Top = 225
+        Top = 273
         Width = 525
         Align = alTop
         BorderSpacing.Around = 5
@@ -374,42 +325,17 @@ object LibraryForm: TLibraryForm
           Width = 503
           AutoSize = False
           Anchors = [akTop, akLeft, akRight]
+          ButtonHint = 'Restore default'
           ButtonWidth = 23
           Glyph.Data = {
-            36040000424D3604000000000000360000002800000010000000100000000100
-            2000000000000004000064000000640000000000000000000000FFFFFFFFFFFF
-            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFFFFFFFFFFFFFFFFFF7F7F7FFBCBCBCFFB4B4B4FFFFFFFFFFFFFFFFFF7A7A
-            7AFF7A7A7AFF7A7A7AFF7A7A7AFF939393FFF7F7F7FFFFFFFFFFFFFFFFFFFFFF
-            FFFFFFFFFFFFE6E6E6FF8A8A8AFF7A7A7AFF828282FFFFFFFFFFFFFFFFFF7A7A
-            7AFF7A7A7AFF7A7A7AFF939393FFF7F7F7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFF7F7F7FF8A8A8AFF7A7A7AFF8A8A8AFFCDCDCDFFFFFFFFFFFFFFFFFF7A7A
-            7AFF7A7A7AFF7A7A7AFF8A8A8AFFF7F7F7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFBCBCBCFF7A7A7AFF8A8A8AFFF7F7F7FFFFFFFFFFFFFFFFFFFFFFFFFF7A7A
-            7AFFACACACFF8A8A8AFF7A7A7AFFBCBCBCFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFF939393FF7A7A7AFFCDCDCDFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFACAC
-            ACFFFFFFFFFFCDCDCDFF7A7A7AFF939393FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFF7A7A7AFF7A7A7AFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFFFFFFFFFF7F7F7FF7A7A7AFF7A7A7AFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFF7A7A7AFF7A7A7AFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFFFFFFFFFFFFFFFFF7A7A7AFF7A7A7AFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFF939393FF7A7A7AFFCDCDCDFFF7F7F7FF939393FFFFFFFFFFFFFFFFFFFFFF
-            FFFFFFFFFFFFCDCDCDFF7A7A7AFF939393FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFBCBCBCFF7A7A7AFF8A8A8AFF939393FF7A7A7AFFFFFFFFFFFFFFFFFFFFFF
-            FFFFF7F7F7FF8A8A8AFF7A7A7AFFBCBCBCFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFF7F7F7FF8A8A8AFF7A7A7AFF7A7A7AFF7A7A7AFFFFFFFFFFFFFFFFFFCDCD
-            CDFF8A8A8AFF7A7A7AFF8A8A8AFFF7F7F7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFF7F7F7FF939393FF7A7A7AFF7A7A7AFF7A7A7AFFFFFFFFFFFFFFFFFF8282
-            82FF7A7A7AFF8A8A8AFFE6E6E6FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF7F7
-            F7FF939393FF7A7A7AFF7A7A7AFF7A7A7AFF7A7A7AFFFFFFFFFFFFFFFFFFB4B4
-            B4FFBCBCBCFFF7F7F7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            F6000000424DF600000000000000760000002800000010000000100000000100
+            0400000000008000000000000000000000001000000010000000000000000000
+            BF0000BF000000BFBF00BF000000BF00BF00BFBF0000C0C0C000808080000000
+            FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00777777777777
+            7777777777777777777777777777777777777777777777777777777777777777
+            7777777777777778477777444447777748777744447777777477774447777777
+            7477774474777777747777477744777748777777777744448777777777777777
+            7777777777777777777777777777777777777777777777777777
           }
           MaxLength = 0
           NumGlyphs = 1
@@ -512,7 +438,7 @@ object LibraryForm: TLibraryForm
       object GB_SBAsnippets: TGroupBox
         Left = 5
         Height = 105
-        Top = 335
+        Top = 383
         Width = 525
         Align = alTop
         BorderSpacing.Around = 5
@@ -535,42 +461,17 @@ object LibraryForm: TLibraryForm
           Width = 503
           AutoSize = False
           Anchors = [akTop, akLeft, akRight]
+          ButtonHint = 'Restore default'
           ButtonWidth = 23
           Glyph.Data = {
-            36040000424D3604000000000000360000002800000010000000100000000100
-            2000000000000004000064000000640000000000000000000000FFFFFFFFFFFF
-            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFFFFFFFFFFFFFFFFFF7F7F7FFBCBCBCFFB4B4B4FFFFFFFFFFFFFFFFFF7A7A
-            7AFF7A7A7AFF7A7A7AFF7A7A7AFF939393FFF7F7F7FFFFFFFFFFFFFFFFFFFFFF
-            FFFFFFFFFFFFE6E6E6FF8A8A8AFF7A7A7AFF828282FFFFFFFFFFFFFFFFFF7A7A
-            7AFF7A7A7AFF7A7A7AFF939393FFF7F7F7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFF7F7F7FF8A8A8AFF7A7A7AFF8A8A8AFFCDCDCDFFFFFFFFFFFFFFFFFF7A7A
-            7AFF7A7A7AFF7A7A7AFF8A8A8AFFF7F7F7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFBCBCBCFF7A7A7AFF8A8A8AFFF7F7F7FFFFFFFFFFFFFFFFFFFFFFFFFF7A7A
-            7AFFACACACFF8A8A8AFF7A7A7AFFBCBCBCFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFF939393FF7A7A7AFFCDCDCDFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFACAC
-            ACFFFFFFFFFFCDCDCDFF7A7A7AFF939393FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFF7A7A7AFF7A7A7AFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFFFFFFFFFF7F7F7FF7A7A7AFF7A7A7AFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFF7A7A7AFF7A7A7AFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFFFFFFFFFFFFFFFFF7A7A7AFF7A7A7AFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFF939393FF7A7A7AFFCDCDCDFFF7F7F7FF939393FFFFFFFFFFFFFFFFFFFFFF
-            FFFFFFFFFFFFCDCDCDFF7A7A7AFF939393FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFBCBCBCFF7A7A7AFF8A8A8AFF939393FF7A7A7AFFFFFFFFFFFFFFFFFFFFFF
-            FFFFF7F7F7FF8A8A8AFF7A7A7AFFBCBCBCFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFF7F7F7FF8A8A8AFF7A7A7AFF7A7A7AFF7A7A7AFFFFFFFFFFFFFFFFFFCDCD
-            CDFF8A8A8AFF7A7A7AFF8A8A8AFFF7F7F7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFF7F7F7FF939393FF7A7A7AFF7A7A7AFF7A7A7AFFFFFFFFFFFFFFFFFF8282
-            82FF7A7A7AFF8A8A8AFFE6E6E6FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF7F7
-            F7FF939393FF7A7A7AFF7A7A7AFF7A7A7AFF7A7A7AFFFFFFFFFFFFFFFFFFB4B4
-            B4FFBCBCBCFFF7F7F7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            F6000000424DF600000000000000760000002800000010000000100000000100
+            0400000000008000000000000000000000001000000010000000000000000000
+            BF0000BF000000BFBF00BF000000BF00BF00BFBF0000C0C0C000808080000000
+            FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00777777777777
+            7777777777777777777777777777777777777777777777777777777777777777
+            7777777777777778477777444447777748777744447777777477774447777777
+            7477774474777777747777477744777748777777777744448777777777777777
+            7777777777777777777777777777777777777777777777777777
           }
           MaxLength = 0
           NumGlyphs = 1
@@ -673,24 +574,61 @@ object LibraryForm: TLibraryForm
       object SB: TStatusBar
         Left = 0
         Height = 23
-        Top = 450
+        Top = 499
         Width = 535
         Panels = <>
+      end
+      object Panel7: TPanel
+        Left = 0
+        Height = 48
+        Top = 0
+        Width = 535
+        Align = alTop
+        BevelOuter = bvNone
+        ClientHeight = 48
+        ClientWidth = 535
+        TabOrder = 5
+        object Ed_SBARepoZipFile: TComboBox
+          Left = 191
+          Height = 23
+          Top = 11
+          Width = 327
+          Anchors = [akTop, akLeft, akRight]
+          AutoComplete = True
+          AutoCompleteText = [cbactEnabled, cbactEndOfLineComplete, cbactSearchAscending]
+          AutoDropDown = True
+          AutoSelect = False
+          ItemHeight = 15
+          ItemIndex = 0
+          Items.Strings = (
+            '/archive/master.zip'
+          )
+          TabOrder = 0
+          Text = '/archive/master.zip'
+        end
+        object Label10: TLabel
+          Left = 15
+          Height = 15
+          Top = 15
+          Width = 166
+          Caption = 'Repository Zip Filepath/Branch:'
+          ParentColor = False
+        end
       end
     end
     object IPCores: TTabSheet
       Caption = 'IPCores'
-      ClientHeight = 473
+      ClientHeight = 522
       ClientWidth = 535
       object Panel2: TPanel
         Left = 0
-        Height = 473
+        Height = 522
         Top = 0
         Width = 150
         Align = alLeft
         BevelOuter = bvNone
         Caption = 'Panel2'
-        ClientHeight = 473
+        ClientHeight = 522
         ClientWidth = 150
         TabOrder = 0
         object IPCoresFilter: TListViewFilterEdit
@@ -709,7 +647,7 @@ object LibraryForm: TLibraryForm
         end
         object LV_IPCores: TListView
           Left = 3
-          Height = 441
+          Height = 490
           Top = 29
           Width = 144
           Align = alClient
@@ -717,7 +655,7 @@ object LibraryForm: TLibraryForm
           Columns = <          
             item
               AutoSize = True
-              Caption = 'Snippet'
+              Caption = 'IP Core'
               MinWidth = 100
               Width = 140
             end          
@@ -737,18 +675,18 @@ object LibraryForm: TLibraryForm
       end
       object Panel4: TPanel
         Left = 150
-        Height = 473
+        Height = 522
         Top = 0
         Width = 385
         Align = alClient
         BevelOuter = bvNone
-        ClientHeight = 473
+        ClientHeight = 522
         ClientWidth = 385
         TabOrder = 1
         object Label5: TLabel
           Left = 5
           Height = 18
-          Top = 287
+          Top = 315
           Width = 380
           Align = alTop
           AutoSize = False
@@ -759,8 +697,8 @@ object LibraryForm: TLibraryForm
         end
         object IpCoreDescription: TMemo
           Left = 3
-          Height = 67
-          Top = 305
+          Height = 75
+          Top = 333
           Width = 379
           Align = alTop
           BorderSpacing.Left = 3
@@ -778,7 +716,7 @@ object LibraryForm: TLibraryForm
         end
         object IPCoreImage: TImage
           Left = 3
-          Height = 258
+          Height = 286
           Top = 26
           Width = 379
           AntialiasingMode = amOn
@@ -806,8 +744,9 @@ object LibraryForm: TLibraryForm
         object B_AddtoLibrary: TBitBtn
           Left = 224
           Height = 38
-          Top = 424
+          Top = 471
           Width = 150
+          Anchors = [akLeft, akBottom]
           Caption = 'Add to local library'
           Enabled = False
           Glyph.Data = {
@@ -836,8 +775,9 @@ object LibraryForm: TLibraryForm
         object Label1: TLabel
           Left = 16
           Height = 15
-          Top = 416
+          Top = 463
           Width = 144
+          Anchors = [akLeft, akBottom]
           Caption = 'New IPcore in remote repo.'
           Font.Color = clGreen
           ParentColor = False
@@ -847,8 +787,9 @@ object LibraryForm: TLibraryForm
         object Label4: TLabel
           Left = 16
           Height = 15
-          Top = 448
+          Top = 495
           Width = 129
+          Anchors = [akLeft, akBottom]
           Caption = 'IPCore update in remote'
           Font.Color = clBlue
           ParentColor = False
@@ -858,16 +799,19 @@ object LibraryForm: TLibraryForm
         object Label8: TLabel
           Left = 5
           Height = 15
-          Top = 398
+          Top = 445
           Width = 42
+          Anchors = [akLeft, akBottom]
           Caption = 'Legend:'
           ParentColor = False
+          ParentFont = False
         end
         object Label9: TLabel
           Left = 16
           Height = 15
-          Top = 432
+          Top = 479
           Width = 142
+          Anchors = [akLeft, akBottom]
           Caption = 'New IPCore in local library.'
           Font.Color = clRed
           ParentColor = False
@@ -878,7 +822,7 @@ object LibraryForm: TLibraryForm
           Cursor = crHandPoint
           Left = 3
           Height = 20
-          Top = 375
+          Top = 411
           Width = 379
           Align = alTop
           Alignment = taRightJustify
@@ -887,6 +831,7 @@ object LibraryForm: TLibraryForm
           Constraints.MaxWidth = 380
           Constraints.MinHeight = 20
           Font.Color = clBlue
+          Font.Height = 16
           Font.Style = [fsUnderline]
           OnClick = URL_IpCoreClick
           ParentFont = False
@@ -897,17 +842,17 @@ object LibraryForm: TLibraryForm
     end
     object Programs: TTabSheet
       Caption = 'Programs'
-      ClientHeight = 473
+      ClientHeight = 522
       ClientWidth = 535
       object Panel3: TPanel
         Left = 0
-        Height = 473
+        Height = 522
         Top = 0
         Width = 150
         Align = alLeft
         BevelOuter = bvNone
         Caption = 'Panel3'
-        ClientHeight = 473
+        ClientHeight = 522
         ClientWidth = 150
         TabOrder = 0
         object ProgramsFilter: TListViewFilterEdit
@@ -926,7 +871,7 @@ object LibraryForm: TLibraryForm
         end
         object LV_Programs: TListView
           Left = 3
-          Height = 441
+          Height = 490
           Top = 29
           Width = 144
           Align = alClient
@@ -934,7 +879,7 @@ object LibraryForm: TLibraryForm
           Columns = <          
             item
               AutoSize = True
-              Caption = 'Snippet'
+              Caption = 'Programs'
               MinWidth = 100
               Width = 140
             end          
@@ -954,12 +899,12 @@ object LibraryForm: TLibraryForm
       end
       object Panel5: TPanel
         Left = 150
-        Height = 473
+        Height = 522
         Top = 0
         Width = 385
         Align = alClient
         BevelOuter = bvNone
-        ClientHeight = 473
+        ClientHeight = 522
         ClientWidth = 385
         TabOrder = 1
         object Label6: TLabel
@@ -976,7 +921,7 @@ object LibraryForm: TLibraryForm
         end
         object ProgramDescription: TMemo
           Left = 3
-          Height = 382
+          Height = 430
           Top = 18
           Width = 379
           Align = alTop
@@ -992,10 +937,10 @@ object LibraryForm: TLibraryForm
         end
         object Label2: TLabel
           Left = 5
-          Height = 36
-          Top = 426
-          Width = 83
-          AutoSize = False
+          Height = 15
+          Top = 470
+          Width = 142
+          Anchors = [akLeft, akBottom]
           Caption = 'The Items in green are new'
           Font.Color = clGreen
           ParentColor = False
@@ -1003,10 +948,11 @@ object LibraryForm: TLibraryForm
           WordWrap = True
         end
         object B_AddtoPrograms: TBitBtn
-          Left = 168
+          Left = 222
           Height = 38
-          Top = 424
+          Top = 470
           Width = 160
+          Anchors = [akLeft, akBottom]
           Caption = 'Add to local library'
           Enabled = False
           Glyph.Data = {
@@ -1036,17 +982,17 @@ object LibraryForm: TLibraryForm
     end
     object Snippets: TTabSheet
       Caption = 'Snippets'
-      ClientHeight = 473
+      ClientHeight = 522
       ClientWidth = 535
       object Panel1: TPanel
         Left = 0
-        Height = 473
+        Height = 522
         Top = 0
         Width = 150
         Align = alLeft
         BevelOuter = bvNone
         Caption = 'Panel1'
-        ClientHeight = 473
+        ClientHeight = 522
         ClientWidth = 150
         TabOrder = 0
         object SnippetsFilter: TListViewFilterEdit
@@ -1065,7 +1011,7 @@ object LibraryForm: TLibraryForm
         end
         object LV_Snippets: TListView
           Left = 3
-          Height = 441
+          Height = 490
           Top = 29
           Width = 144
           Align = alClient
@@ -1093,12 +1039,12 @@ object LibraryForm: TLibraryForm
       end
       object Panel6: TPanel
         Left = 150
-        Height = 473
+        Height = 522
         Top = 0
         Width = 385
         Align = alClient
         BevelOuter = bvNone
-        ClientHeight = 473
+        ClientHeight = 522
         ClientWidth = 385
         TabOrder = 1
         object Label7: TLabel
@@ -1115,7 +1061,7 @@ object LibraryForm: TLibraryForm
         end
         object SnippetDescription: TMemo
           Left = 3
-          Height = 382
+          Height = 430
           Top = 18
           Width = 379
           Align = alTop
@@ -1131,10 +1077,10 @@ object LibraryForm: TLibraryForm
         end
         object Label3: TLabel
           Left = 5
-          Height = 36
-          Top = 426
-          Width = 83
-          AutoSize = False
+          Height = 15
+          Top = 470
+          Width = 142
+          Anchors = [akLeft, akBottom]
           Caption = 'The Items in green are new'
           Font.Color = clGreen
           ParentColor = False
@@ -1142,10 +1088,11 @@ object LibraryForm: TLibraryForm
           WordWrap = True
         end
         object B_AddtoSnippets: TBitBtn
-          Left = 168
+          Left = 222
           Height = 38
-          Top = 424
+          Top = 470
           Width = 160
+          Anchors = [akLeft, akBottom]
           Caption = 'Add to local library'
           Enabled = False
           Glyph.Data = {
@@ -1198,5 +1145,10 @@ object LibraryForm: TLibraryForm
     OnTimer = IdleTimer1Timer
     left = 424
     top = 40
+  end
+  object IniPS: TIniPropStorage
+    StoredValues = <>
+    left = 496
+    top = 488
   end
 end

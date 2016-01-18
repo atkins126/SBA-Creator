@@ -3,6 +3,24 @@ SBA System Creator
 What's New
 ==========
 
+v0.3.10.90:
+Improve support for alternative repositories
+Improve default library folder structure
+Minor bug corrections
+
+v0.3.8.84:
+Bug correction in the clipboard import error catching
+
+v0.3.8.82:
+Project wizard support for paste SBA project definitions from clipboard
+
+v0.3.7.80:
+Improve project wizard
+
+v0.3.6.78:
+Improve library management
+Improve editor popup menu
+
 v0.3.5.74:
 Minor bugs correction
 Now the SBA Project can be exported

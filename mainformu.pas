@@ -423,7 +423,7 @@ type
     { public declarations }
     procedure UpdatePrjTree;
     procedure AutoUpdate;
-    procedure ProcessWGET(url, f: string; status: TProcessStatus);
+    function ProcessWGET(url, f: string; status: TProcessStatus): boolean;
   end;
 
 var
@@ -560,7 +560,7 @@ begin
   ActiveEditor.Modified:=false;
   ChangeEditorButtons(ActiveEditor);
   ToolsFileObf.Enabled:=false;
-  if not fileexistsUTF8(wdir+mapfile) then copyfile(application.Location+mapfile,wdir+mapfile);
+  if not fileexistsUTF8(wdir+mapfile) then copyfile(AppDir+mapfile,wdir+mapfile);
   sl:=TStringList.Create;
   om:=TStringList.Create;
   om.LoadFromFile(wdir+mapfile);
@@ -1160,10 +1160,18 @@ begin
 end;
 
 procedure TMainForm.ProjectNewExecute(Sender: TObject);
+var TmpPrj:TSBAPrj;
 begin
-  if CloseProject and (PrjWizForm.NewPrj=mrOk) and
-     SBAPrj.PrepareNewFolder then
-     OpenProject(SBAPrj.location+SBAPrj.name+cSBAPrjExt);
+  if CloseProject then
+  begin
+    TmpPrj:=TSBAPrj.Create;
+    if (PrjWizForm.NewPrj(TmpPrj)=mrOk) and TmpPrj.PrepareNewFolder then
+    begin
+      if assigned(SBAPrj) then freeAndNil(SBAPrj);
+      SBAPrj:=TmpPrj;
+      OpenProject(SBAPrj.location+SBAPrj.name+cSBAPrjExt);
+    end else FreeAndNil(TmpPrj);
+  end;
 end;
 
 procedure TMainForm.ProjectOpenExecute(Sender: TObject);
@@ -1217,6 +1225,7 @@ begin
      S:=SBAPrj.location+SBAPrj.name+'_SBActrlr.vhd';
      OpenInEditor(S);
     end;
+    Log.clear;
   finally
     if assigned(SL) then FreeAndNil(SL);
   end;
@@ -1424,21 +1433,21 @@ begin
   { TODO : Completar la verificación en el caso de LINUX }
   case hdltype of
     vhdl : begin
-      if not fileexistsUTF8(Application.Location+'ghdl\bin\ghdl.exe') then
+      if not fileexistsUTF8(AppDir+'ghdl\bin\ghdl.exe') then
       begin
        showmessage('GHDL tool not found');
        exit;
       end;
     end;
     verilog,systemverilog : begin
-      if not fileexistsUTF8(Application.Location+'iverilog\bin\iverilog.exe') then
+      if not fileexistsUTF8(AppDir+'iverilog\bin\iverilog.exe') then
       begin
        showmessage('Icarus Verilog tool not found');
        exit;
       end;
     end;
     else begin
-      showmessage('Sorry, Syntax check is not implemented yet for this kind of file.');
+      showmessage('Sorry, Syntax check is not yet implemented for this kind of file.');
       exit;
     end;
   end;
@@ -1918,8 +1927,11 @@ end;
 
 
 procedure TMainForm.Process1Terminate(Sender: TObject);
-var PS:TProcessStatus;
+var
+  PS:TProcessStatus;
+  PStr:String;
 begin
+  PStr:='';
   PS:=ProcessStatus;
   ProcessStatus:=Idle;
   if Process1.NumBytesAvailable>0 then Process1ReadData(Sender);
@@ -1928,7 +1940,15 @@ begin
     GetBanner: LoadAnnouncement;
     SyntaxChk: ToolsFileSyntaxCheck.Enabled:=true;
   end;
-infoln('End of process');
+{IFDEF Debug}
+  case PS of
+    Idle:PStr:='Idle';
+    GetBanner:PStr:='GetBanner';
+    SyntaxChk:PStr:='SyntaxChk';
+    Obfusct:PStr:='Obfusct';
+  end;
+  infoln('End of process: '+PStr);
+{ENDIF}
 end;
 
 procedure TMainForm.RW_AddfromCBExecute(Sender: TObject);
@@ -2029,14 +2049,16 @@ begin
   process1.Parameters.Add('/c');
   // Hay un bug en el CMD /C que no interpreta adecuadamente las rutas con paréntesis
   // La inclusión de los dobles "" ayuda en la solución temporal del bug
-  process1.Parameters.Add('""'+Application.Location+'obfuscator.bat" '+wfile+' obfuscated_file.'+s+' '+s+' '+mapfile+'"');
+  process1.Parameters.Add('""'+AppDir+'obfuscator.bat" '+wfile+' obfuscated_file.'+s+' '+s+' '+mapfile+'"');
   {$ENDIF}
   {$IFDEF LINUX}
   process1.Executable:='/bin/bash';
   process1.Parameters.Add('-c');
-  process1.Parameters.Add(Application.Location+'obfuscator.sh '+wfile+' obfuscated_file.'+s+' '+s+' '+mapfile);
+  process1.Parameters.Add(AppDir+'obfuscator.sh '+wfile+' obfuscated_file.'+s+' '+s+' '+mapfile);
   {$ENDIF}
-
+  {$IFDEF DARWIN}
+  ShowMessage('Ofuscation is not yet implemented in Darwin');
+  {$ENDIF}
   Log.Clear;
   process1.Execute;
   while process1.Running do begin sleep(300); application.ProcessMessages; end;
@@ -2211,6 +2233,12 @@ begin
     systemverilog,verilog : checkbat:='checkver.sh';
   end;
   {$ENDIF}
+  {$IFDEF DARWIN}
+  case hdl of
+    vhdl : checkbat:='checkvhdl.sh';
+    systemverilog,verilog : checkbat:='checkver.sh';
+  end;
+  {$ENDIF}
   wpath:=extractfilepath(f);
   fname:=extractfilename(f);
   while ProcessStatus<>Idle do begin sleep(300); application.ProcessMessages; end;
@@ -2222,13 +2250,18 @@ begin
   process1.Parameters.Add('/c');
   // Hay un bug en el CMD /C que no interpreta adecuadamente las rutas con paréntesis
   // La inclusión de los dobles "" ayuda en la solución temporal del bug
-  if path<>'' then process1.Parameters.Add('""'+Application.Location+checkbat+'" '+fname+' "'+path+'""')
-  else process1.Parameters.Add('""'+Application.Location+checkbat+'" '+fname+'"');
+  if path<>'' then process1.Parameters.Add('""'+AppDir+checkbat+'" '+fname+' "'+path+'""')
+  else process1.Parameters.Add('""'+AppDir+checkbat+'" '+fname+'"');
   {$ENDIF}
   {$IFDEF LINUX}
   process1.Executable:='/bin/bash';
   process1.Parameters.Add('-c');
-  process1.Parameters.Add(Application.Location+checkbat+' '+fname+' "'+path+'"');
+  process1.Parameters.Add(AppDir+checkbat+' '+fname+' "'+path+'"');
+  {$ENDIF}
+  {$IFDEF DARWIN}
+  process1.Executable:='sh';
+  process1.Parameters.Add('-c');
+  process1.Parameters.Add(AppDir+checkbat+' '+fname+' "'+path+'"');
   {$ENDIF}
   Log.Clear;
   process1.Execute;
@@ -2244,7 +2277,7 @@ end;
 
 procedure TMainForm.LoadRsvWordsFile;
 begin
-  if not fileexistsutf8(wdir+'rsvwords.txt') then copyfile(application.Location+'rsvwords.txt', wdir+'rsvwords.txt');
+  if not fileexistsutf8(wdir+'rsvwords.txt') then copyfile(AppDir+'rsvwords.txt', wdir+'rsvwords.txt');
   L_RsvWord.Clear;
   L_RsvWord.Items.LoadFromFile(UTF8toSys(wdir+'rsvwords.txt'));
   HighLightReservedWords(L_RsvWord.Items);
@@ -2310,9 +2343,10 @@ begin
   end;
 end;
 
-procedure TMainForm.ProcessWGET(url,f:string;status:TProcessStatus);
+function TMainForm.ProcessWGET(url,f:string;status:TProcessStatus):boolean;
 begin
   { TODO : Encapsular el process en forma programática y enviar todo el procedimiento hacia la unidad de herramientas }
+  result:=false;
   While ProcessStatus<>idle do
   begin
     sleep(300);
@@ -2320,27 +2354,48 @@ begin
   end;
   Log.Clear;
   process1.Parameters.Clear;
+  process1.CurrentDirectory:=ConfigDir;
   {$IFDEF WINDOWS}
-  process1.Executable:=Application.Location+'tools'+PathDelim+'wget.exe';
+  process1.Executable:=AppDir+'tools'+PathDelim+'wget.exe';
   {$ENDIF}
   {$IFDEF LINUX}
   process1.Executable:='wget';
   {$ENDIF}
-  process1.CurrentDirectory:=ConfigDir;
+  {$IFDEF DARWIN}
+  process1.Executable:='curl';
+  {$ENDIF}
   {$IFNDEF DEBUG}
+  {$IFDEF DARWIN}
+  process1.Parameters.Add('-s');
+  {$ELSE}
   process1.Parameters.Add('-q');
   {$ENDIF}
-  process1.Parameters.Add('-O');
+  {$ENDIF}
   {$IFDEF WINDOWS}
+  process1.Parameters.Add('-O');
   process1.Parameters.Add('"'+f+'"');
-  {$ENDIF}
-  {$IFDEF LINUX}
-  process1.Parameters.Add(f);
-  {$ENDIF}
   process1.Parameters.Add('--no-check-certificate');
   process1.Parameters.Add(url);
+  {$ENDIF}
+  {$IFDEF LINUX}
+  process1.Parameters.Add('-O');
+  process1.Parameters.Add(f);
+  process1.Parameters.Add('--no-check-certificate');
+  process1.Parameters.Add(url);
+  {$ENDIF}
+  {$IFDEF DARWIN}
+  process1.Parameters.Add('-L');
+  process1.Parameters.Add(url);
+  process1.Parameters.Add('-o');
+  process1.Parameters.Add(f);
+  {$ENDIF}
   ProcessStatus:=status;
-  process1.Execute;
+  try
+    process1.Execute;
+    result:=true;
+  except
+    On E:Exception do ShowMessage('The web download tool can not be used: '+E.Message);
+  end;
 end;
 
 procedure TMainForm.LoadAnnouncement;

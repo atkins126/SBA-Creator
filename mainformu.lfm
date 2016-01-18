@@ -1,10 +1,10 @@
 object MainForm: TMainForm
-  Left = 1146
-  Height = 771
-  Top = 40
+  Left = 1143
+  Height = 772
+  Top = 42
   Width = 765
   AllowDropFiles = True
-  ClientHeight = 751
+  ClientHeight = 752
   ClientWidth = 765
   Constraints.MinHeight = 690
   Constraints.MinWidth = 765
@@ -20,7 +20,7 @@ object MainForm: TMainForm
   LCLVersion = '1.4.4.0'
   object MainPages: TPageControl
     Left = 0
-    Height = 728
+    Height = 729
     Top = 0
     Width = 765
     ActivePage = SystemTab
@@ -33,7 +33,7 @@ object MainForm: TMainForm
     OnChange = MainPagesChange
     object SystemTab: TTabSheet
       Caption = 'SystemTab'
-      ClientHeight = 700
+      ClientHeight = 701
       ClientWidth = 757
       ImageIndex = 0
       object Shape1: TShape
@@ -1733,7 +1733,7 @@ object MainForm: TMainForm
       object AnnouncementPanel: TPanel
         Left = 0
         Height = 100
-        Top = 600
+        Top = 601
         Width = 757
         Align = alBottom
         BorderSpacing.InnerBorder = 10
@@ -1752,7 +1752,7 @@ object MainForm: TMainForm
           AnimPosition = 1
           AnimRepeat = 0
           AnimRepeatLap = 0
-          AnimSpeed = 3000
+          AnimSpeed = 300
           AnimStatic = False
           AutoSize = False
           Center = True
@@ -1772,7 +1772,7 @@ object MainForm: TMainForm
       end
       object MainPanel: TuETilePanel
         Left = 0
-        Height = 470
+        Height = 471
         Top = 130
         Width = 757
         Align = alClient
@@ -1783,7 +1783,7 @@ object MainForm: TMainForm
         ChildSizing.ShrinkVertical = crsHomogenousSpaceResize
         ChildSizing.Layout = cclLeftToRightThenTopToBottom
         ChildSizing.ControlsPerLine = 4
-        ClientHeight = 470
+        ClientHeight = 471
         ClientWidth = 757
         Font.Color = clWhite
         Font.Height = -16
@@ -38916,25 +38916,25 @@ object MainForm: TMainForm
     end
     object EditorsTab: TTabSheet
       Caption = 'EditorsTab'
-      ClientHeight = 700
+      ClientHeight = 701
       ClientWidth = 757
       ImageIndex = 1
       OnContextPopup = EditorsTabContextPopup
       object P_Editors: TPanel
         Left = 152
-        Height = 700
+        Height = 701
         Top = 0
         Width = 605
         Align = alClient
         BevelOuter = bvNone
-        ClientHeight = 700
+        ClientHeight = 701
         ClientWidth = 605
         TabOrder = 0
         object Splitter1: TSplitter
           Cursor = crVSplit
           Left = 0
           Height = 6
-          Top = 599
+          Top = 600
           Width = 605
           Align = alBottom
           ResizeAnchor = akBottom
@@ -38942,7 +38942,7 @@ object MainForm: TMainForm
         object Log: TListBox
           Left = 0
           Height = 95
-          Top = 605
+          Top = 606
           Width = 605
           Align = alBottom
           ItemHeight = 0
@@ -38954,7 +38954,7 @@ object MainForm: TMainForm
         end
         object EditorPages: TPageControl
           Left = 0
-          Height = 560
+          Height = 561
           Top = 39
           Width = 474
           Align = alClient
@@ -39089,13 +39089,13 @@ object MainForm: TMainForm
         end
         object P_AuxEditor: TPanel
           Left = 474
-          Height = 560
+          Height = 561
           Top = 39
           Width = 131
           Align = alRight
           AutoSize = True
           BevelOuter = bvNone
-          ClientHeight = 560
+          ClientHeight = 561
           ClientWidth = 131
           TabOrder = 3
           object P_Obf: TPanel
@@ -39227,23 +39227,23 @@ object MainForm: TMainForm
       end
       object P_Project: TPanel
         Left = 0
-        Height = 700
+        Height = 701
         Top = 0
         Width = 147
         Align = alLeft
         BevelOuter = bvNone
-        ClientHeight = 700
+        ClientHeight = 701
         ClientWidth = 147
         TabOrder = 1
         Visible = False
         object GroupBox1: TGroupBox
           Left = 0
-          Height = 546
+          Height = 547
           Top = 0
           Width = 147
           Align = alClient
           Caption = 'Project Info'
-          ClientHeight = 526
+          ClientHeight = 527
           ClientWidth = 143
           Color = clWhite
           ParentColor = False
@@ -39307,7 +39307,7 @@ object MainForm: TMainForm
           end
           object PrjTree: TTreeView
             Left = 0
-            Height = 502
+            Height = 503
             Top = 24
             Width = 143
             Align = alClient
@@ -39349,7 +39349,7 @@ object MainForm: TMainForm
         object CoreImage: TImage
           Left = 0
           Height = 148
-          Top = 552
+          Top = 553
           Width = 147
           AntialiasingMode = amOn
           Align = alBottom
@@ -39361,7 +39361,7 @@ object MainForm: TMainForm
           Cursor = crVSplit
           Left = 0
           Height = 6
-          Top = 546
+          Top = 547
           Width = 147
           Align = alBottom
           ParentColor = False
@@ -39370,7 +39370,7 @@ object MainForm: TMainForm
       end
       object Splitter4: TSplitter
         Left = 147
-        Height = 700
+        Height = 701
         Top = 0
         Width = 5
         ParentColor = False
@@ -39378,7 +39378,7 @@ object MainForm: TMainForm
     end
     object ProgEditTab: TTabSheet
       Caption = 'ProgEditTab'
-      ClientHeight = 700
+      ClientHeight = 619
       ClientWidth = 757
       object ToolBar3: TToolBar
         Left = 0
@@ -39510,17 +39510,17 @@ object MainForm: TMainForm
       end
       object P_AuxProg: TPanel
         Left = 627
-        Height = 661
+        Height = 580
         Top = 39
         Width = 130
         Align = alRight
         BevelOuter = bvNone
-        ClientHeight = 661
+        ClientHeight = 580
         ClientWidth = 130
         TabOrder = 1
         object P_CodeSnippets: TGroupBox
           Left = 2
-          Height = 364
+          Height = 290
           Top = 294
           Width = 126
           Align = alClient
@@ -39528,7 +39528,7 @@ object MainForm: TMainForm
           BorderSpacing.Right = 2
           BorderSpacing.Bottom = 3
           Caption = 'Code snippets'
-          ClientHeight = 344
+          ClientHeight = 270
           ClientWidth = 122
           Constraints.MinHeight = 290
           TabOrder = 0
@@ -39546,7 +39546,7 @@ object MainForm: TMainForm
           end
           object SnippetDescription: TMemo
             Left = 3
-            Height = 138
+            Height = 64
             Top = 170
             Width = 116
             Align = alClient
@@ -39567,7 +39567,7 @@ object MainForm: TMainForm
           object B_InsertSnipped: TBitBtn
             Left = 3
             Height = 30
-            Top = 311
+            Top = 237
             Width = 116
             Align = alBottom
             BorderSpacing.Around = 3
@@ -39810,7 +39810,7 @@ object MainForm: TMainForm
       end
       inline SynEdit_X: TSynEdit
         Left = 0
-        Height = 661
+        Height = 580
         Top = 39
         Width = 627
         Align = alClient
@@ -40852,7 +40852,7 @@ object MainForm: TMainForm
   object StatusBar1: TStatusBar
     Left = 0
     Height = 23
-    Top = 728
+    Top = 729
     Width = 765
     Panels = <    
       item
