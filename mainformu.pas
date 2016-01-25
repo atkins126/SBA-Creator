@@ -11,11 +11,11 @@ uses
   SynPluginSyncroEdit, SynHighlighterIni, FileUtil,
   ListViewFilterEdit, strutils, Clipbrd, IniPropStorage, StdActns,
   BGRASpriteAnimation, uebutton, uETilePanel, ulazautoupdate, versionsupportu,
-  types, lclintf, LCLType, HistoryFiles, StringListUTF8;
+  types, lclintf, LCLType, HistoryFiles, IniFilesUTF8, StringListUTF8;
 
 type
   thdltype=(vhdl, prg, verilog, systemverilog, ini, other);
-  tProcessStatus=(Idle,GetBanner, SyntaxChk, Obfusct);
+  tProcessStatus=(Idle,GetBanner, SyntaxChk, Obfusct,exePlugIn);
 
   { TMainForm }
 
@@ -26,6 +26,7 @@ type
     EditBlkIndent: TAction;
     B_SBAAdress: TBitBtn;
     IdleTimer1: TIdleTimer;
+    header_text: TImage;
     LazAutoUpdate1: TLazAutoUpdate;
     L_SBAAddress: TListBox;
     MenuItem56: TMenuItem;
@@ -56,13 +57,13 @@ type
     MI_AddInstance: TMenuItem;
     ProjectEditCoreList: TAction;
     EditInsertDate: TAction;
-    BitBtn1: TuEButton;
-    BitBtn2: TuEButton;
-    BitBtn3: TuEButton;
-    BitBtn4: TuEButton;
-    B_SBAForum: TuEButton;
-    B_SBAWebsite: TuEButton;
-    B_SBALibrary: TuEButton;
+    btn_new_project: TuEButton;
+    btn_open_project: TuEButton;
+    btn_prj_editor: TuEButton;
+    btn_prj_prgeditor: TuEButton;
+    btn_sba_forum: TuEButton;
+    btn_sba_website: TuEButton;
+    btn_sba_library: TuEButton;
     EditorHistory: THistoryFiles;
     CoreImage: TImage;
     MenuItem26: TMenuItem;
@@ -161,7 +162,7 @@ type
     EditPaste: TEditPaste;
     EditSelectAll: TEditSelectAll;
     EditUndo: TEditUndo;
-    Image1: TImage;
+    header_bg: TImage;
     LogoImage: TImage;
     MenuItem18: TMenuItem;
     MenuItem21: TMenuItem;
@@ -293,16 +294,17 @@ type
     ToolButton6: TToolButton;
     ToolButton7: TToolButton;
     ToolButton9: TToolButton;
-    B_Config: TuEButton;
+    btn_config: TuEButton;
     PrjTree: TTreeView;
+    procedure btn_plgClick(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure B_SBAAdressClick(Sender: TObject);
-    procedure B_SBAForumClick(Sender: TObject);
-    procedure B_ConfigClick(Sender: TObject);
-    procedure B_SBALibraryClick(Sender: TObject);
+    procedure btn_sba_forumClick(Sender: TObject);
+    procedure btn_configClick(Sender: TObject);
+    procedure btn_sba_libraryClick(Sender: TObject);
     procedure B_InsertSnippedClick(Sender: TObject);
     procedure B_SBALabelsClick(Sender: TObject);
-    procedure B_SBAWebsiteClick(Sender: TObject);
+    procedure btn_sba_websiteClick(Sender: TObject);
     procedure EditBlkCommentExecute(Sender: TObject);
     procedure EditBlkIndentExecute(Sender: TObject);
     procedure EditBlkUncommentExecute(Sender: TObject);
@@ -396,6 +398,7 @@ type
     function CloseEditor(T: TTabSheet): boolean;
     function CloseProject: boolean;
     procedure CreateEditor(var ActiveTab: TTabSheet);
+    procedure CreatePlugInsBtns;
     function CreateTempFile(fn:string): boolean;
     procedure DetectSBAController;
     function EditorEmpty(Editor: TSynEdit): boolean;
@@ -403,6 +406,7 @@ type
     procedure GotoEditor;
     procedure hdltypeselect(const ts: string);
     procedure HighLightReservedWords(List:TStrings);
+    function LoadTheme(thmdir: string): boolean;
     procedure NewEditorPage;
     procedure Ofuscate(f: string; hdl: thdltype);
     function Open(f: String): boolean;
@@ -472,6 +476,68 @@ begin
   begin
     FreeAndNil(ActiveEditor);
     FreeAndNil(T);
+  end;
+end;
+
+function TMainForm.LoadTheme(thmdir:string):boolean;
+var
+  i:integer;
+  b:TuEButton;
+begin
+  result:=false;
+  try
+    header_bg.Picture.LoadFromFile(thmdir+'header_bg.jpg');
+    MainPanel.LoadFromFile(thmdir+'background.jpg');
+  except
+    ShowMessage('There was an error loading theme in: '+thmdir);
+    exit;
+  end;
+  for i:=0 to MainPanel.ControlCount-1 do if MainPanel.Controls[i].ClassNameIs('TuEButton') then
+  begin
+    b:=TuEButton(MainPanel.Controls[i]);
+    b.LoadImageFromFile(thmdir+'btn_bg.png');
+    if FileExistsUtf8(thmdir+b.Name+'.png') then b.LoadGlyphFromFile(thmdir+b.Name+'.png');
+  end;
+  result:=true;
+end;
+
+procedure TMainForm.CreatePlugInsBtns;
+var
+  PlugBtn:TuEButton;
+  PlgDir:String;
+  PlgIni:TIniFile;
+  i:Integer;
+
+  procedure createbtn(n:integer);
+  var s:string;
+  begin
+    s:=inttostr(n);
+    PlugBtn:=TuEButton.Create(MainForm);
+    PlugBtn.Parent:=MainPanel;
+    PlugBtn.Name:='btn_plg_'+s;
+    PlugBtn.Constraints.MinHeight:=btn_new_project.Constraints.MinHeight;
+    PlugBtn.Constraints.MinWidth:=btn_new_project.Constraints.MinWidth;
+    PlugBtn.TextShadowColor:=btn_new_project.TextShadowColor;
+    PlugBtn.Layout:=blGlyphTop;
+    PLugBtn.ParentColor:=false;
+    PLugBtn.Color:=btn_new_project.Color;
+    PlugBtn.Caption:=PlgIni.ReadString('MAIN','Name','PlugIn #'+s);
+    if FileExistsUtf8(PlgDir+PlgIni.ReadString('MAIN','Glyph','')) then PlugBtn.LoadGlyphFromFile(PlgDir+PlgIni.ReadString('MAIN','Glyph',''));
+    PlugBtn.Tag:=n;
+    PlugBtn.OnClick:=@btn_plgClick;
+  end;
+
+begin
+  if PlugInsList.Count=0 then exit;
+  for i:=0 to PlugInsList.Count-1 do
+  begin
+    try
+      PlgIni:=TIniFile.Create(PlugInsList.ValueFromIndex[i]);
+      PlgDir:=ExtractFilePath(PlugInsList.ValueFromIndex[i]);
+      createbtn(i);
+    finally
+      If assigned(PlgIni) then FreeAndNil(PlgIni);
+    end;
   end;
 end;
 
@@ -607,7 +673,7 @@ begin
   ExtractSBALabels;
 end;
 
-procedure TMainForm.B_SBAWebsiteClick(Sender: TObject);
+procedure TMainForm.btn_sba_websiteClick(Sender: TObject);
 begin
   OpenUrl('http://sba.accesus.com');
 end;
@@ -729,20 +795,40 @@ begin
   end;
 end;
 
-procedure TMainForm.B_SBALibraryClick(Sender: TObject);
+procedure TMainForm.btn_sba_libraryClick(Sender: TObject);
 begin
   ShowLibraryForm;
   SBASnippet.UpdateSnippetsFilter(SnippetsFilter);
 end;
 
-procedure TMainForm.B_ConfigClick(Sender: TObject);
+procedure TMainForm.btn_configClick(Sender: TObject);
 begin
   if ConfigForm.ShowModal=mrOk then SetConfigValues;
 end;
 
-procedure TMainForm.B_SBAForumClick(Sender: TObject);
+procedure TMainForm.btn_sba_forumClick(Sender: TObject);
 begin
   OpenURL('http://sbaforum.accesus.com/');
+end;
+
+procedure TMainForm.btn_plgClick(Sender: TObject);
+var
+  PlgIni:TIniFile;
+  b:TuEButton;
+begin
+  if Sender.ClassName<>'TuEButton' then exit;
+  b:=TuEButton(Sender);
+  try
+    PlgIni:=TIniFile.Create(PlugInsList.ValueFromIndex[b.Tag]);
+    while ProcessStatus<>Idle do begin sleep(300); application.ProcessMessages; end;
+    ProcessStatus:=exePlugIn;
+    Process1.Parameters.Clear;
+    Process1.Executable:=ExtractFilePath(PlugInsList.ValueFromIndex[b.Tag])+PlgIni.ReadString('MAIN','Cmd','');
+    Process1.Parameters.Add(PlgIni.ReadString('MAIN','Param',''));
+    If FileExistsUTF8(Process1.Executable) then Process1.Execute;
+  finally
+    If assigned(PlgIni) then FreeAndNil(PlgIni);
+  end;
 end;
 
 procedure TMainForm.Button1Click(Sender: TObject);
@@ -915,8 +1001,8 @@ procedure TMainForm.MainPanelResize(Sender: TObject);
 var v:integer;
 begin
   //v:=max(128,max((MainPanel.Width-(50*5)) div 4,(MainPanel.Height-(50*3)) div 4));
-  //BitBtn1.Constraints.MinHeight:=v;
-  //BitBtn1.Constraints.MinWidth:=v;
+  //btn_new_project.Constraints.MinHeight:=v;
+  //btn_new_project.Constraints.MinWidth:=v;
 end;
 
 procedure TMainForm.PrjHistoryClickHistoryItem(Sender: TObject;
@@ -1512,6 +1598,7 @@ begin
       IpCoreList:=TStringList.Create;
       SnippetsList:=TStringList.Create;
       ProgramsList:=TStringList.Create;
+      PlugInsList:=TStringList.Create;
       UpdateLists;
       SetupPrgTmplMenu;
       SynSBASyn:= TSynSBASyn.Create(Self);
@@ -1523,6 +1610,8 @@ begin
       EditorHistory.IniFile:=ConfigDir+'FileHistory.ini';
       PrjHistory.IniFile:=ConfigDir+'FileHistory.ini';
       EditorHistory.UpdateParentMenu;
+      CreatePlugInsBtns;
+      LoadTheme(ConfigDir+'theme'+PathDelim);
       infoln('All FormCreate tasks finished');
     end;
   end;
@@ -1569,12 +1658,27 @@ begin
     //
     M:=TMenuItem.Create(PrgTemplates);
     M.OnClick:=@SBA_InsertTemplateExecute;
+    M.Caption:=cSBAStartUSignals;
+    PrgTemplates.Items.Add(M);
+    //
+    M:=TMenuItem.Create(PrgTemplates);
+    M.OnClick:=@SBA_InsertTemplateExecute;
+    M.Caption:=cSBAStartUProc;
+    PrgTemplates.Items.Add(M);
+    //
+    M:=TMenuItem.Create(PrgTemplates);
+    M.OnClick:=@SBA_InsertTemplateExecute;
     M.Caption:=cSBAStartProgUReg;
     PrgTemplates.Items.Add(M);
     //
     M:=TMenuItem.Create(PrgTemplates);
     M.OnClick:=@SBA_InsertTemplateExecute;
     M.Caption:=cSBAStartUserProg;
+    PrgTemplates.Items.Add(M);
+    //
+    M:=TMenuItem.Create(PrgTemplates);
+    M.OnClick:=@SBA_InsertTemplateExecute;
+    M.Caption:=cSBAStartUStatements;
     PrgTemplates.Items.Add(M);
     //
     M:=TMenuItem.Create(PrgTemplates);
@@ -1606,6 +1710,7 @@ end;
 
 procedure TMainForm.FormDestroy(Sender: TObject);
 begin
+  if Assigned(PlugInsList) then FreeandNil(PlugInsList);
   if Assigned(ProgramsList) then FreeandNil(ProgramsList);
   if Assigned(SnippetsList) then FreeandNil(SnippetsList);
   if Assigned(IPCoreList) then FreeandNil(IPCoreList);
@@ -1724,11 +1829,29 @@ begin
     end;
 
     undostrings.Assign(SourceEditor.Lines);
+    if not SBAContrlrProg.CpyUSignals(SynEdit_X.Lines, SourceEditor.Lines) then
+    begin
+      SourceEditor.ClearAll;
+      SourceEditor.Lines.Assign(undostrings);
+      ShowMessage('Error Copying User signals and type definitions: Please verify "'+cSBAStartUSignals+'" signatures.');
+      Exit;
+    end;
+
+    undostrings.Assign(SourceEditor.Lines);
+    if not SBAContrlrProg.CpyUProcedures(SynEdit_X.Lines, SourceEditor.Lines) then
+    begin
+      SourceEditor.ClearAll;
+      SourceEditor.Lines.Assign(undostrings);
+      ShowMessage('Error Copying User Procedures and Functions: Please verify "'+cSBAStartUProc+'" signatures.');
+      Exit;
+    end;
+
+    undostrings.Assign(SourceEditor.Lines);
     if not SBAContrlrProg.CpyProgUReg(SynEdit_X.Lines, SourceEditor.Lines) then
     begin
       SourceEditor.ClearAll;
       SourceEditor.Lines.Assign(undostrings);
-      ShowMessage('Error Copying user registers: Please verify "'+cSBAStartProgUReg+'" signatures.');
+      ShowMessage('Error Copying user registers and constants: Please verify "'+cSBAStartProgUReg+'" signatures.');
       Exit;
     end;
 
@@ -1758,6 +1881,16 @@ begin
       ShowMessage('Error Copying User program to controller: Please verify "'+cSBAStartUserProg+'" signatures.');
       Exit;
     end;
+
+    undostrings.Assign(SourceEditor.Lines);
+    if not SBAContrlrProg.CpyUStatements(SynEdit_X.Lines, SourceEditor.Lines) then
+    begin
+      SourceEditor.ClearAll;
+      SourceEditor.Lines.Assign(undostrings);
+      ShowMessage('Error Copying User Statements: Please verify "'+cSBAStartUStatements+'" signatures.');
+      Exit;
+    end;
+
     SynEdit_X.Modified:=false;
     MainPages.ActivePage:=EditorsTab;
     EditorPagesChange(nil);

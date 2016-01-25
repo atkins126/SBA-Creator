@@ -54,6 +54,8 @@ const  //based in sub dirs in zip file from Github
   cSBAprogramsZipFile='sbaprograms.zip';
   cSBAsnippetsZipFile='sbasnippets.zip';
   cSBARepoZipFile='/archive/master.zip';
+  cSBAthemeZipFile='theme.zip';
+  cSBApluginsZipFile='plugins.zip';
 
 var
   ConfigForm: TConfigForm;
@@ -62,7 +64,7 @@ var
   EditorFontSize:integer;
   LibAsReadOnly:Boolean;
   AutoOpenPrjF:Boolean;
-  IpCoreList,SnippetsList,ProgramsList:Tstringlist;
+  IpCoreList,SnippetsList,ProgramsList,PlugInsList:Tstringlist;
 
 function GetConfigValues:boolean;
 function SetConfigValues:boolean;
@@ -79,6 +81,7 @@ begin
   GetAllFileNames(LibraryDir,'*.ini',IpCoreList);
   GetAllFileNames(SnippetsDir,'*.snp',SnippetsList);
   GetAllFileNames(ProgramsDir,'*.prg',ProgramsList);
+  GetAllFileNamesAndPaths(ConfigDir+'plugins','*.ini',PlugInsList);
 end;
 
 function GetConfigValues: boolean;
@@ -161,8 +164,25 @@ begin
       Exit;
     end;
 
+  InfoLn('ThemeDir: '+ConfigDir+'theme');
+  If Not DirectoryExistsUTF8(ConfigDir+'theme') then
+    If not Unzip(AppDir+cSBAthemeZipFile,ConfigDir+'theme') then
+    begin
+      ShowMessage('Failed to create theme folder: '+ConfigDir+'theme');
+      Exit;
+    end;
+
+  InfoLn('PlugInsDir: '+ConfigDir+'plugins');
+  If Not DirectoryExistsUTF8(ConfigDir+'plugins') then
+    If not Unzip(AppDir+cSBApluginsZipFile,ConfigDir+'plugins') then
+    begin
+      ShowMessage('Failed to create plugins folder: '+ConfigDir+'plugins');
+      Exit;
+    end;
+
   if not FileExistsUTF8(ConfigDir+cSBADefaultPrgTemplate) then CopyFile(AppDir+cSBADefaultPrgTemplate,ConfigDir+cSBADefaultPrgTemplate);
   if not FileExistsUTF8(ConfigDir+'newbanner.gif') then CopyFile(AppDir+'banner.gif',ConfigDir+'newbanner.gif');
+
   result:=true;
 end;
 

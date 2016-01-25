@@ -12,12 +12,18 @@ const
   cSBALblSignatr='-- /L:';
   cSBAStartProgDetails='-- /SBA: Program Details';
   cSBAEndProgDetails='-- /SBA: End';
+  cSBAStartUSignals='-- /SBA: User Signals';
+  cSBAEndUSignals='-- /SBA: End';
+  cSBAStartUProc='-- /SBA: User Procedures';
+  cSBAEndUProc='-- /SBA: End';
   cSBAStartProgUReg='-- /SBA: User Registers';
   cSBAEndProgUReg='-- /SBA: End';
   cSBAStartProgLabels='-- /SBA: Label constants';
   cSBAEndProgLabels='-- /SBA: End';
   cSBAStartUserProg='-- /SBA: User Program';
   cSBAEndUserProg='-- /SBA: End';
+  cSBAStartUStatements='-- /SBA: User Statements';
+  cSBAEndUStatements='-- /SBA: End';
   cSBASTPTypedef='subtype STP_type';
   cSBADefaultPrgName='NewProgram.prg';
   cSBADefaultPrgTemplate='PrgTemplate.prg';
@@ -35,12 +41,16 @@ type
     constructor Create;
     function DetectSBAContrlr(Src:TStrings):boolean;
     function ExtractSBALbls(Prog, Labels: TStrings): boolean;
+    function CpyUBlock(Prog,Src:TStrings;BStart,BEnd:String):boolean;
     function CpySrc2Prog(Src,Prog:TStrings):boolean;
     function CpyProgDetails(Prog,Src:TStrings):boolean;
+    function CpyUSignals(Prog,Src:TStrings):boolean;
+    function CpyUProcedures(Prog, Src: TStrings): boolean;
     function CpyProgUReg(Prog,Src:TStrings):boolean;
     function GenLblandProgFormat(Prog, Labels: TStrings): boolean;
     function CpyProgLabels(Labels,Src:TStrings):boolean;
     function CpyUserProg(Prog,Src:TStrings):boolean;
+    function CpyUStatements(Prog, Src: TStrings): boolean;
     property Filename : String read FFilename write SetFilename;
   end;
 
@@ -81,34 +91,38 @@ function TSBAContrlrProg.CpySrc2Prog(Src, Prog: TStrings): boolean;
 var
   i,startpos,iPos:integer;
 
+  function CopyS2P(BStart,BEnd:string):boolean;
+  var i:integer;
+  begin
+    result:=false;
+    startpos:=GetPosList(BStart,Src);
+    if startpos>=0 then
+    begin
+      For i:=startpos to Src.Count-1 do
+      begin
+        Prog.Append(Src[i]);
+        if (pos(BEnd,Src[i])<>0) then break;
+      end;
+      if (pos(BEnd,Src[i])=0) then exit;
+      Prog.Append('');
+      result:=true;
+    end;
+  end;
+
 begin
   Result:=false;
 
   // Program Details
-  startpos:=GetPosList(cSBAStartProgDetails,Src);
-  if startpos>=0 then
-  begin
-    For i:=startpos to Src.Count-1 do
-    begin
-      Prog.Append(Src[i]);
-      if (pos(cSBAEndProgDetails,Src[i])<>0) then break;
-    end;
-    if (pos(cSBAEndProgDetails,Src[i])=0) then exit;
-    Prog.Append('');
-  end;
+  if not CopyS2P(cSBAStartProgDetails,cSBAEndProgDetails) then exit;
 
-  // User Registers and Constants
-  startpos:=GetPosList(cSBAStartProgUReg,Src);
-  if startpos>=0 then
-  begin
-    For i:=startpos to Src.Count-1 do
-    begin
-      Prog.Append(Src[i]);
-      if (pos(cSBAEndProgUReg,Src[i])<>0) then break;
-    end;
-    if (pos(cSBAEndProgUReg,Src[i])=0) then exit;
-    Prog.Append('');
-  end;
+  // User Signals (Optional)
+  CopyS2P(cSBAStartUSignals,cSBAEndUSignals);
+
+  // User Main process Procedures and Functions (Optional)
+  CopyS2P(cSBAStartUProc,cSBAEndUProc);
+
+  // Program User Registers and Constants
+  if not CopyS2P(cSBAStartProgUReg,cSBAEndProgUReg) then exit;
 
   //Check for labels block
   startpos:=GetPosList(cSBAStartProgLabels,Src);
@@ -134,35 +148,83 @@ begin
         Prog.Append(Src[i])
       else
         Prog.Append(Copy(Src[i],iPos,1000));
-      if (pos(cSBAEndUserProg,Src[i])<>0) then
-      begin
-        Result:=true;
-        break;
-      end;
+      if (pos(cSBAEndUserProg,Src[i])<>0) then break;
     end;
+    if (pos(cSBAEndUserProg,Src[i])=0) then exit;
+    Prog.Append('');
   end;
+
+  // User Statements (Optional)
+  CopyS2P(cSBAStartUStatements,cSBAEndUStatements);
+
+  Result:=true;
 end;
 
-function TSBAContrlrProg.CpyProgDetails(Prog, Src: TStrings): boolean;
+// Copy User block code from Prog to Src
+// BStart and BEnd are start and end block signature constants
+function TSBAContrlrProg.CpyUBlock(Prog, Src: TStrings; BStart, BEnd: String
+  ): boolean;
 var
   i,sblock,eblock,iPos:integer;
 
 begin
   Result:=false;
-  iPos:=GetPosList(cSBAStartProgDetails,Src);
-  if iPos=-1 then exit;
 
-  while (pos(cSBAEndProgDetails,Src[iPos])=0) and (Src.Count>iPos) do Src.Delete(iPos);
-  if (pos(cSBAEndProgDetails,Src[iPos])=0) then exit else Src.Delete(iPos);
+  iPos:=GetPosList(BStart,Src);
+  if iPos=-1 then
+  begin
+    Result:=GetPosList(BStart,Prog)=-1;
+    exit;
+  end;
 
-  sblock:=GetPosList(cSBAStartProgDetails,Prog);
-  eblock:=GetPosList(cSBAEndProgDetails,Prog,sblock);
+  while (pos(BEnd,Src[iPos])=0) and (Src.Count>iPos) do Src.Delete(iPos);
+  if (pos(BEnd,Src[iPos])=0) then exit else Src.Delete(iPos);
+
+  sblock:=GetPosList(BStart,Prog);
+  eblock:=GetPosList(BEnd,Prog,sblock);
   if (sblock=-1) or (eblock=-1) then exit;
 
   For i:=eblock downto sblock do Src.Insert(iPos,Prog[i]);
   Result:=true;
 end;
 
+// Copy Program Details
+function TSBAContrlrProg.CpyProgDetails(Prog, Src: TStrings): boolean;
+begin
+  Result:=CpyUBlock(Prog,Src,cSBAStartProgDetails,cSBAEndProgDetails);
+end;
+
+// Copy User signals and type definitions
+function TSBAContrlrProg.CpyUSignals(Prog, Src: TStrings): boolean;
+begin
+  Result:=CpyUBlock(Prog,Src,cSBAStartUSignals,cSBAEndUSignals);
+end;
+
+// Copy Main process user prodecures and functions
+function TSBAContrlrProg.CpyUProcedures(Prog, Src: TStrings): boolean;
+begin
+  Result:=CpyUBlock(Prog,Src,cSBAStartUProc,cSBAEndUProc);
+end;
+
+//Copy User registers and constants
+function TSBAContrlrProg.CpyProgUReg(Prog, Src: TStrings): boolean;
+begin
+  Result:=CpyUBlock(Prog,Src,cSBAStartProgUReg,cSBAEndProgUReg);
+end;
+
+// Copy User program
+function TSBAContrlrProg.CpyUserProg(Prog, Src: TStrings): boolean;
+begin
+  Result:=CpyUBlock(Prog,Src,cSBAStartUserProg,cSBAEndUserProg);
+end;
+
+//Copy User Statements
+function TSBAContrlrProg.CpyUStatements(Prog, Src: TStrings): boolean;
+begin
+  Result:=CpyUBlock(Prog,Src,cSBAStartUStatements,cSBAEndUStatements);
+end;
+
+// Set Controller file name
 procedure TSBAContrlrProg.SetFilename(AValue: String);
 begin
   if FFilename=AValue then Exit;
@@ -172,27 +234,6 @@ end;
 constructor TSBAContrlrProg.Create;
 begin
   FFileName:=cSBADefaultPrgName;
-end;
-
-
-function TSBAContrlrProg.CpyProgUReg(Prog, Src: TStrings): boolean;
-var
-  i,sblock,eblock,iPos:integer;
-
-begin
-  Result:=false;
-  iPos:=GetPosList(cSBAStartProgUReg,Src);
-  if iPos=-1 then exit;
-
-  while (pos(cSBAEndProgUReg,Src[iPos])=0) and (Src.Count>iPos) do Src.Delete(iPos);
-  if (pos(cSBAEndProgUReg,Src[iPos])=0) then exit else Src.Delete(iPos);
-
-  sblock:=GetPosList(cSBAStartProgUReg,Prog);
-  eblock:=GetPosList(cSBAEndProgUReg,Prog,sblock);
-  if (sblock=-1) or (eblock=-1) then exit;
-
-  For i:=eblock downto sblock do Src.Insert(iPos,Prog[i]);
-  Result:=true;
 end;
 
 // Extract Labels and complete steps numbers
@@ -228,6 +269,7 @@ begin
   Result:=pos(cSBAEndUserProg,Prog[i])<>0;
 end;
 
+// Copy program labels
 function TSBAContrlrProg.CpyProgLabels(Labels, Src: TStrings): boolean;
 var i,iPos:integer;
 begin
@@ -243,28 +285,6 @@ begin
   if iPos<>-1 then Src[iPos]:='  subtype STP_type is integer range 0 to '+inttostr(STPCnt)+';';
   Result:=true;
 end;
-
-// Copy User program
-function TSBAContrlrProg.CpyUserProg(Prog, Src: TStrings): boolean;
-var
-  i,sblock,eblock,iPos:integer;
-
-begin
-  Result:=false;
-  iPos:=GetPosList(cSBAStartUserProg,Src);
-  if iPos=-1 then exit;
-
-  while (pos(cSBAEndUserProg,Src[iPos])=0) and (Src.Count>iPos) do Src.Delete(iPos);
-  if (pos(cSBAEndUserProg,Src[iPos])=0) then exit else Src.Delete(iPos);
-
-  sblock:=GetPosList(cSBAStartUserProg,Prog);
-  eblock:=GetPosList(cSBAEndUserProg,Prog,sblock);
-  if (sblock=-1) or (eblock=-1) then exit;
-
-  For i:=eblock downto sblock do Src.Insert(iPos,Prog[i]);
-  Result:=true;
-end;
-
 
 end.
 
