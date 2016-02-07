@@ -21,8 +21,8 @@
       <UseVersionInfo Value="True"/>
       <AutoIncrementBuild Value="True"/>
       <MinorVersionNr Value="3"/>
-      <RevisionNr Value="11"/>
-      <BuildNr Value="92"/>
+      <RevisionNr Value="12"/>
+      <BuildNr Value="6"/>
       <Attributes pvaPreRelease="True"/>
       <StringTable CompanyName="uE Peru" FileDescription="SBA System Creator" LegalCopyright="(c) Miguel A. Risco-Castillo" ProductVersion="Public Beta"/>
     </VersionInfo>
@@ -190,6 +190,7 @@
       <Unit7>
         <Filename Value="sbasnippetu.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="SBASnippetU"/>
       </Unit7>
       <Unit8>
         <Filename Value="sbaprojectu.pas"/>

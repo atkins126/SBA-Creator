@@ -14,6 +14,7 @@ type
 
   TFloatForm = class(TForm)
     Image: TImage;
+    L_Title: TLabel;
     L_CoreName: TLabel;
     L_Description: TLabel;
     Panel1: TPanel;
@@ -60,9 +61,11 @@ begin
   TimerShow.Enabled:=false;
   try
     Image.Picture.LoadFromFile(LibraryDir+L_CoreName.caption+PathDelim+'image.png');
+    L_Title.Caption:='';
     L_Description.Caption:='';
     try
       Ini:=TINIFile.Create(LibraryDir+L_CoreName.caption+PathDelim+L_CoreName.caption+'.ini');
+      L_Title.Caption:=Ini.ReadString('MAIN','Title','');
       L_Description.Caption:=Ini.ReadString('MAIN','Description','');
     finally
       Ini.free;

@@ -7,7 +7,7 @@ interface
 uses
   Classes, SysUtils, Dialogs, Controls,
   fpjson, jsonparser, fileutil, strutils,UtilsU,
-  IniFilesUTF8,StringListUTF8;
+  IniFilesUTF8,StringListUTF8, math;
 
 const
   cSBADefaultPrjName='NewProject';
@@ -86,7 +86,7 @@ implementation
 
 uses DebugFormU, ConfigFormU, CoresPrjEdFormU;
 
-var AM:integer=0; //Address Map
+var AM:integer; //Address Map pointer
 
 { TSBAPrj }
 
@@ -382,6 +382,7 @@ begin
     STL:=TStringList.Create;
     AML:=TStringList.Create;
     DCL:=TStringList.Create;
+    AM:=0;
     for i:=0 to libcores.Count-1 do LoadIPData(libcores[i],IP,IPS,STL,AML,DCL);
     for i:=0 to ports.count-1 do
     begin
@@ -472,7 +473,7 @@ var
   INI:TINIFile;
   GL,CL,AL,IL,SL:TStringList;
   f:String;
-  i:integer;
+  i,j,k:integer;
   DIL,DOL,ADL:Integer;
   WE,STB:boolean;
 begin
@@ -492,19 +493,12 @@ begin
     if fileexistsUTF8(f) then
     try
       INI:=TIniFile.Create(f);
-      if INI.ReadInteger('Config','SBAPORTS',1)=1 then
-      begin
-        WE:=INI.ReadInteger('Config','WE',1)=1;
-        STB:=INI.ReadInteger('Config','STB',1)=1;
-        ADL:=INI.ReadInteger('Config','ADRLINES',1);
-        DIL:=INI.ReadInteger('Config','DATILINES',16);
-        DOL:=INI.ReadInteger('Config','DATOLINES',16);
-      end else
-      begin
-        ADL:=1;
-        DIL:=16;
-        DOL:=16;
-      end;
+      f:=IfThen(INI.ReadInteger('Config','SBAPORTS',1)>1,'0');
+      WE:=INI.ReadInteger('Config','WE'+f,1)=1;
+      STB:=INI.ReadInteger('Config','STB'+f,1)=1;
+      ADL:=INI.ReadInteger('Config','ADR'+f+'LINES',1);
+      DIL:=INI.ReadInteger('Config','DATI'+f+'LINES',16);
+      DOL:=INI.ReadInteger('Config','DATO'+f+'LINES',16);
       INI.ReadSectionRaw('Generic',GL);
       INI.ReadSectionRaw('Address',AL);
       INI.ReadSectionRaw('Interface',IL);
@@ -526,11 +520,11 @@ begin
     IP.add('    -------------');
     IP.add('    RST_I => RSTi,');
     IP.add('    CLK_I => CLKi,');
-    if STB then   IP.add('    STB_I => STBi(STB_'+instance+'),');
-    if ADL>0 then IP.add('    ADR_I => ADRi,');
-    if WE then    IP.add('    WE_I  => WEi,');
-    if DIL>0 then IP.add('    DAT_I => DATOi,');
-    if DOL>0 then IP.add('    DAT_O => DAT_'+instance+',');
+    if STB then   IP.add('    STB'+f+'_I => STBi(STB_'+instance+'),');
+    if ADL>0 then IP.add('    ADR'+f+'_I => ADRi,');
+    if WE then    IP.add('    WE'+f+'_I  => WEi,');
+    if DIL>0 then IP.add('    DAT'+f+'_I => DATOi,');
+    if DOL>0 then IP.add('    DAT'+f+'_O => DAT_'+instance+',');
     IP.add('    -------------');
     if IL.Count>0 then for i:=0 to IL.Count-1 do
       IP.add(Format('    %:-8s=> %s',[IL.names[i],IL.ValueFromIndex[i]])+
@@ -548,25 +542,38 @@ begin
       IP.add('');
       IPS.add(Format('  Signal %:-11s: DATA_type;',['DAT_'+instance]));
     end;
-    if STB then STL.add(Format('  Constant %:-11s: integer := %d;',['STB_'+instance,STL.count]));
+    if STB or (DOL>0) then STL.add(Format('  Constant %:-11s: integer := %d;',['STB_'+instance,STL.count]));
     if SL.Count>0 then for i:=0 to SL.Count-1 do
       IPS.add(Format('  Signal %:-11s: %s;',[SL.names[i],SL.ValueFromIndex[i]]));
     if AL.Count>0 then
     begin
-      f:=AL.ValueFromIndex[0];
-      if (f<>'X') then
+      // AL Lista de direcciones y offsets
+      // ADL Ancho del bus de direcciones
+      // AM Siguiente dirección disponible en el mapa de direcciones
+      // AML y DCL salidas para el config y el decoder
+      j:=trunc(intpower(2,ADL));
+      if (AM mod j)>0 then
       begin
-        ADL:=StrtoIntDef(f,0);
-        if (ADL=0) and ((AM mod 2)=1) then inc(AM);
+        AM:= ((AM div j)+1)*j
       end;
       for i:=0 to AL.Count-1 do
       begin
-        AML.Add(Format('  Constant %:-11s: integer := %d;',[AL.Names[i],AM]));
-        DCL.Add(Format('     When %:-20s=> STBi <= stb(%s);',[AL.Names[i],'STB_'+instance]));
-        inc(AM);
-  { TODO : Calcular AM en base al offset dado en la sección Address del INI }
-  {     When RAM0 to RAM0+255        => STBi <= stb(STB_RAM0);  -- RAM0, (x000 - x0FF)}
+        f:=AL.ValueFromIndex[i];
+        if (Pos(',',f)=0) and (Pos(':',f)=0) then  //Is not a range value
+        begin
+          j:=StrtoIntDef(f,0);
+          k:=0;
+          f:=AL.Names[i];
+        end else //Is a range from,to
+        begin
+          j:=StrtoIntDef(ExtractDelimited(1,f,[',',':']),0);
+          k:=StrtoIntDef(ExtractDelimited(2,f,[',',':']),0);
+          f:=AL.Names[i]+' to '+AL.Names[i]+'+'+InttoStr(k);
+        end;
+        AML.Add(Format('  Constant %:-11s: integer := %d;',[AL.Names[i],AM+j]));
+        DCL.Add(Format('     When %-20s=> STBi <= stb(%-15s-- %-10s = %d',[f,'STB_'+instance+');',AL.Names[i],AM+j]));
       end;
+      AM:=IfThen(k=0,AM+j+1,AM+k+1);
     end;
   finally
     if assigned(SL) then FreeAndNil(SL);

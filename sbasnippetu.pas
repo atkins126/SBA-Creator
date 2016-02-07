@@ -21,6 +21,9 @@ type
     FDescription: Tstrings;
     FRegisters: Tstrings;
     FFilter:TListViewFilterEdit;
+    FUProc: TStrings;
+    FUSignals: Tstrings;
+    FUStatements: TStrings;
     procedure AddItemToSnippetsFilter(FileIterator: TFileIterator);
     procedure Setfilename(AValue: string);
   public
@@ -29,18 +32,24 @@ type
     function CpyProgDetails(Prog,Src:TStrings):boolean;
     function CpyUserProg(Prog,Src:TStrings):boolean;
     function CpyProgUReg(Prog,Src:TStrings):boolean;
+    function CpyUSignals(Prog,Src:TStrings):boolean;
+    function CpyUProcedures(Prog, Src: TStrings): boolean;
+    function CpyUStatements(Prog, Src: TStrings): boolean;
     procedure UpdateSnippetsFilter(Filter: TListViewFilterEdit);
   published
     property Filename:string read Ffilename write Setfilename;
     property Code:Tstrings read Fcode;
     property Description: Tstrings read Fdescription;
     property Registers: Tstrings read FRegisters;
+    property USignals:Tstrings read FUSignals;
+    property UProc:TStrings read FUProc;
+    property UStatements:TStrings read FUStatements;
   end;
 
 
 implementation
 
-uses ConfigFormU,UtilsU;
+uses ConfigFormU,UtilsU, DebugFormU;
 
 { TSBASnippet }
 
@@ -56,6 +65,9 @@ begin
   CpyUserProg(FData,FCode);
   CpyProgDetails(FData,FDescription);
   CpyProgUReg(FData,FRegisters);
+  CpyUSignals(FData,FUSignals);
+  CpyUProcedures(FData,FUProc);
+  CpyUStatements(FData,FUStatements);
   Ffilename:=AValue;
 end;
 
@@ -67,6 +79,9 @@ begin
   FCode:=TStringList.Create;
   FDescription:=TStringList.Create;
   FRegisters:=TStringList.Create;
+  FUProc:= TStringList.Create;
+  FUSignals:= TstringList.Create;
+  FUStatements:= TStringList.Create;
 end;
 
 destructor TSBASnippet.Destroy;
@@ -75,6 +90,9 @@ begin
   if assigned(FCode) then FreeAndNil(FCode);
   if assigned(FRegisters) then FreeAndNil(FRegisters);
   if assigned(FDescription) then FreeAndNil(FDescription);
+  if assigned(FUProc) then FreeAndNil(FUProc);
+  if assigned(FUSignals) then FreeAndNil(FUSignals);
+  if assigned(FUStatements) then FreeAndNil(FUStatements);
   inherited Destroy;
 end;
 
@@ -112,6 +130,45 @@ begin
   Src.Add(cSBAStartProgUReg);
   Src.Add(cSBAEndProgUReg);
   Result:=inherited CpyProgUReg(Prog, Src);
+  If Src.Count>1 then
+  begin
+    Src.Delete(0);
+    Src.Delete(Src.Count-1);
+  end;
+end;
+
+function TSBASnippet.CpyUSignals(Prog, Src: TStrings): boolean;
+begin
+  Src.Clear;
+  Src.Add(cSBAStartUSignals);
+  Src.Add(cSBAEndUSignals);
+  Result:=inherited CpyUSignals(Prog, Src);
+  If Src.Count>1 then
+  begin
+    Src.Delete(0);
+    Src.Delete(Src.Count-1);
+  end;
+end;
+
+function TSBASnippet.CpyUProcedures(Prog, Src: TStrings): boolean;
+begin
+  Src.Clear;
+  Src.Add(cSBAStartUProc);
+  Src.Add(cSBAEndUProc);
+  Result:=inherited CpyUProcedures(Prog, Src);
+  If Src.Count>1 then
+  begin
+    Src.Delete(0);
+    Src.Delete(Src.Count-1);
+  end;
+end;
+
+function TSBASnippet.CpyUStatements(Prog, Src: TStrings): boolean;
+begin
+  Src.Clear;
+  Src.Add(cSBAStartUStatements);
+  Src.Add(cSBAEndUStatements);
+  Result:=inherited CpyUStatements(Prog, Src);
   If Src.Count>1 then
   begin
     Src.Delete(0);

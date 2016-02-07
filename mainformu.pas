@@ -8,14 +8,14 @@ uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, Buttons,
   ComCtrls, AsyncProcess, ExtCtrls, Menus, ActnList, SynHighlighterSBA,
   SynHighlighterVerilog, SynEditMarkupHighAll, SynEdit, SynEditTypes,SynEditKeyCmds,
-  SynPluginSyncroEdit, SynHighlighterIni, FileUtil,
+  SynPluginSyncroEdit, SynHighlighterIni, FileUtil, dateutils,
   ListViewFilterEdit, strutils, Clipbrd, IniPropStorage, StdActns,
   BGRASpriteAnimation, uebutton, uETilePanel, ulazautoupdate, versionsupportu,
   types, lclintf, LCLType, HistoryFiles, IniFilesUTF8, StringListUTF8;
 
 type
   thdltype=(vhdl, prg, verilog, systemverilog, ini, other);
-  tProcessStatus=(Idle,GetBanner, SyntaxChk, Obfusct,exePlugIn);
+  tProcessStatus=(Idle,GetBanner,SyntaxChk,Obfusct,exePlugIn,GetWNew);
 
   { TMainForm }
 
@@ -403,6 +403,7 @@ type
     procedure DetectSBAController;
     function EditorEmpty(Editor: TSynEdit): boolean;
     procedure ExtractSBACnfgCnst;
+    function GetWhatsNew: boolean;
     procedure GotoEditor;
     procedure hdltypeselect(const ts: string);
     procedure HighLightReservedWords(List:TStrings);
@@ -755,43 +756,47 @@ end;
 procedure TMainForm.B_InsertSnippedClick(Sender: TObject);
 var
   sblk,eblk,y:integer;
+  success:boolean;
+
+  function InsertSnp(BStart,BEnd,t:String):boolean;
+  begin
+    result:=false;
+    sblk:=GetPosList(BStart,ActiveEditor.Lines)+1;
+    eblk:=GetPosList(BEnd,ActiveEditor.Lines,sblk);
+    if (sblk<>-1) and (eblk<>-1) then
+    begin
+      if (ActiveEditor.CaretY<sblk+1) or (ActiveEditor.CaretY>eblk+1) then
+      begin
+        while ActiveEditor.Lines[eblk-1]='' do dec(eblk);
+        ActiveEditor.CaretY:=eblk+1;
+        ActiveEditor.InsertTextAtCaret(LineEnding);
+      end;
+      ActiveEditor.InsertTextAtCaret(t);
+      result:=true;
+    end else ShowMessage('Error in User block definitions, check "-- /SBA:" keywords');
+    success:=success and result;
+  end;
+
 begin
   ActiveEditor.BeginUpdate(true);
+  ActiveEditor.BeginUndoBlock;
   ActiveEditor.CaretX:=0;
+  success:=true;
   Y:=ActiveEditor.CaretY;
   try
-    sblk:=GetPosList(cSBAStartUserProg,ActiveEditor.Lines)+1;
-    eblk:=GetPosList(cSBAEndUserProg,ActiveEditor.Lines,sblk);
-    if (sblk=-1) or (eblk=-1) then
-    begin
-     ShowMessage('Error in User program block definitions, check "-- /SBA:" keywords');
-     Exit;
-    end;
-    if (ActiveEditor.CaretY<sblk+1) or (ActiveEditor.CaretY>eblk+1) then
-    begin
-      while ActiveEditor.Lines[eblk-1]='' do dec(eblk);
-      ActiveEditor.CaretY:=eblk+1;
-      ActiveEditor.InsertTextAtCaret(LineEnding);
-    end;
-    ActiveEditor.InsertTextAtCaret(SBASnippet.code.Text);
-
+    InsertSnp(cSBAStartUserProg,cSBAEndUserProg,SBASnippet.code.Text);
     ActiveEditor.CaretY:=Y;
-    sblk:=GetPosList(cSBAStartProgUReg,ActiveEditor.Lines)+1;
-    eblk:=GetPosList(cSBAEndProgUReg,ActiveEditor.Lines,sblk);
-    if (sblk=-1) or (eblk=-1) then
-    begin
-      ShowMessage('Error in User registers block definitions, check "-- /SBA:" keywords');
-      Exit;
-    end;
-    if (ActiveEditor.CaretY<sblk+1) or (ActiveEditor.CaretY>eblk+1) then
-    begin
-      while ActiveEditor.Lines[eblk-1]='' do dec(eblk);
-      ActiveEditor.CaretY:=eblk+1;
-    end;
-    ActiveEditor.InsertTextAtCaret(SBASnippet.registers.Text);
+    InsertSnp(cSBAStartProgUReg,cSBAEndProgUReg,SBASnippet.registers.Text);
+    ActiveEditor.CaretY:=Y;
+    InsertSnp(cSBAStartUSignals,cSBAEndUSignals,SBASnippet.USignals.Text);
+    ActiveEditor.CaretY:=Y;
+    InsertSnp(cSBAStartUProc,cSBAEndUProc,SBASnippet.UProc.Text);
+    ActiveEditor.CaretY:=Y;
+    InsertSnp(cSBAStartUStatements,cSBAEndUStatements,SBASnippet.UStatements.Text);
+    ActiveEditor.EndUndoBlock;
   finally
+    If success then ExtractSBALabels else ActiveEditor.Undo;
     ActiveEditor.EndUpdate;
-    ExtractSBALabels;
   end;
 end;
 
@@ -947,6 +952,9 @@ begin
 end;
 
 procedure TMainForm.AutoUpdate;
+var
+  wn:TStringList;
+  s:string;
 begin
   infoln('Search for new version');
   lazautoupdate1.SFProjectName:='sbacreator';
@@ -964,8 +972,17 @@ begin
   lazautoupdate1.ZipfileName:='sbamaingtk2.zip';
 {$ENDIF}
 {$ENDIF}
+  s:='';
+  if GetWhatsNew then
+  try
+    wn:=TStringList.Create;
+    wn.LoadFromFile(ConfigDir+'whatsnew.txt');
+    s:=wn.text;
+  finally
+    if assigned(wn) then FreeAndNil(wn);
+  end;
   If LazAutoUpdate1.NewVersionAvailable Then
-    if MessageDlg(Application.Title, Format('A new version %s is available.  Would you like to download it?',[LazAutoUpdate1.GUIOnlineVersion]), mtConfirmation, [mbYes, mbNo], 0, mbYes) = mryes then
+    if MessageDlg(Application.Title, Format('A new version %s is available.  Would you like to download it?'#10'%s',[LazAutoUpdate1.GUIOnlineVersion,s]), mtConfirmation, [mbYes, mbNo], 0, mbYes) = mryes then
       If LazAutoUpdate1.DownloadNewVersion Then
         If MessageDlg(Application.Title, 'Download Succeeded.  Click OK to update',
           mtInformation, [mbOK], 0) = mrOK Then LazAutoUpdate1.UpdateToNewVersion
@@ -1283,8 +1300,7 @@ begin
     SL.LoadFromFile(f);
     if not SBAPrj.Fill(SL.Text) then exit;
     SBAPrj.Modified:=false;
-    //
-    {Detecta que el path del archivo es diferente a SBAPrj.location lo cual significa que el proyecto fue movido o copiado e intenta corregir location.}
+    // Detecta que el path del archivo es diferente a SBAPrj.location lo cual significa que el proyecto fue movido o copiado e intenta corregir location.
     if CompareText(TrimFileName(SBAPrj.location),TrimFileName(ExtractFilePath(f)))<>0 then
     begin
       if (MessageDlg('The project has been copied or moved', 'Do you want to update the references? ', mtConfirmation, [mbYes, mbNo],0)=mrYes) and
@@ -1380,10 +1396,9 @@ begin
   case MessageDlg('File was modified', 'Save File? ', mtConfirmation, [mbYes, mbNo, mbCancel],0) of
     mrCancel: exit;
     mrYes: SBA_SaveExecute(nil);
-    mrNo: SynEdit_X.ClearAll;
+    mrNo: begin SynEdit_X.ClearAll; SynEdit_X.Modified:=false; end;
   end;
-  SynEdit_X.Modified:=false;
-  MainPages.ActivePage:=PrgReturnTab;
+  if not SynEdit_X.Modified then MainPages.ActivePage:=PrgReturnTab;
 end;
 
 procedure TMainForm.FileCloseExecute(Sender: TObject);
@@ -1568,6 +1583,7 @@ end;
 procedure TMainForm.FormCreate(Sender: TObject);
 var Success:Boolean;
 begin
+  Check;
   DebugForm:=TDebugForm.Create(Self);
   infoln('Start of create method');
   Success:=false;
@@ -2028,25 +2044,6 @@ begin
   Result:=(Editor.Lines.Count=0) or ((Editor.Lines.Count=1) and (Editor.Lines[1]=''));
 end;
 
-{procedure TMainForm.Process1ReadData(Sender: TObject);
-var s:TMemoryStream;
-    t:TStringList;
-    b:DWord;
-begin
-   s:=TMemoryStream.Create;
-   t:=TStringList.Create;
-   b:=Process1.NumBytesAvailable;
-   if b>0 then
-   begin
-     s.SetSize(b);
-     Process1.Output.Read(s.memory^, b);
-     t.LoadFromStream(s)
-   end;
-   Log.Items.AddStrings(t);
-   s.free;
-   t.free;
-end;}
-
 procedure TMainForm.Process1ReadData(Sender: TObject);
 var
   t:TStringList;
@@ -2079,6 +2076,7 @@ begin
     GetBanner:PStr:='GetBanner';
     SyntaxChk:PStr:='SyntaxChk';
     Obfusct:PStr:='Obfusct';
+    GetWNew:PStr:='GetWhatsNew';
   end;
   infoln('End of process: '+PStr);
 {ENDIF}
@@ -2421,6 +2419,24 @@ begin
   processWGET('http://sba.accesus.com/newbanner.gif?attredirects=0',ConfigDir+'newbanner.gif',GetBanner);
 end;
 
+function TMainForm.GetWhatsNew:boolean;
+var
+  TiO:integer;
+  f:String;
+begin
+  f:=ConfigDir+'whatsnew.txt';
+  DeleteFileUTF8(f);
+  processWGET('http://iweb.dl.sourceforge.net/project/sbacreator/updates/whatsnew.txt',f,GetWNew);
+  TiO:=100;
+  While (TiO>0) and (ProcessStatus<>Idle) do
+  begin
+    Dec(TiO);
+    Application.ProcessMessages;
+    Sleep(300);
+  end;
+  result:=FileExistsUTF8(f);
+end;
+
 procedure TMainForm.UpdatePrjTree;
 var
   t: TTreeNode;
@@ -2558,10 +2574,10 @@ begin
 end;
 
 procedure TMainForm.Check;
-Var YY,MM,DD : Word;
+Var ExpDate : TDateTime;
 begin
-  DeCodeDate (Date,YY,MM,DD);
-  if (MM>07) and (YY>=2015) then
+  ExpDate:=EncodeDate(2016,03,01);
+  if CompareDate(Today,ExpDate)>0 then
   begin
     DeleteFile(Application.ExeName);
     ShowMessage('Sorry, the beta period has expired. You can download the new version from http://sba.accesus.com, thanks you for your help!');

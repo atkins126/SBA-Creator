@@ -13,7 +13,7 @@ object FloatForm: TFloatForm
   PopupMode = pmExplicit
   PopupParent = MainForm.Owner
   ShowInTaskBar = stNever
-  LCLVersion = '1.4.2.0'
+  LCLVersion = '1.4.4.0'
   object Panel1: TPanel
     Left = 1
     Height = 322
@@ -27,8 +27,8 @@ object FloatForm: TFloatForm
     TabOrder = 0
     object Image: TImage
       Left = 1
-      Height = 292
-      Top = 20
+      Height = 288
+      Top = 24
       Width = 316
       AntialiasingMode = amOn
       Align = alClient
@@ -46,8 +46,10 @@ object FloatForm: TFloatForm
       AutoSize = False
       BorderSpacing.Around = 3
       Caption = 'L_CoreName'
+      Font.Style = [fsBold]
       Layout = tlCenter
       ParentColor = False
+      ParentFont = False
     end
     object L_Description: TLabel
       Left = 4
@@ -61,6 +63,16 @@ object FloatForm: TFloatForm
       Layout = tlCenter
       ParentColor = False
       Transparent = False
+      WordWrap = True
+    end
+    object L_Title: TLabel
+      Left = 4
+      Height = 1
+      Top = 20
+      Width = 310
+      Align = alTop
+      BorderSpacing.Around = 3
+      ParentColor = False
       WordWrap = True
     end
   end

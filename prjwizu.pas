@@ -149,7 +149,6 @@ Procedure TprjWizForm.ProgressPanelUpdate;
   end;
 
 begin
-  { TODO : Linux BUG, Mejorar la apariencia de los indicadores de pasos (steps) usar paneles en vez de TToggle }
   StepDisable(TB_Start);
   StepDisable(TB_Step2);
   StepDisable(TB_Step3);
@@ -543,6 +542,7 @@ end;
 procedure TprjWizForm.Ed_TopInterfaceCheckboxToggled(sender: TObject; aCol,
   aRow: Integer; aState: TCheckboxState);
 begin
+  //Asegura que los valores msb y lsb de un bus sean diferente a ''
   with Ed_TopInterface do if Cells[2,aRow]='1' then
   begin
     Cells[3,aRow]:='0';
