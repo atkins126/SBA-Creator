@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Dialogs, Controls,
-  fpjson, jsonparser, fileutil, strutils,UtilsU,
+  fpjson, jsonparser, fileutil, LazFileUtils, strutils,
   IniFilesUTF8,StringListUTF8, math;
 
 const
@@ -84,7 +84,7 @@ var
 
 implementation
 
-uses DebugFormU, ConfigFormU, CoresPrjEdFormU;
+uses DebugFormU, ConfigFormU, CoresPrjEdFormU, UtilsU;
 
 var AM:integer; //Address Map pointer
 

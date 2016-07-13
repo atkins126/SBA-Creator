@@ -5,7 +5,7 @@ unit StringListUTF8;
 interface
 
 uses
-  Classes, SysUtils, FileUtil;
+  Classes, SysUtils, FileUtil, LazUTF8;
 
 type
   ParentClass = TStringList;

@@ -26,7 +26,8 @@ const
   cSBAEndUStatements='-- /SBA: End';
   cSBASTPTypedef='subtype STP_type';
   cSBADefaultPrgName='NewProgram.prg';
-  cSBADefaultPrgTemplate='PrgTemplate.prg';
+  cSBADefPrgTemplate='PrgTemplate.prg';
+  cSBAAdvPrgTemplate='AdvPrgTemplate.prg';
 
 type
 
@@ -116,10 +117,10 @@ begin
   if not CopyS2P(cSBAStartProgDetails,cSBAEndProgDetails) then exit;
 
   // User Signals (Optional)
-  CopyS2P(cSBAStartUSignals,cSBAEndUSignals);
+  if CtrlAdvMode then CopyS2P(cSBAStartUSignals,cSBAEndUSignals);
 
   // User Main process Procedures and Functions (Optional)
-  CopyS2P(cSBAStartUProc,cSBAEndUProc);
+  if CtrlAdvMode then CopyS2P(cSBAStartUProc,cSBAEndUProc);
 
   // Program User Registers and Constants
   if not CopyS2P(cSBAStartProgUReg,cSBAEndProgUReg) then exit;
@@ -155,7 +156,7 @@ begin
   end;
 
   // User Statements (Optional)
-  CopyS2P(cSBAStartUStatements,cSBAEndUStatements);
+  if CtrlAdvMode then CopyS2P(cSBAStartUStatements,cSBAEndUStatements);
 
   Result:=true;
 end;

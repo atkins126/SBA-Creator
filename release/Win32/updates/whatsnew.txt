@@ -1,34 +1,61 @@
-SBA System Creator 
 
 What's New
 ==========
+v0.3.15.20
+- Reset expiration date of beta test
+- Sourceforge break auto updates, this feature is now under test with
+  different server
+- Configuration value for advanced SBA Controller editing capabilities
+- Minor bug corrections
+
+v0.3.14.14
+- Code Reformat now open a new editor tab with the results.
+
+v0.3.13.12
+- Reset expiration date of beta test
+- Complete support for vhdl editor templates, use template.ini
+  in config folder to add your own templates
+
+v0.3.12.06
+- Better support for themes
+- IPCore float form now also show IPCore Title
+- Auto update feature now show what is new before to update
+- Improve auto calculations of SBA memory map
+- Better support for multi sba bus cores
+
+v0.3.11.92
+- Initial support for themes and plugins
+- Base files updates (use SBA Library form to update base files)
+- More extensible and configurable SBA Controller (only in new projects)
+- User signals, procedures and Staments
 
 v0.3.10.90:
-Improve support for alternative repositories
-Improve default library folder structure
-Minor bug corrections
+- Improve support for alternative repositories
+- Improve default library folder structure
+- Minor bug corrections
 
 v0.3.8.84:
-Bug correction in the clipboard import error catching
+- Bug correction in the clipboard import error catching
 
 v0.3.8.82:
-Project wizard support for paste SBA project definitions from clipboard
+- Project wizard support for paste SBA project definitions from clipboard
 
 v0.3.7.80:
-Improve project wizard
+- Improve project wizard
 
 v0.3.6.78:
-Improve library management
-Improve editor popup menu
+- Improve library management
+- Improve editor popup menu
 
 v0.3.5.74:
-Minor bugs correction
-Now the SBA Project can be exported
+- Minor bugs correction
+- Now the SBA Project can be exported
 
 v0.3.4.70:
-Improve debug messages and autoupdate
-In project wizard the option to create project folder now is checked for default
-Preliminary implementation for export project
+- Improve debug messages and autoupdate
+- In project wizard the option to create project folder now is checked
+  for default
+- Preliminary implementation for export project
 
 v0.3.2.65:
-Improve support for automatic uptates
+- Improve support for automatic updates

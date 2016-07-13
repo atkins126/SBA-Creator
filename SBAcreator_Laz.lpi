@@ -21,8 +21,8 @@
       <UseVersionInfo Value="True"/>
       <AutoIncrementBuild Value="True"/>
       <MinorVersionNr Value="3"/>
-      <RevisionNr Value="12"/>
-      <BuildNr Value="6"/>
+      <RevisionNr Value="15"/>
+      <BuildNr Value="20"/>
       <Attributes pvaPreRelease="True"/>
       <StringTable CompanyName="uE Peru" FileDescription="SBA System Creator" LegalCopyright="(c) Miguel A. Risco-Castillo" ProductVersion="Public Beta"/>
     </VersionInfo>
@@ -33,11 +33,11 @@
           <Version Value="11"/>
           <PathDelim Value="\"/>
           <Target>
-            <Filename Value="C:\Temporal\SBAcreator\SBAcreator"/>
+            <Filename Value="$Env(PRJOUT)\SBAcreator\SBAcreator"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <UnitOutputDirectory Value="C:\Temp\lazarus\lib\$(TargetCPU)-$(TargetOS)"/>
+            <UnitOutputDirectory Value="$Env(TEMP)\lazarus\lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
             <SyntaxOptions>
@@ -66,6 +66,9 @@
           </Linking>
           <Other>
             <CustomOptions Value="-dDEBUG"/>
+            <OtherDefines Count="1">
+              <Define0 Value="DEBUG"/>
+            </OtherDefines>
           </Other>
         </CompilerOptions>
       </Item2>
@@ -74,11 +77,11 @@
           <Version Value="11"/>
           <PathDelim Value="\"/>
           <Target>
-            <Filename Value="C:\Temporal\SBAcreator\SBAcreator"/>
+            <Filename Value="$Env(PRJOUT)\SBAcreator\SBAcreator"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <UnitOutputDirectory Value="C:\Temp\lazarus\lib\$(TargetCPU)-$(TargetOS)"/>
+            <UnitOutputDirectory Value="$Env(TEMP)\lazarus\lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <CodeGeneration>
             <SmartLinkUnit Value="True"/>
@@ -98,6 +101,11 @@
               </Win32>
             </Options>
           </Linking>
+          <Other>
+            <OtherDefines Count="1">
+              <Define0 Value="DEBUG"/>
+            </OtherDefines>
+          </Other>
         </CompilerOptions>
       </Item3>
     </BuildModes>
@@ -111,45 +119,42 @@
         <FormatVersion Value="1"/>
       </local>
     </RunParams>
-    <RequiredPackages Count="12">
+    <RequiredPackages Count="11">
       <Item1>
         <PackageName Value="LazUtils"/>
       </Item1>
       <Item2>
-        <PackageName Value="lazupdate"/>
+        <PackageName Value="RunTimeTypeInfoControls"/>
       </Item2>
       <Item3>
-        <PackageName Value="RunTimeTypeInfoControls"/>
+        <PackageName Value="LazControls"/>
       </Item3>
       <Item4>
-        <PackageName Value="LazControls"/>
+        <PackageName Value="HistoryLazarus"/>
       </Item4>
       <Item5>
-        <PackageName Value="HistoryLazarus"/>
+        <PackageName Value="bgracontrols"/>
       </Item5>
       <Item6>
-        <PackageName Value="bgracontrols"/>
+        <PackageName Value="laz_synapse"/>
       </Item6>
       <Item7>
-        <PackageName Value="laz_synapse"/>
+        <PackageName Value="uEControls"/>
       </Item7>
       <Item8>
-        <PackageName Value="uEControls"/>
+        <PackageName Value="IDEIntf"/>
       </Item8>
       <Item9>
-        <PackageName Value="IDEIntf"/>
+        <PackageName Value="FCL"/>
       </Item9>
       <Item10>
-        <PackageName Value="FCL"/>
+        <PackageName Value="SynEdit"/>
       </Item10>
       <Item11>
-        <PackageName Value="SynEdit"/>
-      </Item11>
-      <Item12>
         <PackageName Value="LCL"/>
-      </Item12>
+      </Item11>
     </RequiredPackages>
-    <Units Count="21">
+    <Units Count="22">
       <Unit0>
         <Filename Value="SBAcreator.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -169,6 +174,7 @@
       <Unit3>
         <Filename Value="synhighlightersba.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="SynHighlighterSBA"/>
       </Unit3>
       <Unit4>
         <Filename Value="versionsupportu.pas"/>
@@ -268,6 +274,7 @@
       <Unit19>
         <Filename Value="stringlistutf8.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="StringListUTF8"/>
       </Unit19>
       <Unit20>
         <Filename Value="exportprjformu.pas"/>
@@ -277,17 +284,22 @@
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="ExportPrjFormU"/>
       </Unit20>
+      <Unit21>
+        <Filename Value="autoupdateu.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="AutoUpdateU"/>
+      </Unit21>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
     <Version Value="11"/>
     <PathDelim Value="\"/>
     <Target>
-      <Filename Value="C:\Temporal\SBAcreator\SBAcreator"/>
+      <Filename Value="$Env(PRJOUT)\SBAcreator\SBAcreator"/>
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <UnitOutputDirectory Value="C:\Temp\lazarus\lib\$(TargetCPU)-$(TargetOS)"/>
+      <UnitOutputDirectory Value="$Env(TEMP)\lazarus\lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Linking>
       <Debugging>

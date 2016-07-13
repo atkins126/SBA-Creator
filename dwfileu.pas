@@ -5,16 +5,50 @@ unit DwFileU;
 interface
 
 uses
-  Classes, Dialogs, SysUtils, Strutils, httpsend;
+  Classes, Forms, Dialogs, SysUtils, Strutils, httpsend, LazFileUtils,
+  Process, AsyncProcess;
+
+Type
+
+{ TDownloadThread }
+
+ TDownloadThread = class(TThread)
+ private
+   fStatusText : string;
+   procedure ShowStatus;
+ protected
+   procedure Execute; override;
+ public
+   Constructor Create(CreateSuspended : boolean);
+ end;
+
+ { TDwProcess }
+
+ TDwProcess = class(TAsyncProcess)
+ private
+   FStatus: integer;
+   procedure SetStatus(AValue: integer);
+ public
+   Constructor Create (AOwner : TComponent);override;
+   function WGET(url, f: string; st: integer): boolean;
+   procedure WaitforIdle;
+   procedure OnTerminate(Sender: TObject);
+   procedure OnReadData(Sender: TObject);
+   property Status:integer read FStatus write SetStatus;
+ end;
+
+var
+  DwProcess:TDwProcess=nil;
 
 function DownloadHTTP(URL, TargetFile: string): boolean;
+function DownloadHTTPEx(URL, TargetFile: string; var ReturnCode, DownloadSize: integer):boolean;
 function DownloadHTTPStream(URL: string; Buffer: TStream): boolean;
 function SFDirectLinkURL(URL: string; Document: TMemoryStream): string;
 function SourceForgeURL(URL: string): string;
 
 implementation
 
-uses DebugFormU;
+uses DebugFormU, UtilsU, ConfigFormU;
 
 function DownloadHTTP(URL, TargetFile: string): boolean;
 // Download file; retry if necessary.
@@ -31,6 +65,63 @@ begin
     result:=true;
   finally
     FreeAndNil(Buffer);
+  end;
+end;
+
+function DownloadHTTPEx(URL, TargetFile: string;var ReturnCode, DownloadSize: integer): boolean;
+  // Download file; retry if necessary.
+  // Deals with SourceForge download links
+  // Could use Synapse HttpGetBinary, but that doesn't deal
+  // with result codes (i.e. it happily downloads a 404 error document)
+const
+  MaxRetries = 3;
+var
+  HTTPGetResult: boolean;
+  HTTPSender: THTTPSend;
+  RetryAttempt: integer;
+begin
+  Result := False;
+  RetryAttempt := 1;
+  URL := SourceForgeURL(URL); //Deal with sourceforge URLs
+  HTTPSender := THTTPSend.Create;
+  try
+    try
+      // Try to get the file
+      HTTPGetResult := HTTPSender.HTTPMethod('GET', URL);
+      while (HTTPGetResult = False) and (RetryAttempt < MaxRetries) do
+      begin
+        PauseXms(500 * RetryAttempt);
+        HTTPGetResult := HTTPSender.HTTPMethod('GET', URL);
+        RetryAttempt := RetryAttempt + 1;
+      end;
+      // If we have an answer from the server, check if the file
+      // was sent to us
+      ReturnCode := HTTPSender.Resultcode;
+      DownloadSize := HTTPSender.DownloadSize;
+      case HTTPSender.Resultcode of
+        100..299:
+        begin
+          with TFileStream.Create(TargetFile, fmCreate or fmOpenWrite) do
+            try
+              Seek(0, soFromBeginning);
+              CopyFrom(HTTPSender.Document, 0);
+            finally
+              Free;
+            end;
+          Result := True;
+        end; //informational, success
+        300..399: Result := False; //redirection. Not implemented, but could be.
+        400..499: Result := False; //client error; 404 not found etc
+        500..599: Result := False; //internal server error
+        else
+          Result := False; //unknown code
+      end;
+    except
+      // We don't care for the reason for this error; the download failed.
+      Result := False;
+    end;
+  finally
+    HTTPSender.Free;
   end;
 end;
 
@@ -218,6 +309,148 @@ begin
     end;
   end;
   result:=URL;
+end;
+
+{ TDwProcess }
+
+procedure TDwProcess.SetStatus(AValue: integer);
+begin
+  if FStatus=AValue then Exit;
+  FStatus:=AValue;
+end;
+
+constructor TDwProcess.Create(AOwner: TComponent);
+begin
+  inherited Create(AOwner);
+  Options:=[poUsePipes,poStderrToOutPut];
+  PipeBufferSize:=4096;
+  ShowWindow:=swoMinimize;
+  FStatus:=0;
+  inherited OnTerminate:=@OnTerminate;
+  inherited OnReadData:=@OnReadData;
+end;
+
+function TDwProcess.WGET(url, f: string; st: integer): boolean;
+begin
+  InfoLn('DwProcess WGET started');
+  result:=false;
+  While FStatus<>0 do
+  begin
+    sleep(100);
+    application.ProcessMessages;
+  end;
+  DeleteFileUTF8(f);
+  Parameters.Clear;
+  CurrentDirectory:=ConfigDir;
+  {$IFDEF WINDOWS}
+  Executable:=AppDir+'tools'+PathDelim+'wget.exe';
+  infoln(Executable);
+  {$ENDIF}
+  {$IFDEF LINUX}
+  Executable:='wget';
+  {$ENDIF}
+  {$IFDEF DARWIN}
+  Executable:='curl';
+  {$ENDIF}
+  {$IFNDEF DEBUG}
+  {$IFDEF DARWIN}
+  Parameters.Add('-s');
+  {$ELSE}
+  Parameters.Add('-q');
+  {$ENDIF}
+  {$ENDIF}
+  {$IFDEF WINDOWS}
+  Parameters.Add('-O');
+  Parameters.Add('"'+f+'"');
+  Parameters.Add('--no-check-certificate');
+  Parameters.Add(url);
+  {$ENDIF}
+  {$IFDEF LINUX}
+  Parameters.Add('-O');
+  Parameters.Add(f);
+  Parameters.Add('--no-check-certificate');
+  Parameters.Add(url);
+  {$ENDIF}
+  {$IFDEF DARWIN}
+  Parameters.Add('-L');
+  Parameters.Add(url);
+  Parameters.Add('-o');
+  Parameters.Add(f);
+  {$ENDIF}
+  infoln(Parameters);
+  FStatus:=st;
+  try
+    Execute;
+    result:=true;
+  except
+    On E:Exception do ShowMessage('The web download tool can not be used: '+E.Message);
+  end;
+end;
+
+procedure TDwProcess.WaitforIdle;
+var
+  TiO:integer;
+begin
+  TiO:=300;
+  While (TiO>0) and (FStatus<>0) do
+  begin
+    Dec(TiO);
+    Application.ProcessMessages;
+    Sleep(100);
+  end;
+end;
+
+procedure TDwProcess.OnTerminate(Sender: TObject);
+begin
+  if NumBytesAvailable>0 then OnReadData(Sender);
+  infoln('DwProcess terminated');
+  FStatus:=0;
+end;
+
+procedure TDwProcess.OnReadData(Sender: TObject);
+var
+  t:TStringList;
+begin
+  t:=TStringList.Create;
+  t.LoadFromStream(Output);
+  infoln(t.Text);
+  t.free;
+end;
+
+{ TDownloadThread }
+
+constructor TDownloadThread.Create(CreateSuspended : boolean);
+begin
+  FreeOnTerminate := True;
+  inherited Create(CreateSuspended);
+end;
+
+procedure TDownloadThread.ShowStatus;
+// this method is executed by the mainthread and can therefore access all GUI elements.
+begin
+  InfoLn(fStatusText);
+end;
+
+procedure TDownloadThread.Execute;
+var
+  newStatus : string;
+begin
+  fStatusText := 'TDownloadThread Starting...';
+  Synchronize(@Showstatus);
+  fStatusText := 'TDownloadThread Running...';
+  while (not Terminated) do //and ([any condition required]) do
+    begin
+{
+      ...
+      [here goes the code of the main thread loop]
+      ...
+}
+      if NewStatus <> fStatusText then
+        begin
+          fStatusText := newStatus;
+          Synchronize(@Showstatus);
+        end;
+    end;
 end;
 
 

@@ -5,7 +5,7 @@ unit PrjWizU;
 interface
 
 uses
-  Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, ExtCtrls,
+  Classes, SysUtils, FileUtil, LazFileUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls,
   Buttons, EditBtn, StdCtrls, Clipbrd, Spin, Grids, ValEdit, Menus, strutils,
   types, IniFilesUTF8, StringListUTF8, SBAProjectU;
 
@@ -623,6 +623,7 @@ begin
   With Ed_TopInterface do
   begin
     S:=Cells[0,aRow];
+    V:=true;
     if S<>'' then
     begin
       V:=ValidateName(S);

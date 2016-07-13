@@ -5,8 +5,9 @@ unit LibraryFormU;
 interface
 
 uses
-  Classes, SysUtils, FileUtil, ListViewFilterEdit, Forms,
+  Classes, SysUtils, ListViewFilterEdit, Forms,
   Controls, Graphics, Dialogs, ComCtrls, Buttons, ExtCtrls,
+  FileUtil, LazFileUtils,
   AsyncProcess, lclintf, StdCtrls, EditBtn, IniPropStorage,
   SBASnippetU, SBAProgramU, IniFilesUTF8, StringListUTF8;
 

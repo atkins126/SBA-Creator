@@ -5,7 +5,8 @@ unit UtilsU;
 interface
 
 uses
-  Classes, SysUtils, Dialogs, FileUtil, StrUtils, Zipper, DebugFormU;
+  Classes, SysUtils, Dialogs, FileUtil, LazFileUtils, StrUtils, DateUtils,
+  Zipper, DebugFormU;
 
 function SearchForFiles(const dir,mask: string; Onfind:TFileFoundEvent):boolean;
 function PopulateDirList(const directory : string; list : TStrings): boolean;
@@ -20,6 +21,7 @@ function DirReplace(s,d:string): boolean;
 function DeleteDirectoryEx(DirectoryName: string): boolean;
 function DirDelete(d:string):boolean;
 function VCmpr(v1,v2:string):integer;
+procedure PauseXms(const Milliseconds: longword);
 
 implementation
 
@@ -254,6 +256,14 @@ begin
       result:=i
     end;
   end;
+end;
+
+procedure PauseXms(const Milliseconds: longword);
+var
+  TimeGoal: longword;
+begin
+  TimeGoal := MilliSecondOfTheDay(Now)+Milliseconds;
+  while MilliSecondOfTheDay(Now) < (TimeGoal) do ;
 end;
 
 

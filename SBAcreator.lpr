@@ -5,12 +5,13 @@ program SBAcreator;
 uses
   {$IFDEF UNIX}{$IFDEF UseCThreads}
   cthreads,
+  cmem,
   {$ENDIF}{$ENDIF}
 
   Interfaces, // this includes the LCL widgetset
   Forms, HistoryLazarus, MainFormU, synhighlighterverilog, synhighlightersba,
   versionsupportu, SBAProgContrlrU, AboutFormU, sbasnippetu, configformu,
-  PrjWizU, dwfileU, DebugFormU, SBAProjectU, floatformu, CoresPrjEdFormU,
+  PrjWizU, dwfileU, DebugFormU, AutoUpdateU, SBAProjectU, floatformu, CoresPrjEdFormU,
   LibraryFormU, UtilsU, sbaprogramu, IniFilesUTF8, exportprjformu, UScaleDPI,
 
   {$IFDEF CODETYPHON}

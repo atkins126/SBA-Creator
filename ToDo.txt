@@ -7,3 +7,5 @@ Colocar un save all en el editor hdl.
 
 
 Listo: Arreglar las excepciones al validar el código del PRG (el programa se cierra si se presiona Cancel)
+
+Corregir el autoupdate, sourceforge ya no es compatible

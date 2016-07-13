@@ -5,7 +5,7 @@ unit ConfigFormU;
 interface
 
 uses
-  Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, ExtCtrls,
+  Classes, SysUtils, FileUtil, LazFileUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls,
   StdCtrls, Buttons, EditBtn, ButtonPanel;
 
 type
@@ -16,6 +16,7 @@ type
     ButtonPanel1: TButtonPanel;
     CB_LibAsReadOnly: TCheckBox;
     CB_AutoOpenPrjF: TCheckBox;
+    CB_CtrlAdvMode: TCheckBox;
     Ed_EditorFontSize: TComboBox;
     Ed_EditorFontName: TComboBox;
     Ed_LibraryDir: TDirectoryEdit;
@@ -64,10 +65,12 @@ var
   EditorFontSize:integer;
   LibAsReadOnly:Boolean;
   AutoOpenPrjF:Boolean;
+  CtrlAdvMode:Boolean;
   IpCoreList,SnippetsList,ProgramsList,PlugInsList:Tstringlist;
 
 function GetConfigValues:boolean;
 function SetConfigValues:boolean;
+function SetUpConfig:boolean;
 procedure UpdateLists;
 
 implementation
@@ -84,37 +87,9 @@ begin
   GetAllFileNamesAndPaths(ConfigDir+'plugins','*.ini',PlugInsList);
 end;
 
-function GetConfigValues: boolean;
+function SetupConfig:boolean;
 begin
   result:=false;
-  AppDir:=Application.location;
-  InfoLn('Application folder: '+AppDir);
-  {$IFDEF Darwin}
-  AppDir := AppendPathDelim(copy(AppDir,1,Pos('/SBAcreator.app',AppDir)-1));
-  {$ENDIF}
-  If not FileExistsUTF8(GetAppConfigFile(false)) then
-  begin
-    MainForm.Top:=0;
-    MainForm.Left:=0;
-  end;
-  With MainForm.IniStor do
-  begin
-    IniFileName:=GetAppConfigFile(false);
-    InfoLn('Config File: '+IniFileName);
-    ConfigDir:=ReadString('ConfigDir',GetAppConfigDirUTF8(false));
-    SBAbaseDir:=ReadString('SBAbaseDir',ConfigDir+DefSBAbaseDir+PathDelim);
-    LibraryDir:=ReadString('LibraryDir',ConfigDir+DefLibraryDir+PathDelim);
-    SnippetsDir:=ReadString('SnippetsDir',ConfigDir+DefSnippetsDir+PathDelim);
-    ProgramsDir:=ReadString('ProgramsDir',ConfigDir+DefProgramsDir+PathDelim);
-    ProjectsDir:=ReadString('ProjectsDir',GetUserDir+DefProjectsDir+PathDelim);
-    DefAuthor:=ReadString('DefAuthor','Author');
-    EditorFontName:=ReadString('EditorFontName','Courier New');
-    EditorFontSize:=ReadInteger('EditorFontSize',10);
-    if Screen.Fonts.IndexOf(EditorFontName)=-1 then EditorFontName:='Courier New';
-    LibAsReadOnly:=ReadBoolean('LibAsReadOnly',true);
-    AutoOpenPrjF:=ReadBoolean('AutoOpenPrjF',true);
-  end;
-
   InfoLn('ConfigDir: '+ConfigDir);
   If Not DirectoryExistsUTF8(ConfigDir) then
     If Not ForceDirectoriesUTF8(ConfigDir) Then
@@ -180,9 +155,45 @@ begin
       Exit;
     end;
 
-  if not FileExistsUTF8(ConfigDir+cSBADefaultPrgTemplate) then CopyFile(AppDir+cSBADefaultPrgTemplate,ConfigDir+cSBADefaultPrgTemplate);
+  if not FileExistsUTF8(ConfigDir+cSBADefPrgTemplate) then CopyFile(AppDir+cSBADefPrgTemplate,ConfigDir+cSBADefPrgTemplate);
+  if not FileExistsUTF8(ConfigDir+cSBAAdvPrgTemplate) then CopyFile(AppDir+cSBAAdvPrgTemplate,ConfigDir+cSBAAdvPrgTemplate);
   if not FileExistsUTF8(ConfigDir+'newbanner.gif') then CopyFile(AppDir+'banner.gif',ConfigDir+'newbanner.gif');
+  if not FileExistsUTF8(ConfigDir+'templates.ini') then CopyFile(AppDir+'templates.ini',ConfigDir+'templates.ini');
 
+  result:=true;
+end;
+
+function GetConfigValues: boolean;
+begin
+  result:=false;
+  AppDir:=Application.location;
+  InfoLn('Application folder: '+AppDir);
+  {$IFDEF Darwin}
+  AppDir := AppendPathDelim(copy(AppDir,1,Pos('/SBAcreator.app',AppDir)-1));
+  {$ENDIF}
+  If not FileExistsUTF8(GetAppConfigFile(false)) then
+  begin
+    MainForm.Top:=0;
+    MainForm.Left:=0;
+  end;
+  With MainForm.IniStor do
+  begin
+    IniFileName:=GetAppConfigFile(false);
+    InfoLn('Config File: '+IniFileName);
+    ConfigDir:=ReadString('ConfigDir',GetAppConfigDirUTF8(false));
+    SBAbaseDir:=ReadString('SBAbaseDir',ConfigDir+DefSBAbaseDir+PathDelim);
+    LibraryDir:=ReadString('LibraryDir',ConfigDir+DefLibraryDir+PathDelim);
+    SnippetsDir:=ReadString('SnippetsDir',ConfigDir+DefSnippetsDir+PathDelim);
+    ProgramsDir:=ReadString('ProgramsDir',ConfigDir+DefProgramsDir+PathDelim);
+    ProjectsDir:=ReadString('ProjectsDir',GetUserDir+DefProjectsDir+PathDelim);
+    DefAuthor:=ReadString('DefAuthor','Author');
+    EditorFontName:=ReadString('EditorFontName','Courier New');
+    EditorFontSize:=ReadInteger('EditorFontSize',10);
+    if Screen.Fonts.IndexOf(EditorFontName)=-1 then EditorFontName:='Courier New';
+    LibAsReadOnly:=ReadBoolean('LibAsReadOnly',true);
+    AutoOpenPrjF:=ReadBoolean('AutoOpenPrjF',true);
+    CtrlAdvMode:=ReadBoolean('CtrlAdvMode',false);
+  end;
   result:=true;
 end;
 
@@ -245,6 +256,9 @@ begin
     AutoOpenPrjF:=CB_AutoOpenPrjF.Checked;
     WriteBoolean('AutoOpenPrjF',AutoOpenPrjF);
     //
+    CtrlAdvMode:=CB_CtrlAdvMode.Checked;
+    WriteBoolean('CtrlAdvMode',CtrlAdvMode);
+    //
     EditorFontName:=Ed_EditorFontName.Text;
     WriteString('EditorFontName',EditorFontName);
     MainForm.SynEdit_X.Font.Name:=EditorFontName;
@@ -270,6 +284,7 @@ begin
   Ed_DefAuthor.Text:=DefAuthor;
   CB_LibAsReadOnly.checked:=LibAsReadOnly;
   CB_AutoOpenPrjF.Checked:=AutoOpenPrjF;
+  CB_CtrlAdvMode.Checked:=CtrlAdvMode;
   Ed_EditorFontName.Text:=EditorFontName;
 end;
 

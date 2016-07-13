@@ -1,7 +1,7 @@
 object MainForm: TMainForm
-  Left = 1141
+  Left = 1143
   Height = 750
-  Top = 44
+  Top = 41
   Width = 765
   HorzScrollBar.Page = 765
   HorzScrollBar.Range = 765
@@ -21,7 +21,7 @@ object MainForm: TMainForm
   OnDropFiles = FormDropFiles
   OnResize = FormResize
   SessionProperties = 'CoreImage.Height;Height;Left;Log.Height;P_ProgAddress.Height;P_ProgLabels.Height;P_Project.Width;SnippetsList.Height;Top;Width;WindowState'
-  LCLVersion = '1.4.4.0'
+  LCLVersion = '1.6.0.4'
   object MainPages: TPageControl
     Left = 0
     Height = 707
@@ -2378,6 +2378,12 @@ object MainForm: TMainForm
             Width = 5
             Caption = 'ToolButton19'
             Style = tbsDivider
+          end
+          object ToolButton50: TToolButton
+            Left = 615
+            Top = 0
+            Caption = '&Templates'
+            DropdownMenu = EdTemplates
           end
         end
         object P_AuxEditor: TPanel
@@ -5962,6 +5968,12 @@ object MainForm: TMainForm
       OnExecute = EditBlkUncommentExecute
       ShortCut = 24685
     end
+    object EditInsertTemplate: TAction
+      Category = 'Edit'
+      Caption = 'Insert &Template'
+      ImageIndex = 27
+      OnExecute = EditInsertTemplateExecute
+    end
   end
   object OpenDialog: TOpenDialog
     Title = 'Open File'
@@ -8967,32 +8979,6 @@ object MainForm: TMainForm
     left = 600
     top = 640
   end
-  object LazAutoUpdate1: TLazAutoUpdate
-    About.Description.Strings = (
-      'A component for updating your application'#13#10'Designed for projects hosted by SourceForge'#13#10#13#10'Main methods:'#13#10'Procedure AutoUpdate'#13#10'Function NewVersionAvailable: Boolean'#13#10'Function DownloadNewVersion: Boolean'#13#10'Function UpdateToNewVersion: Boolean'#13#10'Procedure ShowWhatsNewIfAvailable'#13#10'For troubleshooting, set DebugMode=TRUE'
-    )
-    About.Title = 'About LazAutoUpdate'
-    About.Height = 450
-    About.Width = 400
-    About.Font.Color = clNavy
-    About.Font.Height = -13
-    About.BackGroundColor = clWindow
-    About.Version = '0.1.22'
-    About.Authorname = 'Gordon Bamber'
-    About.Organisation = 'Public Domain'
-    About.AuthorEmail = 'minesadorada@gmail.com'
-    About.ComponentName = 'Laz Auto-update v0.1.22'
-    About.LicenseType = abLGPL
-    SFProjectName = 'sbacreator'
-    CopyTree = True
-    UpdatesFolder = 'updates'
-    VersionsININame = 'sbamainexe.ini'
-    VersionCountLimit = 1000000
-    DownloadCountLimit = 10000000
-    ZipfileName = 'sbamainexe.zip'
-    left = 688
-    top = 640
-  end
   object EditorPopUp: TPopupMenu
     Images = ImageList
     left = 527
@@ -9036,5 +9022,9 @@ object MainForm: TMainForm
         FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
       }
     end
+  end
+  object EdTemplates: TPopupMenu
+    left = 600
+    top = 528
   end
 end

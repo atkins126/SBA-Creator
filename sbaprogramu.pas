@@ -5,7 +5,8 @@ unit SBAProgramU;
 interface
 
 uses
-  Dialogs, Classes, SysUtils, SBAProgContrlrU, ListViewFilterEdit, FileUtil;
+  Dialogs, Classes, SysUtils, SBAProgContrlrU, ListViewFilterEdit, FileUtil,
+  LazFileUtils;
 
 const
   cSBADefaultProgramName='NewProgram.prg';

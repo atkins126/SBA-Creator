@@ -8,18 +8,19 @@ uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, Buttons,
   ComCtrls, AsyncProcess, ExtCtrls, Menus, ActnList, SynHighlighterSBA,
   SynHighlighterVerilog, SynEditMarkupHighAll, SynEdit, SynEditTypes,SynEditKeyCmds,
-  SynPluginSyncroEdit, SynHighlighterIni, FileUtil, dateutils,
-  ListViewFilterEdit, strutils, Clipbrd, IniPropStorage, StdActns,
-  BGRASpriteAnimation, uebutton, uETilePanel, ulazautoupdate, versionsupportu,
+  SynPluginSyncroEdit, SynHighlighterIni, FileUtil, LazUTF8, LazFileUtils,
+  dateutils, ListViewFilterEdit, strutils, Clipbrd, IniPropStorage, StdActns,
+  BGRASpriteAnimation, uebutton, uETilePanel, versionsupportu,
   types, lclintf, LCLType, HistoryFiles, IniFilesUTF8, StringListUTF8;
 
 type
   thdltype=(vhdl, prg, verilog, systemverilog, ini, other);
-  tProcessStatus=(Idle,GetBanner,SyntaxChk,Obfusct,exePlugIn,GetWNew);
+  tProcessStatus=(Idle,GetF,SyntaxChk,Obfusct,exePlugIn);
 
   { TMainForm }
 
   TMainForm = class(TForm)
+    EditInsertTemplate: TAction;
     EditBlkUncomment: TAction;
     EditBlkComment: TAction;
     EditBlkUnindent: TAction;
@@ -27,7 +28,6 @@ type
     B_SBAAdress: TBitBtn;
     IdleTimer1: TIdleTimer;
     header_text: TImage;
-    LazAutoUpdate1: TLazAutoUpdate;
     L_SBAAddress: TListBox;
     MenuItem56: TMenuItem;
     MenuItem57: TMenuItem;
@@ -44,6 +44,7 @@ type
     MI_AddUserFile: TMenuItem;
     MI_RemCore: TMenuItem;
     EditorPopUp: TPopupMenu;
+    EdTemplates: TPopupMenu;
     ProjectRemUserFile: TAction;
     ProjectAddUserFiles: TAction;
     ProjectRemCore: TAction;
@@ -155,6 +156,7 @@ type
     HidenPage: TTabSheet;
     ToolButton48: TToolButton;
     ToolButton49: TToolButton;
+    ToolButton50: TToolButton;
     TreeImg: TImageList;
     EditRedo: TAction;
     EditCopy: TEditCopy;
@@ -312,6 +314,7 @@ type
     procedure EditCopyExecute(Sender: TObject);
     procedure EditCutExecute(Sender: TObject);
     procedure EditInsertDateExecute(Sender: TObject);
+    procedure EditInsertTemplateExecute(Sender: TObject);
     procedure EditorHistoryClickHistoryItem(Sender: TObject; Item: TMenuItem;
       const Filename: string);
     procedure EditorsTabContextPopup(Sender: TObject; MousePos: TPoint;
@@ -403,7 +406,7 @@ type
     procedure DetectSBAController;
     function EditorEmpty(Editor: TSynEdit): boolean;
     procedure ExtractSBACnfgCnst;
-    function GetWhatsNew: boolean;
+    function GetFile(filename:string): boolean;
     procedure GotoEditor;
     procedure hdltypeselect(const ts: string);
     procedure HighLightReservedWords(List:TStrings);
@@ -413,22 +416,21 @@ type
     function Open(f: String): boolean;
     procedure OpenInEditor(const f: string);
     procedure OpenProject(const f:string);
-    procedure Reformat(sl: Tstrings);
+    procedure Reformat(osl,nsl: Tstrings);
     function  SaveFile(f:String; Src:TStrings):Boolean;
     procedure SetupEditorPopupMenu;
+    procedure SetupEdTmplMenu;
     procedure SetupPrgTmplMenu;
     procedure SetupSynMarkup;
     procedure SyntaxCheck(f,path: string; hdl: Thdltype);
     procedure ExtractSBALabels;
     procedure LoadRsvWordsFile;
     procedure LoadAnnouncement;
-    procedure GetAnnouncement;
   protected
   public
     { public declarations }
     procedure UpdatePrjTree;
     procedure AutoUpdate;
-    function ProcessWGET(url, f: string; status: TProcessStatus): boolean;
   end;
 
 var
@@ -439,7 +441,7 @@ implementation
 {$R *.lfm}
 
 uses DebugFormU, SBAProgContrlrU, SBAProjectU, ConfigFormU, AboutFormU, sbasnippetu, PrjWizU,
-     DwFileU, FloatFormU, LibraryFormU, ExportPrjFormU, UtilsU;
+     DwFileU, FloatFormU, LibraryFormU, ExportPrjFormU, UtilsU, AutoUpdateU;
 
 var
   SynMarkup: TSynEditMarkupHighlightAllCaret;
@@ -464,14 +466,19 @@ var
   r:integer;
   f:string;
 begin
+  result:=true;
+  if T=nil then exit;
   EditorPages.ActivePage:=T;
   EditorPagesChange(nil);
-  r:=0; result:=true;
-  f:=T.Hint;
-  if ActiveEditor.Modified then r:=MessageDlg('File was modified', 'Save File? '+f, mtConfirmation, [mbYes, mbNo, mbCancel],0);
-  case r of
-    mrCancel: result:=false;
-    mrYes: result:=SaveFile(f, ActiveEditor.Lines);
+  if ActiveEditor.Modified then
+  begin
+    f:=T.Hint;
+    r:=MessageDlg('File was modified', 'Save File? '+f, mtConfirmation, [mbYes, mbNo, mbCancel],0);
+    case r of
+      mrCancel: result:=false;
+      mrYes: result:=SaveFile(f, ActiveEditor.Lines);
+      mrNo: result:=true;
+    end;
   end;
   if result then
   begin
@@ -885,6 +892,30 @@ begin
   If assigned(ActiveEditor) then ActiveEditor.InsertTextAtCaret(FormatDateTime('yyyy/mm/dd',date));
 end;
 
+procedure TMainForm.EditInsertTemplateExecute(Sender: TObject);
+var
+  Ini:TIniFile;
+  SL:TStringList;
+  j,n:integer;
+begin
+  Infoln('Menu: '+TMenuItem(Sender).Caption);
+  if (Sender.ClassName='TMenuItem') and assigned(ActiveEditor) then
+  begin
+    ActiveEditor.CaretX:=0;
+    try
+      SL:=TStringList.Create;
+      SL.Clear;
+      Ini:=TInifile.Create(ConfigDir+'templates.ini');
+      j:=Ini.ReadInteger(TMenuItem(Sender).Caption,'Lines',0);
+      for n:=0 to j-1 do SL.Add(Ini.ReadString(TMenuItem(Sender).Caption,'L'+inttostr(n),''));
+      if SL.Count>0 then ActiveEditor.InsertTextAtCaret(SL.Text);
+    finally
+      if assigned(Ini) then freeAndNil(Ini);
+      if assigned(SL) then freeAndNil(SL);
+    end;
+  end;
+end;
+
 procedure TMainForm.EditorHistoryClickHistoryItem(Sender: TObject;
   Item: TMenuItem; const Filename: string);
 begin
@@ -957,37 +988,27 @@ var
   s:string;
 begin
   infoln('Search for new version');
-  lazautoupdate1.SFProjectName:='sbacreator';
-  lazautoupdate1.UpdatesFolder:='updates';
-{$IFDEF WINDOWS}
-  lazautoupdate1.VersionsININame:='sbamainexe.ini';
-  lazautoupdate1.ZipfileName:='sbamainexe.zip';
-{$ENDIF}
-{$IFDEF LCLGTK2}
-{$IFDEF CPUARM}
-  lazautoupdate1.VersionsININame:='sbamainarmgtk2.ini';
-  lazautoupdate1.ZipfileName:='sbamainarmgtk2.zip';
-{$ELSE}
-  lazautoupdate1.VersionsININame:='sbamaingtk2.ini';
-  lazautoupdate1.ZipfileName:='sbamaingtk2.zip';
-{$ENDIF}
-{$ENDIF}
   s:='';
-  if GetWhatsNew then
-  try
-    wn:=TStringList.Create;
-    wn.LoadFromFile(ConfigDir+'whatsnew.txt');
-    s:=wn.text;
-  finally
-    if assigned(wn) then FreeAndNil(wn);
-  end;
-  If LazAutoUpdate1.NewVersionAvailable Then
-    if MessageDlg(Application.Title, Format('A new version %s is available.  Would you like to download it?'#10'%s',[LazAutoUpdate1.GUIOnlineVersion,s]), mtConfirmation, [mbYes, mbNo], 0, mbYes) = mryes then
-      If LazAutoUpdate1.DownloadNewVersion Then
+  If NewVersionAvailable Then
+  begin
+    infoln('A new version is available, getting what is new file.');
+    if GetWhatsNew then
+    try
+      infoln('What is new file was downloaded.');
+      wn:=TStringList.Create;
+      wn.LoadFromFile(ConfigDir+'whatsnew.txt');
+      s:=wn.text;
+      infoln(wn);
+    finally
+      if assigned(wn) then FreeAndNil(wn);
+    end;
+    if MessageDlg(Application.Title, Format('A new version %s is available.  Would you like to download it?'#10'%s',[GetNewVersion,s]), mtConfirmation, [mbYes, mbNo], 0, mbYes) = mryes then
+      If DownloadNewVersion Then
         If MessageDlg(Application.Title, 'Download Succeeded.  Click OK to update',
-          mtInformation, [mbOK], 0) = mrOK Then LazAutoUpdate1.UpdateToNewVersion
+          mtInformation, [mbOK], 0) = mrOK Then UpdateToNewVersion
         Else
           ShowMessage('Sorry, download of new version failed');
+  end else infoln('A new version is not available or no detected.');
   UpdtFlag:=true;
   infoln('End of search for new version');
 end;
@@ -1001,6 +1022,8 @@ procedure TMainForm.IdleTimer1Timer(Sender: TObject);
 begin
   if (not Process1.Running) and (ProcessStatus<>Idle) then
     Process1Terminate(Sender);
+  if (not DwProcess.Running) and (DwProcess.Status<>0) then
+    DwProcess.OnTerminate(Sender);
 end;
 
 procedure TMainForm.LogoImageDblClick(Sender: TObject);
@@ -1254,10 +1277,17 @@ begin
   begin
    SBAContrlrProg.Filename:=cSBADefaultPrgName;
    StatusBar1.Panels[1].Text:=cSBADefaultPrgName;
-   tmp:=tstringlist.Create;
-   tmp.LoadFromFile(ConfigDir+cSBADefaultPrgTemplate);
-   ActiveEditor.Lines.Assign(tmp);
-   if assigned(tmp) then freeandnil(tmp);
+   try
+     tmp:=tstringlist.Create;
+     try
+       tmp.LoadFromFile(ConfigDir+IFTHEN(CtrlAdvMode,cSBAAdvPrgTemplate,cSBADefPrgTemplate));
+       ActiveEditor.Lines.Assign(tmp);
+     except
+       On E:Exception do ShowMessage(E.Message);
+     end;
+   finally
+     if assigned(tmp) then freeandnil(tmp);
+   end;
    ExtractSBALabels;
   end;
 end;
@@ -1281,7 +1311,7 @@ procedure TMainForm.ProjectOpenExecute(Sender: TObject);
 begin
   OpenDialog.FileName:='';
   OpenDialog.DefaultExt:='.sba';
-  OpenDialog.Filter:='SBA project|*.sba;';
+  OpenDialog.Filter:='SBA project|*.sba';
   if OpenDialog.Execute then OpenProject(OpenDialog.FileName);
 end;
 
@@ -1398,7 +1428,12 @@ begin
     mrYes: SBA_SaveExecute(nil);
     mrNo: begin SynEdit_X.ClearAll; SynEdit_X.Modified:=false; end;
   end;
-  if not SynEdit_X.Modified then MainPages.ActivePage:=PrgReturnTab;
+  if not SynEdit_X.Modified then
+  begin
+    MainPages.ActivePage:=PrgReturnTab;
+    SynEdit_X.ClearAll;
+    SynEdit_X.Modified:=false;
+  end;
 end;
 
 procedure TMainForm.FileCloseExecute(Sender: TObject);
@@ -1441,7 +1476,7 @@ begin
   hdltypeselect('.prg');
   StatusBar1.Panels[1].Text:=cSBADefaultPrgName;
   tmp:=tstringlist.Create;
-  tmp.LoadFromFile(ConfigDir+cSBADefaultPrgTemplate);
+  tmp.LoadFromFile(ConfigDir+IFTHEN(CtrlAdvMode,cSBAAdvPrgTemplate,cSBADefPrgTemplate));
   ActiveEditor.Lines.Assign(tmp);
   if assigned(tmp) then freeandnil(tmp);
   ExtractSBALabels;
@@ -1498,10 +1533,14 @@ begin
 end;
 
 procedure TMainForm.ToolsFileReformatExecute(Sender: TObject);
+var OSL,NSL:TStrings;
 begin
   ToolsFileReformat.Enabled:=false;
+  OSL:=ActiveEditor.Lines;
+  NewEditorPage;
+  NSL:=ActiveEditor.Lines;
   ActiveEditor.BeginUpdate(false);
-  Reformat(ActiveEditor.Lines);
+  Reformat(OSL,NSL);
   ActiveEditor.EndUpdate;
   ActiveEditor.Modified:=true;
   ToolsFileReformat.Enabled:=true;
@@ -1566,7 +1605,7 @@ end;
 procedure TMainForm.FormCloseQuery(Sender: TObject; var CanClose: boolean);
 begin
   CanClose:=false;
-  If LazAutoUpdate1.DownloadInProgress Then
+  If DownloadInProgress Then
   Begin
     ShowMessage('Please wait. Download is still in progress.');
     exit;
@@ -1589,22 +1628,26 @@ begin
   Success:=false;
   try
     Success:=GetConfigValues;
+    Success:=Success and SetupConfig;
   finally
     if not Success then
     begin
      infoln('There was an error in Create Method');
      ShowMessage('Sorry, an unrecoverable error has occurred, the application is going to exit now');
-     While LazAutoUpdate1.DownloadInProgress do Application.ProcessMessages;
-     LazAutoUpdate1.Free;
      Halt;
     end else begin
       infoln('Config values OK '+ConfigDir);
       caption:='SBA Creator v'+GetFileVersion;
       infoln(caption);
       wdir:='.\';
+      DwProcess:=TDwProcess.Create(Self);
       LoadAnnouncement;
       infoln('Banner loaded');
-      GetAnnouncement;
+      GetFile('newbanner.gif');
+{ TODO : Mientras no se habilite el evento de fin de descarga se tiene que esperar a que se termine la descarga del banner lo que demora la visualización de la ventana principal. }
+      DwProcess.WaitforIdle;
+      LoadAnnouncement;
+////////////////
       MainPages.ShowTabs:=false;
       MainPages.ActivePage:=SystemTab;
       SBAPrj:=TSBAPrj.Create;
@@ -1617,6 +1660,7 @@ begin
       PlugInsList:=TStringList.Create;
       UpdateLists;
       SetupPrgTmplMenu;
+      SetupEdTmplMenu;
       SynSBASyn:= TSynSBASyn.Create(Self);
       SynVerilogSyn:= TSynVerilogSyn.Create(Self);
       SetupSynMarkup;
@@ -1707,6 +1751,55 @@ begin
     M.Caption:=cSBALblSignatr;
     PrgTemplates.Items.Add(M);
     //
+  end;
+end;
+
+procedure TMainForm.SetupEdTmplMenu;
+var
+  Ini:TIniFile;
+  M:TMenuItem;
+  S:String;
+  i,j:integer;
+
+  procedure CreateSubMenu(N:TMenuItem);
+  var
+    M:TMenuItem;
+    S:String;
+    i,j:integer;
+  begin
+    If not assigned(N) then exit;
+    if Ini.ValueExists(N.Caption,'NumItems') then
+    begin
+      j:=Ini.ReadInteger(N.Caption,'NumItems',0);
+      for i:=0 to j-1 do
+      begin
+        S:=Ini.ReadString(N.Caption,'I'+inttostr(i),'');
+        M:=TMenuItem.Create(N);
+        M.Caption:=S;
+        CreateSubMenu(M);
+        N.Add(M);
+      end;
+    end else N.OnClick:=@EditInsertTemplateExecute;
+  end;
+
+begin
+  If Assigned(EdTemplates) then with EdTemplates do
+  begin
+    EdTemplates.Items.Clear;
+    Try
+      Ini:=TIniFile.Create(ConfigDir+'templates.ini');
+      j:=Ini.ReadInteger('MAIN','NumItems',0);
+      for i:=0 to j-1 do
+      begin
+        S:=Ini.ReadString('MAIN','I'+inttostr(i),'');
+        M:=TMenuItem.Create(EdTemplates);
+        M.Caption:=S;
+        EdTemplates.Items.Add(M);
+        CreateSubMenu(M);
+      end;
+    finally
+      If Assigned(Ini) then FreeAndNil(Ini);
+    end;
   end;
 end;
 
@@ -1845,7 +1938,7 @@ begin
     end;
 
     undostrings.Assign(SourceEditor.Lines);
-    if not SBAContrlrProg.CpyUSignals(SynEdit_X.Lines, SourceEditor.Lines) then
+    if not SBAContrlrProg.CpyUSignals(SynEdit_X.Lines, SourceEditor.Lines) and CtrlAdvMode then
     begin
       SourceEditor.ClearAll;
       SourceEditor.Lines.Assign(undostrings);
@@ -1854,7 +1947,7 @@ begin
     end;
 
     undostrings.Assign(SourceEditor.Lines);
-    if not SBAContrlrProg.CpyUProcedures(SynEdit_X.Lines, SourceEditor.Lines) then
+    if not SBAContrlrProg.CpyUProcedures(SynEdit_X.Lines, SourceEditor.Lines) and CtrlAdvMode then
     begin
       SourceEditor.ClearAll;
       SourceEditor.Lines.Assign(undostrings);
@@ -1899,7 +1992,7 @@ begin
     end;
 
     undostrings.Assign(SourceEditor.Lines);
-    if not SBAContrlrProg.CpyUStatements(SynEdit_X.Lines, SourceEditor.Lines) then
+    if not SBAContrlrProg.CpyUStatements(SynEdit_X.Lines, SourceEditor.Lines) and CtrlAdvMode then
     begin
       SourceEditor.ClearAll;
       SourceEditor.Lines.Assign(undostrings);
@@ -2055,7 +2148,6 @@ infoln(t.Text);
    t.free;
 end;
 
-
 procedure TMainForm.Process1Terminate(Sender: TObject);
 var
   PS:TProcessStatus;
@@ -2067,16 +2159,13 @@ begin
   if Process1.NumBytesAvailable>0 then Process1ReadData(Sender);
   Log.ItemIndex:=Log.Count-1;
   case PS of
-    GetBanner: LoadAnnouncement;
     SyntaxChk: ToolsFileSyntaxCheck.Enabled:=true;
   end;
 {IFDEF Debug}
   case PS of
     Idle:PStr:='Idle';
-    GetBanner:PStr:='GetBanner';
     SyntaxChk:PStr:='SyntaxChk';
     Obfusct:PStr:='Obfusct';
-    GetWNew:PStr:='GetWhatsNew';
   end;
   infoln('End of process: '+PStr);
 {ENDIF}
@@ -2253,7 +2342,7 @@ begin
   if ToolsFileObf.Checked then ToolsFileObfExecute(nil);
 end;
 
-procedure TMainForm.Reformat(sl:Tstrings);
+procedure TMainForm.Reformat(osl, nsl: Tstrings);
 var
   s: string;
   c: char;
@@ -2269,17 +2358,17 @@ var
 
 begin
   ostr:=TStringList.Create;
+  ostr.Assign(osl);
 
   //Delete comments
-  for i:=sl.Count-1 downto 0 do
+  for i:=ostr.Count-1 downto 0 do
   begin
-    s:=sl[i];
+    s:=ostr[i];
     j:=pos(commentstr,s);
-    if j>0 then sl[i]:=LeftStr(s,j-1);
+    if j>0 then ostr[i]:=LeftStr(s,j-1);
   end;
 
-  ostr.Assign(sl);
-  sl.clear;
+  nsl.clear;
   s:=''; j:=1; f:=false; sp:=false;
 
   //Delete Tabs, Double spaces and CR LF, reformat to random case and 80 cols
@@ -2295,18 +2384,18 @@ begin
     s:=s+c;
     if (j>80) and (c in [' ', ';', '+', '-', '(', ')']) and not f then
     begin
-      sl.Add(s);
+      nsl.Add(s);
       s:='';
       j:=1;
     end else inc(j);
   end;
-  if s<>'' then sl.Add(s);
+  if s<>'' then nsl.Add(s);
 
   // Add last comments
-  sl.Add(commentstr+'------------------------------------------------------------------------------');
-  sl.Add(commentstr+' This file was obfuscated and reformated using SBA Creator                  --');
-  sl.Add(commentstr+' (c) Miguel Risco-Castillo                                                  --');
-  sl.Add(commentstr+'------------------------------------------------------------------------------');
+  nsl.Add(commentstr+'------------------------------------------------------------------------------');
+  nsl.Add(commentstr+' This file was obfuscated and reformated using SBA Creator                  --');
+  nsl.Add(commentstr+' (c) Miguel Risco-Castillo                                                  --');
+  nsl.Add(commentstr+'------------------------------------------------------------------------------');
   ostr.Free;
 end;
 
@@ -2414,29 +2503,6 @@ begin
   HighLightReservedWords(L_RsvWord.Items);
 end;
 
-procedure TMainForm.GetAnnouncement;
-begin
-  processWGET('http://sba.accesus.com/newbanner.gif?attredirects=0',ConfigDir+'newbanner.gif',GetBanner);
-end;
-
-function TMainForm.GetWhatsNew:boolean;
-var
-  TiO:integer;
-  f:String;
-begin
-  f:=ConfigDir+'whatsnew.txt';
-  DeleteFileUTF8(f);
-  processWGET('http://iweb.dl.sourceforge.net/project/sbacreator/updates/whatsnew.txt',f,GetWNew);
-  TiO:=100;
-  While (TiO>0) and (ProcessStatus<>Idle) do
-  begin
-    Dec(TiO);
-    Application.ProcessMessages;
-    Sleep(300);
-  end;
-  result:=FileExistsUTF8(f);
-end;
-
 procedure TMainForm.UpdatePrjTree;
 var
   t: TTreeNode;
@@ -2492,61 +2558,6 @@ begin
   end;
 end;
 
-function TMainForm.ProcessWGET(url,f:string;status:TProcessStatus):boolean;
-begin
-  { TODO : Encapsular el process en forma programática y enviar todo el procedimiento hacia la unidad de herramientas }
-  result:=false;
-  While ProcessStatus<>idle do
-  begin
-    sleep(300);
-    application.ProcessMessages;
-  end;
-  Log.Clear;
-  process1.Parameters.Clear;
-  process1.CurrentDirectory:=ConfigDir;
-  {$IFDEF WINDOWS}
-  process1.Executable:=AppDir+'tools'+PathDelim+'wget.exe';
-  {$ENDIF}
-  {$IFDEF LINUX}
-  process1.Executable:='wget';
-  {$ENDIF}
-  {$IFDEF DARWIN}
-  process1.Executable:='curl';
-  {$ENDIF}
-  {$IFNDEF DEBUG}
-  {$IFDEF DARWIN}
-  process1.Parameters.Add('-s');
-  {$ELSE}
-  process1.Parameters.Add('-q');
-  {$ENDIF}
-  {$ENDIF}
-  {$IFDEF WINDOWS}
-  process1.Parameters.Add('-O');
-  process1.Parameters.Add('"'+f+'"');
-  process1.Parameters.Add('--no-check-certificate');
-  process1.Parameters.Add(url);
-  {$ENDIF}
-  {$IFDEF LINUX}
-  process1.Parameters.Add('-O');
-  process1.Parameters.Add(f);
-  process1.Parameters.Add('--no-check-certificate');
-  process1.Parameters.Add(url);
-  {$ENDIF}
-  {$IFDEF DARWIN}
-  process1.Parameters.Add('-L');
-  process1.Parameters.Add(url);
-  process1.Parameters.Add('-o');
-  process1.Parameters.Add(f);
-  {$ENDIF}
-  ProcessStatus:=status;
-  try
-    process1.Execute;
-    result:=true;
-  except
-    On E:Exception do ShowMessage('The web download tool can not be used: '+E.Message);
-  end;
-end;
-
 procedure TMainForm.LoadAnnouncement;
 begin
   if FileexistsUtf8(ConfigDir+'newbanner.gif') then
@@ -2576,11 +2587,11 @@ end;
 procedure TMainForm.Check;
 Var ExpDate : TDateTime;
 begin
-  ExpDate:=EncodeDate(2016,03,01);
+  ExpDate:=EncodeDate(2016,12,31);
   if CompareDate(Today,ExpDate)>0 then
   begin
-    DeleteFile(Application.ExeName);
     ShowMessage('Sorry, the beta period has expired. You can download the new version from http://sba.accesus.com, thanks you for your help!');
+//    DeleteFile(Application.ExeName);
     halt;
   end;
 end;
@@ -2616,6 +2627,14 @@ begin
       mapfile:='vhdl_map.dat'
     end;
   end;
+end;
+
+function TMainForm.GetFile(filename: string): boolean;
+var
+  f:String;
+begin
+  f:=ConfigDir+filename;
+  result:=DwProcess.WGET(Format(SBADwUrl,[filename]),f,integer(GetF));
 end;
 
 end.
