@@ -6,16 +6,17 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, Buttons,
-  ComCtrls, AsyncProcess, ExtCtrls, Menus, ActnList, SynHighlighterSBA,
-  SynHighlighterVerilog, SynEditMarkupHighAll, SynEdit, SynEditTypes,SynEditKeyCmds,
-  SynPluginSyncroEdit, SynHighlighterIni, FileUtil, LazUTF8, LazFileUtils,
+  ComCtrls, AsyncProcess, ExtCtrls, Menus, ActnList,
+  SynHighlighterSBA, SynHighlighterVerilog, SynHighlighterJSON, SynEditMarkupHighAll,
+  SynEdit, SynEditTypes,SynEditKeyCmds, SynPluginSyncroEdit, SynHighlighterIni,
+  FileUtil, LazUTF8, LazFileUtils,
   dateutils, ListViewFilterEdit, strutils, Clipbrd, IniPropStorage, StdActns,
   BGRASpriteAnimation, uebutton, uETilePanel, versionsupportu,
   types, lclintf, LCLType, HistoryFiles, IniFilesUTF8, StringListUTF8;
 
 type
-  thdltype=(vhdl, prg, verilog, systemverilog, ini, other);
-  tProcessStatus=(Idle,GetF,SyntaxChk,Obfusct,exePlugIn);
+  thdltype=(vhdl, prg, verilog, systemverilog, ini, json, other);
+  tProcessStatus=(Idle,SyntaxChk,Obfusct,exePlugIn);
 
   { TMainForm }
 
@@ -239,7 +240,7 @@ type
     MI_Addnew: TMenuItem;
     MI_Remove: TMenuItem;
     ObfRsvMenu: TPopupMenu;
-    Process1: TAsyncProcess;
+    ToolProcess: TAsyncProcess;
     SaveDialog: TSaveDialog;
     SearchFind: TSearchFind;
     SearchFindNext: TSearchFindNext;
@@ -251,6 +252,7 @@ type
     SynEdit_X: TSynEdit;
     SynSBASyn:TSynSBASyn;
     SynVerilogSyn:TSynVerilogSyn;
+    SynJSONSyn:TSynJSONSyn;
     SystemTab: TTabSheet;
     EditorsTab: TTabSheet;
     ProgEditTab: TTabSheet;
@@ -384,8 +386,8 @@ type
     procedure WordSelectionChange(Sender: TObject);
     procedure FileNewExecute(Sender: TObject);
     procedure FileOpenExecute(Sender: TObject);
-    procedure Process1ReadData(Sender: TObject);
-    procedure Process1Terminate(Sender: TObject);
+    procedure ToolProcessReadData(Sender: TObject);
+    procedure ToolProcessTerminate(Sender: TObject);
     procedure RW_AddfromCBExecute(Sender: TObject);
     procedure RW_AddWordExecute(Sender: TObject);
     procedure RW_OpenListExecute(Sender: TObject);
@@ -404,6 +406,7 @@ type
     procedure CreatePlugInsBtns;
     function CreateTempFile(fn:string): boolean;
     procedure DetectSBAController;
+    procedure dwTerminate(Sender: TObject);
     function EditorEmpty(Editor: TSynEdit): boolean;
     procedure ExtractSBACnfgCnst;
     function GetFile(filename:string): boolean;
@@ -834,10 +837,10 @@ begin
     PlgIni:=TIniFile.Create(PlugInsList.ValueFromIndex[b.Tag]);
     while ProcessStatus<>Idle do begin sleep(300); application.ProcessMessages; end;
     ProcessStatus:=exePlugIn;
-    Process1.Parameters.Clear;
-    Process1.Executable:=ExtractFilePath(PlugInsList.ValueFromIndex[b.Tag])+PlgIni.ReadString('MAIN','Cmd','');
-    Process1.Parameters.Add(PlgIni.ReadString('MAIN','Param',''));
-    If FileExistsUTF8(Process1.Executable) then Process1.Execute;
+    ToolProcess.Parameters.Clear;
+    ToolProcess.Executable:=ExtractFilePath(PlugInsList.ValueFromIndex[b.Tag])+PlgIni.ReadString('MAIN','Cmd','');
+    ToolProcess.Parameters.Add(PlgIni.ReadString('MAIN','Param',''));
+    If FileExistsUTF8(ToolProcess.Executable) then ToolProcess.Execute;
   finally
     If assigned(PlgIni) then FreeAndNil(PlgIni);
   end;
@@ -1020,9 +1023,9 @@ end;
 
 procedure TMainForm.IdleTimer1Timer(Sender: TObject);
 begin
-  if (not Process1.Running) and (ProcessStatus<>Idle) then
-    Process1Terminate(Sender);
-  if (not DwProcess.Running) and (DwProcess.Status<>0) then
+  if (not ToolProcess.Running) and (ProcessStatus<>Idle) then
+    ToolProcessTerminate(Sender);
+  if (not DwProcess.Running) and (DwProcess.Status<>dwIdle) then
     DwProcess.OnTerminate(Sender);
 end;
 
@@ -1232,8 +1235,6 @@ begin
     result:=true;
   end;
 end;
-
-
 
 procedure TMainForm.ProjectExportExecute(Sender: TObject);
 begin
@@ -1642,12 +1643,7 @@ begin
       wdir:='.\';
       DwProcess:=TDwProcess.Create(Self);
       LoadAnnouncement;
-      infoln('Banner loaded');
       GetFile('newbanner.gif');
-{ TODO : Mientras no se habilite el evento de fin de descarga se tiene que esperar a que se termine la descarga del banner lo que demora la visualización de la ventana principal. }
-      DwProcess.WaitforIdle;
-      LoadAnnouncement;
-////////////////
       MainPages.ShowTabs:=false;
       MainPages.ActivePage:=SystemTab;
       SBAPrj:=TSBAPrj.Create;
@@ -1663,6 +1659,7 @@ begin
       SetupEdTmplMenu;
       SynSBASyn:= TSynSBASyn.Create(Self);
       SynVerilogSyn:= TSynVerilogSyn.Create(Self);
+      SynJSONSyn:=TSynJSONSyn.create(Self);
       SetupSynMarkup;
       SetupEditorPopupMenu;
       SynEdit_X.Font.Name:=EditorFontName;
@@ -1825,6 +1822,7 @@ begin
   if Assigned(IPCoreList) then FreeandNil(IPCoreList);
   If Assigned(SynSBASyn) then FreeandNil(SynSBASyn);
   If Assigned(SynVerilogSyn) then FreeandNil(SynVerilogSyn);
+  If Assigned(SynJSONSyn) then FreeandNil(SynJSONSyn);
   if Assigned(SBASnippet) then FreeandNil(SBASnippet);
   If Assigned(SBAContrlrProg) then FreeandNil(SBAContrlrProg);
   if assigned(SBAPrj) then FreeAndNil(SBAPrj);
@@ -2137,18 +2135,18 @@ begin
   Result:=(Editor.Lines.Count=0) or ((Editor.Lines.Count=1) and (Editor.Lines[1]=''));
 end;
 
-procedure TMainForm.Process1ReadData(Sender: TObject);
+procedure TMainForm.ToolProcessReadData(Sender: TObject);
 var
   t:TStringList;
 begin
    t:=TStringList.Create;
-   t.LoadFromStream(Process1.Output);
+   t.LoadFromStream(ToolProcess.Output);
    Log.Items.AddStrings(t);
 infoln(t.Text);
    t.free;
 end;
 
-procedure TMainForm.Process1Terminate(Sender: TObject);
+procedure TMainForm.ToolProcessTerminate(Sender: TObject);
 var
   PS:TProcessStatus;
   PStr:String;
@@ -2156,7 +2154,7 @@ begin
   PStr:='';
   PS:=ProcessStatus;
   ProcessStatus:=Idle;
-  if Process1.NumBytesAvailable>0 then Process1ReadData(Sender);
+  if ToolProcess.NumBytesAvailable>0 then ToolProcessReadData(Sender);
   Log.ItemIndex:=Log.Count-1;
   case PS of
     SyntaxChk: ToolsFileSyntaxCheck.Enabled:=true;
@@ -2261,27 +2259,27 @@ begin
   wfile:=extractfilename(f);
   while ProcessStatus<>Idle do begin sleep(300); application.ProcessMessages; end;
   ProcessStatus:=Obfusct;
-  process1.Parameters.Clear;
-  process1.CurrentDirectory:=wpath;
+  ToolProcess.Parameters.Clear;
+  ToolProcess.CurrentDirectory:=wpath;
 
   {$IFDEF WINDOWS}
-  process1.Executable:='cmd.exe';
-  process1.Parameters.Add('/c');
+  ToolProcess.Executable:='cmd.exe';
+  ToolProcess.Parameters.Add('/c');
   // Hay un bug en el CMD /C que no interpreta adecuadamente las rutas con paréntesis
   // La inclusión de los dobles "" ayuda en la solución temporal del bug
-  process1.Parameters.Add('""'+AppDir+'obfuscator.bat" '+wfile+' obfuscated_file.'+s+' '+s+' '+mapfile+'"');
+  ToolProcess.Parameters.Add('""'+AppDir+'obfuscator.bat" '+wfile+' obfuscated_file.'+s+' '+s+' '+mapfile+'"');
   {$ENDIF}
   {$IFDEF LINUX}
-  process1.Executable:='/bin/bash';
-  process1.Parameters.Add('-c');
-  process1.Parameters.Add(AppDir+'obfuscator.sh '+wfile+' obfuscated_file.'+s+' '+s+' '+mapfile);
+  ToolProcess.Executable:='/bin/bash';
+  ToolProcess.Parameters.Add('-c');
+  ToolProcess.Parameters.Add(AppDir+'obfuscator.sh '+wfile+' obfuscated_file.'+s+' '+s+' '+mapfile);
   {$ENDIF}
   {$IFDEF DARWIN}
   ShowMessage('Ofuscation is not yet implemented in Darwin');
   {$ENDIF}
   Log.Clear;
-  process1.Execute;
-  while process1.Running do begin sleep(300); application.ProcessMessages; end;
+  ToolProcess.Execute;
+  while ToolProcess.Running do begin sleep(300); application.ProcessMessages; end;
   if not fileexistsUTF8(wpath+'obfuscated_file.'+s) then
   begin
     showmessage('The obfuscated file not was created');
@@ -2463,28 +2461,28 @@ begin
   fname:=extractfilename(f);
   while ProcessStatus<>Idle do begin sleep(300); application.ProcessMessages; end;
   ProcessStatus:=SyntaxChk;
-  process1.Parameters.Clear;
-  process1.CurrentDirectory:=wpath;
+  ToolProcess.Parameters.Clear;
+  ToolProcess.CurrentDirectory:=wpath;
   {$IFDEF WINDOWS}
-  process1.Executable:='cmd.exe';
-  process1.Parameters.Add('/c');
+  ToolProcess.Executable:='cmd.exe';
+  ToolProcess.Parameters.Add('/c');
   // Hay un bug en el CMD /C que no interpreta adecuadamente las rutas con paréntesis
   // La inclusión de los dobles "" ayuda en la solución temporal del bug
-  if path<>'' then process1.Parameters.Add('""'+AppDir+checkbat+'" '+fname+' "'+path+'""')
-  else process1.Parameters.Add('""'+AppDir+checkbat+'" '+fname+'"');
+  if path<>'' then ToolProcess.Parameters.Add('""'+AppDir+checkbat+'" '+fname+' "'+path+'""')
+  else ToolProcess.Parameters.Add('""'+AppDir+checkbat+'" '+fname+'"');
   {$ENDIF}
   {$IFDEF LINUX}
-  process1.Executable:='/bin/bash';
-  process1.Parameters.Add('-c');
-  process1.Parameters.Add(AppDir+checkbat+' '+fname+' "'+path+'"');
+  ToolProcess.Executable:='/bin/bash';
+  ToolProcess.Parameters.Add('-c');
+  ToolProcess.Parameters.Add(AppDir+checkbat+' '+fname+' "'+path+'"');
   {$ENDIF}
   {$IFDEF DARWIN}
-  process1.Executable:='sh';
-  process1.Parameters.Add('-c');
-  process1.Parameters.Add(AppDir+checkbat+' '+fname+' "'+path+'"');
+  ToolProcess.Executable:='sh';
+  ToolProcess.Parameters.Add('-c');
+  ToolProcess.Parameters.Add(AppDir+checkbat+' '+fname+' "'+path+'"');
   {$ENDIF}
   Log.Clear;
-  process1.Execute;
+  ToolProcess.Execute;
   { TODO : Pensar en eliminar el .bat y usar una lista para crear los parámetros debido a las posibles rutas con espacios. }
 end;
 
@@ -2563,8 +2561,13 @@ begin
   if FileexistsUtf8(ConfigDir+'newbanner.gif') then
   try
     AnnouncementImage.AnimatedGifToSprite(ConfigDir+'newbanner.gif');
+    infoln('Banner loaded');
   except
-    ON E:Exception do DeleteFileUTF8(ConfigDir+'newbanner.gif');
+    ON E:Exception do
+    begin
+      DeleteFileUTF8(ConfigDir+'newbanner.gif');
+      Infoln('Error loading new banner:'+E.Message);
+    end;
   end;
 end;
 
@@ -2604,6 +2607,7 @@ begin
       if (hdlext='.v') or (hdlext='.vl') or (hdlext='.ver') then hdltype:=verilog else
         if (hdlext='.sv') then hdltype:=systemverilog else
           if (hdlext='.ini') then hdltype:=ini else
+            if (hdlext='.sba') then hdltype:=json else
             hdltype:=other;
   case hdltype of
     vhdl,prg : begin
@@ -2621,6 +2625,11 @@ begin
       ActiveEditor.Highlighter:=SynIniSyn;
       mapfile:='vhdl_map.dat'
     end;
+    json: begin
+      commentstr:='__comment';
+      ActiveEditor.Highlighter:=SynJSONSyn;
+      mapfile:='vhdl_map.dat'
+    end;
     other : begin
       commentstr:='--';
       ActiveEditor.Highlighter:=nil;
@@ -2634,7 +2643,17 @@ var
   f:String;
 begin
   f:=ConfigDir+filename;
-  result:=DwProcess.WGET(Format(SBADwUrl,[filename]),f,integer(GetF));
+  result:=DwProcess.WGET(Format(SBADwUrl,[filename]),f);
+  { TODO : WARNING: DwProcess también es usado en AutoUpdate, debería tenerse cuidado cuando se cambia el evento }
+  if result then DwProcess.OnTerminate:=@dwTerminate;
+end;
+
+procedure TMainForm.dwTerminate(Sender: TObject);
+begin
+{ TODO : WARNING: DwProcess también es usado en AutoUpdate, debería tenerse cuidado cuando se cambia el evento }
+  DwProcess.OnTerminate:=@DwProcess.dwTerminate;
+  DwProcess.dwTerminate(Sender);
+  LoadAnnouncement;
 end;
 
 end.

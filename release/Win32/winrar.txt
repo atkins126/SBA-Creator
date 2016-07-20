@@ -1,6 +1,7 @@
 ;El comentario siguiente contiene secuencias de órdenes para auto extracción
 
 Setup=shortcut.bat
+Setup=SBACreator.exe
 SetupCode
 Title=Setup SBA System creator
 License=License

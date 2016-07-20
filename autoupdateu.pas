@@ -53,7 +53,7 @@ var
 begin
   result:=false;
   f:=ConfigDir+VersionFile;
-  DwProcess.WGET(Format(SBADwUrl,[VersionFile]),f,1);
+  DwProcess.WGET(Format(SBADwUrl,[VersionFile]),f);
   DwProcess.WaitforIdle;
   if not fileexistsUTF8(f) then exit;
   ini:=TIniFile.Create(ConfigDir+VersionFile);
@@ -70,7 +70,7 @@ var
 begin
   result:=false;
   f:=ConfigDir+WhatsNewFile;
-  DwProcess.WGET(Format(SBADwUrl,[WhatsNewFile]),f,1);
+  DwProcess.WGET(Format(SBADwUrl,[WhatsNewFile]),f);
   DwProcess.WaitforIdle;
   if not fileexistsUTF8(f) then exit;
   result:=true;
@@ -82,7 +82,7 @@ var
 begin
   result:=false;
   f:=ConfigDir+UpdaterZipfile;
-  DwProcess.WGET(Format(SBADwUrl,[UpdaterZipfile]),f,1);
+  DwProcess.WGET(Format(SBADwUrl,[UpdaterZipfile]),f);
   DwProcess.WaitforIdle;
   if not fileexistsUTF8(f) then exit;
   Unzip(f,AppDir+'updates');
@@ -135,7 +135,7 @@ end;
 
 function DownloadInProgress: boolean;
 begin
-  result:=DwProcess.Status<>0;
+  result:=DwProcess.Status=dwDownloading;
 end;
 
 end.

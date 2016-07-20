@@ -9,7 +9,11 @@ uses
   Controls, Graphics, Dialogs, ComCtrls, Buttons, ExtCtrls,
   FileUtil, LazFileUtils,
   AsyncProcess, lclintf, StdCtrls, EditBtn, IniPropStorage,
-  SBASnippetU, SBAProgramU, IniFilesUTF8, StringListUTF8;
+  SBASnippetU, SBAProgramU, IniFilesUTF8;
+
+type
+  tLibDwStatus=(Idle,GetBase, GetLibrary, GetPrograms, GetSnippets);
+
 
 type
 
@@ -62,7 +66,6 @@ type
     PB_SBAlibrary: TProgressBar;
     PB_SBAprograms: TProgressBar;
     PB_SBAsnippets: TProgressBar;
-    Process1: TAsyncProcess;
     IpCoreDescription: TMemo;
     SnippetDescription: TMemo;
     SnippetsFilter: TListViewFilterEdit;
@@ -110,6 +113,7 @@ type
     procedure AddItemToIPCoresFilter(FileIterator: TFileIterator);
     procedure AddItemToProgramsFilter(FileIterator: TFileIterator);
     procedure AddItemToSnippetsFilter(FileIterator: TFileIterator);
+    procedure dwTerminate(Sender: TObject);
     function EndGet(zfile, defdir: string): boolean;
     function EndGetBase: boolean;
     procedure EndGetLibrary;
@@ -117,6 +121,7 @@ type
     procedure EndGetSnippets;
     function GetVersion(f: string): string;
     function LookupFilterItem(S: string; LV: TListViewDataList): integer;
+    function GetFile(url, f: string; status: TLibDwStatus): boolean;
     { private declarations }
   public
     { public declarations }
@@ -134,83 +139,16 @@ implementation
 
 {$R *.lfm}
 
-uses ConfigFormU, UtilsU, DebugFormU;
-
-type
-  tProcessStatus=(Idle,GetBase, GetLibrary, GetPrograms, GetSnippets);
+uses ConfigFormU, UtilsU, DWFileU, DebugFormU;
 
 var
-  ProcessStatus:TProcessStatus=Idle;
+  LibDwStatus:TLibDwStatus=Idle;
 
 function ShowLibraryForm: TModalResult;
 begin
   LibraryForm.UpdateLists;
   result:=LibraryForm.ShowModal;
 end;
-
-function ProcessWGET(url,f:string;status:TProcessStatus):boolean;
-begin
-  { TODO : Encapsular el process en forma programática y enviar todo el procedimiento hacia la unidad de herramientas }
-  result:=false;
-  While ProcessStatus<>idle do
-  begin
-    sleep(300);
-    application.ProcessMessages;
-  end;
-  infoln('');
-  infoln('');
-  infoln('source: '+url);
-  infoln('destination: '+f);
-  infoln('--------------------------------------');
-  infoln('');
-  With LibraryForm do
-  begin
-    process1.Parameters.Clear;
-    process1.CurrentDirectory:=ConfigDir;
-    {$IFDEF WINDOWS}
-    process1.Executable:=AppDir+'tools'+PathDelim+'wget.exe';
-    {$ENDIF}
-    {$IFDEF LINUX}
-    process1.Executable:='wget';
-    {$ENDIF}
-    {$IFDEF DARWIN}
-    process1.Executable:='curl';
-    {$ENDIF}
-    {$IFNDEF DEBUG}
-    {$IFDEF DARWIN}
-    process1.Parameters.Add('-s');
-    {$ELSE}
-    process1.Parameters.Add('-q');
-    {$ENDIF}
-    {$ENDIF}
-    {$IFDEF WINDOWS}
-    process1.Parameters.Add('-O');
-    process1.Parameters.Add('"'+f+'"');
-    process1.Parameters.Add('--no-check-certificate');
-    process1.Parameters.Add(url);
-    {$ENDIF}
-    {$IFDEF LINUX}
-    process1.Parameters.Add('-O');
-    process1.Parameters.Add(f);
-    process1.Parameters.Add('--no-check-certificate');
-    process1.Parameters.Add(url);
-    {$ENDIF}
-    {$IFDEF DARWIN}
-    process1.Parameters.Add('-L');
-    process1.Parameters.Add(url);
-    process1.Parameters.Add('-o');
-    process1.Parameters.Add(f);
-    {$ENDIF}
-    ProcessStatus:=status;
-    try
-      process1.Execute;
-      result:=true;
-    except
-      On E:Exception do ShowMessage('The web download tool can not be used: '+E.Message);
-    end;
-  end;
-end;
-
 
 { TLibraryForm }
 
@@ -253,7 +191,7 @@ procedure TLibraryForm.B_SBAlibraryGetClick(Sender: TObject);
 begin
   PB_SBALibrary.Style:=pbstMarquee;
   SB.SimpleText:='Downloading file '+cSBAlibraryZipFile;
-  ProcessWGET(Ed_SBAlibrary.Text+Ed_SBARepoZipFile.Text,ConfigDir+cSBAlibraryZipFile,GetLibrary);
+  GetFile(Ed_SBAlibrary.Text+Ed_SBARepoZipFile.Text,ConfigDir+cSBAlibraryZipFile,GetLibrary);
 end;
 
 procedure TLibraryForm.B_SBAlibrarySurfClick(Sender: TObject);
@@ -265,7 +203,7 @@ procedure TLibraryForm.B_SBAprogramsGetClick(Sender: TObject);
 begin
   PB_SBAprograms.Style:=pbstMarquee;
   SB.SimpleText:='Downloading file '+cSBAprogramsZipFile;
-  ProcessWGET(Ed_SBAprograms.Text+Ed_SBARepoZipFile.Text,ConfigDir+cSBAprogramsZipFile,Getprograms);
+  GetFile(Ed_SBAprograms.Text+Ed_SBARepoZipFile.Text,ConfigDir+cSBAprogramsZipFile,Getprograms);
 end;
 
 procedure TLibraryForm.B_SBAprogramsSurfClick(Sender: TObject);
@@ -277,7 +215,7 @@ procedure TLibraryForm.B_SBAsnippetsGetClick(Sender: TObject);
 begin
   PB_SBAsnippets.Style:=pbstMarquee;
   SB.SimpleText:='Downloading file '+cSBAsnippetsZipFile;
-  ProcessWGET(Ed_SBAsnippets.Text+Ed_SBARepoZipFile.Text,ConfigDir+cSBAsnippetsZipFile,Getsnippets);
+  GetFile(Ed_SBAsnippets.Text+Ed_SBARepoZipFile.Text,ConfigDir+cSBAsnippetsZipFile,Getsnippets);
 end;
 
 procedure TLibraryForm.B_SBAsnippetsSurfClick(Sender: TObject);
@@ -319,8 +257,8 @@ end;
 
 procedure TLibraryForm.IdleTimer1Timer(Sender: TObject);
 begin
-  if (not Process1.Running) and (ProcessStatus<>Idle) then
-    Process1Terminate(Sender);
+  if (not DwProcess.Running) and (DwProcess.Status<>dwIdle) then
+    DwProcess.OnTerminate(Sender);
 end;
 
 procedure TLibraryForm.LV_IPCoresClick(Sender: TObject);
@@ -390,29 +328,11 @@ begin
 end;
 
 procedure TLibraryForm.Process1ReadData(Sender: TObject);
-var
-  t:TStringList;
 begin
-   t:=TStringList.Create;
-   t.LoadFromStream(Process1.Output);
-   infoln(t.Text);
-   t.free;
 end;
 
 procedure TLibraryForm.Process1Terminate(Sender: TObject);
-var PS:TProcessStatus;
 begin
-  PS:=ProcessStatus;
-  ProcessStatus:=Idle;
-  if Process1.NumBytesAvailable>0 then Process1ReadData(Sender);
-  case PS of
-    GetBase: EndGetBase;
-    GetLibrary: EndGetLibrary;
-    GetPrograms: EndGetPrograms;
-    GetSnippets: EndGetSnippets;
-  end;
-  infoln('');
-  infoln('End of process');
 end;
 
 procedure TLibraryForm.LV_ProgramsCustomDrawItem(Sender: TCustomListView;
@@ -427,7 +347,7 @@ procedure TLibraryForm.B_SBAbaseGetClick(Sender: TObject);
 begin
   PB_SBABase.Style:=pbstMarquee;
   SB.SimpleText:='Downloading file '+cSBABaseZipFile;
-  ProcessWGET(Ed_SBAbase.Text+Ed_SBARepoZipFile.Text,ConfigDir+cSBABaseZipFile,GetBase);
+  GetFile(Ed_SBAbase.Text+Ed_SBARepoZipFile.Text,ConfigDir+cSBABaseZipFile,GetBase);
 end;
 
 procedure TLibraryForm.B_AddtoLibraryClick(Sender: TObject);
@@ -539,10 +459,16 @@ function TLibraryForm.EndGet(zfile,defdir:string):boolean;
 var ZipMainFolder:String;
 begin
   result:=false;
+  if FileSize(ConfigDir+zfile)=0 then
+  begin
+    SB.SimpleText:='Invalid or missing zip file';
+    ShowMessage('The repository do not gives a valid zip file');
+    exit;
+  end;
   SB.SimpleText:='Unziping file '+zfile;
 { TODO : Extraer la ruta principal del zip para ser usado al extraer librerías de diferentes fuentes o ramas (branchs) establecer un criterio: Siempre las librerías deben empaquetarse en el zip dentro de un directorio.}
   ZipMainFolder:=GetZipMainFolder(ConfigDir+zfile);
-  if UnZip(ConfigDir+zFile,ConfigDir+'temp') then
+  if (ZipMainFolder<>'') and UnZip(ConfigDir+zFile,ConfigDir+'temp') then
   begin
     SB.SimpleText:='Unziping successful';
     if DirReplace(ConfigDir+'temp'+PathDelim+ZipMainFolder,ConfigDir+'temp'+PathDelim+DefDir) then
@@ -659,6 +585,39 @@ begin
     SnippetsFilter.Items.Add(Data);
   end;
   SnippetsFilter.InvalidateFilter;
+end;
+
+function TLibraryForm.GetFile(url,f:string;status:TLibDwStatus):boolean;
+begin
+  result:=false;
+  if not assigned(DwProcess) then exit;
+  result:=DwProcess.WGET(url,f);
+  if result then
+  begin
+    LibDwStatus:=status;
+    { TODO : WARNING: DwProcess también es usado en AutoUpdate, debería tenerse cuidado cuando se cambia el evento }
+    DwProcess.OnTerminate:=@dwTerminate;
+  end;
+end;
+
+procedure TLibraryForm.dwTerminate(Sender: TObject);
+var
+  PS:TLibDwStatus;
+  S:String;
+begin
+{ WARNING: DwProcess también es usado en AutoUpdate, debería tenerse cuidado cuando se cambia el evento }
+  DwProcess.OnTerminate:=@DwProcess.dwTerminate;
+  DwProcess.dwTerminate(Sender);
+  PS:=LibDwStatus;
+  LibDwStatus:=Idle;
+  case PS of
+    GetBase: EndGetBase;
+    GetLibrary: EndGetLibrary;
+    GetPrograms: EndGetPrograms;
+    GetSnippets: EndGetSnippets;
+  end;
+  WriteStr(S,PS);
+  InfoLn('LibDWTerminate: '+S);
 end;
 
 end.

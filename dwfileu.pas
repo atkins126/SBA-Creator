@@ -10,6 +10,8 @@ uses
 
 Type
 
+ tDWProcessStatus=(dwIdle,dwDownloading,dwTimeOut);
+
 { TDownloadThread }
 
  TDownloadThread = class(TThread)
@@ -26,15 +28,22 @@ Type
 
  TDwProcess = class(TAsyncProcess)
  private
-   FStatus: integer;
-   procedure SetStatus(AValue: integer);
+   FFileDestiny: String;
+   FStatus: tDWProcessStatus;
+   FUrlSource: String;
+   procedure SetFileDestiny(AValue: String);
+   procedure SetStatus(AValue: tDWProcessStatus);
+   procedure SetUrlSource(AValue: String);
  public
    Constructor Create (AOwner : TComponent);override;
-   function WGET(url, f: string; st: integer): boolean;
-   procedure WaitforIdle;
-   procedure OnTerminate(Sender: TObject);
-   procedure OnReadData(Sender: TObject);
-   property Status:integer read FStatus write SetStatus;
+   function WGET(url, f: string): boolean;
+   function WaitforIdle: boolean;
+   procedure DwTerminate(Sender: TObject);
+   procedure DwReadData(Sender: TObject);
+published
+   property Status:tDWProcessStatus read FStatus write SetStatus;
+   property UrlSource:String read FUrlSource write SetUrlSource;
+   property FileDestiny:String read FFileDestiny write SetFileDestiny;
  end;
 
 var
@@ -313,33 +322,27 @@ end;
 
 { TDwProcess }
 
-procedure TDwProcess.SetStatus(AValue: integer);
-begin
-  if FStatus=AValue then Exit;
-  FStatus:=AValue;
-end;
-
 constructor TDwProcess.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
   Options:=[poUsePipes,poStderrToOutPut];
   PipeBufferSize:=4096;
   ShowWindow:=swoMinimize;
-  FStatus:=0;
-  inherited OnTerminate:=@OnTerminate;
-  inherited OnReadData:=@OnReadData;
+  FStatus:=dwIdle;
+  OnTerminate:=@DwTerminate;
+  OnReadData:=@DwReadData;
 end;
 
-function TDwProcess.WGET(url, f: string; st: integer): boolean;
+function TDwProcess.WGET(url, f: string): boolean;
 begin
-  InfoLn('DwProcess WGET started');
   result:=false;
-  While FStatus<>0 do
-  begin
-    sleep(100);
-    application.ProcessMessages;
-  end;
-  DeleteFileUTF8(f);
+  if not WaitforIdle then exit;
+  FUrlSource:=url;
+  FFileDestiny:=f;
+  InfoLn('DwProcess WGET started');
+  InfoLn('DWProcess Url: '+FUrlSource);
+  InfoLn('DWProcess file destiny: '+FFileDestiny);
+  DeleteFileUTF8(FFileDestiny);
   Parameters.Clear;
   CurrentDirectory:=ConfigDir;
   {$IFDEF WINDOWS}
@@ -361,24 +364,24 @@ begin
   {$ENDIF}
   {$IFDEF WINDOWS}
   Parameters.Add('-O');
-  Parameters.Add('"'+f+'"');
+  Parameters.Add('"'+FFileDestiny+'"');
   Parameters.Add('--no-check-certificate');
-  Parameters.Add(url);
+  Parameters.Add(FUrlSource);
   {$ENDIF}
   {$IFDEF LINUX}
   Parameters.Add('-O');
-  Parameters.Add(f);
+  Parameters.Add(FFileDestiny);
   Parameters.Add('--no-check-certificate');
-  Parameters.Add(url);
+  Parameters.Add(FUrlSource);
   {$ENDIF}
   {$IFDEF DARWIN}
   Parameters.Add('-L');
-  Parameters.Add(url);
+  Parameters.Add(FUrlSource);
   Parameters.Add('-o');
-  Parameters.Add(f);
+  Parameters.Add(FFileDestiny);
   {$ENDIF}
   infoln(Parameters);
-  FStatus:=st;
+  FStatus:=dwDownloading;
   try
     Execute;
     result:=true;
@@ -387,27 +390,34 @@ begin
   end;
 end;
 
-procedure TDwProcess.WaitforIdle;
+function TDwProcess.WaitforIdle:boolean;
 var
   TiO:integer;
 begin
   TiO:=300;
-  While (TiO>0) and (FStatus<>0) do
+  While (TiO>0) and (FStatus<>dwIdle) do
   begin
     Dec(TiO);
     Application.ProcessMessages;
     Sleep(100);
   end;
+  result:=FStatus=dwIdle;
+  InfoLn('DwProcess WGET '+IFTHEN(result,'is Idle','can not terminate: Time Out'));
+  if not result then
+  begin
+    InfoLn('DWProcess timeout in Url: '+FUrlSource);
+    FStatus:=dwTimeOut;
+  end;
 end;
 
-procedure TDwProcess.OnTerminate(Sender: TObject);
+procedure TDwProcess.DwTerminate(Sender: TObject);
 begin
   if NumBytesAvailable>0 then OnReadData(Sender);
-  infoln('DwProcess terminated');
-  FStatus:=0;
+  infoln('DwProcess terminated: '+FFileDestiny);
+  FStatus:=dwIdle;
 end;
 
-procedure TDwProcess.OnReadData(Sender: TObject);
+procedure TDwProcess.DwReadData(Sender: TObject);
 var
   t:TStringList;
 begin
@@ -415,6 +425,24 @@ begin
   t.LoadFromStream(Output);
   infoln(t.Text);
   t.free;
+end;
+
+procedure TDwProcess.SetStatus(AValue: tDWProcessStatus);
+begin
+  if FStatus=AValue then Exit;
+  FStatus:=AValue;
+end;
+
+procedure TDwProcess.SetFileDestiny(AValue: String);
+begin
+  if FFileDestiny=AValue then Exit;
+  FFileDestiny:=AValue;
+end;
+
+procedure TDwProcess.SetUrlSource(AValue: String);
+begin
+  if FUrlSource=AValue then Exit;
+  FUrlSource:=AValue;
 end;
 
 { TDownloadThread }

@@ -1,6 +1,6 @@
 object MainForm: TMainForm
   Left = 1143
-  Height = 750
+  Height = 771
   Top = 41
   Width = 765
   HorzScrollBar.Page = 765
@@ -8,7 +8,7 @@ object MainForm: TMainForm
   VertScrollBar.Page = 639
   VertScrollBar.Range = 639
   AllowDropFiles = True
-  ClientHeight = 730
+  ClientHeight = 751
   ClientWidth = 765
   Constraints.MinHeight = 750
   Constraints.MinWidth = 765
@@ -24,7 +24,7 @@ object MainForm: TMainForm
   LCLVersion = '1.6.0.4'
   object MainPages: TPageControl
     Left = 0
-    Height = 707
+    Height = 728
     Top = 0
     Width = 765
     ActivePage = SystemTab
@@ -37,7 +37,7 @@ object MainForm: TMainForm
     OnChange = MainPagesChange
     object SystemTab: TTabSheet
       Caption = 'SystemTab'
-      ClientHeight = 679
+      ClientHeight = 700
       ClientWidth = 757
       ImageIndex = 0
       object Shape1: TShape
@@ -625,7 +625,7 @@ object MainForm: TMainForm
       object AnnouncementPanel: TPanel
         Left = 0
         Height = 100
-        Top = 579
+        Top = 600
         Width = 757
         Align = alBottom
         BorderSpacing.InnerBorder = 10
@@ -664,7 +664,7 @@ object MainForm: TMainForm
       end
       object MainPanel: TuETilePanel
         Left = 0
-        Height = 449
+        Height = 470
         Top = 130
         Width = 757
         Align = alClient
@@ -675,7 +675,7 @@ object MainForm: TMainForm
         ChildSizing.ShrinkVertical = crsHomogenousSpaceResize
         ChildSizing.Layout = cclLeftToRightThenTopToBottom
         ChildSizing.ControlsPerLine = 4
-        ClientHeight = 449
+        ClientHeight = 470
         ClientWidth = 757
         Color = 6308640
         Font.Color = clWhite
@@ -688,7 +688,7 @@ object MainForm: TMainForm
         object btn_new_project: TuEButton
           Left = 33
           Height = 148
-          Top = 51
+          Top = 58
           Width = 148
           Debug = False
           Layout = blGlyphTop
@@ -708,7 +708,7 @@ object MainForm: TMainForm
         object btn_open_project: TuEButton
           Left = 214
           Height = 148
-          Top = 51
+          Top = 58
           Width = 148
           Debug = False
           Layout = blGlyphTop
@@ -728,7 +728,7 @@ object MainForm: TMainForm
         object btn_prj_editor: TuEButton
           Left = 395
           Height = 148
-          Top = 51
+          Top = 58
           Width = 148
           Debug = False
           Layout = blGlyphTop
@@ -748,7 +748,7 @@ object MainForm: TMainForm
         object btn_prj_prgeditor: TuEButton
           Left = 576
           Height = 148
-          Top = 51
+          Top = 58
           Width = 148
           Debug = False
           Layout = blGlyphTop
@@ -769,7 +769,7 @@ object MainForm: TMainForm
         object btn_sba_library: TuEButton
           Left = 33
           Height = 148
-          Top = 250
+          Top = 264
           Width = 148
           Debug = False
           Layout = blGlyphTop
@@ -790,7 +790,7 @@ object MainForm: TMainForm
         object btn_sba_website: TuEButton
           Left = 214
           Height = 148
-          Top = 250
+          Top = 264
           Width = 148
           Debug = False
           Layout = blGlyphTop
@@ -811,7 +811,7 @@ object MainForm: TMainForm
         object btn_sba_forum: TuEButton
           Left = 395
           Height = 148
-          Top = 250
+          Top = 264
           Width = 148
           Debug = False
           Layout = blGlyphTop
@@ -832,7 +832,7 @@ object MainForm: TMainForm
         object btn_config: TuEButton
           Left = 576
           Height = 148
-          Top = 250
+          Top = 264
           Width = 148
           Debug = False
           Layout = blGlyphTop
@@ -4151,7 +4151,7 @@ object MainForm: TMainForm
   object StatusBar1: TStatusBar
     Left = 0
     Height = 23
-    Top = 707
+    Top = 728
     Width = 765
     Panels = <    
       item
@@ -5385,7 +5385,7 @@ object MainForm: TMainForm
       5DFF006699FFFFFFFF00FFFFFF00
     }
   end
-  object Process1: TAsyncProcess
+  object ToolProcess: TAsyncProcess
     PipeBufferSize = 4096
     Active = False
     Options = [poUsePipes, poStderrToOutPut]
@@ -5399,8 +5399,8 @@ object MainForm: TMainForm
     WindowTop = 0
     WindowWidth = 0
     FillAttribute = 0
-    OnReadData = Process1ReadData
-    OnTerminate = Process1Terminate
+    OnReadData = ToolProcessReadData
+    OnTerminate = ToolProcessTerminate
     left = 88
     top = 640
   end

@@ -187,7 +187,7 @@ begin
         exit;
       end;
     end;
-    if J.FindPath('exportpath')=nil then exportpath:='' else exportpath:=J.FindPath('exportpath').AsString;
+    if J.FindPath('exportpath')=nil then exportpath:='' else exportpath:=AppendPathDelim(TrimFilename(J.FindPath('exportpath').AsString));
     if J.FindPath('expmonolithic')=nil then expmonolithic:=false else expmonolithic:=J.FindPath('expmonolithic').AsBoolean;
     if J.FindPath('explibfiles')=nil then explibfiles:=true else explibfiles:=J.FindPath('explibfiles').AsBoolean;
     result:=true;
@@ -210,8 +210,8 @@ begin
             '"date": "'+date+'",'#10+
             '"description": "'+description+'",'#10+
             '"exportpath": "'+exportpath+'",'#10+
-            '"expmonolithic": "'+IfThen(expmonolithic,'true','false')+'",'#10+
-            '"explibfiles": "'+IfThen(explibfiles,'true','false')+'"';
+            '"expmonolithic": '+IfThen(expmonolithic,'true','false')+','#10+
+            '"explibfiles": '+IfThen(explibfiles,'true','false');
   S:='';
   for i:=0 to ports.Count-1 do
   begin
@@ -234,7 +234,7 @@ begin
   if S<>'' then SData+=','#10'"userfiles": ['#10+LeftStr(S, length(S)-2)+#10']'#10
     else SData+=','#10'"userfiles": null'#10;
   SData+='}';
-  result:=SData;
+  result:=ReplaceStr(SData,'\','/');
 end;
 
 function TSBAPrj.CoreGetReq(const s: string): TStringList;

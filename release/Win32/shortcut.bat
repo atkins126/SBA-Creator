@@ -13,11 +13,12 @@ pause
 GOTO EXIT
 
 :D0
-IF NOT EXIST "%USERPROFILE%\Desktop" GOTO D1
-@Shortcut.exe /f:"%USERPROFILE%\Desktop\SBACreator.lnk" /a:c /t:"%_%\SBACreator.exe" /w:"%_%"
+for /f "usebackq tokens=3*" %%D IN (`reg query "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\User Shell Folders" /v Desktop`) do set DESKTOP=%%D
+IF NOT EXIST %DESKTOP% GOTO D1
+@"%_%\tools\Shortcut.exe" /f:"%DESKTOP%\SBACreator.lnk" /a:c /t:"%_%\SBACreator.exe" /w:"%_%"
 GOTO EXIT
 
 :D1
-@Shortcut.exe /f:"%USERPROFILE%\Escritorio\SBACreator.lnk" /a:c /t:"%_%\SBACreator.exe" /w:"%_%"
+echo No se pudo encontrar la ruta hacia el escritorio del usuario: %DESKTOP%
 
 :EXIT

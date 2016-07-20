@@ -11,7 +11,7 @@ object LibraryForm: TLibraryForm
   OnDestroy = FormDestroy
   Position = poMainFormCenter
   SessionProperties = 'Ed_SBAbase.Text;Ed_SBAlibrary.Text;Ed_SBAprograms.Text;Ed_SBARepoZipFile.Text;Ed_SBAsnippets.Text;Ed_SBARepoZipFile.Items;Ed_SBARepoZipFile.ItemIndex'
-  LCLVersion = '1.4.4.0'
+  LCLVersion = '1.6.0.4'
   object LibraryPages: TPageControl
     Left = 0
     Height = 550
@@ -1120,25 +1120,6 @@ object LibraryForm: TLibraryForm
         end
       end
     end
-  end
-  object Process1: TAsyncProcess
-    PipeBufferSize = 4096
-    Active = False
-    Options = [poUsePipes, poStderrToOutPut]
-    Priority = ppNormal
-    StartupOptions = []
-    ShowWindow = swoMinimize
-    WindowColumns = 0
-    WindowHeight = 0
-    WindowLeft = 0
-    WindowRows = 0
-    WindowTop = 0
-    WindowWidth = 0
-    FillAttribute = 0
-    OnReadData = Process1ReadData
-    OnTerminate = Process1Terminate
-    left = 360
-    top = 40
   end
   object IdleTimer1: TIdleTimer
     AutoEnabled = True
