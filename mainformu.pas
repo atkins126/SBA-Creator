@@ -989,6 +989,7 @@ procedure TMainForm.AutoUpdate;
 var
   wn:TStringList;
   s:string;
+  p:integer;
 begin
   infoln('Search for new version');
   s:='';
@@ -1000,7 +1001,8 @@ begin
       infoln('What is new file was downloaded.');
       wn:=TStringList.Create;
       wn.LoadFromFile(ConfigDir+'whatsnew.txt');
-      s:=wn.text;
+      p:=Pos('Old Releases',wn.text);
+      s:=IFTHEN(p>1,Copy(wn.text,1,p-1),wn.text);
       infoln(wn);
     finally
       if assigned(wn) then FreeAndNil(wn);
@@ -1558,7 +1560,7 @@ end;
 
 procedure TMainForm.FileSaveExecute(Sender: TObject);
 begin
-  If Pos('FileNew',EditorPages.ActivePage.Hint)=0 then
+  If Pos('NewFile',EditorPages.ActivePage.Hint)=0 then
   begin
     SaveFile(EditorPages.ActivePage.Hint, ActiveEditor.Lines);
     ActiveEditor.Modified:=false;
