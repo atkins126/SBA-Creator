@@ -1,13 +1,13 @@
 object DebugForm: TDebugForm
-  Left = 875
+  Left = 821
   Height = 240
-  Top = 470
+  Top = 432
   Width = 504
   Caption = 'DebugForm'
   ClientHeight = 240
   ClientWidth = 504
   Position = poMainFormCenter
-  LCLVersion = '1.4.0.4'
+  LCLVersion = '1.6.0.4'
   object Memo: TMemo
     Left = 0
     Height = 210

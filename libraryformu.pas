@@ -7,8 +7,9 @@ interface
 uses
   Classes, SysUtils, ListViewFilterEdit, Forms,
   Controls, Graphics, Dialogs, ComCtrls, Buttons, ExtCtrls,
-  FileUtil, LazFileUtils,
-  AsyncProcess, lclintf, StdCtrls, EditBtn, IniPropStorage,
+  FileUtil,
+  LazFileUtils,
+  AsyncProcess, lclintf, StdCtrls, EditBtn, IniPropStorage, Menus,
   SBASnippetU, SBAProgramU, IniFilesUTF8;
 
 type
@@ -50,7 +51,9 @@ type
     Label8: TLabel;
     Label9: TLabel;
     L_TitleIPCore: TLabel;
+    MenuItem1: TMenuItem;
     Panel7: TPanel;
+    ItemsMenu: TPopupMenu;
     ProgramDescription: TMemo;
     Label5: TLabel;
     Label6: TLabel;
@@ -97,17 +100,19 @@ type
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure IdleTimer1Timer(Sender: TObject);
-    procedure LV_IPCoresClick(Sender: TObject);
     procedure LV_IPCoresCustomDrawItem(Sender: TCustomListView;
       Item: TListItem; State: TCustomDrawState; var DefaultDraw: Boolean);
-    procedure LV_ProgramsClick(Sender: TObject);
-    procedure Process1ReadData(Sender: TObject);
-    procedure Process1Terminate(Sender: TObject);
+    procedure LV_IPCoresSelectItem(Sender: TObject; Item: TListItem;
+      Selected: Boolean);
     procedure LV_ProgramsCustomDrawItem(Sender: TCustomListView;
       Item: TListItem; State: TCustomDrawState; var DefaultDraw: Boolean);
-    procedure LV_SnippetsClick(Sender: TObject);
+    procedure LV_ProgramsSelectItem(Sender: TObject; Item: TListItem;
+      Selected: Boolean);
     procedure LV_SnippetsCustomDrawItem(Sender: TCustomListView;
       Item: TListItem; State: TCustomDrawState; var DefaultDraw: Boolean);
+    procedure LV_SnippetsSelectItem(Sender: TObject; Item: TListItem;
+      Selected: Boolean);
+    procedure MenuItem1Click(Sender: TObject);
     procedure URL_IpCoreClick(Sender: TObject);
   private
     procedure AddItemToIPCoresFilter(FileIterator: TFileIterator);
@@ -152,7 +157,16 @@ end;
 
 { TLibraryForm }
 
-procedure TLibraryForm.LV_SnippetsClick(Sender: TObject);
+procedure TLibraryForm.LV_SnippetsCustomDrawItem(Sender: TCustomListView;
+  Item: TListItem; State: TCustomDrawState; var DefaultDraw: Boolean);
+var Icolor:TColor;
+begin
+  if SnippetsList.IndexOf(Item.Caption)=-1 then Icolor:=clGreen else Icolor:=clBlack;
+  Sender.Canvas.Font.Color:=Icolor;
+end;
+
+procedure TLibraryForm.LV_SnippetsSelectItem(Sender: TObject; Item: TListItem;
+  Selected: Boolean);
 var
   f:string;
   l:TListItem;
@@ -162,20 +176,35 @@ begin
   if (L=nil) or (LV_Snippets.Items.Count=0) then exit;
   B_AddtoSnippets.Enabled:=SnippetsList.IndexOf(L.Caption)=-1;
   f:=L.SubItems[0];
-  if f<>'' then
+  if FileExists(f) then
+//  if f<>'' then
   begin
     SBASnippet.filename:=f;
     if SBASnippet.description.count>0 then SnippetDescription.Lines.Assign(SBASnippet.description);
   end;
 end;
 
-procedure TLibraryForm.LV_SnippetsCustomDrawItem(Sender: TCustomListView;
-  Item: TListItem; State: TCustomDrawState; var DefaultDraw: Boolean);
-var Icolor:TColor;
+procedure TLibraryForm.MenuItem1Click(Sender: TObject);
+var
+  L:TListItem;
+  d:string;
 begin
-  if SnippetsList.IndexOf(Item.Caption)=-1 then Icolor:=clGreen else Icolor:=clBlack;
-  Sender.Canvas.Font.Color:=Icolor;
+  L:=nil;
+  Case LibraryPages.ActivePageIndex of
+    1 : L:=LV_IPCores.Selected;
+    2 : L:=LV_Programs.Selected;
+    3 : L:=LV_Snippets.Selected;
+  end;
+  if (L=nil) then exit;
+  Case LibraryPages.ActivePageIndex of
+    1 : d:=LibraryDir+L.Caption;
+    2 : d:=ProgramsDir;
+    3 : d:=SnippetsDir;
+  end;
+  Infoln('Try to open folder : '+d);
+  if DirectoryExists(d) then OpenDocument(d);
 end;
+
 
 procedure TLibraryForm.URL_IpCoreClick(Sender: TObject);
 begin
@@ -261,7 +290,30 @@ begin
     DwProcess.OnTerminate(Sender);
 end;
 
-procedure TLibraryForm.LV_IPCoresClick(Sender: TObject);
+procedure TLibraryForm.LV_IPCoresCustomDrawItem(Sender: TCustomListView;
+  Item: TListItem; State: TCustomDrawState; var DefaultDraw: Boolean);
+var Icolor:TColor;
+begin
+  case Item.SubItems[1] of
+    'U': Icolor:=clBlue;
+    '=': Icolor:=clBlack;
+    'N': Icolor:=clGreen;
+  else Icolor:=clRed;
+  end;
+  Sender.Canvas.Font.Color:=Icolor;
+{$IFDEF LINUX}
+//Workaround to ListView.Canvas.Font in GTK
+  if Item.SubItems[1]<>'=' then
+  begin
+    DefaultDraw:=False;
+    Sender.Canvas.Brush.Style:=bsClear;
+    Sender.Canvas.TextOut(Item.Left+5, Item.Top+3, Item.Caption);
+  end;
+{$ENDIF}
+end;
+
+procedure TLibraryForm.LV_IPCoresSelectItem(Sender: TObject; Item: TListItem;
+  Selected: Boolean);
 var
   f:string;
   l:TListItem;
@@ -288,29 +340,16 @@ begin
   end;
 end;
 
-procedure TLibraryForm.LV_IPCoresCustomDrawItem(Sender: TCustomListView;
+procedure TLibraryForm.LV_ProgramsCustomDrawItem(Sender: TCustomListView;
   Item: TListItem; State: TCustomDrawState; var DefaultDraw: Boolean);
 var Icolor:TColor;
 begin
-  case Item.SubItems[1] of
-    'U': Icolor:=clBlue;
-    '=': Icolor:=clBlack;
-    'N': Icolor:=clGreen;
-  else Icolor:=clRed;
-  end;
+  if ProgramsList.IndexOf(Item.Caption)=-1 then Icolor:=clGreen else Icolor:=clBlack;
   Sender.Canvas.Font.Color:=Icolor;
-{$IFDEF LINUX}
-//Workaround to ListView.Canvas.Font in GTK
-  if Item.SubItems[1]<>'=' then
-  begin
-    DefaultDraw:=False;
-    Sender.Canvas.Brush.Style:=bsClear;
-    Sender.Canvas.TextOut(Item.Left+5, Item.Top+3, Item.Caption);
-  end;
-{$ENDIF}
 end;
 
-procedure TLibraryForm.LV_ProgramsClick(Sender: TObject);
+procedure TLibraryForm.LV_ProgramsSelectItem(Sender: TObject; Item: TListItem;
+  Selected: Boolean);
 var
   f:string;
   l:TListItem;
@@ -325,22 +364,6 @@ begin
     SBAProgram.filename:=f;
     if SBAProgram.description.count>0 then ProgramDescription.Lines.Assign(SBAProgram.description);
   end;
-end;
-
-procedure TLibraryForm.Process1ReadData(Sender: TObject);
-begin
-end;
-
-procedure TLibraryForm.Process1Terminate(Sender: TObject);
-begin
-end;
-
-procedure TLibraryForm.LV_ProgramsCustomDrawItem(Sender: TCustomListView;
-  Item: TListItem; State: TCustomDrawState; var DefaultDraw: Boolean);
-var Icolor:TColor;
-begin
-  if ProgramsList.IndexOf(Item.Caption)=-1 then Icolor:=clGreen else Icolor:=clBlack;
-  Sender.Canvas.Font.Color:=Icolor;
 end;
 
 procedure TLibraryForm.B_SBAbaseGetClick(Sender: TObject);
@@ -500,37 +523,43 @@ end;
 
 procedure TLibraryForm.AddItemToIPCoresFilter(FileIterator: TFileIterator);
 var
-  Data:TStringArray;
+//  Data:TStringArray;
+  Data:TListViewDataItem;
   v:integer;
 begin
-  SetLength(Data,3);
-  Data[0]:=ExtractFileNameWithoutExt(FileIterator.FileInfo.Name);
-  Data[1]:=FileIterator.FileName;
-  v:=VCmpr(GetVersion(FileIterator.FileName),GetVersion(LibraryDir+Data[0]+PathDelim+Data[0]+'.ini'));
-  if IpCoreList.IndexOf(Data[0])=-1 then
-    Data[2]:='N'  // The item is new do not exists in local library
-  else if v>0 then Data[2]:='U' // the item is a new version of the one in the local library
-    else if v=0 then Data[2]:='=';  // the item is the same as local library
+  Data.Data := nil;
+  SetLength(Data.StringArray,3);
+  Data.StringArray[0]:=ExtractFileNameWithoutExt(FileIterator.FileInfo.Name);
+  Data.StringArray[1]:=FileIterator.FileName;
+  v:=VCmpr(GetVersion(FileIterator.FileName),GetVersion(LibraryDir+Data.StringArray[0]+PathDelim+Data.StringArray[0]+'.ini'));
+  if IpCoreList.IndexOf(Data.StringArray[0])=-1 then
+    Data.StringArray[2]:='N'  // The item is new do not exists in local library
+  else if v>0 then Data.StringArray[2]:='U' // the item is a new version of the one in the local library
+    else if v=0 then Data.StringArray[2]:='=';  // the item is the same as local library
   IPCoresFilter.Items.Add(Data);
 end;
 
 procedure TLibraryForm.AddItemToProgramsFilter(FileIterator: TFileIterator);
 var
-  Data:TStringArray;
+//  Data:TStringArray;
+  Data:TListViewDataItem;
 begin
-  SetLength(Data,2);
-  Data[0]:=ExtractFileNameWithoutExt(FileIterator.FileInfo.Name);
-  Data[1]:=FileIterator.FileName;
+  Data.Data := nil;
+  SetLength(Data.StringArray,2);
+  Data.StringArray[0]:=ExtractFileNameWithoutExt(FileIterator.FileInfo.Name);
+  Data.StringArray[1]:=FileIterator.FileName;
   ProgramsFilter.Items.Add(Data);
 end;
 
 procedure TLibraryForm.AddItemToSnippetsFilter(FileIterator: TFileIterator);
 var
-  Data:TStringArray;
+//  Data:TStringArray;
+  Data:TListViewDataItem;
 begin
-  SetLength(Data,2);
-  Data[0]:=ExtractFileNameWithoutExt(FileIterator.FileInfo.Name);
-  Data[1]:=FileIterator.FileName;
+  Data.Data := nil;
+  SetLength(Data.StringArray,2);
+  Data.StringArray[0]:=ExtractFileNameWithoutExt(FileIterator.FileInfo.Name);
+  Data.StringArray[1]:=FileIterator.FileName;
   SnippetsFilter.Items.Add(Data);
 end;
 
@@ -542,7 +571,7 @@ begin
   result:=-1; i:=0;
   while (result=-1) and (i<LV.Count) do
   begin
-    Data:=LV[i];
+    Data:=LV[i].StringArray;
     if Data[0]=S then result:=i else inc(i);
   end;
 end;
@@ -550,16 +579,17 @@ end;
 procedure TLibraryForm.UpdateLists;
 var
   S:String;
-  Data:TStringArray;
+  Data:TListViewDataItem; //TStringArray;
 begin
   IpCoresFilter.Items.Clear;
   SearchForFiles(ConfigDir+'temp'+PathDelim+DefLibraryDir, '*.ini',@AddItemToIpCoresFilter);
   For S in IpCoreList do if LookupFilterItem(S,IPCoresFilter.Items)=-1 then
   begin
-    SetLength(Data,3);
-    Data[0]:=S;
-    Data[1]:=LibraryDir+S+PathDelim+S+'.ini';
-    Data[2]:='L'; //The item in library is local and do not exist into the repository
+    Data.Data := nil;
+    SetLength(Data.StringArray,3);
+    Data.StringArray[0]:=S;
+    Data.StringArray[1]:=LibraryDir+S+PathDelim+S+'.ini';
+    Data.StringArray[2]:='L'; //The item in library is local and do not exist into the repository
     IPCoresFilter.Items.Add(Data);
   end;
   IpCoresFilter.InvalidateFilter;
@@ -568,9 +598,10 @@ begin
   SearchForFiles(ConfigDir+'temp'+PathDelim+DefProgramsDir, '*.prg',@AddItemToProgramsFilter);
   For S in ProgramsList do if LookupFilterItem(S,ProgramsFilter.Items)=-1 then
   begin
-    SetLength(Data,2);
-    Data[0]:=S;
-    Data[1]:=ProgramsDir+S+'.vhd';
+    Data.Data := nil;
+    SetLength(Data.StringArray,2);
+    Data.StringArray[0]:=S;
+    Data.StringArray[1]:=ProgramsDir+S+'.vhd';
     ProgramsFilter.Items.Add(Data);
   end;
   ProgramsFilter.InvalidateFilter;
@@ -579,9 +610,10 @@ begin
   SearchForFiles(ConfigDir+'temp'+PathDelim+DefSnippetsDir, '*.snp',@AddItemToSnippetsFilter);
   For S in SnippetsList do if LookupFilterItem(S,SnippetsFilter.Items)=-1 then
   begin
-    SetLength(Data,2);
-    Data[0]:=S;
-    Data[1]:=SnippetsDir+S+'.vhd';
+    Data.Data := nil;
+    SetLength(Data.StringArray,2);
+    Data.StringArray[0]:=S;
+    Data.StringArray[1]:=SnippetsDir+S+'.snp';
     SnippetsFilter.Items.Add(Data);
   end;
   SnippetsFilter.InvalidateFilter;
@@ -605,7 +637,7 @@ var
   PS:TLibDwStatus;
   S:String;
 begin
-{ WARNING: DwProcess también es usado en AutoUpdate, debería tenerse cuidado cuando se cambia el evento }
+{ TODO : WARNING: DwProcess también es usado en AutoUpdate, debería tenerse cuidado cuando se cambia el evento }
   DwProcess.OnTerminate:=@DwProcess.dwTerminate;
   DwProcess.dwTerminate(Sender);
   PS:=LibDwStatus;

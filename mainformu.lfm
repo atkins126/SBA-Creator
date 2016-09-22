@@ -1,16 +1,16 @@
 object MainForm: TMainForm
   Left = 1143
-  Height = 771
-  Top = 41
+  Height = 698
+  Top = 40
   Width = 765
   HorzScrollBar.Page = 765
   HorzScrollBar.Range = 765
   VertScrollBar.Page = 639
   VertScrollBar.Range = 639
   AllowDropFiles = True
-  ClientHeight = 751
+  ClientHeight = 678
   ClientWidth = 765
-  Constraints.MinHeight = 750
+  Constraints.MinHeight = 698
   Constraints.MinWidth = 765
   KeyPreview = True
   Menu = MainMenu
@@ -24,7 +24,7 @@ object MainForm: TMainForm
   LCLVersion = '1.6.0.4'
   object MainPages: TPageControl
     Left = 0
-    Height = 728
+    Height = 655
     Top = 0
     Width = 765
     ActivePage = SystemTab
@@ -37,7 +37,7 @@ object MainForm: TMainForm
     OnChange = MainPagesChange
     object SystemTab: TTabSheet
       Caption = 'SystemTab'
-      ClientHeight = 700
+      ClientHeight = 627
       ClientWidth = 757
       ImageIndex = 0
       object Shape1: TShape
@@ -625,7 +625,7 @@ object MainForm: TMainForm
       object AnnouncementPanel: TPanel
         Left = 0
         Height = 100
-        Top = 600
+        Top = 527
         Width = 757
         Align = alBottom
         BorderSpacing.InnerBorder = 10
@@ -664,7 +664,7 @@ object MainForm: TMainForm
       end
       object MainPanel: TuETilePanel
         Left = 0
-        Height = 470
+        Height = 397
         Top = 130
         Width = 757
         Align = alClient
@@ -675,7 +675,7 @@ object MainForm: TMainForm
         ChildSizing.ShrinkVertical = crsHomogenousSpaceResize
         ChildSizing.Layout = cclLeftToRightThenTopToBottom
         ChildSizing.ControlsPerLine = 4
-        ClientHeight = 470
+        ClientHeight = 397
         ClientWidth = 757
         Color = 6308640
         Font.Color = clWhite
@@ -686,10 +686,10 @@ object MainForm: TMainForm
         TabOrder = 1
         OnResize = MainPanelResize
         object btn_new_project: TuEButton
-          Left = 33
-          Height = 148
-          Top = 58
-          Width = 148
+          Left = 40
+          Height = 140
+          Top = 39
+          Width = 140
           Debug = False
           Layout = blGlyphTop
           TextShadowColor = clBlack
@@ -701,15 +701,15 @@ object MainForm: TMainForm
           BitmapOptions.MarginBottom = 2
           BitmapOptions.MarginLeft = 2
           BitmapOptions.Direction = sdVertical
-          Constraints.MinHeight = 148
-          Constraints.MinWidth = 148
+          Constraints.MinHeight = 140
+          Constraints.MinWidth = 140
           ParentColor = False
         end
         object btn_open_project: TuEButton
-          Left = 214
-          Height = 148
-          Top = 58
-          Width = 148
+          Left = 220
+          Height = 140
+          Top = 39
+          Width = 140
           Debug = False
           Layout = blGlyphTop
           TextShadowColor = clBlack
@@ -721,15 +721,15 @@ object MainForm: TMainForm
           BitmapOptions.MarginBottom = 2
           BitmapOptions.MarginLeft = 2
           BitmapOptions.Direction = sdVertical
-          Constraints.MinHeight = 148
-          Constraints.MinWidth = 148
+          Constraints.MinHeight = 140
+          Constraints.MinWidth = 140
           ParentColor = False
         end
         object btn_prj_editor: TuEButton
-          Left = 395
-          Height = 148
-          Top = 58
-          Width = 148
+          Left = 400
+          Height = 140
+          Top = 39
+          Width = 140
           Debug = False
           Layout = blGlyphTop
           TextShadowColor = clBlack
@@ -741,15 +741,15 @@ object MainForm: TMainForm
           BitmapOptions.MarginBottom = 2
           BitmapOptions.MarginLeft = 2
           BitmapOptions.Direction = sdVertical
-          Constraints.MinHeight = 148
-          Constraints.MinWidth = 148
+          Constraints.MinHeight = 140
+          Constraints.MinWidth = 140
           ParentColor = False
         end
         object btn_prj_prgeditor: TuEButton
-          Left = 576
-          Height = 148
-          Top = 58
-          Width = 148
+          Left = 580
+          Height = 140
+          Top = 39
+          Width = 140
           Debug = False
           Layout = blGlyphTop
           TextShadowColor = clBlack
@@ -762,15 +762,15 @@ object MainForm: TMainForm
           BitmapOptions.MarginLeft = 2
           BitmapOptions.Direction = sdVertical
           Caption = '&PRG/SNP Editor'
-          Constraints.MinHeight = 148
-          Constraints.MinWidth = 148
+          Constraints.MinHeight = 140
+          Constraints.MinWidth = 140
           ParentColor = False
         end
         object btn_sba_library: TuEButton
-          Left = 33
-          Height = 148
-          Top = 264
-          Width = 148
+          Left = 40
+          Height = 140
+          Top = 218
+          Width = 140
           Debug = False
           Layout = blGlyphTop
           TextShadowColor = clBlack
@@ -782,16 +782,16 @@ object MainForm: TMainForm
           BitmapOptions.MarginLeft = 2
           BitmapOptions.Direction = sdVertical
           Caption = 'SBA Library'
-          Constraints.MinHeight = 148
-          Constraints.MinWidth = 148
+          Constraints.MinHeight = 140
+          Constraints.MinWidth = 140
           OnClick = btn_sba_libraryClick
           ParentColor = False
         end
         object btn_sba_website: TuEButton
-          Left = 214
-          Height = 148
-          Top = 264
-          Width = 148
+          Left = 220
+          Height = 140
+          Top = 218
+          Width = 140
           Debug = False
           Layout = blGlyphTop
           TextShadowColor = clBlack
@@ -803,16 +803,16 @@ object MainForm: TMainForm
           BitmapOptions.MarginLeft = 2
           BitmapOptions.Direction = sdVertical
           Caption = 'SBA Website'
-          Constraints.MinHeight = 148
-          Constraints.MinWidth = 148
+          Constraints.MinHeight = 140
+          Constraints.MinWidth = 140
           OnClick = btn_sba_websiteClick
           ParentColor = False
         end
         object btn_sba_forum: TuEButton
-          Left = 395
-          Height = 148
-          Top = 264
-          Width = 148
+          Left = 400
+          Height = 140
+          Top = 218
+          Width = 140
           Debug = False
           Layout = blGlyphTop
           TextShadowColor = clBlack
@@ -824,16 +824,16 @@ object MainForm: TMainForm
           BitmapOptions.MarginLeft = 2
           BitmapOptions.Direction = sdVertical
           Caption = 'SBA Forum'
-          Constraints.MinHeight = 148
-          Constraints.MinWidth = 148
+          Constraints.MinHeight = 140
+          Constraints.MinWidth = 140
           OnClick = btn_sba_forumClick
           ParentColor = False
         end
         object btn_config: TuEButton
-          Left = 576
-          Height = 148
-          Top = 264
-          Width = 148
+          Left = 580
+          Height = 140
+          Top = 218
+          Width = 140
           Debug = False
           Layout = blGlyphTop
           TextShadowColor = clBlack
@@ -845,8 +845,8 @@ object MainForm: TMainForm
           BitmapOptions.MarginLeft = 2
           BitmapOptions.Direction = sdVertical
           Caption = 'Configuration'
-          Constraints.MinHeight = 148
-          Constraints.MinWidth = 148
+          Constraints.MinHeight = 140
+          Constraints.MinWidth = 140
           OnClick = btn_configClick
           ParentColor = False
         end
@@ -2209,25 +2209,25 @@ object MainForm: TMainForm
     end
     object EditorsTab: TTabSheet
       Caption = 'EditorsTab'
-      ClientHeight = 679
+      ClientHeight = 627
       ClientWidth = 757
       ImageIndex = 1
       OnContextPopup = EditorsTabContextPopup
       object P_Editors: TPanel
         Left = 152
-        Height = 679
+        Height = 627
         Top = 0
         Width = 605
         Align = alClient
         BevelOuter = bvNone
-        ClientHeight = 679
+        ClientHeight = 627
         ClientWidth = 605
         TabOrder = 0
         object Splitter1: TSplitter
           Cursor = crVSplit
           Left = 0
           Height = 6
-          Top = 578
+          Top = 526
           Width = 605
           Align = alBottom
           ResizeAnchor = akBottom
@@ -2235,7 +2235,7 @@ object MainForm: TMainForm
         object Log: TListBox
           Left = 0
           Height = 95
-          Top = 584
+          Top = 532
           Width = 605
           Align = alBottom
           ItemHeight = 0
@@ -2247,7 +2247,7 @@ object MainForm: TMainForm
         end
         object EditorPages: TPageControl
           Left = 0
-          Height = 539
+          Height = 487
           Top = 39
           Width = 474
           Align = alClient
@@ -2388,13 +2388,13 @@ object MainForm: TMainForm
         end
         object P_AuxEditor: TPanel
           Left = 474
-          Height = 539
+          Height = 487
           Top = 39
           Width = 131
           Align = alRight
           AutoSize = True
           BevelOuter = bvNone
-          ClientHeight = 539
+          ClientHeight = 487
           ClientWidth = 131
           TabOrder = 3
           object P_Obf: TPanel
@@ -2526,23 +2526,23 @@ object MainForm: TMainForm
       end
       object P_Project: TPanel
         Left = 0
-        Height = 679
+        Height = 627
         Top = 0
         Width = 147
         Align = alLeft
         BevelOuter = bvNone
-        ClientHeight = 679
+        ClientHeight = 627
         ClientWidth = 147
         TabOrder = 1
         Visible = False
         object GroupBox1: TGroupBox
           Left = 0
-          Height = 525
+          Height = 473
           Top = 0
           Width = 147
           Align = alClient
           Caption = 'Project Info'
-          ClientHeight = 505
+          ClientHeight = 453
           ClientWidth = 143
           Color = clWhite
           ParentColor = False
@@ -2606,7 +2606,7 @@ object MainForm: TMainForm
           end
           object PrjTree: TTreeView
             Left = 0
-            Height = 481
+            Height = 429
             Top = 24
             Width = 143
             Align = alClient
@@ -2648,7 +2648,7 @@ object MainForm: TMainForm
         object CoreImage: TImage
           Left = 0
           Height = 148
-          Top = 531
+          Top = 479
           Width = 147
           AntialiasingMode = amOn
           Align = alBottom
@@ -2660,7 +2660,7 @@ object MainForm: TMainForm
           Cursor = crVSplit
           Left = 0
           Height = 6
-          Top = 525
+          Top = 473
           Width = 147
           Align = alBottom
           ParentColor = False
@@ -2669,7 +2669,7 @@ object MainForm: TMainForm
       end
       object Splitter4: TSplitter
         Left = 147
-        Height = 679
+        Height = 627
         Top = 0
         Width = 5
         ParentColor = False
@@ -4151,7 +4151,7 @@ object MainForm: TMainForm
   object StatusBar1: TStatusBar
     Left = 0
     Height = 23
-    Top = 728
+    Top = 655
     Width = 765
     Panels = <    
       item
@@ -4163,8 +4163,8 @@ object MainForm: TMainForm
     SimplePanel = False
   end
   object ImageList: TImageList
-    left = 24
-    top = 584
+    left = 20
+    top = 508
     Bitmap = {
       4C69260000001000000010000000FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
       FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00006699FF006699FF006699FF0066
@@ -5401,19 +5401,19 @@ object MainForm: TMainForm
     FillAttribute = 0
     OnReadData = ToolProcessReadData
     OnTerminate = ToolProcessTerminate
-    left = 88
-    top = 640
+    left = 84
+    top = 564
   end
   object SaveDialog: TSaveDialog
     Title = 'Save File As'
     Options = [ofOverwritePrompt, ofShowHelp, ofPathMustExist, ofEnableSizing, ofViewDetail]
-    left = 296
-    top = 640
+    left = 292
+    top = 564
   end
   object ObfRsvMenu: TPopupMenu
     Images = ImageList
-    left = 368
-    top = 528
+    left = 364
+    top = 452
     object MI_Addnew: TMenuItem
       Action = RW_AddWord
       Bitmap.Data = {
@@ -5612,8 +5612,8 @@ object MainForm: TMainForm
   end
   object ActionList: TActionList
     Images = ImageList
-    left = 24
-    top = 640
+    left = 20
+    top = 564
     object RW_AddWord: TAction
       Category = 'Rsv_Words'
       Caption = 'Add new word'
@@ -5978,8 +5978,8 @@ object MainForm: TMainForm
   object OpenDialog: TOpenDialog
     Title = 'Open File'
     Options = [ofShowHelp, ofFileMustExist, ofNoTestFileCreate, ofEnableSizing, ofViewDetail]
-    left = 368
-    top = 640
+    left = 364
+    top = 564
   end
   object SyncroEdit: TSynPluginSyncroEdit
     GutterGlyph.Data = {
@@ -6107,18 +6107,18 @@ object MainForm: TMainForm
     MarkupInfoSync.FrameColor = clFuchsia
     MarkupInfoArea.Background = clMoneyGreen
     MarkupInfoArea.Foreground = clNone
-    left = 224
-    top = 640
+    left = 220
+    top = 564
   end
   object IniStor: TIniPropStorage
     StoredValues = <>
-    left = 152
-    top = 640
+    left = 148
+    top = 564
   end
   object EditorMenu: TMainMenu
     Images = ImageList
-    left = 88
-    top = 528
+    left = 84
+    top = 452
     object ProjectMenuEd: TMenuItem
       Caption = 'Project'
       object MenuItem956: TMenuItem
@@ -7331,8 +7331,8 @@ object MainForm: TMainForm
     end
   end
   object TreeImg: TImageList
-    left = 152
-    top = 584
+    left = 148
+    top = 508
     Bitmap = {
       4C69060000001000000010000000FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
       FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
@@ -7531,8 +7531,8 @@ object MainForm: TMainForm
   end
   object ProgMenu: TMainMenu
     Images = ImageList
-    left = 224
-    top = 528
+    left = 220
+    top = 452
     object MenuItem32: TMenuItem
       Caption = '&File'
       object MenuItem13: TMenuItem
@@ -8298,8 +8298,8 @@ object MainForm: TMainForm
   end
   object MainMenu: TMainMenu
     Images = ImageList
-    left = 24
-    top = 528
+    left = 20
+    top = 452
     object MenuItem33: TMenuItem
       Caption = '&Project'
       object MenuItem34: TMenuItem
@@ -8542,8 +8542,8 @@ object MainForm: TMainForm
     end
   end
   object EdTabMenu: TPopupMenu
-    left = 296
-    top = 528
+    left = 292
+    top = 452
     object MenuItem4: TMenuItem
       Action = FileClose
     end
@@ -8552,8 +8552,8 @@ object MainForm: TMainForm
     end
   end
   object PrgTemplates: TPopupMenu
-    left = 152
-    top = 528
+    left = 148
+    top = 452
     object MenuItem14: TMenuItem
       Caption = 'New Item1'
     end
@@ -8561,8 +8561,8 @@ object MainForm: TMainForm
   object MarkImages: TImageList
     Height = 12
     Width = 12
-    left = 88
-    top = 584
+    left = 84
+    top = 508
     Bitmap = {
       4C690A0000000C0000000C000000666600FF666600FF666600FF666600FF6666
       00FF666600FF666600FF666600FF666600FF666600FF666600FF666600FF6666
@@ -8754,8 +8754,8 @@ object MainForm: TMainForm
     ParentMenu = FileHistoryEd
     FileMustExist = True
     OnClickHistoryItem = EditorHistoryClickHistoryItem
-    left = 448
-    top = 640
+    left = 444
+    top = 564
   end
   object PrjHistory: THistoryFiles
     MaxItems = 10
@@ -8764,13 +8764,13 @@ object MainForm: TMainForm
     ParentMenu = ProjectsHistory
     FileMustExist = True
     OnClickHistoryItem = PrjHistoryClickHistoryItem
-    left = 528
-    top = 640
+    left = 524
+    top = 564
   end
   object PrjTreeMenu: TPopupMenu
     Images = ImageList
-    left = 448
-    top = 528
+    left = 444
+    top = 452
     object MI_AddCore: TMenuItem
       Action = ProjectEditCoreList
       Bitmap.Data = {
@@ -8970,19 +8970,19 @@ object MainForm: TMainForm
   object SynIniSyn: TSynIniSyn
     DefaultFilter = 'INI Files (*.ini)|*.ini'
     Enabled = False
-    left = 224
-    top = 584
+    left = 220
+    top = 508
   end
   object IdleTimer1: TIdleTimer
     AutoEnabled = True
     OnTimer = IdleTimer1Timer
-    left = 600
-    top = 640
+    left = 596
+    top = 564
   end
   object EditorPopUp: TPopupMenu
     Images = ImageList
-    left = 527
-    top = 528
+    left = 523
+    top = 452
     object MenuItem57: TMenuItem
       Action = EditCut
       Bitmap.Data = {
@@ -9024,7 +9024,7 @@ object MainForm: TMainForm
     end
   end
   object EdTemplates: TPopupMenu
-    left = 600
-    top = 528
+    left = 596
+    top = 452
   end
 end

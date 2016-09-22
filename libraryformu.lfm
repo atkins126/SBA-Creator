@@ -1,17 +1,17 @@
 object LibraryForm: TLibraryForm
-  Left = 1026
+  Left = 1223
   Height = 550
-  Top = 345
+  Top = 424
   Width = 543
   BorderStyle = bsDialog
-  Caption = 'LibraryForm'
+  Caption = 'Library Manager'
   ClientHeight = 550
   ClientWidth = 543
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   Position = poMainFormCenter
   SessionProperties = 'Ed_SBAbase.Text;Ed_SBAlibrary.Text;Ed_SBAprograms.Text;Ed_SBARepoZipFile.Text;Ed_SBAsnippets.Text;Ed_SBARepoZipFile.Items;Ed_SBARepoZipFile.ItemIndex'
-  LCLVersion = '1.6.0.4'
+  LCLVersion = '1.7'
   object LibraryPages: TPageControl
     Left = 0
     Height = 550
@@ -643,6 +643,7 @@ object LibraryForm: TLibraryForm
           AutoSize = False
           MaxLength = 0
           TabOrder = 0
+          TextHint = 'IPCore Name'
           FilteredListview = LV_IPCores
         end
         object LV_IPCores: TListView
@@ -663,14 +664,15 @@ object LibraryForm: TLibraryForm
               Caption = 'Path'
               Visible = False
             end>
+          PopupMenu = ItemsMenu
           ReadOnly = True
           RowSelect = True
           ShowColumnHeaders = False
           SortType = stText
           TabOrder = 1
           ViewStyle = vsReport
-          OnClick = LV_IPCoresClick
           OnCustomDrawItem = LV_IPCoresCustomDrawItem
+          OnSelectItem = LV_IPCoresSelectItem
         end
       end
       object Panel4: TPanel
@@ -887,14 +889,15 @@ object LibraryForm: TLibraryForm
               Caption = 'Path'
               Visible = False
             end>
+          PopupMenu = ItemsMenu
           ReadOnly = True
           RowSelect = True
           ShowColumnHeaders = False
           SortType = stText
           TabOrder = 1
           ViewStyle = vsReport
-          OnClick = LV_ProgramsClick
           OnCustomDrawItem = LV_ProgramsCustomDrawItem
+          OnSelectItem = LV_ProgramsSelectItem
         end
       end
       object Panel5: TPanel
@@ -1027,14 +1030,15 @@ object LibraryForm: TLibraryForm
               Caption = 'Path'
               Visible = False
             end>
+          PopupMenu = ItemsMenu
           ReadOnly = True
           RowSelect = True
           ShowColumnHeaders = False
           SortType = stText
           TabOrder = 1
           ViewStyle = vsReport
-          OnClick = LV_SnippetsClick
           OnCustomDrawItem = LV_SnippetsCustomDrawItem
+          OnSelectItem = LV_SnippetsSelectItem
         end
       end
       object Panel6: TPanel
@@ -1131,5 +1135,13 @@ object LibraryForm: TLibraryForm
     StoredValues = <>
     left = 496
     top = 488
+  end
+  object ItemsMenu: TPopupMenu
+    left = 352
+    top = 40
+    object MenuItem1: TMenuItem
+      Caption = 'Open Item Folder'
+      OnClick = MenuItem1Click
+    end
   end
 end
