@@ -21,6 +21,7 @@ type
   { TMainForm }
 
   TMainForm = class(TForm)
+    ProjectUpdCore: TAction;
     EditInsertTemplate: TAction;
     EditBlkUncomment: TAction;
     EditBlkComment: TAction;
@@ -41,6 +42,9 @@ type
     MenuItem67: TMenuItem;
     MenuItem68: TMenuItem;
     MenuItem69: TMenuItem;
+    MenuItem70: TMenuItem;
+    MI_UpdCore: TMenuItem;
+    ProjectsHistory: TMenuItem;
     MI_RemUserFile: TMenuItem;
     MI_AddUserFile: TMenuItem;
     MI_RemCore: TMenuItem;
@@ -83,7 +87,7 @@ type
     MarkImages: TImageList;
     MainPanel: TuETilePanel;
     MenuItem14: TMenuItem;
-    ProjectsHistory: TMenuItem;
+    ProjectsHistory2: TMenuItem;
     P_ProgAddress: TGroupBox;
     SBA_InsertTemplate: TAction;
     MenuItem13: TMenuItem;
@@ -355,6 +359,8 @@ type
     procedure MainPagesChange(Sender: TObject);
     procedure ProjectRemUserFileExecute(Sender: TObject);
     procedure ProjectSaveExecute(Sender: TObject);
+    procedure ProjectsHistory2Click(Sender: TObject);
+    procedure ProjectUpdCoreExecute(Sender: TObject);
     procedure SBA_cancelExecute(Sender: TObject);
     procedure SBA_EditProgramExecute(Sender: TObject);
     procedure B_ObfClick(Sender: TObject);
@@ -402,6 +408,7 @@ type
     function CloseProg: boolean;
     function CloseEditor(T: TTabSheet): boolean;
     function CloseProject: boolean;
+    procedure CopyPrjHistory;
     procedure CreateEditor(var ActiveTab: TTabSheet);
     procedure CreatePlugInsBtns;
     function CreateTempFile(fn:string): boolean;
@@ -1084,6 +1091,7 @@ begin
     exit;
   end;
   MI_AddCore.Visible:=false;
+  MI_UpdCore.Visible:=false;
   MI_RemCore.Visible:=false;
   MI_AddInstance.Visible:=false;
   MI_AddUserFile.Visible:=false;
@@ -1098,6 +1106,7 @@ begin
      ((TN.Parent=nil) and (TN.text='Lib')) then
   begin
     MI_AddCore.Visible:=true;
+    MI_UpdCore.Visible:=true;
     //MI_RemCore.Visible:=true;
     MI_AddInstance.Visible:=true;
   end;
@@ -1347,6 +1356,7 @@ begin
     //
     UpdatePrjTree;
     PrjHistory.UpdateList(f);
+    CopyPrjHistory;
     P_Project.Visible:=true;
     If MainPages.ActivePage=SystemTab then GotoEditor;
     S:=SBAPrj.location+SBAPrj.name+'_Top.vhd';
@@ -1421,6 +1431,19 @@ begin
     end;
   end;
   SBAPrj.Save;
+end;
+
+procedure TMainForm.ProjectsHistory2Click(Sender: TObject);
+Var FileName:String;
+begin
+  FileName:=PrjHistory.GetItemValue(TMenuItem(Sender).MenuIndex);
+  if CompareText(Filename,(SBAPrj.location+SBAPrj.name+cSBAPrjExt))=0 then exit;
+  if CloseProject then OpenProject(Filename);
+end;
+
+procedure TMainForm.ProjectUpdCoreExecute(Sender: TObject);
+begin
+  { TODO : Implementar funcionalidad para actualizar el IPCore }
 end;
 
 procedure TMainForm.SBA_cancelExecute(Sender: TObject);
@@ -1657,8 +1680,6 @@ begin
       ProgramsList:=TStringList.Create;
       PlugInsList:=TStringList.Create;
       UpdateLists;
-      SetupPrgTmplMenu;
-      SetupEdTmplMenu;
       SynSBASyn:= TSynSBASyn.Create(Self);
       SynVerilogSyn:= TSynVerilogSyn.Create(Self);
       SynJSONSyn:=TSynJSONSyn.create(Self);
@@ -1666,15 +1687,35 @@ begin
       SetupEditorPopupMenu;
       SynEdit_X.Font.Name:=EditorFontName;
       SynEdit_X.Font.Size:=EditorFontSize;
-      EditorHistory.IniFile:=ConfigDir+'FileHistory.ini';
+      SetupPrgTmplMenu;
+      SetupEdTmplMenu;
       PrjHistory.IniFile:=ConfigDir+'FileHistory.ini';
+      PrjHistory.UpdateParentMenu;
+      EditorHistory.IniFile:=ConfigDir+'FileHistory.ini';
       EditorHistory.UpdateParentMenu;
+      CopyPrjHistory;
       CreatePlugInsBtns;
       LoadTheme(ConfigDir+'theme'+PathDelim);
       infoln('All FormCreate tasks finished');
     end;
   end;
 end;
+
+procedure TMainForm.CopyPrjHistory;
+Var i:Integer;
+    m:TMenuItem;
+begin
+  if not (assigned(ProjectsHistory) or assigned(ProjectsHistory2)) then exit;
+  ProjectsHistory2.Clear;
+  for i:=0 to ProjectsHistory.Count-1 do
+  begin
+    m:=TMenuItem.Create(ProjectsHistory2);
+    m.caption:=ProjectsHistory.Items[i].caption;
+    m.OnClick:=@ProjectsHistory2Click;
+    ProjectsHistory2.Add(m);
+  end;
+end;
+
 
 procedure TMainForm.SetupEditorPopupMenu;
 var
@@ -1706,6 +1747,7 @@ procedure TMainForm.SetupPrgTmplMenu;
 var
   M:TMenuItem;
 begin
+  { TODO : Mover las plantillas de los place holder PRG a un submenu y adicionar capacidad para colocar más plantillas }
   If Assigned(PrgTemplates) then with PrgTemplates do
   begin
     PrgTemplates.Items.Clear;

@@ -21,17 +21,17 @@ object MainForm: TMainForm
   OnDropFiles = FormDropFiles
   OnResize = FormResize
   SessionProperties = 'CoreImage.Height;Height;Left;Log.Height;P_ProgAddress.Height;P_ProgLabels.Height;P_Project.Width;SnippetsList.Height;Top;Width;WindowState'
-  LCLVersion = '1.6.0.4'
+  LCLVersion = '1.7'
   object MainPages: TPageControl
     Left = 0
     Height = 655
     Top = 0
     Width = 765
-    ActivePage = SystemTab
+    ActivePage = ProgEditTab
     Align = alClient
     ParentShowHint = False
     ShowHint = True
-    TabIndex = 0
+    TabIndex = 2
     TabOrder = 0
     TabPosition = tpBottom
     OnChange = MainPagesChange
@@ -2613,6 +2613,7 @@ object MainForm: TMainForm
             AutoExpand = True
             BackgroundColor = clCream
             BorderStyle = bsNone
+            Color = clCream
             DefaultItemHeight = 18
             ExpandSignColor = clTeal
             ExpandSignType = tvestPlusMinus
@@ -2677,7 +2678,7 @@ object MainForm: TMainForm
     end
     object ProgEditTab: TTabSheet
       Caption = 'ProgEditTab'
-      ClientHeight = 679
+      ClientHeight = 627
       ClientWidth = 757
       object ToolBar3: TToolBar
         Left = 0
@@ -2809,17 +2810,17 @@ object MainForm: TMainForm
       end
       object P_AuxProg: TPanel
         Left = 627
-        Height = 640
+        Height = 588
         Top = 39
         Width = 130
         Align = alRight
         BevelOuter = bvNone
-        ClientHeight = 640
+        ClientHeight = 588
         ClientWidth = 130
         TabOrder = 1
         object P_CodeSnippets: TGroupBox
           Left = 2
-          Height = 343
+          Height = 291
           Top = 294
           Width = 126
           Align = alClient
@@ -2827,7 +2828,7 @@ object MainForm: TMainForm
           BorderSpacing.Right = 2
           BorderSpacing.Bottom = 3
           Caption = 'Code snippets'
-          ClientHeight = 323
+          ClientHeight = 271
           ClientWidth = 122
           Constraints.MinHeight = 290
           TabOrder = 0
@@ -2845,7 +2846,7 @@ object MainForm: TMainForm
           end
           object SnippetDescription: TMemo
             Left = 3
-            Height = 117
+            Height = 65
             Top = 170
             Width = 116
             Align = alClient
@@ -2866,7 +2867,7 @@ object MainForm: TMainForm
           object B_InsertSnipped: TBitBtn
             Left = 3
             Height = 30
-            Top = 290
+            Top = 238
             Width = 116
             Align = alBottom
             BorderSpacing.Around = 3
@@ -3109,7 +3110,7 @@ object MainForm: TMainForm
       end
       inline SynEdit_X: TSynEdit
         Left = 0
-        Height = 640
+        Height = 588
         Top = 39
         Width = 627
         Align = alClient
@@ -5921,25 +5922,6 @@ object MainForm: TMainForm
       Hint = 'Remove IP Core from Project'
       ImageIndex = 30
     end
-    object ProjectCoresAddInst: TAction
-      Category = 'Project'
-      Caption = 'Add instance'
-      Hint = 'Add IP Core Instance at cursor position'
-      ImageIndex = 31
-      OnExecute = ProjectCoresAddInstExecute
-    end
-    object ProjectAddUserFiles: TAction
-      Category = 'Project'
-      Caption = 'Add User Files'
-      ImageIndex = 32
-      OnExecute = ProjectAddUserFilesExecute
-    end
-    object ProjectRemUserFile: TAction
-      Category = 'Project'
-      Caption = 'Remove User File'
-      ImageIndex = 30
-      OnExecute = ProjectRemUserFileExecute
-    end
     object EditBlkIndent: TAction
       Category = 'Edit'
       Caption = 'Indent Selection'
@@ -5973,6 +5955,32 @@ object MainForm: TMainForm
       Caption = 'Insert &Template'
       ImageIndex = 27
       OnExecute = EditInsertTemplateExecute
+    end
+    object ProjectUpdCore: TAction
+      Category = 'Project'
+      Caption = 'Update IP Core'
+      Hint = 'Update Project IPCore from Libraries'
+      ImageIndex = 18
+      OnExecute = ProjectUpdCoreExecute
+    end
+    object ProjectCoresAddInst: TAction
+      Category = 'Project'
+      Caption = 'Add instance'
+      Hint = 'Add IP Core Instance at cursor position'
+      ImageIndex = 31
+      OnExecute = ProjectCoresAddInstExecute
+    end
+    object ProjectAddUserFiles: TAction
+      Category = 'Project'
+      Caption = 'Add User Files'
+      ImageIndex = 32
+      OnExecute = ProjectAddUserFilesExecute
+    end
+    object ProjectRemUserFile: TAction
+      Category = 'Project'
+      Caption = 'Remove User File'
+      ImageIndex = 30
+      OnExecute = ProjectRemUserFileExecute
     end
   end
   object OpenDialog: TOpenDialog
@@ -6319,7 +6327,7 @@ object MainForm: TMainForm
       object MenuItem929: TMenuItem
         Caption = '-'
       end
-      object ProjectsHistory: TMenuItem
+      object ProjectsHistory2: TMenuItem
         Caption = 'Recent Projects'
       end
     end
@@ -8380,6 +8388,12 @@ object MainForm: TMainForm
           FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00
         }
       end
+      object ProjectsHistory: TMenuItem
+        Caption = 'Recent Projects'
+      end
+      object MenuItem70: TMenuItem
+        Caption = '-'
+      end
       object MenuItem36: TMenuItem
         Action = ProjectGotoEditor
         Bitmap.Data = {
@@ -8754,6 +8768,7 @@ object MainForm: TMainForm
     ParentMenu = FileHistoryEd
     FileMustExist = True
     OnClickHistoryItem = EditorHistoryClickHistoryItem
+    CheckLastItem = True
     left = 444
     top = 564
   end
@@ -8764,6 +8779,7 @@ object MainForm: TMainForm
     ParentMenu = ProjectsHistory
     FileMustExist = True
     OnClickHistoryItem = PrjHistoryClickHistoryItem
+    CheckLastItem = True
     left = 524
     top = 564
   end
@@ -8848,6 +8864,9 @@ object MainForm: TMainForm
         FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
         FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00
       }
+    end
+    object MI_UpdCore: TMenuItem
+      Action = ProjectUpdCore
     end
     object MI_AddInstance: TMenuItem
       Action = ProjectCoresAddInst
