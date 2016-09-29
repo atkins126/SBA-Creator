@@ -357,6 +357,7 @@ type
     procedure ProjectNewExecute(Sender: TObject);
     procedure ProjectOpenExecute(Sender: TObject);
     procedure MainPagesChange(Sender: TObject);
+    procedure ProjectRemCoreExecute(Sender: TObject);
     procedure ProjectRemUserFileExecute(Sender: TObject);
     procedure ProjectSaveExecute(Sender: TObject);
     procedure ProjectsHistory2Click(Sender: TObject);
@@ -1106,7 +1107,7 @@ begin
      ((TN.Parent=nil) and (TN.text='Lib')) then
   begin
     MI_AddCore.Visible:=true;
-    MI_UpdCore.Visible:=true;
+    //MI_UpdCore.Visible:=true;
     //MI_RemCore.Visible:=true;
     MI_AddInstance.Visible:=true;
   end;
@@ -1405,6 +1406,15 @@ begin
   end else MainForm.Menu := nil;
 end;
 
+procedure TMainForm.ProjectRemCoreExecute(Sender: TObject);
+var
+  TN:TTreeNode;
+begin
+  TN:=PrjTree.Selected;
+  if (TN<>nil) and (TN.Parent<>nil) and (TN.GetParentNodeOfAbsoluteLevel(0).Text='Lib') then
+    if SBAPrj.RemoveCore(TN.Text) then  UpdatePrjTree;
+end;
+
 procedure TMainForm.ProjectRemUserFileExecute(Sender: TObject);
 var
   TN:TTreeNode;
@@ -1442,8 +1452,12 @@ begin
 end;
 
 procedure TMainForm.ProjectUpdCoreExecute(Sender: TObject);
+var
+  TN:TTreeNode;
 begin
-  { TODO : Implementar funcionalidad para actualizar el IPCore }
+  TN:=PrjTree.Selected;
+  if (TN<>nil) and (TN.Parent<>nil) and (TN.GetParentNodeOfAbsoluteLevel(0).Text='Lib') then
+      SBAPrj.UpdateCore(TN.Text);
 end;
 
 procedure TMainForm.SBA_cancelExecute(Sender: TObject);

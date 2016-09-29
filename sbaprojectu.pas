@@ -56,6 +56,7 @@ type
     Modified:boolean;
     constructor Create;
     destructor Destroy; override;
+  private
   public
     function Fill(Data: string): boolean;
     function Collect:string;
@@ -71,6 +72,7 @@ type
     function EditLib:boolean;
     procedure CopyIPCoreFiles(cl: TStrings);
     function RemoveCore(c:string):boolean;
+    function UpdateCore(c: string): boolean;
     function CleanUpLibCores(CL: TStrings): boolean;
     function AddUserFile(f:string):boolean;
     function RemUserFile(f:string):boolean;
@@ -439,8 +441,14 @@ end;
 
 function TSBAPrj.RemoveCore(c: string): boolean;
 begin
+  { TODO : Implementar funcionalidad para remover el IPCore }
   result:=false;
-  //NO implementado
+end;
+
+function TSBAPrj.UpdateCore(c: string): boolean;
+begin
+  { TODO : Implementar funcionalidad para actualizar el IPCore }
+  result:=false;
 end;
 
 procedure TSBAPrj.LoadIPData(ipname: String; IP,IPS,STL,AML,DCL:TStrings);

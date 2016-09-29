@@ -35,6 +35,8 @@ type
 
   TProcTableProc = procedure of object;
 
+  TBlockID = (PackageBlk, EntityBlk, ArchBlk, CompBlk, EntCompBlk, MapBlk, ProcessBlk, CaseBlk, ForBlk, IfBlk, WhileBlk, FuncProcBlk);
+
 type
 
   { TSynSBASyn }
@@ -189,7 +191,9 @@ begin
 end;
 
 procedure TSynSBASyn.IdentProc;
-var i:integer;
+var
+  i:integer;
+  blk:TBlockID;
 begin
   while Identifiers[fLine[Run]] do inc(Run);
   fStringLen:=Run-fTokenPos;
@@ -199,6 +203,7 @@ begin
   begin
     if KeyComp(FHLWordsList[i]) then fTokenID := tkString;
   end;
+  blk:=TBlockID(PtrUInt(TopCodeFoldBlockType));
   case Upcase(fToIdent^) of
     'A':begin
       //vhdl
@@ -212,7 +217,7 @@ begin
          KeyComp('assert') or
          KeyComp('attribute')
       then fTokenID := tkKey;
-      if KeyComp('architecture') then begin fTokenID := tkKey; StartCodeFoldBlock(nil); end;
+      if KeyComp('architecture') then begin fTokenID := tkKey; StartCodeFoldBlock(Pointer(PtrUInt(ArchBlk))); end;
       //ieee
       if KeyComp('add_unsigned') or
          KeyComp('and_table') or
@@ -241,8 +246,8 @@ begin
       if KeyComp('configuration') or
          KeyComp('constant')
       then fTokenID := tkKey;
-      if KeyComp('case') then begin fTokenID := tkKey; StartCodeFoldBlock(nil); end;
-      if KeyComp('component') then begin fTokenID := tkKey; StartCodeFoldBlock(nil); end;
+      if KeyComp('case') then begin fTokenID := tkKey; StartCodeFoldBlock(Pointer(PtrUInt(CaseBlk))); end;
+      if KeyComp('component') then begin fTokenID := tkKey; StartCodeFoldBlock(Pointer(PtrUInt(CompBlk))); end;
       //ieee
       if KeyComp('character') then fTokenID := tkIeee;
     end;
@@ -259,13 +264,17 @@ begin
          KeyComp('elsif') or
          KeyComp('exit')
       then fTokenID := tkKey;
-      if KeyComp('entity') then begin fTokenID := tkKey; StartCodeFoldBlock(nil); end;
+      if KeyComp('entity') then
+      begin
+        fTokenID := tkKey;
+        if (Blk<>ArchBlk) then StartCodeFoldBlock(Pointer(PtrUInt(EntityBlk))) else StartCodeFoldBlock(Pointer(PtrUInt(EntCompBlk)));
+      end;
       if KeyComp('end') then endTokenProc;
     end;
     'F':begin
       //vhdl
       if KeyComp('file') then fTokenID := tkKey;
-      if KeyComp('for') then begin fTokenID := tkKey; StartCodeFoldBlock(nil); end;
+      if KeyComp('for') then begin fTokenID := tkKey; StartCodeFoldBlock(Pointer(PtrUInt(ForBlk))); end;
       if KeyComp('function')then begin fTokenID := tkKey; FoldValidProc; end;
       //ieee
       if KeyComp('falling_edge') or
@@ -287,7 +296,7 @@ begin
     end;
     'I':begin
       //vhdl
-      if KeyComp('if') then begin fTokenID := tkKey; StartCodeFoldBlock(nil); end;
+      if KeyComp('if') then begin fTokenID := tkKey; StartCodeFoldBlock(Pointer(PtrUInt(IfBlk))); end;
       if KeyComp('impure') or
          KeyComp('in') or
          KeyComp('inertial') or
@@ -317,9 +326,8 @@ begin
     end;
     'M':begin
       //vhdl
-      if KeyComp('map') or
-         KeyComp('mod')
-      then fTokenID := tkKey;
+      if KeyComp('map') then begin fTokenID := tkKey; end; //StartCodeFoldBlock(Pointer(PtrUInt(MapBlk))); end;
+      if KeyComp('mod') then fTokenID := tkKey;
       //ieee
       if KeyComp('math_real') or
          KeyComp('min') or
@@ -361,7 +369,7 @@ begin
          KeyComp('pure')
       then fTokenID := tkKey;
       if KeyComp('process') or
-         KeyComp('package') then begin fTokenID := tkKey; StartCodeFoldBlock(nil); end;
+         KeyComp('package') then begin fTokenID := tkKey; StartCodeFoldBlock(Pointer(PtrUInt(PackageBlk))); end;
       if KeyComp('procedure') then begin fTokenID := tkKey; FoldValidProc; end;
       //ieee
       if KeyComp('positive') or
@@ -489,7 +497,7 @@ begin
          KeyComp('when') or
          KeyComp('with')
       then fTokenID := tkKey;
-      if KeyComp('while') then begin fTokenID := tkKey; StartCodeFoldBlock(nil); end;
+      if KeyComp('while') then begin fTokenID := tkKey; StartCodeFoldBlock(Pointer(PtrUInt(WhileBlk))); end;
       //ieee
       if KeyComp('work') then fTokenID := tkIeee;
     end;
@@ -735,7 +743,10 @@ begin
 end;
 
 procedure TSynSBASyn.RoundCloseProc;
+var Blk:TBlockID;
 begin
+  blk:=TBlockID(PtrUInt(TopCodeFoldBlockType));
+  if blk=MapBlk then EndCodeFoldBlock();
   inc(Run);
   fTokenID := tkSymbol;
 end;
@@ -747,10 +758,14 @@ begin
 end;
 
 procedure TSynSBASyn.SemiColonProc;
+var Blk:TBlockID;
 begin
+  blk:=TBlockID(PtrUInt(TopCodeFoldBlockType));
+  if blk=EntCompBlk then EndCodeFoldBlock();
   inc(Run);
   fTokenID := tkSymbol;
 end;
+
 
 procedure TSynSBASyn.SlashProc;
 begin
@@ -899,7 +914,7 @@ begin
     found:=true;
     break;
   end else inc(tmp);
-  if not found then StartCodeFoldBlock(nil);
+  if not found then StartCodeFoldBlock(Pointer(PtrUInt(FuncProcBlk)));
 end;
 
 procedure TSynSBASyn.Next;
