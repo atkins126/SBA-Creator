@@ -40,7 +40,6 @@ type
     GB_SBAlibrary: TGroupBox;
     GB_SBAprograms: TGroupBox;
     GB_SBAsnippets: TGroupBox;
-    IdleTimer1: TIdleTimer;
     IniPS: TIniPropStorage;
     IPCoreImage: TImage;
     Label1: TLabel;
@@ -81,6 +80,7 @@ type
     LV_IPCores: TListView;
     LV_Programs: TListView;
     SB: TStatusBar;
+    KillProcTimer: TTimer;
     UpdateRep: TTabSheet;
     URL_IpCore: TStaticText;
     procedure B_AddtoSnippetsClick(Sender: TObject);
@@ -100,6 +100,7 @@ type
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure IdleTimer1Timer(Sender: TObject);
+    procedure KillProcTimerTimer(Sender: TObject);
     procedure LV_IPCoresCustomDrawItem(Sender: TCustomListView;
       Item: TListItem; State: TCustomDrawState; var DefaultDraw: Boolean);
     procedure LV_IPCoresSelectItem(Sender: TObject; Item: TListItem;
@@ -286,6 +287,13 @@ end;
 
 procedure TLibraryForm.IdleTimer1Timer(Sender: TObject);
 begin
+end;
+
+procedure TLibraryForm.KillProcTimerTimer(Sender: TObject);
+begin
+  { TODO : WorkAround En Linux el método OnTerminate no es ejecutado por lo cual se incluye la condición Running para saber si continúa la ejecución del proceso. }
+  //Si se corrije el comportamiento en Linux, se puede prescindir de la evaluación a Running
+  if not assigned(DwProcess) then exit;
   if (not DwProcess.Running) and (DwProcess.Status<>dwIdle) then
     DwProcess.OnTerminate(Sender);
 end;

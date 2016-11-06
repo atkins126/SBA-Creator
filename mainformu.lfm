@@ -1,5 +1,5 @@
 object MainForm: TMainForm
-  Left = 1143
+  Left = 1146
   Height = 698
   Top = 40
   Width = 765
@@ -2254,6 +2254,8 @@ object MainForm: TMainForm
           ParentShowHint = False
           TabOrder = 2
           OnChange = EditorPagesChange
+          OnCloseTabClicked = FileCloseExecute
+          Options = [nboShowCloseButtons]
         end
         object ToolBar2: TToolBar
           Left = 0
@@ -2962,7 +2964,7 @@ object MainForm: TMainForm
             Width = 116
             Align = alBottom
             BorderSpacing.Around = 3
-            Caption = 'Search for ...'
+            Caption = 'Update Labels'
             Glyph.Data = {
               36040000424D3604000000000000360000002800000010000000100000000100
               2000000000000004000064000000640000000000000000000000FFFFFFFFFFFF
@@ -3046,7 +3048,7 @@ object MainForm: TMainForm
             Width = 116
             Align = alBottom
             BorderSpacing.Around = 3
-            Caption = 'Seach for ...'
+            Caption = 'Update Const'
             Glyph.Data = {
               36040000424D3604000000000000360000002800000010000000100000000100
               2000000000000004000064000000640000000000000000000000FFFFFFFFFFFF
@@ -5983,6 +5985,13 @@ object MainForm: TMainForm
       ImageIndex = 30
       OnExecute = ProjectRemUserFileExecute
     end
+    object ProjectOpenItem: TAction
+      Category = 'Project'
+      Caption = 'Open File'
+      Hint = 'Open Item in Editor'
+      ImageIndex = 6
+      OnExecute = ProjectOpenItemExecute
+    end
   end
   object OpenDialog: TOpenDialog
     Title = 'Open File'
@@ -8788,6 +8797,9 @@ object MainForm: TMainForm
     Images = ImageList
     left = 444
     top = 452
+    object MI_OpenTreeItem: TMenuItem
+      Action = ProjectOpenItem
+    end
     object MI_AddCore: TMenuItem
       Action = ProjectEditCoreList
       Bitmap.Data = {

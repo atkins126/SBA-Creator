@@ -1125,12 +1125,6 @@ object LibraryForm: TLibraryForm
       end
     end
   end
-  object IdleTimer1: TIdleTimer
-    AutoEnabled = True
-    OnTimer = IdleTimer1Timer
-    left = 424
-    top = 40
-  end
   object IniPS: TIniPropStorage
     StoredValues = <>
     left = 496
@@ -1143,5 +1137,11 @@ object LibraryForm: TLibraryForm
       Caption = 'Open Item Folder'
       OnClick = MenuItem1Click
     end
+  end
+  object KillProcTimer: TTimer
+    Interval = 3000
+    OnTimer = KillProcTimerTimer
+    left = 448
+    top = 488
   end
 end

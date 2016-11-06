@@ -1,10 +1,11 @@
 @echo off
 REM Check VHDL Syntax using GHDL
 REM (c) Miguel Risco-Castillo
-REM v1.4 2015-06-15
+REM v1.5 2016-10-30
 
 echo Cleaning previous check...
 "%~dp0ghdl\bin\ghdl.exe" --remove
+if exist work-*.cf del work-*.cf
 
 echo Importing sources from vhdl files...
 if [%2]==[] goto nouse_path 

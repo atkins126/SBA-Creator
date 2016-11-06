@@ -9,7 +9,7 @@ object CoresPrjEdForm: TCoresPrjEdForm
   ClientHeight = 220
   ClientWidth = 401
   Position = poMainFormCenter
-  LCLVersion = '1.4.0.4'
+  LCLVersion = '1.7'
   object Label1: TLabel
     Left = 9
     Height = 15

@@ -5,7 +5,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs,
-  StdCtrls, Buttons
+  StdCtrls, Buttons, ExtCtrls, Clipbrd
   ;
 
 type
@@ -13,9 +13,12 @@ type
   { TDebugForm }
 
   TDebugForm = class(TForm)
+    B_MemoClpbrdCopy: TBitBtn;
     B_MemoClear: TBitBtn;
     Memo: TMemo;
+    Panel1: TPanel;
     procedure B_MemoClearClick(Sender: TObject);
+    procedure B_MemoClpbrdCopyClick(Sender: TObject);
   private
     { private declarations }
   public
@@ -40,6 +43,9 @@ begin
   result:=false;
   if not assigned(DebugForm) then exit;
   DebugForm.Memo.Append(Format('%:3d: %s',[DebugForm.Memo.Lines.Count,M]));
+  {$IFDEF LINUX}
+  DebugForm.Memo.SelStart := Length(DebugForm.Memo.Lines.Text)-1;
+  {$ENDIF}
   DebugForm.Show;
   {$ENDIF}
   result:=true;
@@ -56,10 +62,11 @@ begin
 end;
 
 function infoln(l: TStrings): boolean;
+var s:string;
 begin
   result:=true;
   infoln('Start of list: ');
-  result:=infoln(l.Text);
+  for s in l do result:=result and infoln(s);
   infoln('End of list');
 end;
 
@@ -68,6 +75,11 @@ end;
 procedure TDebugForm.B_MemoClearClick(Sender: TObject);
 begin
   Memo.Clear;
+end;
+
+procedure TDebugForm.B_MemoClpbrdCopyClick(Sender: TObject);
+begin
+  Clipboard.AsText:=Memo.Text;
 end;
 
 end.

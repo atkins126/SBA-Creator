@@ -57,10 +57,11 @@ type
     constructor Create;
     destructor Destroy; override;
   private
+    procedure FillRequeriments(list, m: TStrings; var level:integer);
   public
     function Fill(Data: string): boolean;
     function Collect:string;
-    function CoreGetReq(const s: string): TStringList;
+    function CoreGetReq(const inifile: string): TStringList;
     function PrepareNewFolder: boolean;
     function CustomizeFiles:boolean;
     function SaveAs(f: String):boolean;
@@ -77,7 +78,7 @@ type
     function AddUserFile(f:string):boolean;
     function RemUserFile(f:string):boolean;
     function GetUserFilePath(f:string):string;
-    function GetAllFileNames(vhdonly:boolean=true):string;
+    function GetAllFileNames(dir: string; vhdonly: boolean=true): string;
   end;
 
 var
@@ -239,19 +240,22 @@ begin
   result:=ReplaceStr(SData,'\','/');
 end;
 
-function TSBAPrj.CoreGetReq(const s: string): TStringList;
+function TSBAPrj.CoreGetReq(const inifile: string): TStringList;
 var
   ini: TIniFile;
+  r:string;
   k,l: TStringList;
 begin
   k:=TStringList.Create;
   l:=TStringList.Create;
   try
-    ini:=TIniFile.Create(s);
+    ini:=TIniFile.Create(inifile);
     k.DelimitedText:=ini.ReadString('REQUIREMENTS', 'IPCores', '');
-    l.AddStrings(k);
+    for r in k do l.Append(r+'=IPCores'); //l.AddStrings(k);
     k.DelimitedText:=ini.ReadString('REQUIREMENTS', 'Packages', '');
-    l.AddStrings(k);
+    for r in k do l.Append(r+'=Packages'); //l.AddStrings(k);
+    k.DelimitedText:=ini.ReadString('REQUIREMENTS', 'UserFiles', '');
+    for r in k do l.Append(r+'=UserFiles'); //l.AddStrings(k);
   finally
     if assigned(k) then FreeAndNil(k);
     if assigned(ini) then FreeAndNil(ini);
@@ -271,7 +275,7 @@ begin
     Modified:=true;
     Save;
     result:=true;
-  end else ShowMessage('The file is already in the list')
+  end else ShowMessage('The file '+f+' is already in the list')
   else ShowMessage('The user file: '+f+',could not be found.');
 end;
 
@@ -297,18 +301,26 @@ begin
   result:=UserFiles.Values[f];
 end;
 
-function TSBAPrj.GetAllFileNames(vhdonly: boolean): string;
+function TSBAPrj.GetAllFileNames(dir:string; vhdonly: boolean=true): string;
 var
   S,R:string;
-  i:integer;
-  l:tstringlist;
+  i,level:integer;
+  l,m:tstringlist;
 begin
   l:=tstringlist.create;
   l.add(loclib+cSBApkg);
   l.add(loclib+cSyscon);
   l.add(loclib+cDataIntf);
-  if libcores.Count>0 then for R in libcores do
-    l.add(loclib+R+'.vhd');
+  if libcores.Count>0 then
+  begin
+    m:=tstringlist.create;
+    level:=0;
+    FillRequeriments(libcores,m,level);
+    infoln('Cores Requeriments:');
+    infoln(m);
+    for R in m do l.add(loclib+R+'.vhd');
+    if assigned(m) then freeandnil(m);
+  end;
   if userfiles.Count>0 then for i:=0 to userfiles.Count-1 do
     if not vhdonly or (extractfileext(userfiles.names[i])='.vhd') then
       l.add(userfiles.ValueFromIndex[i]+userfiles.names[i]);
@@ -317,9 +329,11 @@ begin
   l.add(location+name+'_'+cSBActrlr);
   l.add(location+name+'_'+cSBATop);
   Result:='';
-  for S in l do Result+=CreateRelativePath(s,location)+' ';
+  R:=IFTHEN(dir='',location,dir);
+  for S in l do Result+=CreateRelativePath(s,r)+' ';
   Result:=LeftStr(Result,length(Result)-1);
-  l.free;{ TODO : Sería mejor devolver la lista y luego armar el comando sin el .bat }
+  if assigned(l) then freeandnil(l);
+  { TODO : Sería mejor devolver la lista y luego armar el comando sin el .bat }
 end;
 
 function TSBAPrj.PrepareNewFolder:boolean;
@@ -594,28 +608,46 @@ end;
 
 procedure TSBAPrj.CopyIPCoreFiles(cl:TStrings);
 var
-  r,s:string;
+  i,j:integer;
+  r,s,v:string;
   l:TStringList;
 begin
   if cl.Count=0 then exit;
-  for s in cl do if not fileExistsUTF8(LibraryDir+s+PathDelim+s+'.ini') then
+  for i:=0 to cl.Count-1 do
   begin
-    ShowMessage('The IP Core file: '+LibraryDir+S+' was not found.');
-    exit;
-  end else if not FileExistsUTF8(LocLib+s+'.vhd') then
-  begin
-infoln('Copiando: '+s+'.vhd');  //Copy IPCore
-    CopyFile(LibraryDir+s+PathDelim+s+'.vhd',LocLib+s+'.vhd');
-    if LibAsReadOnly then FileSetAttrUTF8(LocLib+s+'.vhd',faReadOnly);
-
-    l:=CoreGetReq(LibraryDir+s+PathDelim+s+'.ini');
-    for r in l do if FileExistsUTF8(LibraryDir+s+PathDelim+r+'.vhd') then
+    v:=cl[i];
+    s:=Copy2SymbDel(v,'=');
+    if not fileExistsUTF8(LibraryDir+s+PathDelim+s+'.ini') then
     begin
-infoln('Copiando: '+r+'.vhd'); //Copy Requirements
-      CopyFile(LibraryDir+s+PathDelim+r+'.vhd',LocLib+r+'.vhd');
-      if LibAsReadOnly then FileSetAttrUTF8(LocLib+r+'.vhd',faReadOnly);
-    end else CopyIPCoreFiles(l);  //If requirement is not in core folder get from lib
-    if assigned(l) then freeandnil(l);
+      ShowMessage('The IP Core file: '+LibraryDir+S+' was not found.');
+      exit;
+    end else if (v<>'UserFiles') and not FileExistsUTF8(LocLib+s+'.vhd') then
+    begin
+      infoln('Copiando: '+s+'.vhd');  //Copy IPCore
+      CopyFile(LibraryDir+s+PathDelim+s+'.vhd',LocLib+s+'.vhd');
+      if LibAsReadOnly then FileSetAttrUTF8(LocLib+s+'.vhd',faReadOnly);
+
+      l:=CoreGetReq(LibraryDir+s+PathDelim+s+'.ini');
+      for j:=0 to l.Count-1 do
+      begin
+        v:=l[j];
+        r:=Copy2SymbDel(v,'=');
+        if FileExistsUTF8(LibraryDir+s+PathDelim+r+'.vhd') then
+        begin
+          infoln('Copiando: '+r+'.vhd'); //Copy Requirements
+          if (v<>'UserFiles') then
+          begin
+            CopyFile(LibraryDir+s+PathDelim+r+'.vhd',LocLib+r+'.vhd');
+            if LibAsReadOnly then FileSetAttrUTF8(LocLib+r+'.vhd',faReadOnly);
+          end else
+          begin
+            CopyFile(LibraryDir+s+PathDelim+r+'.vhd',location+'user'+PathDelim+r+'.vhd');
+            AddUserFile(location+'user'+PathDelim+r+'.vhd');
+          end;
+        end else CopyIPCoreFiles(l);  //If requirement is not in core folder get from lib
+      end;
+      if assigned(l) then freeandnil(l);
+    end;
   end;
 end;
 
@@ -631,30 +663,39 @@ begin
   end;
 end;
 
+//Colecta todos los nombres de núcleos de "list" más sus requerimientos en una
+//lista "m" hasta el nivel 10 en forma recursiva
+procedure TSBAPrj.FillRequeriments(list, m: TStrings; var level: integer);
+var
+  i:integer;
+  r,v:string;
+  k:TStringList;
+begin
+  if list.Count=0 then exit;
+  if level<10 then inc(level) else exit;
+
+  for i:=0 to list.Count-1 do
+  begin
+    v:=list[i];
+    r:=Copy2SymbDel(v,'=');
+    if v='UserFiles' then Continue;
+    if m.IndexOf(r)=-1 then
+    m.Add(r);
+    try
+      k:=CoreGetReq(LibraryDir+r+PathDelim+r+'.ini');
+      FillRequeriments(k,m,level);
+    finally
+      if assigned(k) then FreeAndNil(k);
+    end;
+  end;
+end;
+
+
 function TSBAPrj.CleanUpLibCores(CL:TStrings): boolean;
 var
   s,n:string;
   l,m:TStringList;
   level:integer;
-
-  procedure FillRequeriments(list,m:TStrings);
-  var
-    r:string;
-    k:TStringList;
-  begin
-    if list.Count=0 then exit;
-    if level<10 then inc(level) else exit;
-    for r in list do if m.IndexOf(r)=-1 then
-    begin
-      m.Add(r);
-      try
-        k:=CoreGetReq(LibraryDir+r+PathDelim+r+'.ini');
-        FillRequeriments(k,m);
-      finally
-        if assigned(k) then FreeAndNil(k);
-      end;
-    end;
-  end;
 
 begin
   result:=false;
@@ -662,7 +703,7 @@ begin
   try
     //Fill the m stringlist with ipcore and requeriments files
     m:=TStringList.Create;
-    FillRequeriments(cl,m);
+    FillRequeriments(cl,m,level);
     //Delete all vhd files not in the m stringlist from the LocLib folder
     l:=TStringList(FindAllFiles(LocLib,'*.vhd'));
     for s in l do
@@ -671,7 +712,7 @@ begin
       if not AnsiMatchText(n+'.vhd',[cSBApkg,cSyscon,cDataIntf]) and (m.IndexOf(n)=-1) then
       begin
         FileSetAttrUTF8(s,faArchive);
-infoln('Borrando: '+s);
+        infoln('Borrando: '+s);
         DeleteFileUTF8(s);
       end;
     end;
@@ -712,6 +753,7 @@ var
   R,S:TStringList;
   T:String;
 begin
+  { TODO : Verificar que se exportan los requerimientos de los IPCores y los archivos de usuario }
   result:=false;
   if not directoryexistsUTF8(ExportPath) then
   begin

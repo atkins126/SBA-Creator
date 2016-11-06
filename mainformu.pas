@@ -12,7 +12,7 @@ uses
   FileUtil, LazUTF8, LazFileUtils,
   dateutils, ListViewFilterEdit, strutils, Clipbrd, IniPropStorage, StdActns,
   BGRASpriteAnimation, uebutton, uETilePanel, versionsupportu,
-  types, lclintf, LCLType, HistoryFiles, IniFilesUTF8, StringListUTF8;
+  types, lclintf, LCLType, HistoryFiles, IniFilesUTF8, StringListUTF8, WAPageControl;
 
 type
   thdltype=(vhdl, prg, verilog, systemverilog, ini, json, other);
@@ -21,6 +21,8 @@ type
   { TMainForm }
 
   TMainForm = class(TForm)
+    MI_OpenTreeItem: TMenuItem;
+    ProjectOpenItem: TAction;
     ProjectUpdCore: TAction;
     EditInsertTemplate: TAction;
     EditBlkUncomment: TAction;
@@ -357,6 +359,7 @@ type
     procedure ProjectNewExecute(Sender: TObject);
     procedure ProjectOpenExecute(Sender: TObject);
     procedure MainPagesChange(Sender: TObject);
+    procedure ProjectOpenItemExecute(Sender: TObject);
     procedure ProjectRemCoreExecute(Sender: TObject);
     procedure ProjectRemUserFileExecute(Sender: TObject);
     procedure ProjectSaveExecute(Sender: TObject);
@@ -406,6 +409,7 @@ type
     { private declarations }
     procedure ChangeEditorButtons(editor: TSynEdit);
     procedure Check;
+    procedure CheckStartParams;
     function CloseProg: boolean;
     function CloseEditor(T: TTabSheet): boolean;
     function CloseProject: boolean;
@@ -427,6 +431,7 @@ type
     function Open(f: String): boolean;
     procedure OpenInEditor(const f: string);
     procedure OpenProject(const f:string);
+    procedure OpenTreeItem(TN: TTreeNode);
     procedure Reformat(osl,nsl: Tstrings);
     function  SaveFile(f:String; Src:TStrings):Boolean;
     procedure SetupEditorPopupMenu;
@@ -999,6 +1004,7 @@ var
   s:string;
   p:integer;
 begin
+  UpdtFlag:=true;
   infoln('Search for new version');
   s:='';
   If NewVersionAvailable Then
@@ -1022,7 +1028,6 @@ begin
         Else
           ShowMessage('Sorry, download of new version failed');
   end else infoln('A new version is not available or no detected.');
-  UpdtFlag:=true;
   infoln('End of search for new version');
 end;
 
@@ -1033,6 +1038,8 @@ end;
 
 procedure TMainForm.IdleTimer1Timer(Sender: TObject);
 begin
+  { TODO : WorkAround En Linux el método OnTerminate no es ejecutado por lo cual se incluye la condición Running para saber si continúa la ejecución del proceso. }
+  //Si se corrije el comportamiento en Linux, se puede prescindir de la evaluación a Running
   if (not ToolProcess.Running) and (ProcessStatus<>Idle) then
     ToolProcessTerminate(Sender);
   if (not DwProcess.Running) and (DwProcess.Status<>dwIdle) then
@@ -1116,20 +1123,24 @@ end;
 procedure TMainForm.PrjTreeDblClick(Sender: TObject);
 var
   TN:TTreeNode;
-  S,P:String;
 begin
   TN:=PrjTree.Selected;
-  if TN.Parent<>nil then
-  begin
-    S:=TN.GetParentNodeOfAbsoluteLevel(0).Text;
-    if S=SBAPrj.name then P:=SBAPrj.location+SBAPrj.name+'_'+TN.Text+'.vhd'
-    else case S of
-    'Aux' :P:=SBAPrj.loclib+TN.Text+'.vhd';
-    'Lib' :P:=SBAPrj.loclib+TN.Text+'.vhd';
-    'User':P:=SBAPrj.GetUserFilePath(TN.Text)+TN.Text;
-    end;
-    OpenInEditor(P);
+  OpenTreeItem(TN);
+end;
+
+procedure TMainForm.OpenTreeItem(TN:TTreeNode);
+var
+  S,P:String;
+begin
+  if TN.Parent=nil then exit;
+  S:=TN.GetParentNodeOfAbsoluteLevel(0).Text;
+  if S=SBAPrj.name then P:=SBAPrj.location+SBAPrj.name+'_'+TN.Text+'.vhd'
+  else case S of
+  'Aux' :P:=SBAPrj.loclib+TN.Text+'.vhd';
+  'Lib' :P:=SBAPrj.loclib+TN.Text+'.vhd';
+  'User':P:=SBAPrj.GetUserFilePath(TN.Text)+TN.Text;
   end;
+  OpenInEditor(P);
 end;
 
 procedure TMainForm.PrjTreeMouseDown(Sender: TObject; Button: TMouseButton;
@@ -1156,7 +1167,7 @@ var
   HitTestInfo: THitTests;
 begin
   P:=Mouse.CursorPos;
-  FloatForm.Top:=P.Y+10;
+  FloatForm.Top:=P.Y+20;
   FloatForm.Left:=P.X+10;
   TN := PrjTree.GetNodeAt(X, Y);
   HitTestInfo := PrjTree.GetHitTestInfoAt(X, Y) ;
@@ -1250,6 +1261,9 @@ end;
 
 procedure TMainForm.ProjectExportExecute(Sender: TObject);
 begin
+  { TODO : Grabar proyecto y archivos de proyecto antes de exportar }
+  If SBAPrj.Modified and (MessageDlg('The Project was modified', 'Save Project? ', mtConfirmation, [mbYes, mbNo],0)=mrYes) then
+    SBAPrj.Save;
   ExportPrjForm.L_PrjDir.Caption:='Project folder: '+SBAPrj.location;
   ExportPrjForm.Ed_TargetDir.Directory:=SBAPrj.exportpath;
   ExportPrjForm.CB_ExpPrjMonolithic.Checked:=SBAPrj.expmonolithic;
@@ -1286,6 +1300,7 @@ begin
   PrgReturnTab:=SystemTab;
   SBA_ReturnToEditor.Enabled:=false;
   MainPages.ActivePage:=ProgEditTab;
+  //ActiveEditor:=SynEdit_X;  // Esto debe ser automático
   if EditorEmpty(ActiveEditor) then
   begin
    SBAContrlrProg.Filename:=cSBADefaultPrgName;
@@ -1404,6 +1419,14 @@ begin
     StatusBar1.Panels[1].Text:='';
     Log.Clear;
   end else MainForm.Menu := nil;
+end;
+
+procedure TMainForm.ProjectOpenItemExecute(Sender: TObject);
+var
+  TN:TTreeNode;
+begin
+  TN:=PrjTree.Selected;
+  if (TN<>nil) then OpenTreeItem(TN);
 end;
 
 procedure TMainForm.ProjectRemCoreExecute(Sender: TObject);
@@ -1639,7 +1662,7 @@ begin
   else exit;
   end;
   ToolsFileSyntaxCheck.Enabled:=false;
-  if SBAPrj.name='' then SyntaxCheck(s,'',hdltype) else SyntaxCheck(s,SBAPrj.GetAllFileNames,hdltype);
+  if SBAPrj.name='' then SyntaxCheck(s,'',hdltype) else SyntaxCheck(s,SBAPrj.GetAllFileNames(extractfilepath(s)),hdltype);
 end;
 
 procedure TMainForm.FormCloseQuery(Sender: TObject; var CanClose: boolean);
@@ -1710,8 +1733,36 @@ begin
       CopyPrjHistory;
       CreatePlugInsBtns;
       LoadTheme(ConfigDir+'theme'+PathDelim);
+      CheckStartParams;
       infoln('All FormCreate tasks finished');
     end;
+  end;
+end;
+
+procedure TMainForm.CheckStartParams;
+var
+  i:Integer;
+  f:String;
+begin
+  If ParamCount>0 then
+  begin
+    ProjectGotoEditorExecute(nil);
+    For i:=1 to ParamCount do
+    begin
+      f:=ParamStr(i);
+      if fileexistsUTF8(f) then
+      begin
+        if not EditorEmpty(ActiveEditor) then NewEditorPage;
+        if Open(f) then
+        begin
+          EditorPages.ActivePage.Hint:=f;
+          EditorPages.ActivePage.Caption:=ExtractFilename(f);
+        end;
+      end;
+    end;
+    ChangeEditorButtons(ActiveEditor);
+    DetectSBAController;
+    if ToolsFileObf.Checked then ToolsFileObfExecute(Self);
   end;
 end;
 
@@ -1809,6 +1860,7 @@ begin
   end;
 end;
 
+{ TODO : Crear una ventana dividida donde un treeview a la izquierdas muestre las entradas de las plantillas y a la derecha un editor vhdl en modo solo lectura muestre un preview de las plantillas antes de agregarlas. }
 procedure TMainForm.SetupEdTmplMenu;
 var
   Ini:TIniFile;
@@ -2085,6 +2137,7 @@ end;
 
 procedure TMainForm.SBA_SaveExecute(Sender: TObject);
 begin
+{ TODO : Agregar en el editor (toolbar y menu) el save all }
   If SBAContrlrProg.FileName<>cSBADefaultPrgName then
   begin
     SaveFile(SBAContrlrProg.FileName,SynEdit_X.Lines);
@@ -2526,8 +2579,15 @@ begin
   ToolProcess.Parameters.Add('/c');
   // Hay un bug en el CMD /C que no interpreta adecuadamente las rutas con paréntesis
   // La inclusión de los dobles "" ayuda en la solución temporal del bug
-  if path<>'' then ToolProcess.Parameters.Add('""'+AppDir+checkbat+'" '+fname+' "'+path+'""')
-  else ToolProcess.Parameters.Add('""'+AppDir+checkbat+'" '+fname+'"');
+  if path<>'' then
+    ToolProcess.Parameters.Add('""'+AppDir+checkbat+'" '+fname+' "'+path+'""')
+  else
+    //Por defecto se agrega una versión estable del SBAPackage en la ruta del ghdl si no existe antes en el directorio de trabajo
+    //Versión estable del SBAPackage: SBAbaseDir+cSBApkg
+    if not fileexistsutf8(wpath+cSBApkg) then
+      ToolProcess.Parameters.Add('""'+AppDir+checkbat+'" '+fname+' "'+SBAbaseDir+cSBApkg+'""')
+    else
+      ToolProcess.Parameters.Add('""'+AppDir+checkbat+'" '+fname+'"');
   {$ENDIF}
   {$IFDEF LINUX}
   ToolProcess.Executable:='/bin/bash';
@@ -2540,6 +2600,7 @@ begin
   ToolProcess.Parameters.Add(AppDir+checkbat+' '+fname+' "'+path+'"');
   {$ENDIF}
   Log.Clear;
+  infoln(ToolProcess.Parameters);
   ToolProcess.Execute;
   { TODO : Pensar en eliminar el .bat y usar una lista para crear los parámetros debido a las posibles rutas con espacios. }
 end;
@@ -2594,8 +2655,9 @@ end;
 
 procedure TMainForm.AddIPCoresToTree(t:TTreeNode;cl:TStrings);
 var
+  i:integer;
   c:TTreeNode;
-  s:string;
+  s,v:string;
   l:TStringList;
 begin
   if cl.Count=0 then exit;
@@ -2604,10 +2666,18 @@ begin
     PrjTree.Items.AddChild(t,'...');
     exit;
   end;
-  for s in cl do
+  for i:=0 to cl.Count-1 do
   begin
+    v:=cl[i];
+    s:=Copy2SymbDel(v,'=');
+    if v='UserFiles' then Continue;
     c:=PrjTree.Items.AddChild(t,s);
-    c.StateIndex:=4;
+    case v of
+      'IPCores':c.StateIndex:=4;
+      'Packages':c.StateIndex:=3;
+      else c.StateIndex:=4;
+    end;
+    if v='Packages' then Continue;
     l:=SBAPrj.CoreGetReq(LibraryDir+s+PathDelim+s+'.ini');
     AddIPCoresToTree(c,l);
     if assigned(l) then freeandnil(l);

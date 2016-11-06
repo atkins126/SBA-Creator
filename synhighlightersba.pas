@@ -35,7 +35,7 @@ type
 
   TProcTableProc = procedure of object;
 
-  TBlockID = (PackageBlk, EntityBlk, ArchBlk, CompBlk, EntCompBlk, MapBlk, ProcessBlk, CaseBlk, ForBlk, IfBlk, WhileBlk, FuncProcBlk);
+  TBlockID = (PackageBlk, EntityBlk, ArchBlk, CompBlk, EntCompBlk, MapBlk, RecordBlk, ProcessBlk, CaseBlk, ForBlk, IfBlk, WhileBlk, FuncProcBlk);
 
 type
 
@@ -382,7 +382,6 @@ begin
     'R':begin
       //vhdl
       if KeyComp('range') or
-         KeyComp('record') or
          KeyComp('register') or
          KeyComp('reject') or
          KeyComp('rem') or
@@ -391,6 +390,7 @@ begin
          KeyComp('rol') or
          KeyComp('ror')
       then fTokenID := tkKey;
+      if KeyComp('record') then begin fTokenID := tkKey; StartCodeFoldBlock(Pointer(PtrUInt(RecordBlk))); end;
       //ieee
       if KeyComp('real') or
          KeyComp('resize') or
@@ -889,7 +889,8 @@ begin
      keycomp('loop') or
      keycomp('package') or
      keycomp('procedure') or
-     keycomp('process')
+     keycomp('process') or
+     keycomp('record')
      ) then Run:=tmp;
   EndCodeFoldBlock();
 end;
@@ -909,6 +910,7 @@ var
 begin
   tmp:=run;
   found:=false;
+{ TODO 1 : No funciona si la función o procedimiento tiene varios parámetros debido al ";" de separación entre parámetros. Se debe elegir otro criterio. }
   while (not (fLine[tmp] in [#0, #10, #13])) do if fLine[tmp]=';' then
   begin
     found:=true;

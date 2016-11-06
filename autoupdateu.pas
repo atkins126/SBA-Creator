@@ -135,7 +135,7 @@ end;
 
 function DownloadInProgress: boolean;
 begin
-  result:=DwProcess.Status=dwDownloading;
+  result:=(DwProcess.Status=dwDownloading) and DwProcess.Running;
 end;
 
 end.

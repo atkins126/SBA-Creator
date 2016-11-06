@@ -394,18 +394,28 @@ function TDwProcess.WaitforIdle:boolean;
 var
   TiO:integer;
 begin
-  TiO:=300;
+  TiO:=300; // Wait for 30 seconds
   While (TiO>0) and (FStatus<>dwIdle) do
   begin
     Dec(TiO);
     Application.ProcessMessages;
     Sleep(100);
   end;
+//
+  if (FStatus<>dwIdle) and not Running then
+  begin
+    infoln('el proceso ya no está en ejecución, forzando un Onterminate');
+    if OnTerminate<>nil then OnTerminate(Self);
+    infoln('---- forzado----');
+  end;
+//
   result:=FStatus=dwIdle;
   InfoLn('DwProcess WGET '+IFTHEN(result,'is Idle','can not terminate: Time Out'));
   if not result then
   begin
     InfoLn('DWProcess timeout in Url: '+FUrlSource);
+    //Terminar el proceso que ejecuta WGet si este falla
+    Terminate(0);
     FStatus:=dwTimeOut;
   end;
 end;

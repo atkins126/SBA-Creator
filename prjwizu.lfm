@@ -1,7 +1,7 @@
 object prjWizForm: TprjWizForm
-  Left = 1042
+  Left = 998
   Height = 431
-  Top = 510
+  Top = 294
   Width = 420
   BorderStyle = bsDialog
   Caption = 'Project Wizard'
@@ -9,7 +9,7 @@ object prjWizForm: TprjWizForm
   ClientWidth = 420
   OnShow = FormShow
   Position = poMainFormCenter
-  LCLVersion = '1.4.4.0'
+  LCLVersion = '1.7'
   object NavPanel: TPanel
     Left = 0
     Height = 42
@@ -483,8 +483,6 @@ object prjWizForm: TprjWizForm
         Top = 130
         Width = 103
         CalendarDisplaySettings = [dsShowHeadings, dsShowDayNames]
-        OKCaption = 'OK'
-        CancelCaption = 'Cancel'
         DateOrder = doYMd
         ButtonWidth = 23
         DirectInput = False
@@ -553,7 +551,7 @@ object prjWizForm: TprjWizForm
         Left = 8
         Height = 15
         Top = 176
-        Width = 106
+        Width = 105
         Caption = 'Top Entity interface:'
         ParentColor = False
       end

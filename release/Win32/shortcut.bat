@@ -20,5 +20,6 @@ GOTO EXIT
 
 :D1
 echo No se pudo encontrar la ruta hacia el escritorio del usuario: %DESKTOP%
+pause
 
 :EXIT

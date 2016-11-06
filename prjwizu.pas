@@ -407,13 +407,12 @@ begin
   if not assigned(TmpPrj) then exit;
   S:=Clipboard.AsText;
   If S='' then exit;
-  ResetFormData;
   TmpPrj.Fill(S);
   If TmpPrj.name<>'' then
   begin
     FillPrjWizValues(TmpPrj);
     Ed_prjLocation.Text:=ProjectsDir;
-  end;
+  end else ShowMessage('There is no valid sba project data in the clipboard');
 end;
 
 procedure TprjWizForm.B_PrjLoadFromTemplateClick(Sender: TObject);
@@ -429,13 +428,12 @@ begin
     if OpenDialog1.Execute then
     begin
       S.LoadFromFile(OpenDialog1.FileName);
-      ResetFormData;
       TmpPrj.Fill(S.Text);
       if TmpPrj.name<>'' then
       begin
         FillPrjWizValues(TmpPrj);
         Ed_prjLocation.Text:=ProjectsDir;
-      end;
+      end else ShowMessage('There is invalid data in the file');
     end;
   finally
     S.Free;
@@ -467,6 +465,7 @@ var
   h,i:Integer;
   s:string;
 begin
+  ResetFormData;
   With Prj do
   begin
     Ed_PrjName.text:=name;
@@ -486,7 +485,7 @@ begin
     Ed_Date.Text:=date;
     if ports.Count>0 then
     begin
-      Ed_TopInterface.RowCount:=ports.count+2;
+      Ed_TopInterface.RowCount:=ports.count+1; //+2;
       with Ed_TopInterface do For i:=0 to ports.count-1 do
       begin
         s:=ports[i];
@@ -530,6 +529,7 @@ Var s:string;
 begin
   s:=AppendPathDelim(TrimFilename(Ed_PrjLocation.text));
   s+=IfThen(CB_CreateSubDir.Checked,Ed_PrjName.Text);
+  { TODO : Buscar usar otro componente label que visualmente acorte la longitud del path, ya que puede escapar del borde derecho de la ventana del wizard. No variar el contenido del label pues es usado a lo largo de la unidad. }
   L_PrjFinalLoc.caption:=TrimFilename(s);
 end;
 
@@ -676,7 +676,6 @@ begin
   Editing:=true;
   WizPages.PageIndex:=0;
   TmpPrj:=Prj;
-  ResetFormData;
   FillPrjWizValues(Prj);
   result:=ShowModal;
 end;
@@ -696,7 +695,8 @@ begin
   Ed_RevVer.Value:=1;
   Ed_Date.Date:=Now;
   Ed_Description.Clear;
-  Ed_TopInterface.Clean;
+{ TODO : BUG: Un error se presenta cuando se cancela el wizard y se vuelve a ejecutar si se ha seleccionado una fila vacía en el grid de puertos. Se replicó el error cargando un SBA desde el clipboard que tenía más de 7 puertos, se seleccionó la fila 8 (vacía) y luego se canceló el Wizard, al iniciar nuevamente el wizard, el procedimiento ResetFormData devuelve error al inicializar el grid de puertos. }
+  Ed_TopInterface.Clear;
   Ed_TopInterface.RowCount:=3;
   with Ed_TopInterface do
   begin

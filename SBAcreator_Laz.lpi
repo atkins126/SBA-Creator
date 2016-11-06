@@ -21,8 +21,8 @@
       <UseVersionInfo Value="True"/>
       <AutoIncrementBuild Value="True"/>
       <MinorVersionNr Value="3"/>
-      <RevisionNr Value="20"/>
-      <BuildNr Value="44"/>
+      <RevisionNr Value="23"/>
+      <BuildNr Value="51"/>
       <Attributes pvaPreRelease="True"/>
       <StringTable CompanyName="uE Peru" FileDescription="SBA System Creator" LegalCopyright="(c) Miguel A. Risco-Castillo" ProductVersion="Public Beta"/>
     </VersionInfo>
@@ -154,7 +154,7 @@
         <PackageName Value="LCL"/>
       </Item11>
     </RequiredPackages>
-    <Units Count="23">
+    <Units Count="24">
       <Unit0>
         <Filename Value="SBAcreator.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -294,6 +294,11 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="SynHighlighterJSON"/>
       </Unit22>
+      <Unit23>
+        <Filename Value="wapagecontrol.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="WAPageControl"/>
+      </Unit23>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
