@@ -17,17 +17,24 @@ Const
   C_LOCALUPDATER = 'updatehm.exe';
 {$ENDIF}
 {$IFDEF LCLGTK2}
-{$IFDEF CPUARM}
+  {$IFDEF CPUARM}
   VersionFile='sbamainarmgtk2.ini';
   UpdaterZipfile='sbamainarmgtk2.zip';
   WhatsNewFile='whatsnewarmgtk2.txt';
   C_LOCALUPDATER = 'updatehm';
-{$ELSE}
+  {$ENDIF}
+  {$IFDEF CPU386}
+  VersionFile='sbamainx86gtk2.ini';
+  UpdaterZipfile='sbamainx86gtk2.zip';
+  WhatsNewFile='whatsnewx86gtk2.txt';
+  C_LOCALUPDATER = 'updatehm';
+  {$ENDIF}
+  {$IFDEF CPUX86_64}
   VersionFile='sbamaingtk2.ini';
   UpdaterZipfile='sbamaingtk2.zip';
   WhatsNewFile='whatsnewgtk2.txt';
   C_LOCALUPDATER = 'updatehm';
-{$ENDIF}
+  {$ENDIF}
 {$ENDIF}
 
 function NewVersionAvailable:boolean;
@@ -68,12 +75,10 @@ function GetWhatsNew:boolean;
 var
   f:String;
 begin
-  result:=false;
   f:=ConfigDir+WhatsNewFile;
   DwProcess.WGET(Format(SBADwUrl,[WhatsNewFile]),f);
   DwProcess.WaitforIdle;
-  if not fileexistsUTF8(f) then exit;
-  result:=true;
+  result:=fileexistsUTF8(f)
 end;
 
 function DownloadNewVersion: boolean;

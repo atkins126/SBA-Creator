@@ -2,10 +2,13 @@
 
 # Check VHDL Syntax using GHDL
 # (c) Miguel Risco-Castillo
-# v1.5 2015-09-09
+# v1.5 2016-11-07
 
 echo Cleaning previous check...
 ghdl --remove
+if [work-*.cf]; then
+  rm -f work-*.cf
+fi
 
 echo Importing sources from vhdl files...
 if [ -z "$2" ]; then

@@ -5,8 +5,7 @@ v0.3.24.60
 - Bug fixes and some improvements
 
 v0.3.23.51
-- Better AutoUpdate
-- Support for user editable files in ipcores libraries
+- Better AutoUpdate, support for user files in ipcores libraries
 - Fixes to issues reported by user community
 - Performance improvements
 

@@ -14,9 +14,7 @@ type
 
   TAboutForm = class(TForm)
     BitBtn1: TBitBtn;
-    BitBtn2: TBitBtn;
     Image1: TImage;
-    procedure BitBtn2Click(Sender: TObject);
   private
     { private declarations }
   public
@@ -34,10 +32,6 @@ uses MainFormU;
 
 { TAboutForm }
 
-procedure TAboutForm.BitBtn2Click(Sender: TObject);
-begin
-  MainForm.Autoupdate;
-end;
 
 end.
 

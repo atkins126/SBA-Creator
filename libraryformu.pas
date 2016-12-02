@@ -128,6 +128,9 @@ type
     function GetVersion(f: string): string;
     function LookupFilterItem(S: string; LV: TListViewDataList): integer;
     function GetFile(url, f: string; status: TLibDwStatus): boolean;
+    procedure UpdateIpCoresList;
+    procedure UpdateProgramsList;
+    procedure UpdateSnippetsList;
     { private declarations }
   public
     { public declarations }
@@ -398,6 +401,7 @@ begin
     on E:Exception do ShowMessage(E.Message);
   end;
   GetAllFileNames(LibraryDir,'*.ini',IpCoreList);
+  UpdateIPCoresList;
   LV_IPCores.Invalidate;
   B_AddtoLibrary.Enabled:=IpCoreList.IndexOf(L.Caption)=-1;
 end;
@@ -418,6 +422,7 @@ begin
     on E:Exception do Infoln(E.Message);
   end;
   GetAllFileNames(ProgramsDir,'*.prg',ProgramsList);
+  UpdateProgramsList;
   LV_Programs.Invalidate;
   B_AddtoPrograms.Enabled:=ProgramsList.IndexOf(L.Caption)=-1;
 end;
@@ -438,6 +443,7 @@ begin
     on E:Exception do Infoln(E.Message);
   end;
   GetAllFileNames(SnippetsDir,'*.snp',SnippetsList);
+  UpdateSnippetsList;
   LV_Snippets.Invalidate;
   B_AddtoSnippets.Enabled:=SnippetsList.IndexOf(L.Caption)=-1;
 end;
@@ -463,6 +469,7 @@ procedure TLibraryForm.EndGetLibrary;
 begin
   if EndGet(cSBAlibraryZipFile,DefLibraryDir) then
   begin
+    UpdateIPCoresList;
     ShowMessage('The new IPCore library files are ready.');
   end;
   PB_SBAlibrary.Style:=pbstNormal;
@@ -472,6 +479,7 @@ procedure TLibraryForm.EndGetPrograms;
 begin
   if EndGet(cSBAprogramsZipFile,DefProgramsDir) then
   begin
+    UpdateProgramsList;
     ShowMessage('The new programs files are ready.');
   end;
   PB_SBAprograms.Style:=pbstNormal;
@@ -481,6 +489,7 @@ procedure TLibraryForm.EndGetSnippets;
 begin
   if EndGet(cSBAsnippetsZipFile,DefSnippetsDir) then
   begin
+    UpdateSnippetsList;
     ShowMessage('The new Snippets library files are ready.');
   end;
   PB_SBAsnippets.Style:=pbstNormal;
@@ -504,7 +513,7 @@ begin
     SB.SimpleText:='Unziping successful';
     if DirReplace(ConfigDir+'temp'+PathDelim+ZipMainFolder,ConfigDir+'temp'+PathDelim+DefDir) then
     begin
-      UpdateLists;
+//      UpdateLists; //Update list in each endget___
       SB.SimpleText:='New items loaded from remote repository';
       if (Trim(Ed_SBARepoZipFile.Text)<>'') and (Ed_SBARepoZipFile.Items.IndexOf(Ed_SBARepoZipFile.Text)=-1) then
       begin
@@ -584,7 +593,7 @@ begin
   end;
 end;
 
-procedure TLibraryForm.UpdateLists;
+procedure TLibraryForm.UpdateIpCoresList;
 var
   S:String;
   Data:TListViewDataItem; //TStringArray;
@@ -601,7 +610,13 @@ begin
     IPCoresFilter.Items.Add(Data);
   end;
   IpCoresFilter.InvalidateFilter;
-//
+end;
+
+procedure TLibraryForm.UpdateProgramsList;
+var
+  S:String;
+  Data:TListViewDataItem; //TStringArray;
+begin
   ProgramsFilter.Items.Clear;
   SearchForFiles(ConfigDir+'temp'+PathDelim+DefProgramsDir, '*.prg',@AddItemToProgramsFilter);
   For S in ProgramsList do if LookupFilterItem(S,ProgramsFilter.Items)=-1 then
@@ -613,7 +628,13 @@ begin
     ProgramsFilter.Items.Add(Data);
   end;
   ProgramsFilter.InvalidateFilter;
-//
+end;
+
+procedure TLibraryForm.UpdateSnippetsList;
+var
+  S:String;
+  Data:TListViewDataItem; //TStringArray;
+begin
   SnippetsFilter.Items.Clear;
   SearchForFiles(ConfigDir+'temp'+PathDelim+DefSnippetsDir, '*.snp',@AddItemToSnippetsFilter);
   For S in SnippetsList do if LookupFilterItem(S,SnippetsFilter.Items)=-1 then
@@ -625,6 +646,13 @@ begin
     SnippetsFilter.Items.Add(Data);
   end;
   SnippetsFilter.InvalidateFilter;
+end;
+
+procedure TLibraryForm.UpdateLists;
+begin
+  UpdateIpCoresList;
+  UpdateProgramsList;
+  UpdateSnippetsList
 end;
 
 function TLibraryForm.GetFile(url,f:string;status:TLibDwStatus):boolean;

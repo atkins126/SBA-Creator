@@ -1,6 +1,0 @@
-SBA System Creator v0.3.2.65
-
-What's New
-==========
-
-Improve support for automatic uptates

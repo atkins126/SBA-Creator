@@ -6,21 +6,38 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, Buttons,
-  ComCtrls, AsyncProcess, ExtCtrls, Menus, ActnList,
-  SynHighlighterSBA, SynHighlighterVerilog, SynHighlighterJSON, SynEditMarkupHighAll,
-  SynEdit, SynEditTypes,SynEditKeyCmds, SynPluginSyncroEdit, SynHighlighterIni,
-  FileUtil, LazUTF8, LazFileUtils,
-  dateutils, ListViewFilterEdit, strutils, Clipbrd, IniPropStorage, StdActns,
-  BGRASpriteAnimation, uebutton, uETilePanel, versionsupportu,
-  types, lclintf, LCLType, HistoryFiles, IniFilesUTF8, StringListUTF8, WAPageControl;
+  ComCtrls, AsyncProcess, ExtCtrls, Menus, ActnList, SynHighlighterSBA,
+  SynHighlighterVerilog, SynHighlighterJSON, SynEditMarkupHighAll, SynEdit,
+  SynEditTypes, SynEditKeyCmds, SynPluginSyncroEdit, SynHighlighterIni,
+  FileUtil, LazUTF8, LazFileUtils, dateutils, ListViewFilterEdit,
+  ExtendedNotebook, strutils, Clipbrd, IniPropStorage, StdActns,
+  BGRASpriteAnimation, uebutton, uETilePanel, versionsupportu, types, lclintf,
+  LCLType, HistoryFiles, IniFilesUTF8, StringListUTF8, WAPageControl;
 
 type
   thdltype=(vhdl, prg, verilog, systemverilog, ini, json, other);
-  tProcessStatus=(Idle,SyntaxChk,Obfusct,exePlugIn);
+  tProcessStatus=(Idle,TimeOut,SyntaxChk,Obfusct,exePlugIn);
 
   { TMainForm }
 
   TMainForm = class(TForm)
+    EditorPages: TExtendedNotebook;
+    HelpCheckUpdate: TAction;
+    HelpGotoSBAWebsite: TAction;
+    HelpGotoSBAForum: TAction;
+    HelpAbout: TAction;
+    MenuItem71: TMenuItem;
+    MenuItem72: TMenuItem;
+    MenuItem73: TMenuItem;
+    MenuItem74: TMenuItem;
+    MenuItem75: TMenuItem;
+    MenuItem76: TMenuItem;
+    MenuItem77: TMenuItem;
+    MenuItem78: TMenuItem;
+    MenuItem80: TMenuItem;
+    MenuItem81: TMenuItem;
+    MenuItem82: TMenuItem;
+    MenuItem83: TMenuItem;
     MI_OpenTreeItem: TMenuItem;
     ProjectOpenItem: TAction;
     ProjectUpdCore: TAction;
@@ -104,7 +121,6 @@ type
     B_InsertSnipped: TBitBtn;
     B_Obf: TBitBtn;
     B_SBALabels: TBitBtn;
-    EditorPages: TPageControl;
     Label3: TLabel;
     Label5: TLabel;
     Log: TListBox;
@@ -154,6 +170,7 @@ type
     MenuItem59: TMenuItem;
     SnippetsFilter: TListViewFilterEdit;
     LV_Snippets: TListView;
+    Splitter2: TSplitter;
     Splitter3: TSplitter;
     Splitter4: TSplitter;
     Splitter5: TSplitter;
@@ -182,7 +199,7 @@ type
     SearchMenu: TMenuItem;
     MenuItem27: TMenuItem;
     MenuItem28: TMenuItem;
-    AboutMenuItem: TMenuItem;
+    HelpMenuItem: TMenuItem;
     MenuItem30: TMenuItem;
     MenuItem31: TMenuItem;
     P_Obf: TPanel;
@@ -213,7 +230,6 @@ type
     FileRevert: TAction;
     FileClose: TAction;
     FileSave: TAction;
-    HelpAbout: THelpAction;
     ToolsMenu: TMenuItem;
     MenuItem15: TMenuItem;
     MenuItem16: TMenuItem;
@@ -309,12 +325,10 @@ type
     procedure btn_plgClick(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure B_SBAAdressClick(Sender: TObject);
-    procedure btn_sba_forumClick(Sender: TObject);
     procedure btn_configClick(Sender: TObject);
     procedure btn_sba_libraryClick(Sender: TObject);
     procedure B_InsertSnippedClick(Sender: TObject);
     procedure B_SBALabelsClick(Sender: TObject);
-    procedure btn_sba_websiteClick(Sender: TObject);
     procedure EditBlkCommentExecute(Sender: TObject);
     procedure EditBlkIndentExecute(Sender: TObject);
     procedure EditBlkUncommentExecute(Sender: TObject);
@@ -334,6 +348,9 @@ type
     procedure FileSaveAsExecute(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure FormResize(Sender: TObject);
+    procedure HelpCheckUpdateExecute(Sender: TObject);
+    procedure HelpGotoSBAForumExecute(Sender: TObject);
+    procedure HelpGotoSBAWebsiteExecute(Sender: TObject);
     procedure IdleTimer1Timer(Sender: TObject);
     procedure LogoImageDblClick(Sender: TObject);
     procedure L_SBALabelsDblClick(Sender: TObject);
@@ -442,6 +459,7 @@ type
     procedure ExtractSBALabels;
     procedure LoadRsvWordsFile;
     procedure LoadAnnouncement;
+    function ToolProcessWaitforIdle: boolean;
   protected
   public
     { public declarations }
@@ -501,6 +519,7 @@ begin
     FreeAndNil(ActiveEditor);
     FreeAndNil(T);
   end;
+  EditorPagesChange(nil);
 end;
 
 function TMainForm.LoadTheme(thmdir:string):boolean;
@@ -619,9 +638,17 @@ end;
 procedure TMainForm.EditorPagesChange(Sender: TObject);
 var ActiveTab:TTabSheet;
 begin
-  ActiveTab:=EditorPages.ActivePage;
-  StatusBar1.Panels[1].Text:=ActiveTab.Hint;
-  ActiveEditor:=TSynEdit(MainForm.FindComponent('SynEdit_'+inttostr(ActiveTab.Tag)));
+  if EditorPages.PageCount=0 then
+  begin
+    ActiveEditor:=nil;
+    StatusBar1.Panels[1].Text:='';
+    exit;
+  end else
+  begin
+    ActiveTab:=EditorPages.ActivePage;
+    StatusBar1.Panels[1].Text:=ActiveTab.Hint;
+    ActiveEditor:=TSynEdit(MainForm.FindComponent('SynEdit_'+inttostr(ActiveTab.Tag)));
+  end;
   If assigned(ActiveEditor) then
   begin
     SyncroEdit.Editor:=ActiveEditor;
@@ -695,11 +722,6 @@ end;
 procedure TMainForm.B_SBALabelsClick(Sender: TObject);
 begin
   ExtractSBALabels;
-end;
-
-procedure TMainForm.btn_sba_websiteClick(Sender: TObject);
-begin
-  OpenUrl('http://sba.accesus.com');
 end;
 
 procedure TMainForm.EditBlkCommentExecute(Sender: TObject);
@@ -832,11 +854,6 @@ end;
 procedure TMainForm.btn_configClick(Sender: TObject);
 begin
   if ConfigForm.ShowModal=mrOk then SetConfigValues;
-end;
-
-procedure TMainForm.btn_sba_forumClick(Sender: TObject);
-begin
-  OpenURL('http://sbaforum.accesus.com/');
 end;
 
 procedure TMainForm.btn_plgClick(Sender: TObject);
@@ -1005,16 +1022,16 @@ var
   p:integer;
 begin
   UpdtFlag:=true;
-  infoln('Search for new version');
+  StatusBar1.Panels[1].Text:='Online check for updates...';
   s:='';
   If NewVersionAvailable Then
   begin
-    infoln('A new version is available, getting what is new file.');
+    StatusBar1.Panels[1].Text:='A new version is available, getting what is new file.';
     if GetWhatsNew then
     try
       infoln('What is new file was downloaded.');
       wn:=TStringList.Create;
-      wn.LoadFromFile(ConfigDir+'whatsnew.txt');
+      wn.LoadFromFile(ConfigDir+WhatsNewFile);
       p:=Pos('Old Releases',wn.text);
       s:=IFTHEN(p>1,Copy(wn.text,1,p-1),wn.text);
       infoln(wn);
@@ -1022,18 +1039,38 @@ begin
       if assigned(wn) then FreeAndNil(wn);
     end;
     if MessageDlg(Application.Title, Format('A new version %s is available.  Would you like to download it?'#10'%s',[GetNewVersion,s]), mtConfirmation, [mbYes, mbNo], 0, mbYes) = mryes then
-      If DownloadNewVersion Then
+    begin
+      StatusBar1.Panels[1].Text:='Downloading a new version of SBA Creator';
+      if DownloadNewVersion Then
+      begin
         If MessageDlg(Application.Title, 'Download Succeeded.  Click OK to update',
-          mtInformation, [mbOK], 0) = mrOK Then UpdateToNewVersion
-        Else
-          ShowMessage('Sorry, download of new version failed');
-  end else infoln('A new version is not available or no detected.');
+          mtInformation, [mbOK], 0) = mrOK Then
+            If UpdateToNewVersion then StatusBar1.Panels[1].Text:='SBA Creator updated, restarting now...'
+            else ShowMessage('There was an error when try to updating SBA Creator');
+      end Else ShowMessage('Sorry, download of new version failed');
+    end else StatusBar1.Panels[1].Text:='';
+  end else StatusBar1.Panels[1].Text:='A new version is not available or not detected.';
   infoln('End of search for new version');
 end;
 
 procedure TMainForm.FormResize(Sender: TObject);
 begin
   LogoImage.Visible:=Self.Width>575;
+end;
+
+procedure TMainForm.HelpCheckUpdateExecute(Sender: TObject);
+begin
+  MainForm.Autoupdate;
+end;
+
+procedure TMainForm.HelpGotoSBAForumExecute(Sender: TObject);
+begin
+  OpenURL('http://sbaforum.accesus.com/');
+end;
+
+procedure TMainForm.HelpGotoSBAWebsiteExecute(Sender: TObject);
+begin
+  OpenUrl('http://sba.accesus.com');
 end;
 
 procedure TMainForm.IdleTimer1Timer(Sender: TObject);
@@ -1633,7 +1670,6 @@ procedure TMainForm.ToolsFileSyntaxCheckExecute(Sender: TObject);
 var s:string;
 begin
   {$IFDEF WINDOWS}
-  { TODO : Completar la verificación en el caso de LINUX }
   case hdltype of
     vhdl : begin
       if not fileexistsUTF8(AppDir+'ghdl\bin\ghdl.exe') then
@@ -1644,6 +1680,31 @@ begin
     end;
     verilog,systemverilog : begin
       if not fileexistsUTF8(AppDir+'iverilog\bin\iverilog.exe') then
+      begin
+       showmessage('Icarus Verilog tool not found');
+       exit;
+      end;
+    end;
+    else begin
+      showmessage('Sorry, Syntax check is not yet implemented for this kind of file.');
+      exit;
+    end;
+  end;
+  {$ENDIF}
+  { TODO : Completar la verificación en el caso de LINUX }
+  {$IFDEF LINUX}
+  case hdltype of
+    vhdl : begin
+      {
+       if not fileexistsUTF8(AppDir+'ghdl\bin\ghdl') then
+       begin
+        showmessage('GHDL tool not found');
+        exit;
+       end;
+      }
+    end;
+    verilog,systemverilog : begin
+      if not fileexistsUTF8(AppDir+'iverilog\bin\iverilog') then
       begin
        showmessage('Icarus Verilog tool not found');
        exit;
@@ -1734,6 +1795,7 @@ begin
       CreatePlugInsBtns;
       LoadTheme(ConfigDir+'theme'+PathDelim);
       CheckStartParams;
+{ TODO : Re-Open TABS opened when the program was closed (make a choice in configform) }
       infoln('All FormCreate tasks finished');
     end;
   end;
@@ -1974,6 +2036,7 @@ var
   p:tpoint;
   s:string;
 begin
+  { TODO : Extraer el nombre del archivo y mostrar la pestaña correspondiente a ese archivo o abrirlo si no lo está, antes de saltar al número de línea que contiene el error. }
   s:=Log.GetSelectedText; if s='' then exit;
   if s[2]=':' then s[2]:=' '; //to remove ':' in drive letter
   if pos('line ',s)=1 then s[5]:=':';  // for catch hdlobf result errors
@@ -2271,11 +2334,7 @@ begin
     SyntaxChk: ToolsFileSyntaxCheck.Enabled:=true;
   end;
 {IFDEF Debug}
-  case PS of
-    Idle:PStr:='Idle';
-    SyntaxChk:PStr:='SyntaxChk';
-    Obfusct:PStr:='Obfusct';
-  end;
+  WriteStr(PStr,PS);
   infoln('End of process: '+PStr);
 {ENDIF}
 end;
@@ -2554,23 +2613,33 @@ begin
   case hdl of
     vhdl : checkbat:='checkvhdl.bat';
     systemverilog,verilog : checkbat:='checkver.bat';
+    else checkbat:='checkvhdl.bat';
   end;
   {$ENDIF}
   {$IFDEF LINUX}
   case hdl of
     vhdl : checkbat:='checkvhdl.sh';
     systemverilog,verilog : checkbat:='checkver.sh';
+    else checkbat:='checkvhdl.sh';
   end;
   {$ENDIF}
   {$IFDEF DARWIN}
   case hdl of
     vhdl : checkbat:='checkvhdl.sh';
     systemverilog,verilog : checkbat:='checkver.sh';
+    else checkbat:='checkvhdl.sh';
   end;
   {$ENDIF}
   wpath:=extractfilepath(f);
   fname:=extractfilename(f);
-  while ProcessStatus<>Idle do begin sleep(300); application.ProcessMessages; end;
+  Log.Clear;
+  Log.Items.Add('Starting External Syntax Check Tool, please wait...');
+  if not ToolProcessWaitforIdle then
+  begin
+    ShowMessage('There was an error when executing external tool for syntax check');
+    ToolsFileSyntaxCheck.Enabled:=true;
+    exit;
+  end;
   ProcessStatus:=SyntaxChk;
   ToolProcess.Parameters.Clear;
   ToolProcess.CurrentDirectory:=wpath;
@@ -2592,17 +2661,64 @@ begin
   {$IFDEF LINUX}
   ToolProcess.Executable:='/bin/bash';
   ToolProcess.Parameters.Add('-c');
-  ToolProcess.Parameters.Add(AppDir+checkbat+' '+fname+' "'+path+'"');
+  if path<>'' then
+    ToolProcess.Parameters.Add(AppDir+checkbat+' '+fname+' "'+path+'"')
+  else
+    //Por defecto se agrega una versión estable del SBAPackage en la ruta del ghdl si no existe antes en el directorio de trabajo
+    //Versión estable del SBAPackage: SBAbaseDir+cSBApkg
+    if not fileexistsutf8(wpath+cSBApkg) then
+      ToolProcess.Parameters.Add(AppDir+checkbat+' '+fname+' "'+SBAbaseDir+cSBApkg+'"')
+    else
+      ToolProcess.Parameters.Add(AppDir+checkbat+' '+fname);
   {$ENDIF}
   {$IFDEF DARWIN}
   ToolProcess.Executable:='sh';
   ToolProcess.Parameters.Add('-c');
-  ToolProcess.Parameters.Add(AppDir+checkbat+' '+fname+' "'+path+'"');
+  if path<>'' then
+    ToolProcess.Parameters.Add(AppDir+checkbat+' '+fname+' "'+path+'"')
+  else
+    //Por defecto se agrega una versión estable del SBAPackage en la ruta del ghdl si no existe antes en el directorio de trabajo
+    //Versión estable del SBAPackage: SBAbaseDir+cSBApkg
+    if not fileexistsutf8(wpath+cSBApkg) then
+      ToolProcess.Parameters.Add(AppDir+checkbat+' '+fname+' "'+SBAbaseDir+cSBApkg+'"')
+    else
+      ToolProcess.Parameters.Add(AppDir+checkbat+' '+fname);
   {$ENDIF}
-  Log.Clear;
   infoln(ToolProcess.Parameters);
   ToolProcess.Execute;
   { TODO : Pensar en eliminar el .bat y usar una lista para crear los parámetros debido a las posibles rutas con espacios. }
+end;
+
+function TMainForm.ToolProcessWaitforIdle:boolean;
+var
+  TiO:integer;
+  S:string;
+begin
+  TiO:=100; // Wait for 10 seconds
+  While (TiO>0) and (ProcessStatus<>Idle) do
+  begin
+    Dec(TiO);
+    Application.ProcessMessages;
+    Sleep(100);
+  end;
+//
+  if (ProcessStatus<>Idle) and not ToolProcess.Running then
+  begin
+    infoln('el proceso ya no está en ejecución, forzando un Onterminate');
+    if ToolProcess.OnTerminate<>nil then ToolProcess.OnTerminate(Self);
+    infoln('---- forzado----');
+  end;
+//
+  result:=ProcessStatus=Idle;
+  InfoLn('ToolProcess '+IFTHEN(result,'is Idle','can not terminate: Time Out'));
+  if not result then
+  begin
+    WriteStr(S,ProcessStatus);
+    InfoLn('ToolProcess timeout: '+S);
+    //Terminar el proceso que ejecuta si este falla
+    ToolProcess.Terminate(0);
+    ProcessStatus:=TimeOut;
+  end;
 end;
 
 procedure TMainForm.ExtractSBALabels;

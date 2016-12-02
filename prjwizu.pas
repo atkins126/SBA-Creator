@@ -733,7 +733,7 @@ begin
   If not Sender.ClassNameIs('TListBox') then exit;
   L:=TListBox(Sender);
   P:=Mouse.CursorPos;
-  FloatForm.Top:=P.Y+10;
+  FloatForm.Top:=P.Y+20;
   FloatForm.Left:=P.X+10;
   i:=L.GetIndexAtXY(X,Y);
   if i>=0 then

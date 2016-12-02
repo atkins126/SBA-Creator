@@ -1,24 +1,16 @@
 object ConfigForm: TConfigForm
   Left = 985
-  Height = 432
+  Height = 458
   Top = 389
   Width = 452
   BorderStyle = bsDialog
   Caption = 'ConfigForm'
-  ClientHeight = 432
+  ClientHeight = 458
   ClientWidth = 452
   OnCreate = FormCreate
   OnShow = FormShow
   Position = poMainFormCenter
-  LCLVersion = '1.6.0.4'
-  object L_ConfigDir: TStaticText
-    Left = 8
-    Height = 16
-    Top = 10
-    Width = 433
-    Caption = 'Config Dir:'
-    TabOrder = 0
-  end
+  LCLVersion = '1.7'
   object Label1: TLabel
     Left = 8
     Height = 15
@@ -48,7 +40,7 @@ object ConfigForm: TConfigForm
     Flat = True
     Anchors = [akTop, akLeft, akRight]
     MaxLength = 0
-    TabOrder = 1
+    TabOrder = 0
   end
   object Ed_SnippetsDir: TDirectoryEdit
     Left = 8
@@ -61,12 +53,12 @@ object ConfigForm: TConfigForm
     Flat = True
     Anchors = [akTop, akLeft, akRight]
     MaxLength = 0
-    TabOrder = 2
+    TabOrder = 1
   end
   object ButtonPanel1: TButtonPanel
     Left = 6
     Height = 34
-    Top = 392
+    Top = 418
     Width = 440
     OKButton.Name = 'OKButton'
     OKButton.DefaultCaption = True
@@ -76,7 +68,7 @@ object ConfigForm: TConfigForm
     CloseButton.DefaultCaption = True
     CancelButton.Name = 'CancelButton'
     CancelButton.DefaultCaption = True
-    TabOrder = 3
+    TabOrder = 2
     ShowButtons = [pbOK, pbCancel]
   end
   object Ed_ProjectsDir: TDirectoryEdit
@@ -90,7 +82,7 @@ object ConfigForm: TConfigForm
     Flat = True
     Anchors = [akTop, akLeft, akRight]
     MaxLength = 0
-    TabOrder = 4
+    TabOrder = 3
   end
   object Label3: TLabel
     Left = 8
@@ -116,7 +108,7 @@ object ConfigForm: TConfigForm
     EditLabel.Width = 416
     EditLabel.Caption = 'Default Author name:'
     EditLabel.ParentColor = False
-    TabOrder = 5
+    TabOrder = 4
   end
   object CB_LibAsReadOnly: TCheckBox
     Left = 8
@@ -126,18 +118,17 @@ object ConfigForm: TConfigForm
     Caption = 'Copy Library IP Cores as readonly'
     Checked = True
     State = cbChecked
-    TabOrder = 6
+    TabOrder = 5
   end
   object CB_AutoOpenPrjF: TCheckBox
-    Left = 239
+    Left = 8
     Height = 19
-    Top = 336
+    Top = 360
     Width = 185
-    Anchors = [akTop, akLeft, akRight]
     Caption = 'Auto open all project main files'
     Checked = True
     State = cbChecked
-    TabOrder = 7
+    TabOrder = 6
   end
   object Ed_ProgramsDir: TDirectoryEdit
     Left = 8
@@ -150,7 +141,7 @@ object ConfigForm: TConfigForm
     Flat = True
     Anchors = [akTop, akLeft, akRight]
     MaxLength = 0
-    TabOrder = 8
+    TabOrder = 7
   end
   object Label4: TLabel
     Left = 8
@@ -167,7 +158,7 @@ object ConfigForm: TConfigForm
     Top = 296
     Width = 160
     ItemHeight = 15
-    TabOrder = 9
+    TabOrder = 8
     Text = 'Courier New'
   end
   object Label5: TLabel
@@ -179,7 +170,7 @@ object ConfigForm: TConfigForm
     ParentColor = False
   end
   object B_FontSelect: TSpeedButton
-    Left = 230
+    Left = 236
     Height = 22
     Top = 296
     Width = 23
@@ -218,7 +209,7 @@ object ConfigForm: TConfigForm
     Left = 176
     Height = 23
     Top = 296
-    Width = 48
+    Width = 56
     ItemHeight = 15
     ItemIndex = 2
     Items.Strings = (
@@ -239,7 +230,7 @@ object ConfigForm: TConfigForm
       '48'
       '72'
     )
-    TabOrder = 10
+    TabOrder = 9
     Text = '10'
   end
   object Label6: TLabel
@@ -253,10 +244,19 @@ object ConfigForm: TConfigForm
   object CB_CtrlAdvMode: TCheckBox
     Left = 8
     Height = 19
-    Top = 364
+    Top = 384
     Width = 193
     Caption = 'SBA Controller Advanced Editing'
-    TabOrder = 11
+    TabOrder = 10
+  end
+  object L_ConfigDir: TLabel
+    Left = 8
+    Height = 15
+    Top = 10
+    Width = 57
+    Caption = 'Config Dir:'
+    ParentColor = False
+    ShowAccelChar = False
   end
   object FontDialog1: TFontDialog
     MinFontSize = 0

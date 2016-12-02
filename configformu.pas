@@ -31,8 +31,8 @@ type
     Label4: TLabel;
     Label5: TLabel;
     Label6: TLabel;
-    L_ConfigDir: TStaticText;
     B_FontSelect: TSpeedButton;
+    L_ConfigDir: TLabel;
     procedure B_FontSelectClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);

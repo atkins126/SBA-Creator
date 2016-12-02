@@ -1,11 +1,11 @@
 object LibraryForm: TLibraryForm
-  Left = 1223
-  Height = 550
-  Top = 424
+  Left = 1212
+  Height = 563
+  Top = 200
   Width = 543
   BorderStyle = bsDialog
   Caption = 'Library Manager'
-  ClientHeight = 550
+  ClientHeight = 563
   ClientWidth = 543
   OnCreate = FormCreate
   OnDestroy = FormDestroy
@@ -14,7 +14,7 @@ object LibraryForm: TLibraryForm
   LCLVersion = '1.7'
   object LibraryPages: TPageControl
     Left = 0
-    Height = 550
+    Height = 563
     Top = 0
     Width = 543
     ActivePage = UpdateRep
@@ -23,12 +23,12 @@ object LibraryForm: TLibraryForm
     TabOrder = 0
     object UpdateRep: TTabSheet
       Caption = 'Update repositories'
-      ClientHeight = 522
+      ClientHeight = 535
       ClientWidth = 535
       object GB_SBAbase: TGroupBox
         Left = 5
         Height = 105
-        Top = 53
+        Top = 69
         Width = 525
         Align = alTop
         BorderSpacing.Around = 5
@@ -166,7 +166,7 @@ object LibraryForm: TLibraryForm
       object GB_SBAlibrary: TGroupBox
         Left = 5
         Height = 105
-        Top = 163
+        Top = 179
         Width = 525
         Align = alTop
         BorderSpacing.Around = 5
@@ -302,7 +302,7 @@ object LibraryForm: TLibraryForm
       object GB_SBAprograms: TGroupBox
         Left = 5
         Height = 105
-        Top = 273
+        Top = 289
         Width = 525
         Align = alTop
         BorderSpacing.Around = 5
@@ -438,7 +438,7 @@ object LibraryForm: TLibraryForm
       object GB_SBAsnippets: TGroupBox
         Left = 5
         Height = 105
-        Top = 383
+        Top = 399
         Width = 525
         Align = alTop
         BorderSpacing.Around = 5
@@ -574,25 +574,25 @@ object LibraryForm: TLibraryForm
       object SB: TStatusBar
         Left = 0
         Height = 23
-        Top = 499
+        Top = 512
         Width = 535
         Panels = <>
       end
       object Panel7: TPanel
         Left = 0
-        Height = 48
+        Height = 64
         Top = 0
         Width = 535
         Align = alTop
         BevelOuter = bvNone
-        ClientHeight = 48
+        ClientHeight = 64
         ClientWidth = 535
         TabOrder = 5
         object Ed_SBARepoZipFile: TComboBox
-          Left = 191
+          Left = 15
           Height = 23
-          Top = 11
-          Width = 327
+          Top = 32
+          Width = 503
           Anchors = [akTop, akLeft, akRight]
           AutoComplete = True
           AutoCompleteText = [cbactEnabled, cbactEndOfLineComplete, cbactSearchAscending]
@@ -609,7 +609,7 @@ object LibraryForm: TLibraryForm
         object Label10: TLabel
           Left = 15
           Height = 15
-          Top = 15
+          Top = 8
           Width = 166
           Caption = 'Repository Zip Filepath/Branch:'
           ParentColor = False
@@ -618,17 +618,17 @@ object LibraryForm: TLibraryForm
     end
     object IPCores: TTabSheet
       Caption = 'IPCores'
-      ClientHeight = 522
+      ClientHeight = 535
       ClientWidth = 535
       object Panel2: TPanel
         Left = 0
-        Height = 522
+        Height = 535
         Top = 0
         Width = 150
         Align = alLeft
         BevelOuter = bvNone
         Caption = 'Panel2'
-        ClientHeight = 522
+        ClientHeight = 535
         ClientWidth = 150
         TabOrder = 0
         object IPCoresFilter: TListViewFilterEdit
@@ -648,7 +648,7 @@ object LibraryForm: TLibraryForm
         end
         object LV_IPCores: TListView
           Left = 3
-          Height = 490
+          Height = 503
           Top = 29
           Width = 144
           Align = alClient
@@ -677,12 +677,12 @@ object LibraryForm: TLibraryForm
       end
       object Panel4: TPanel
         Left = 150
-        Height = 522
+        Height = 535
         Top = 0
         Width = 385
         Align = alClient
         BevelOuter = bvNone
-        ClientHeight = 522
+        ClientHeight = 535
         ClientWidth = 385
         TabOrder = 1
         object Label5: TLabel
@@ -699,10 +699,11 @@ object LibraryForm: TLibraryForm
         end
         object IpCoreDescription: TMemo
           Left = 3
-          Height = 75
+          Height = 88
           Top = 333
           Width = 379
           Align = alTop
+          Anchors = [akTop, akLeft, akRight, akBottom]
           BorderSpacing.Left = 3
           BorderSpacing.Right = 3
           Color = clCream
@@ -746,7 +747,7 @@ object LibraryForm: TLibraryForm
         object B_AddtoLibrary: TBitBtn
           Left = 224
           Height = 38
-          Top = 471
+          Top = 484
           Width = 150
           Anchors = [akLeft, akBottom]
           Caption = 'Add to local library'
@@ -777,7 +778,7 @@ object LibraryForm: TLibraryForm
         object Label1: TLabel
           Left = 16
           Height = 15
-          Top = 463
+          Top = 476
           Width = 144
           Anchors = [akLeft, akBottom]
           Caption = 'New IPcore in remote repo.'
@@ -789,7 +790,7 @@ object LibraryForm: TLibraryForm
         object Label4: TLabel
           Left = 16
           Height = 15
-          Top = 495
+          Top = 508
           Width = 129
           Anchors = [akLeft, akBottom]
           Caption = 'IPCore update in remote'
@@ -801,7 +802,7 @@ object LibraryForm: TLibraryForm
         object Label8: TLabel
           Left = 5
           Height = 15
-          Top = 445
+          Top = 458
           Width = 42
           Anchors = [akLeft, akBottom]
           Caption = 'Legend:'
@@ -811,7 +812,7 @@ object LibraryForm: TLibraryForm
         object Label9: TLabel
           Left = 16
           Height = 15
-          Top = 479
+          Top = 492
           Width = 142
           Anchors = [akLeft, akBottom]
           Caption = 'New IPCore in local library.'
@@ -823,11 +824,12 @@ object LibraryForm: TLibraryForm
         object URL_IpCore: TStaticText
           Cursor = crHandPoint
           Left = 3
-          Height = 20
-          Top = 411
+          Height = 24
+          Top = 424
           Width = 379
           Align = alTop
           Alignment = taRightJustify
+          Anchors = [akLeft, akRight, akBottom]
           AutoSize = True
           BorderSpacing.Around = 3
           Constraints.MaxWidth = 380
@@ -844,17 +846,17 @@ object LibraryForm: TLibraryForm
     end
     object Programs: TTabSheet
       Caption = 'Programs'
-      ClientHeight = 522
+      ClientHeight = 539
       ClientWidth = 535
       object Panel3: TPanel
         Left = 0
-        Height = 522
+        Height = 539
         Top = 0
         Width = 150
         Align = alLeft
         BevelOuter = bvNone
         Caption = 'Panel3'
-        ClientHeight = 522
+        ClientHeight = 539
         ClientWidth = 150
         TabOrder = 0
         object ProgramsFilter: TListViewFilterEdit
@@ -873,7 +875,7 @@ object LibraryForm: TLibraryForm
         end
         object LV_Programs: TListView
           Left = 3
-          Height = 490
+          Height = 507
           Top = 29
           Width = 144
           Align = alClient
@@ -902,12 +904,12 @@ object LibraryForm: TLibraryForm
       end
       object Panel5: TPanel
         Left = 150
-        Height = 522
+        Height = 539
         Top = 0
         Width = 385
         Align = alClient
         BevelOuter = bvNone
-        ClientHeight = 522
+        ClientHeight = 539
         ClientWidth = 385
         TabOrder = 1
         object Label6: TLabel
@@ -924,10 +926,11 @@ object LibraryForm: TLibraryForm
         end
         object ProgramDescription: TMemo
           Left = 3
-          Height = 430
+          Height = 447
           Top = 18
           Width = 379
           Align = alTop
+          Anchors = [akTop, akLeft, akRight, akBottom]
           BorderSpacing.Left = 3
           BorderSpacing.Right = 3
           Color = clCream
@@ -941,7 +944,7 @@ object LibraryForm: TLibraryForm
         object Label2: TLabel
           Left = 5
           Height = 15
-          Top = 470
+          Top = 487
           Width = 142
           Anchors = [akLeft, akBottom]
           Caption = 'The Items in green are new'
@@ -953,7 +956,7 @@ object LibraryForm: TLibraryForm
         object B_AddtoPrograms: TBitBtn
           Left = 222
           Height = 38
-          Top = 470
+          Top = 487
           Width = 160
           Anchors = [akLeft, akBottom]
           Caption = 'Add to local library'
@@ -985,17 +988,17 @@ object LibraryForm: TLibraryForm
     end
     object Snippets: TTabSheet
       Caption = 'Snippets'
-      ClientHeight = 522
+      ClientHeight = 539
       ClientWidth = 535
       object Panel1: TPanel
         Left = 0
-        Height = 522
+        Height = 539
         Top = 0
         Width = 150
         Align = alLeft
         BevelOuter = bvNone
         Caption = 'Panel1'
-        ClientHeight = 522
+        ClientHeight = 539
         ClientWidth = 150
         TabOrder = 0
         object SnippetsFilter: TListViewFilterEdit
@@ -1014,7 +1017,7 @@ object LibraryForm: TLibraryForm
         end
         object LV_Snippets: TListView
           Left = 3
-          Height = 490
+          Height = 507
           Top = 29
           Width = 144
           Align = alClient
@@ -1043,12 +1046,12 @@ object LibraryForm: TLibraryForm
       end
       object Panel6: TPanel
         Left = 150
-        Height = 522
+        Height = 539
         Top = 0
         Width = 385
         Align = alClient
         BevelOuter = bvNone
-        ClientHeight = 522
+        ClientHeight = 539
         ClientWidth = 385
         TabOrder = 1
         object Label7: TLabel
@@ -1065,10 +1068,11 @@ object LibraryForm: TLibraryForm
         end
         object SnippetDescription: TMemo
           Left = 3
-          Height = 430
+          Height = 447
           Top = 18
           Width = 379
           Align = alTop
+          Anchors = [akTop, akLeft, akRight, akBottom]
           BorderSpacing.Left = 3
           BorderSpacing.Right = 3
           Color = clCream
@@ -1082,7 +1086,7 @@ object LibraryForm: TLibraryForm
         object Label3: TLabel
           Left = 5
           Height = 15
-          Top = 470
+          Top = 487
           Width = 142
           Anchors = [akLeft, akBottom]
           Caption = 'The Items in green are new'
@@ -1094,7 +1098,7 @@ object LibraryForm: TLibraryForm
         object B_AddtoSnippets: TBitBtn
           Left = 222
           Height = 38
-          Top = 470
+          Top = 487
           Width = 160
           Anchors = [akLeft, akBottom]
           Caption = 'Add to local library'
