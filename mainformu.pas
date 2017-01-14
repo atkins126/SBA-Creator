@@ -450,7 +450,9 @@ type
     procedure OpenProject(const f:string);
     procedure OpenTreeItem(TN: TTreeNode);
     procedure Reformat(osl,nsl: Tstrings);
+    procedure ReOpenEditorFiles;
     function  SaveFile(f:String; Src:TStrings):Boolean;
+    procedure SaveOpenEditor;
     procedure SetupEditorPopupMenu;
     procedure SetupEdTmplMenu;
     procedure SetupPrgTmplMenu;
@@ -1382,52 +1384,77 @@ end;
 
 procedure TMainForm.OpenProject(const f: string);
 var
-  SL:TStringList;
   s:string;
 begin
-  if not FileExistsUTF8(f) then
+  if not SBAPrj.Open(f) then exit;
+  UpdatePrjTree;
+  PrjHistory.UpdateList(f);
+  CopyPrjHistory;
+  P_Project.Visible:=true;
+  If MainPages.ActivePage=SystemTab then GotoEditor;
+  S:=SBAPrj.location+SBAPrj.name+'_Top.vhd';
+  OpenInEditor(S);
+  if AutoOpenPrjF then
   begin
-    showmessage('The project '+f+' does not exist');
-    exit;
-  end;
-  try
-    SL:=TStringList.create;
-    SL.LoadFromFile(f);
-    if not SBAPrj.Fill(SL.Text) then exit;
-    SBAPrj.Modified:=false;
-    // Detecta que el path del archivo es diferente a SBAPrj.location lo cual significa que el proyecto fue movido o copiado e intenta corregir location.
-    if CompareText(TrimFileName(SBAPrj.location),TrimFileName(ExtractFilePath(f)))<>0 then
-    begin
-      if (MessageDlg('The project has been copied or moved', 'Do you want to update the references? ', mtConfirmation, [mbYes, mbNo],0)=mrYes) and
-          fileexistsUTF8(ExtractFilePath(f)+SBAPrj.name+'_'+cSBATop) then
-      begin
-        SBAPrj.location:=ExtractFilePath(f);
-        SBAPrj.loclib:=SBAPrj.location+'lib'+PathDelim;
-        SBAPrj.Modified:=true;
-      end else ShowMessage('The project files can not be found');
-    end;
-    //
-    UpdatePrjTree;
-    PrjHistory.UpdateList(f);
-    CopyPrjHistory;
-    P_Project.Visible:=true;
-    If MainPages.ActivePage=SystemTab then GotoEditor;
-    S:=SBAPrj.location+SBAPrj.name+'_Top.vhd';
+    S:=SBAPrj.location+SBAPrj.name+'_SBAcfg.vhd';
     OpenInEditor(S);
-    if AutoOpenPrjF then
-    begin
-     S:=SBAPrj.location+SBAPrj.name+'_SBAcfg.vhd';
-     OpenInEditor(S);
-     S:=SBAPrj.location+SBAPrj.name+'_SBAdcdr.vhd';
-     OpenInEditor(S);
-     S:=SBAPrj.location+SBAPrj.name+'_SBActrlr.vhd';
-     OpenInEditor(S);
-    end;
-    Log.clear;
-  finally
-    if assigned(SL) then FreeAndNil(SL);
+    S:=SBAPrj.location+SBAPrj.name+'_SBAdcdr.vhd';
+    OpenInEditor(S);
+    S:=SBAPrj.location+SBAPrj.name+'_SBActrlr.vhd';
+    OpenInEditor(S);
   end;
+  Log.clear;
 end;
+
+//procedure TMainForm.OpenProject(const f: string);
+//var
+//  SL:TStringList;
+//  s:string;
+//begin
+//  { TODO : Eliminar location del archivo sba y almacenarlo dinámicamente }
+//  if not FileExistsUTF8(f) then
+//  begin
+//    showmessage('The project '+f+' does not exist');
+//    exit;
+//  end;
+//  try
+//    SL:=TStringList.create;
+//    SL.LoadFromFile(f);
+//    if not SBAPrj.Fill(SL.Text) then exit;
+//    SBAPrj.Modified:=false;
+//    // Detecta que el path del archivo es diferente a SBAPrj.location lo cual significa que el proyecto fue movido o copiado e intenta corregir location.
+//    if CompareText(TrimFileName(SBAPrj.location),TrimFileName(ExtractFilePath(f)))<>0 then
+//    begin
+//      if (MessageDlg('The project has been copied or moved', 'Do you want to update the references? ', mtConfirmation, [mbYes, mbNo],0)=mrYes) and
+//          fileexistsUTF8(ExtractFilePath(f)+SBAPrj.name+'_'+cSBATop) then
+//      begin
+//        SBAPrj.location:=ExtractFilePath(f);
+//        SBAPrj.loclib:=SBAPrj.location+'lib'+PathDelim;
+//        SBAPrj.Modified:=true;
+//      end else ShowMessage('The project files can not be found');
+//    end;
+//    //
+//    UpdatePrjTree;
+//    PrjHistory.UpdateList(f);
+//    CopyPrjHistory;
+//    P_Project.Visible:=true;
+//    If MainPages.ActivePage=SystemTab then GotoEditor;
+//    S:=SBAPrj.location+SBAPrj.name+'_Top.vhd';
+//    OpenInEditor(S);
+//    if AutoOpenPrjF then
+//    begin
+//     S:=SBAPrj.location+SBAPrj.name+'_SBAcfg.vhd';
+//     OpenInEditor(S);
+//     S:=SBAPrj.location+SBAPrj.name+'_SBAdcdr.vhd';
+//     OpenInEditor(S);
+//     S:=SBAPrj.location+SBAPrj.name+'_SBActrlr.vhd';
+//     OpenInEditor(S);
+//    end;
+//    Log.clear;
+//  finally
+//    if assigned(SL) then FreeAndNil(SL);
+//  end;
+//end;
 
 procedure TMainForm.MainPagesChange(Sender: TObject);
 begin
@@ -1729,18 +1756,40 @@ end;
 procedure TMainForm.FormCloseQuery(Sender: TObject; var CanClose: boolean);
 begin
   CanClose:=false;
-  If DownloadInProgress Then
-  Begin
-    ShowMessage('Please wait. Download is still in progress.');
-    exit;
-  End;
+  If DownloadInProgress Then DWProcess.WaitforIdle;
   if not CloseProg then exit else CanClose:=true;
-  while EditorPages.PageCount>0 do
+  SaveOpenEditor;
+  while CanClose and (EditorPages.PageCount>0) do
   begin
     CanClose:=CloseEditor(EditorPages.ActivePage);
-    If not CanClose then break;
   end;
-  if SBAPrj.Modified then CanClose:=CloseProject;
+  if CanClose and SBAPrj.Modified then CanClose:=CloseProject;
+end;
+
+procedure TMainForm.SaveOpenEditor;
+var
+  i,j:integer;
+  inifile:TIniFile;
+  Editor:TSynEdit;
+begin
+  IniFile:=TIniFile.Create(ConfigDir+'FileHistory.ini');
+  IniFile.EraseSection('LastOpenEditor');
+  if EditorPages.PageCount>0 then
+  begin
+    if P_Project.Visible then IniFile.WriteString('LastOpenEditor','Project',SBAPrj.location+SBAPrj.name+'.sba');
+    j:=0;
+    for i:=0 to EditorPages.PageCount-1 do
+    begin
+      Editor:=TSynEdit(MainForm.FindComponent('SynEdit_'+inttostr(EditorPages.Pages[i].Tag)));
+      if Assigned(Editor) and not EditorEmpty(Editor) then
+      begin
+        Inc(j);
+        IniFile.WriteString('LastOpenEditor',inttostr(j),EditorPages.Pages[i].Hint);
+      end;
+    end;
+    IniFile.WriteInteger('LastOpenEditor','Count',j);
+  end;
+  IniFile.Free;
 end;
 
 procedure TMainForm.FormCreate(Sender: TObject);
@@ -1795,10 +1844,30 @@ begin
       CreatePlugInsBtns;
       LoadTheme(ConfigDir+'theme'+PathDelim);
       CheckStartParams;
-{ TODO : Re-Open TABS opened when the program was closed (make a choice in configform) }
+      ReOpenEditorFiles;
       infoln('All FormCreate tasks finished');
     end;
   end;
+end;
+
+procedure TMainForm.ReOpenEditorFiles;
+var
+  i:integer;
+  prj:string;
+  IniFile:TIniFile;
+begin
+  if not AutoOpenEdFiles then exit;
+  IniFile:=TIniFile.Create(ConfigDir+'FileHistory.ini');
+  prj:=IniFile.ReadString('LastOpenEditor','Project','');
+  if prj<>'' then OpenProject(prj);
+  For i:=1 to IniFile.ReadInteger('LastOpenEditor','Count',0) do
+    OpenInEditor(IniFile.ReadString('LastOpenEditor',InttoStr(i),''));
+  If EditorPages.PageCount>0 then
+  begin
+    MainPages.ActivePage:=EditorsTab;
+    EditorPagesChange(nil);
+  end;
+  IniFile.Free;
 end;
 
 procedure TMainForm.CheckStartParams;
@@ -1806,6 +1875,7 @@ var
   i:Integer;
   f:String;
 begin
+  { TODO : Verificar si lo que se quiere abrir es un proyecto SBA y no abrirlo en el editor HDL sino como proyecto. }
   If ParamCount>0 then
   begin
     ProjectGotoEditorExecute(nil);
@@ -2487,6 +2557,7 @@ end;
 procedure TMainForm.OpenInEditor(const f: string);
 var i:integer;
 begin
+  if f='' then exit;
   if (EditorPages.PageCount=0) then NewEditorPage else
     for i:=0 to EditorPages.PageCount-1 do
       if EditorPages.Pages[i].Hint=f then

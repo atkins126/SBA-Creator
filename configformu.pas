@@ -17,6 +17,7 @@ type
     CB_LibAsReadOnly: TCheckBox;
     CB_AutoOpenPrjF: TCheckBox;
     CB_CtrlAdvMode: TCheckBox;
+    CB_AutoOpenEdfiles: TCheckBox;
     Ed_EditorFontSize: TComboBox;
     Ed_EditorFontName: TComboBox;
     Ed_LibraryDir: TDirectoryEdit;
@@ -65,6 +66,7 @@ var
   EditorFontSize:integer;
   LibAsReadOnly:Boolean;
   AutoOpenPrjF:Boolean;
+  AutoOpenEdFiles:Boolean;
   CtrlAdvMode:Boolean;
   IpCoreList,SnippetsList,ProgramsList,PlugInsList:Tstringlist;
 
@@ -192,6 +194,7 @@ begin
     if Screen.Fonts.IndexOf(EditorFontName)=-1 then EditorFontName:='Courier New';
     LibAsReadOnly:=ReadBoolean('LibAsReadOnly',true);
     AutoOpenPrjF:=ReadBoolean('AutoOpenPrjF',true);
+    AutoOpenEdFiles:=ReadBoolean('AutoOpenEdFiles',true);
     CtrlAdvMode:=ReadBoolean('CtrlAdvMode',false);
   end;
   result:=true;
@@ -256,6 +259,9 @@ begin
     AutoOpenPrjF:=CB_AutoOpenPrjF.Checked;
     WriteBoolean('AutoOpenPrjF',AutoOpenPrjF);
     //
+    AutoOpenEdfiles:=CB_AutoOpenEdfiles.Checked;
+    WriteBoolean('AutoOpenEdfiles',AutoOpenEdfiles);
+    //
     CtrlAdvMode:=CB_CtrlAdvMode.Checked;
     WriteBoolean('CtrlAdvMode',CtrlAdvMode);
     //
@@ -284,6 +290,7 @@ begin
   Ed_DefAuthor.Text:=DefAuthor;
   CB_LibAsReadOnly.checked:=LibAsReadOnly;
   CB_AutoOpenPrjF.Checked:=AutoOpenPrjF;
+  CB_AutoOpenEdfiles.Checked:=AutoOpenEdfiles;
   CB_CtrlAdvMode.Checked:=CtrlAdvMode;
   Ed_EditorFontName.Text:=EditorFontName;
 end;

@@ -4,14 +4,15 @@
     <PathDelim Value="\"/>
     <Version Value="9"/>
     <BuildModes Active="Release"/>
-    <Units Count="53">
+    <Units Count="57">
       <Unit0>
         <Filename Value="SBAcreator.lpr"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="-1"/>
+        <EditorIndex Value="1"/>
         <TopLine Value="19"/>
-        <CursorPos Y="50"/>
+        <CursorPos X="31" Y="41"/>
         <UsageCount Value="202"/>
+        <Loaded Value="True"/>
       </Unit0>
       <Unit1>
         <Filename Value="mainformu.pas"/>
@@ -21,13 +22,13 @@
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="MainFormU"/>
         <IsVisibleTab Value="True"/>
-        <TopLine Value="1780"/>
-        <CursorPos X="27" Y="1798"/>
+        <TopLine Value="1849"/>
+        <CursorPos Y="1863"/>
         <UsageCount Value="202"/>
         <Bookmarks Count="3">
-          <Item0 X="27" Y="1373" ID="9"/>
-          <Item1 X="21" Y="814" ID="2"/>
-          <Item2 X="18" Y="1442" ID="1"/>
+          <Item0 X="27" Y="1375" ID="9"/>
+          <Item1 X="21" Y="816" ID="2"/>
+          <Item2 X="18" Y="1469" ID="1"/>
         </Bookmarks>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -95,11 +96,11 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="SBAProjectU"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="306"/>
-        <CursorPos Y="321"/>
+        <TopLine Value="117"/>
+        <CursorPos X="17" Y="132"/>
         <UsageCount Value="232"/>
         <Bookmarks Count="1">
-          <Item0 X="28" Y="304"/>
+          <Item0 Y="707"/>
         </Bookmarks>
       </Unit8>
       <Unit9>
@@ -110,8 +111,8 @@
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="ConfigFormU"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="169"/>
-        <CursorPos X="15" Y="184"/>
+        <TopLine Value="282"/>
+        <CursorPos X="40" Y="276"/>
         <UsageCount Value="205"/>
       </Unit9>
       <Unit10>
@@ -122,8 +123,8 @@
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="PrjWizU"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="717"/>
-        <CursorPos X="3" Y="733"/>
+        <TopLine Value="207"/>
+        <CursorPos X="27" Y="227"/>
         <UsageCount Value="200"/>
         <Bookmarks Count="1">
           <Item0 X="36" Y="463"/>
@@ -134,8 +135,8 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="DwFileU"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="367"/>
-        <CursorPos Y="399"/>
+        <TopLine Value="387"/>
+        <CursorPos X="3" Y="397"/>
         <UsageCount Value="202"/>
       </Unit11>
       <Unit12>
@@ -181,8 +182,7 @@
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="LibraryFormU"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="604"/>
-        <CursorPos X="69" Y="628"/>
+        <CursorPos X="40" Y="341"/>
         <UsageCount Value="283"/>
       </Unit15>
       <Unit16>
@@ -236,11 +236,10 @@
         <Filename Value="autoupdateu.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="AutoUpdateU"/>
-        <EditorIndex Value="1"/>
-        <TopLine Value="11"/>
-        <CursorPos X="6" Y="17"/>
-        <UsageCount Value="181"/>
-        <Loaded Value="True"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="115"/>
+        <CursorPos X="21" Y="143"/>
+        <UsageCount Value="188"/>
       </Unit21>
       <Unit22>
         <Filename Value="synhighlighterjson.pas"/>
@@ -249,7 +248,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="37"/>
         <CursorPos X="14" Y="48"/>
-        <UsageCount Value="168"/>
+        <UsageCount Value="175"/>
       </Unit22>
       <Unit23>
         <Filename Value="wapagecontrol.pas"/>
@@ -258,7 +257,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="13"/>
         <CursorPos X="36" Y="28"/>
-        <UsageCount Value="88"/>
+        <UsageCount Value="95"/>
       </Unit23>
       <Unit24>
         <Filename Value="usyneditpopupedit.pas"/>
@@ -475,55 +474,94 @@
         <CursorPos X="10" Y="23"/>
         <UsageCount Value="9"/>
       </Unit52>
+      <Unit53>
+        <Filename Value="D:\Lazarus\lcl\propertystorage.pas"/>
+        <UnitName Value="PropertyStorage"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="143"/>
+        <CursorPos X="89" Y="165"/>
+        <UsageCount Value="10"/>
+      </Unit53>
+      <Unit54>
+        <Filename Value="D:\Lazarus\lcl\inipropstorage.pas"/>
+        <UnitName Value="IniPropStorage"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="128"/>
+        <CursorPos X="14" Y="148"/>
+        <UsageCount Value="12"/>
+      </Unit54>
+      <Unit55>
+        <Filename Value="D:\Lazarus\fpc\3.0.0\source\packages\fcl-base\src\inifiles.pp"/>
+        <UnitName Value="IniFiles"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="151"/>
+        <CursorPos X="24" Y="157"/>
+        <UsageCount Value="12"/>
+      </Unit55>
+      <Unit56>
+        <Filename Value="D:\Lazarus\fpc\3.0.0\source\rtl\objpas\sysutils\sysstrh.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="64"/>
+        <CursorPos X="10" Y="80"/>
+        <UsageCount Value="10"/>
+      </Unit56>
     </Units>
     <OtherDefines Count="1">
       <Define0 Value="DEBUG"/>
     </OtherDefines>
-    <JumpHistory Count="11" HistoryIndex="10">
+    <JumpHistory Count="13" HistoryIndex="12">
       <Position1>
         <Filename Value="mainformu.pas"/>
-        <Caret Line="2674" Column="11" TopLine="2659"/>
+        <Caret Line="1436" Column="37" TopLine="1413"/>
       </Position1>
       <Position2>
         <Filename Value="mainformu.pas"/>
-        <Caret Line="2677" Column="29" TopLine="2656"/>
+        <Caret Line="5" Column="20"/>
       </Position2>
       <Position3>
         <Filename Value="mainformu.pas"/>
-        <Caret Line="2672" Column="30" TopLine="2662"/>
+        <Caret Line="1399" Column="34" TopLine="1387"/>
       </Position3>
       <Position4>
         <Filename Value="mainformu.pas"/>
-        <Caret Line="2675" Column="19" TopLine="2646"/>
+        <Caret Line="19" Column="33"/>
       </Position4>
       <Position5>
         <Filename Value="mainformu.pas"/>
-        <Caret Line="2676" Column="19" TopLine="2647"/>
+        <Caret Line="1520" Column="3" TopLine="1515"/>
       </Position5>
       <Position6>
         <Filename Value="mainformu.pas"/>
-        <Caret Line="1505" Column="16" TopLine="1503"/>
+        <Caret Line="1520" Column="3" TopLine="1509"/>
       </Position6>
       <Position7>
         <Filename Value="mainformu.pas"/>
-        <Caret Line="486" Column="3" TopLine="481"/>
+        <Caret Line="1779" Column="23" TopLine="1761"/>
       </Position7>
       <Position8>
         <Filename Value="mainformu.pas"/>
-        <Caret Line="505" Column="3" TopLine="481"/>
+        <Caret Line="1781" Column="44" TopLine="1739"/>
       </Position8>
       <Position9>
         <Filename Value="mainformu.pas"/>
-        <Caret Line="625" Column="40" TopLine="621"/>
+        <Caret Line="1780" TopLine="1765"/>
       </Position9>
       <Position10>
         <Filename Value="mainformu.pas"/>
-        <Caret Line="1798" Column="27" TopLine="1780"/>
+        <Caret Line="1864" Column="22" TopLine="1849"/>
       </Position10>
       <Position11>
         <Filename Value="mainformu.pas"/>
-        <Caret Line="1797" Column="27" TopLine="1779"/>
+        <Caret Line="1389" Column="3" TopLine="1385"/>
       </Position11>
+      <Position12>
+        <Filename Value="mainformu.pas"/>
+        <Caret Line="1798" Column="3" TopLine="1846"/>
+      </Position12>
+      <Position13>
+        <Filename Value="mainformu.pas"/>
+        <Caret Line="1779" Column="50" TopLine="1767"/>
+      </Position13>
     </JumpHistory>
   </ProjectSession>
   <Debugging>

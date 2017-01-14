@@ -1,11 +1,11 @@
 object ConfigForm: TConfigForm
-  Left = 985
-  Height = 458
-  Top = 389
+  Left = 1259
+  Height = 489
+  Top = 150
   Width = 452
   BorderStyle = bsDialog
   Caption = 'ConfigForm'
-  ClientHeight = 458
+  ClientHeight = 489
   ClientWidth = 452
   OnCreate = FormCreate
   OnShow = FormShow
@@ -58,7 +58,7 @@ object ConfigForm: TConfigForm
   object ButtonPanel1: TButtonPanel
     Left = 6
     Height = 34
-    Top = 418
+    Top = 449
     Width = 440
     OKButton.Name = 'OKButton'
     OKButton.DefaultCaption = True
@@ -113,7 +113,7 @@ object ConfigForm: TConfigForm
   object CB_LibAsReadOnly: TCheckBox
     Left = 8
     Height = 19
-    Top = 336
+    Top = 368
     Width = 196
     Caption = 'Copy Library IP Cores as readonly'
     Checked = True
@@ -123,7 +123,7 @@ object ConfigForm: TConfigForm
   object CB_AutoOpenPrjF: TCheckBox
     Left = 8
     Height = 19
-    Top = 360
+    Top = 392
     Width = 185
     Caption = 'Auto open all project main files'
     Checked = True
@@ -244,7 +244,7 @@ object ConfigForm: TConfigForm
   object CB_CtrlAdvMode: TCheckBox
     Left = 8
     Height = 19
-    Top = 384
+    Top = 344
     Width = 193
     Caption = 'SBA Controller Advanced Editing'
     TabOrder = 10
@@ -257,6 +257,16 @@ object ConfigForm: TConfigForm
     Caption = 'Config Dir:'
     ParentColor = False
     ShowAccelChar = False
+  end
+  object CB_AutoOpenEdfiles: TCheckBox
+    Left = 8
+    Height = 19
+    Top = 416
+    Width = 227
+    Caption = 'Reopen last open documents at startup'
+    Checked = True
+    State = cbChecked
+    TabOrder = 11
   end
   object FontDialog1: TFontDialog
     MinFontSize = 0

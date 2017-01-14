@@ -1145,7 +1145,7 @@ object LibraryForm: TLibraryForm
   object KillProcTimer: TTimer
     Interval = 3000
     OnTimer = KillProcTimerTimer
-    left = 448
+    left = 432
     top = 488
   end
 end

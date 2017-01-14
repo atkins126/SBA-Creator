@@ -59,6 +59,7 @@ type
   private
     procedure FillRequeriments(list, m: TStrings; var level:integer);
   public
+    function Open(f:string):boolean;
     function Fill(Data: string): boolean;
     function Collect:string;
     function CoreGetReq(const inifile: string): TStringList;
@@ -139,8 +140,8 @@ begin
     userfiles.Clear;
     try
       name:=J.FindPath('name').AsString;
-      location:=AppendPathDelim(TrimFilename(J.FindPath('location').AsString));
-      loclib:=AppendPathDelim(TrimFilename(location+'lib'));
+      //location:=AppendPathDelim(TrimFilename(J.FindPath('location').AsString));
+      //loclib:=AppendPathDelim(TrimFilename(location+'lib'));
       title:=J.FindPath('title').AsString;
       author:=J.FindPath('author').AsString;
       version:=J.FindPath('version').AsString;
@@ -206,7 +207,7 @@ var
 begin
   SData:='{'#10+
             '"name": "'+name+'",'#10+
-            '"location": "'+AppendPathDelim(location)+'",'#10+
+//            '"location": "'+AppendPathDelim(location)+'",'#10+
             '"title": "'+title+'",'#10+
             '"author": "'+author+'",'#10+
             '"version": "'+version+'",'#10+
@@ -687,6 +688,28 @@ begin
     finally
       if assigned(k) then FreeAndNil(k);
     end;
+  end;
+end;
+
+function TSBAPrj.Open(f: string): boolean;
+var SL:TStringList;
+begin
+  result:=false;
+  if not FileExistsUTF8(f) then
+  begin
+    showmessage('The project '+f+' does not exist');
+    exit;
+  end;
+  try
+    SL:=TStringList.create;
+    SL.LoadFromFile(f);
+    if not Fill(SL.Text) then exit;
+    location:=ExtractFilePath(f);
+    loclib:=location+'lib'+PathDelim;
+    Modified:=false;
+    result:=true;
+  finally
+    if assigned(SL) then FreeAndNil(SL);
   end;
 end;
 
