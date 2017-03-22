@@ -401,6 +401,7 @@ begin
     DCL:=TStringList.Create;
     AM:=0;
     for i:=0 to libcores.Count-1 do LoadIPData(libcores[i],IP,IPS,STL,AML,DCL);
+{ TODO : en el archivo json están definidos los puertos agregados al interfaz del top provenientes de los IP Core, pero sería mas legible agregar los puertos en forma posterior y agregar un comentario al inicio de la definición de cada puerto para separarlos: -- DEMO interface, -- GPIO1 interface, -- Video1 interface, etc. }
     for i:=0 to ports.count-1 do
     begin
       if ExtractDelimited(3,ports[i],[','])='1' then

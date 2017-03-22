@@ -1,7 +1,7 @@
 unit SBASnippetU;
 
 {$mode objfpc}{$H+}
-
+{ TODO : Fusionar TSBAContrlrProg y TSBASnippet agregando un diferenciador basado en la extension al establecer FileName }
 interface
 
 uses

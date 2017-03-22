@@ -714,6 +714,7 @@ begin
     PrgReturnTab:=EditorsTab;
     SBA_ReturnToEditor.Enabled:=true;
     MainPages.ActivePage:=ProgEditTab;
+    MainPagesChange(Sender);
     ExtractSBALabels;
     ExtractSBACnfgCnst;
   end else ShowMessage('Format error in controller, please verify "/SBA:" block signatures.');
@@ -881,6 +882,7 @@ end;
 procedure TMainForm.Button1Click(Sender: TObject);
 begin
   MainPages.ActivePage:=SystemTab;
+  MainPagesChange(Sender);
 end;
 
 procedure TMainForm.B_SBAAdressClick(Sender: TObject);
@@ -1088,6 +1090,7 @@ end;
 procedure TMainForm.LogoImageDblClick(Sender: TObject);
 begin
   MainPages.ActivePage:=HidenPage;
+  MainPagesChange(Sender);
   ActiveEditor:=SynEdit1;
 end;
 
@@ -1294,6 +1297,7 @@ begin
     SBAPrj.name:='';
     SBAPrj.Modified:=false;
     MainPages.ActivePage:=SystemTab;
+    MainPagesChange(nil);
     result:=true;
   end;
 end;
@@ -1331,6 +1335,7 @@ begin
     NewEditorPage;
   end;
   MainPages.ActivePage:=EditorsTab;
+  MainPagesChange(nil);
 end;
 
 procedure TMainForm.ProjectGotoPrgExecute(Sender: TObject);
@@ -1339,7 +1344,7 @@ begin
   PrgReturnTab:=SystemTab;
   SBA_ReturnToEditor.Enabled:=false;
   MainPages.ActivePage:=ProgEditTab;
-  //ActiveEditor:=SynEdit_X;  // Esto debe ser automático
+  MainPagesChange(Sender);  // es automático sólo si el usuario hace clik en las pestañas
   if EditorEmpty(ActiveEditor) then
   begin
    SBAContrlrProg.Filename:=cSBADefaultPrgName;
@@ -1355,8 +1360,8 @@ begin
    finally
      if assigned(tmp) then freeandnil(tmp);
    end;
-   ExtractSBALabels;
   end;
+  ExtractSBALabels;
 end;
 
 procedure TMainForm.ProjectNewExecute(Sender: TObject);
@@ -1473,7 +1478,7 @@ begin
   end else if MainPages.ActivePage=ProgEditTab then
   begin
     MainForm.Menu := ProgMenu;
-    ActiveEditor:= SynEdit_X;
+    ActiveEditor:=SynEdit_X;
     SyncroEdit.Editor:=ActiveEditor;
     hdltypeselect('.prg');
   end else if MainPages.ActivePage=SystemTab then
@@ -1558,6 +1563,7 @@ begin
   if not SynEdit_X.Modified then
   begin
     MainPages.ActivePage:=PrgReturnTab;
+    MainPagesChange(Sender);
     SynEdit_X.ClearAll;
     SynEdit_X.Modified:=false;
   end;
@@ -1568,8 +1574,12 @@ begin
   CloseEditor(EditorPages.ActivePage);
   If EditorPages.PageCount=0 then
   begin
-    if not P_Project.Visible then MainPages.ActivePage:=SystemTab
-    else begin
+    if not P_Project.Visible then
+    begin
+      MainPages.ActivePage:=SystemTab;
+      MainPagesChange(Sender);
+    end else
+    begin
       EditorCnt:=1;
       NewEditorPage;
     end;
@@ -1795,7 +1805,6 @@ end;
 procedure TMainForm.FormCreate(Sender: TObject);
 var Success:Boolean;
 begin
-  Check;
   DebugForm:=TDebugForm.Create(Self);
   infoln('Start of create method');
   Success:=false;
@@ -1814,6 +1823,7 @@ begin
       infoln(caption);
       wdir:='.\';
       DwProcess:=TDwProcess.Create(Self);
+      Check;
       LoadAnnouncement;
       GetFile('newbanner.gif');
       MainPages.ShowTabs:=false;
@@ -1865,6 +1875,7 @@ begin
   If EditorPages.PageCount>0 then
   begin
     MainPages.ActivePage:=EditorsTab;
+    MainPagesChange(nil);
     EditorPagesChange(nil);
   end;
   IniFile.Free;
@@ -1875,7 +1886,22 @@ var
   i:Integer;
   f:String;
 begin
-  { TODO : Verificar si lo que se quiere abrir es un proyecto SBA y no abrirlo en el editor HDL sino como proyecto. }
+  If (ParamCount=1) and FileExists(ParamStr(1)) and (CompareText(ExtractFileExt(ParamStr(1)),'.sba')=0) then
+  begin
+    OpenProject(ParamStr(1));
+    exit;
+  end;
+//
+  If (ParamCount=1) and FileExists(ParamStr(1)) and
+     ((CompareText(ExtractFileExt(ParamStr(1)),'.snp')=0) or
+     (CompareText(ExtractFileExt(ParamStr(1)),'.prg')=0)) then
+  begin
+    SynEdit_X.Lines.LoadFromFile(ParamStr(1));
+    SBAContrlrProg.FileName:=ParamStr(1);
+    ProjectGotoPrgExecute(nil);
+    exit;
+  end;
+//
   If ParamCount>0 then
   begin
     ProjectGotoEditorExecute(nil);
@@ -2243,6 +2269,7 @@ begin
 
     SynEdit_X.Modified:=false;
     MainPages.ActivePage:=EditorsTab;
+    MainPagesChange(Sender);
     EditorPagesChange(nil);
 
   finally
@@ -2891,7 +2918,7 @@ begin
   if SynEdit_X.Modified then
   begin
     MainPages.ActivePage:=ProgEditTab;
-    ActiveEditor:=SynEdit_X;
+    MainPagesChange(nil);
     SyncroEdit.Editor:=ActiveEditor;
     case MessageDlg('Prg was modified', 'Save File? '+SBAContrlrProg.FileName,
        mtConfirmation, [mbYes, mbNo, mbCancel], 0) of
@@ -2905,11 +2932,12 @@ end;
 procedure TMainForm.Check;
 Var ExpDate : TDateTime;
 begin
-  ExpDate:=EncodeDate(2016,12,31);
+  ExpDate:=EncodeDate(2017,03,31);
   if CompareDate(Today,ExpDate)>0 then
   begin
-    ShowMessage('Sorry, the beta period has expired. You can download the new version from http://sba.accesus.com, thanks you for your help!');
-//    DeleteFile(Application.ExeName);
+    ShowMessage('Sorry, this beta version has expired. You can download the new version from http://sba.accesus.com, thanks you for your help!');
+    AutoUpdate;
+    If Assigned(DwProcess) then FreeAndNil(DwProcess);
     halt;
   end;
 end;
