@@ -9,10 +9,10 @@ uses
   ComCtrls, AsyncProcess, ExtCtrls, Menus, ActnList, SynHighlighterSBA,
   SynHighlighterVerilog, SynHighlighterJSON, SynEditMarkupHighAll, SynEdit,
   SynEditTypes, SynEditKeyCmds, SynPluginSyncroEdit, SynHighlighterIni,
-  FileUtil, LazUTF8, LazFileUtils, dateutils, ListViewFilterEdit,
-  ExtendedNotebook, strutils, Clipbrd, IniPropStorage, StdActns,
+  SynCompletion, SynPluginMulticaret, FileUtil, LazUTF8, LazFileUtils, dateutils,
+  ListViewFilterEdit, ExtendedNotebook, strutils, Clipbrd, IniPropStorage, StdActns,
   BGRASpriteAnimation, uebutton, uETilePanel, versionsupportu, types, lclintf,
-  LCLType, HistoryFiles, IniFilesUTF8, StringListUTF8, WAPageControl;
+  LCLType, HistoryFiles, IniFiles, IniFilesUTF8, StringListUTF8, WAPageControl;
 
 type
   thdltype=(vhdl, prg, verilog, systemverilog, ini, json, other);
@@ -38,6 +38,7 @@ type
     MenuItem81: TMenuItem;
     MenuItem82: TMenuItem;
     MenuItem83: TMenuItem;
+    MenuItem84: TMenuItem;
     MI_OpenTreeItem: TMenuItem;
     ProjectOpenItem: TAction;
     ProjectUpdCore: TAction;
@@ -175,12 +176,26 @@ type
     Splitter4: TSplitter;
     Splitter5: TSplitter;
     Splitter6: TSplitter;
+    SynCompletion: TSynCompletion;
     SynEdit1: TSynEdit;
     SynIniSyn: TSynIniSyn;
     HidenPage: TTabSheet;
+    UpdGuiTimer: TTimer;
+    ToolButton23: TToolButton;
+    ToolButton46: TToolButton;
     ToolButton48: TToolButton;
     ToolButton49: TToolButton;
+    EdTemplateButton: TToolButton;
     ToolButton50: TToolButton;
+    ToolButton51: TToolButton;
+    ToolButton52: TToolButton;
+    ToolButton53: TToolButton;
+    ToolButton54: TToolButton;
+    ToolButton55: TToolButton;
+    ToolButton56: TToolButton;
+    ToolButton57: TToolButton;
+    ToolButton58: TToolButton;
+    ToolButton59: TToolButton;
     TreeImg: TImageList;
     EditRedo: TAction;
     EditCopy: TEditCopy;
@@ -221,7 +236,7 @@ type
     ToolButton27: TToolButton;
     ToolButton33: TToolButton;
     ToolButton43: TToolButton;
-    ToolButton46: TToolButton;
+    PrgTemplateButton: TToolButton;
     ToolButton47: TToolButton;
     ToolButton8: TToolButton;
     ToolsFileSyntaxCheck: TAction;
@@ -275,6 +290,7 @@ type
     SynSBASyn:TSynSBASyn;
     SynVerilogSyn:TSynVerilogSyn;
     SynJSONSyn:TSynJSONSyn;
+    SynMultiCaret:TSynPluginMulticaret;
     SystemTab: TTabSheet;
     EditorsTab: TTabSheet;
     ProgEditTab: TTabSheet;
@@ -294,7 +310,6 @@ type
     ToolButton20: TToolButton;
     ToolButton21: TToolButton;
     ToolButton22: TToolButton;
-    ToolButton23: TToolButton;
     ToolButton24: TToolButton;
     ToolButton25: TToolButton;
     ToolButton26: TToolButton;
@@ -339,6 +354,8 @@ type
     procedure EditInsertTemplateExecute(Sender: TObject);
     procedure EditorHistoryClickHistoryItem(Sender: TObject; Item: TMenuItem;
       const Filename: string);
+    procedure EditorPagesMouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
     procedure EditorsTabContextPopup(Sender: TObject; MousePos: TPoint;
       var Handled: Boolean);
     procedure EditPasteExecute(Sender: TObject);
@@ -408,6 +425,7 @@ type
     procedure SBA_SaveAsExecute(Sender: TObject);
     procedure SBA_SaveExecute(Sender: TObject);
     procedure TReplaceDialogReplace(Sender: TObject);
+    procedure UpdGuiTimerTimer(Sender: TObject);
     procedure WordMouseMove(Sender: TObject; Shift: TShiftState; X,
       Y: Integer);
     procedure WordSelectionChange(Sender: TObject);
@@ -456,7 +474,7 @@ type
     procedure SetupEditorPopupMenu;
     procedure SetupEdTmplMenu;
     procedure SetupPrgTmplMenu;
-    procedure SetupSynMarkup;
+    procedure SetupSynMarkup(Editor:TSynEdit);
     procedure SyntaxCheck(f,path: string; hdl: Thdltype);
     procedure ExtractSBALabels;
     procedure LoadRsvWordsFile;
@@ -494,6 +512,8 @@ var
   PrgReturnTab:TTabSheet=nil;
   ProcessStatus:TProcessStatus=Idle;
   UpdtFlag:boolean=false;
+  DwProcess:TDwProcess=nil;
+  TempDwTerminate:TNotifyEvent;
 
 { TMainForm }
 
@@ -606,14 +626,11 @@ begin
   E.ClearAll;
   E.Parent:=ActiveTab;
   E.OnStatusChange:=@SynEditStatusChange;
-  SynMarkup:=TSynEditMarkupHighlightAllCaret(E.MarkupByClass[
-    TSynEditMarkupHighlightAllCaret]);
-  SynMarkup.MarkupInfo.Background := clBtnFace;
-  SynMarkup.WaitTime := 500; // tiempo en millisegundos
-  SynMarkup.Trim := True;
-  SynMarkup.FullWord:= True;
   ActiveEditor:=E;
+  SetupSynMarkup(ActiveEditor);
   SyncroEdit.Editor:=ActiveEditor;
+  SynCompletion.Editor:=ActiveEditor;
+  SynMultiCaret.Editor:=ActiveEditor;
   ActiveEditor.Modified:=false;
 end;
 
@@ -654,12 +671,13 @@ begin
   If assigned(ActiveEditor) then
   begin
     SyncroEdit.Editor:=ActiveEditor;
+    SynCompletion.Editor:=ActiveEditor;
+    SynMultiCaret.Editor:=ActiveEditor;
     wdir:=extractfilepath(ActiveTab.hint);
     if wdir='' then wdir:='.\';
     hdltypeselect(extractfileext(ActiveTab.hint));
-    DetectSBAController;
     if ToolsFileObf.Checked then ToolsFileObfExecute(Sender);
-    ChangeEditorButtons(ActiveEditor);
+    UpdGuiTimer.Enabled:=true;
   end;
 end;
 
@@ -942,7 +960,7 @@ begin
     try
       SL:=TStringList.Create;
       SL.Clear;
-      Ini:=TInifile.Create(ConfigDir+'templates.ini');
+      Ini:=TInifile.Create(ConfigDir+'templates.ini',[ifoStripQuotes]);
       j:=Ini.ReadInteger(TMenuItem(Sender).Caption,'Lines',0);
       for n:=0 to j-1 do SL.Add(Ini.ReadString(TMenuItem(Sender).Caption,'L'+inttostr(n),''));
       if SL.Count>0 then ActiveEditor.InsertTextAtCaret(SL.Text);
@@ -957,6 +975,12 @@ procedure TMainForm.EditorHistoryClickHistoryItem(Sender: TObject;
   Item: TMenuItem; const Filename: string);
 begin
   OpenInEditor(Filename);
+end;
+
+procedure TMainForm.EditorPagesMouseDown(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
+begin
+  if assigned(ActiveEditor) then ActiveEditor.SetFocus
 end;
 
 procedure TMainForm.EditorsTabContextPopup(Sender: TObject; MousePos: TPoint;
@@ -1007,9 +1031,8 @@ begin
       EditorPages.ActivePage.Hint:=SaveDialog.FileName;
       EditorPages.ActivePage.Caption:=ExtractFilename(SaveDialog.FileName);
       ActiveEditor.Modified:=false;
-      ChangeEditorButtons(ActiveEditor);
-      DetectSBAController;
       StatusBar1.Panels[1].Text:=SaveDialog.FileName;
+      UpdGuiTimer.Enabled:=true;
     end;
   end;
 end;
@@ -1028,10 +1051,10 @@ begin
   UpdtFlag:=true;
   StatusBar1.Panels[1].Text:='Online check for updates...';
   s:='';
-  If NewVersionAvailable Then
+  If NewVersionAvailable(DwProcess) Then
   begin
     StatusBar1.Panels[1].Text:='A new version is available, getting what is new file.';
-    if GetWhatsNew then
+    if GetWhatsNew(DwProcess) then
     try
       infoln('What is new file was downloaded.');
       wn:=TStringList.Create;
@@ -1045,7 +1068,7 @@ begin
     if MessageDlg(Application.Title, Format('A new version %s is available.  Would you like to download it?'#10'%s',[GetNewVersion,s]), mtConfirmation, [mbYes, mbNo], 0, mbYes) = mryes then
     begin
       StatusBar1.Panels[1].Text:='Downloading a new version of SBA Creator';
-      if DownloadNewVersion Then
+      if DownloadNewVersion(DwProcess) Then
       begin
         If MessageDlg(Application.Title, 'Download Succeeded.  Click OK to update',
           mtInformation, [mbOK], 0) = mrOK Then
@@ -1078,13 +1101,13 @@ begin
 end;
 
 procedure TMainForm.IdleTimer1Timer(Sender: TObject);
+Var PStr:String;
 begin
   { TODO : WorkAround En Linux el método OnTerminate no es ejecutado por lo cual se incluye la condición Running para saber si continúa la ejecución del proceso. }
   //Si se corrije el comportamiento en Linux, se puede prescindir de la evaluación a Running
   if (not ToolProcess.Running) and (ProcessStatus<>Idle) then
     ToolProcessTerminate(Sender);
-  if (not DwProcess.Running) and (DwProcess.Status<>dwIdle) then
-    DwProcess.OnTerminate(Sender);
+  if (DwProcess.Status<>dwIdle) then DwProcess.WaitforIdle;
 end;
 
 procedure TMainForm.LogoImageDblClick(Sender: TObject);
@@ -1304,9 +1327,9 @@ end;
 
 procedure TMainForm.ProjectExportExecute(Sender: TObject);
 begin
-  { TODO : Grabar proyecto y archivos de proyecto antes de exportar }
-  If SBAPrj.Modified and (MessageDlg('The Project was modified', 'Save Project? ', mtConfirmation, [mbYes, mbNo],0)=mrYes) then
-    SBAPrj.Save;
+  { TODO : Grabar también archivos de proyecto antes de exportar }
+  If SBAPrj.Modified and (MessageDlg('The Project was modified', 'Save Project and its files? ', mtConfirmation, [mbYes, mbNo],0)=mrYes) then
+    ProjectSaveExecute(Sender); //SBAPrj.Save;
   ExportPrjForm.L_PrjDir.Caption:='Project folder: '+SBAPrj.location;
   ExportPrjForm.Ed_TargetDir.Directory:=SBAPrj.exportpath;
   ExportPrjForm.CB_ExpPrjMonolithic.Checked:=SBAPrj.expmonolithic;
@@ -1361,6 +1384,7 @@ begin
      if assigned(tmp) then freeandnil(tmp);
    end;
   end;
+  if assigned(ActiveEditor) then ActiveEditor.SetFocus;
   ExtractSBALabels;
 end;
 
@@ -1411,56 +1435,6 @@ begin
   Log.clear;
 end;
 
-//procedure TMainForm.OpenProject(const f: string);
-//var
-//  SL:TStringList;
-//  s:string;
-//begin
-//  { TODO : Eliminar location del archivo sba y almacenarlo dinámicamente }
-//  if not FileExistsUTF8(f) then
-//  begin
-//    showmessage('The project '+f+' does not exist');
-//    exit;
-//  end;
-//  try
-//    SL:=TStringList.create;
-//    SL.LoadFromFile(f);
-//    if not SBAPrj.Fill(SL.Text) then exit;
-//    SBAPrj.Modified:=false;
-//    // Detecta que el path del archivo es diferente a SBAPrj.location lo cual significa que el proyecto fue movido o copiado e intenta corregir location.
-//    if CompareText(TrimFileName(SBAPrj.location),TrimFileName(ExtractFilePath(f)))<>0 then
-//    begin
-//      if (MessageDlg('The project has been copied or moved', 'Do you want to update the references? ', mtConfirmation, [mbYes, mbNo],0)=mrYes) and
-//          fileexistsUTF8(ExtractFilePath(f)+SBAPrj.name+'_'+cSBATop) then
-//      begin
-//        SBAPrj.location:=ExtractFilePath(f);
-//        SBAPrj.loclib:=SBAPrj.location+'lib'+PathDelim;
-//        SBAPrj.Modified:=true;
-//      end else ShowMessage('The project files can not be found');
-//    end;
-//    //
-//    UpdatePrjTree;
-//    PrjHistory.UpdateList(f);
-//    CopyPrjHistory;
-//    P_Project.Visible:=true;
-//    If MainPages.ActivePage=SystemTab then GotoEditor;
-//    S:=SBAPrj.location+SBAPrj.name+'_Top.vhd';
-//    OpenInEditor(S);
-//    if AutoOpenPrjF then
-//    begin
-//     S:=SBAPrj.location+SBAPrj.name+'_SBAcfg.vhd';
-//     OpenInEditor(S);
-//     S:=SBAPrj.location+SBAPrj.name+'_SBAdcdr.vhd';
-//     OpenInEditor(S);
-//     S:=SBAPrj.location+SBAPrj.name+'_SBActrlr.vhd';
-//     OpenInEditor(S);
-//    end;
-//    Log.clear;
-//  finally
-//    if assigned(SL) then FreeAndNil(SL);
-//  end;
-//end;
-
 procedure TMainForm.MainPagesChange(Sender: TObject);
 begin
   If MainPages.ActivePage=EditorsTab then
@@ -1480,6 +1454,8 @@ begin
     MainForm.Menu := ProgMenu;
     ActiveEditor:=SynEdit_X;
     SyncroEdit.Editor:=ActiveEditor;
+    SynCompletion.Editor:=ActiveEditor;
+    SynMultiCaret.Editor:=ActiveEditor;
     hdltypeselect('.prg');
   end else if MainPages.ActivePage=SystemTab then
   begin
@@ -1685,11 +1661,7 @@ end;
 
 procedure TMainForm.FileRevertExecute(Sender: TObject);
 begin
-  if Open(EditorPages.ActivePage.Hint) then
-  begin
-    ChangeEditorButtons(ActiveEditor);
-    DetectSBAController;
-  end;
+  if Open(EditorPages.ActivePage.Hint) then UpdGuiTimer.Enabled:=true;
 end;
 
 procedure TMainForm.FileSaveExecute(Sender: TObject);
@@ -1698,8 +1670,7 @@ begin
   begin
     SaveFile(EditorPages.ActivePage.Hint, ActiveEditor.Lines);
     ActiveEditor.Modified:=false;
-    ChangeEditorButtons(ActiveEditor);
-    DetectSBAController;
+    UpdGuiTimer.Enabled:=true;
   end else FileSaveAsExecute(Sender);
 end;
 
@@ -1766,7 +1737,7 @@ end;
 procedure TMainForm.FormCloseQuery(Sender: TObject; var CanClose: boolean);
 begin
   CanClose:=false;
-  If DownloadInProgress Then DWProcess.WaitforIdle;
+  If DownloadInProgress(DwProcess) Then DWProcess.WaitforIdle;
   if not CloseProg then exit else CanClose:=true;
   SaveOpenEditor;
   while CanClose and (EditorPages.PageCount>0) do
@@ -1840,7 +1811,9 @@ begin
       SynSBASyn:= TSynSBASyn.Create(Self);
       SynVerilogSyn:= TSynVerilogSyn.Create(Self);
       SynJSONSyn:=TSynJSONSyn.create(Self);
-      SetupSynMarkup;
+      SynMultiCaret:=TSynPluginMulticaret.Create(Self);
+      SetupSynMarkup(SynEdit_X);
+      if FileExistsUTF8(ConfigDir+'autocomplete.txt') then SynCompletion.ItemList.LoadFromFile(ConfigDir+'autocomplete.txt');
       SetupEditorPopupMenu;
       SynEdit_X.Font.Name:=EditorFontName;
       SynEdit_X.Font.Size:=EditorFontSize;
@@ -1853,8 +1826,8 @@ begin
       CopyPrjHistory;
       CreatePlugInsBtns;
       LoadTheme(ConfigDir+'theme'+PathDelim);
-      CheckStartParams;
       ReOpenEditorFiles;
+      CheckStartParams;
       infoln('All FormCreate tasks finished');
     end;
   end;
@@ -1908,19 +1881,8 @@ begin
     For i:=1 to ParamCount do
     begin
       f:=ParamStr(i);
-      if fileexistsUTF8(f) then
-      begin
-        if not EditorEmpty(ActiveEditor) then NewEditorPage;
-        if Open(f) then
-        begin
-          EditorPages.ActivePage.Hint:=f;
-          EditorPages.ActivePage.Caption:=ExtractFilename(f);
-        end;
-      end;
+      if fileexistsUTF8(f) then OpenInEditor(f);
     end;
-    ChangeEditorButtons(ActiveEditor);
-    DetectSBAController;
-    if ToolsFileObf.Checked then ToolsFileObfExecute(Self);
   end;
 end;
 
@@ -1955,9 +1917,10 @@ begin
   end;
 end;
 
-procedure TMainForm.SetupSynMarkup;
+procedure TMainForm.SetupSynMarkup(Editor: TSynEdit);
 begin
-  SynMarkup:=TSynEditMarkupHighlightAllCaret(SynEdit_X.MarkupByClass[
+  if not assigned(Editor) then exit;
+  SynMarkup:=TSynEditMarkupHighlightAllCaret(Editor.MarkupByClass[
     TSynEditMarkupHighlightAllCaret]);
   SynMarkup.MarkupInfo.Background := clBtnFace;
   SynMarkup.MarkupInfo.FrameColor:= clGray;
@@ -2044,7 +2007,11 @@ var
         CreateSubMenu(M);
         N.Add(M);
       end;
-    end else N.OnClick:=@EditInsertTemplateExecute;
+    end else
+    begin
+      N.OnClick:=@EditInsertTemplateExecute;
+      N.ImageIndex:=31;
+    end;
   end;
 
 begin
@@ -2091,6 +2058,7 @@ begin
   If Assigned(SynSBASyn) then FreeandNil(SynSBASyn);
   If Assigned(SynVerilogSyn) then FreeandNil(SynVerilogSyn);
   If Assigned(SynJSONSyn) then FreeandNil(SynJSONSyn);
+  If Assigned(SynMultiCaret) then FreeandNil(SynMultiCaret);
   if Assigned(SBASnippet) then FreeandNil(SBASnippet);
   If Assigned(SBAContrlrProg) then FreeandNil(SBAContrlrProg);
   if assigned(SBAPrj) then FreeAndNil(SBAPrj);
@@ -2107,19 +2075,8 @@ begin
   For i:=0 to Length(FileNames)-1 do
   begin
     f:=FileNames[i];
-    if fileexistsUTF8(f) then
-    begin
-      if not EditorEmpty(ActiveEditor) then NewEditorPage;
-      if Open(f) then
-      begin
-        EditorPages.ActivePage.Hint:=f;
-        EditorPages.ActivePage.Caption:=ExtractFilename(f);
-      end;
-    end;
+    if fileexistsUTF8(f) then OpenInEditor(f);
   end;
-  ChangeEditorButtons(ActiveEditor);
-  DetectSBAController;
-  if ToolsFileObf.Checked then ToolsFileObfExecute(Sender);
 end;
 
 procedure TMainForm.HelpAboutExecute(Sender: TObject);
@@ -2352,6 +2309,16 @@ begin
   ShowMessage('No se encuentra: ' + buscado);
 end;
 
+procedure TMainForm.UpdGuiTimerTimer(Sender: TObject);
+begin
+  UpdGuiTimer.Enabled:=false;
+  if assigned(ActiveEditor) then
+  begin
+    ChangeEditorButtons(ActiveEditor);
+    DetectSBAController;
+  end;
+end;
+
 procedure TMainForm.WordMouseMove(Sender: TObject; Shift: TShiftState; X,
   Y: Integer);
 var
@@ -2558,8 +2525,7 @@ begin
     begin
       EditorPages.ActivePage.Hint:=wpath+'obfuscated_file.'+s;
       EditorPages.ActivePage.Caption:='obfuscated_file.'+s;
-      ChangeEditorButtons(ActiveEditor);
-      DetectSBAController;
+      UpdGuiTimer.Enabled:=true;
     end;
   end;
 end;
@@ -2602,10 +2568,8 @@ begin
       EditorPages.ActivePage.Caption:=ExtractFilename(f);
     end;
   end;
-
-  ChangeEditorButtons(ActiveEditor);
-  DetectSBAController;
   if ToolsFileObf.Checked then ToolsFileObfExecute(nil);
+  UpdGuiTimer.Enabled:=true;
 end;
 
 procedure TMainForm.Reformat(osl, nsl: Tstrings);
@@ -2695,11 +2659,11 @@ begin
    SearchReplace.Enabled:=f2 and f3;
 
    if (EditorPages.ActivePage.Caption='') then exit;
-   if (MainPages.ActivePage=EditorsTab) then
-     if (EditorPages.ActivePage.Caption[1]<>'*') then
-     begin
-       if f1 then EditorPages.ActivePage.Caption:='*'+ExtractFileName(EditorPages.ActivePage.Hint);
-     end else if not f1 then EditorPages.ActivePage.Caption:=ExtractFileName(EditorPages.ActivePage.Hint);
+   if (EditorPages.ActivePage.Caption[1]<>'*') then
+   begin
+     if f1 then EditorPages.ActivePage.Caption:='*'+ExtractFileName(EditorPages.ActivePage.Hint);
+   end else if not f1 then EditorPages.ActivePage.Caption:=ExtractFileName(EditorPages.ActivePage.Hint);
+   if EditorPages.ActivePage.Showing then ActiveEditor.SetFocus;
   end;
 end;
 
@@ -2920,6 +2884,8 @@ begin
     MainPages.ActivePage:=ProgEditTab;
     MainPagesChange(nil);
     SyncroEdit.Editor:=ActiveEditor;
+    SynCompletion.Editor:=ActiveEditor;
+    SynMultiCaret.Editor:=ActiveEditor;
     case MessageDlg('Prg was modified', 'Save File? '+SBAContrlrProg.FileName,
        mtConfirmation, [mbYes, mbNo, mbCancel], 0) of
        mrYes: Result:=SaveFile(SBAContrlrProg.FileName,SynEdit_X.Lines);
@@ -2932,7 +2898,7 @@ end;
 procedure TMainForm.Check;
 Var ExpDate : TDateTime;
 begin
-  ExpDate:=EncodeDate(2017,03,31);
+  ExpDate:=EncodeDate(2017,07,31);
   if CompareDate(Today,ExpDate)>0 then
   begin
     ShowMessage('Sorry, this beta version has expired. You can download the new version from http://sba.accesus.com, thanks you for your help!');
@@ -2988,14 +2954,19 @@ begin
   f:=ConfigDir+filename;
   result:=DwProcess.WGET(Format(SBADwUrl,[filename]),f);
   { TODO : WARNING: DwProcess también es usado en AutoUpdate, debería tenerse cuidado cuando se cambia el evento }
-  if result then DwProcess.OnTerminate:=@dwTerminate;
+  if result then
+  begin
+    TempDwTerminate:=DwProcess.OnTerminate;
+    DwProcess.OnTerminate:=@dwTerminate;
+  end;
 end;
 
 procedure TMainForm.dwTerminate(Sender: TObject);
 begin
 { TODO : WARNING: DwProcess también es usado en AutoUpdate, debería tenerse cuidado cuando se cambia el evento }
-  DwProcess.OnTerminate:=@DwProcess.dwTerminate;
-  DwProcess.dwTerminate(Sender);
+  Info('TMainForm','dwTerminate');
+  DwProcess.OnTerminate:=TempDwTerminate;
+  DwProcess.OnTerminate(Sender);
   LoadAnnouncement;
 end;
 

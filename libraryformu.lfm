@@ -11,7 +11,7 @@ object LibraryForm: TLibraryForm
   OnDestroy = FormDestroy
   Position = poMainFormCenter
   SessionProperties = 'Ed_SBAbase.Text;Ed_SBAlibrary.Text;Ed_SBAprograms.Text;Ed_SBARepoZipFile.Text;Ed_SBAsnippets.Text;Ed_SBARepoZipFile.Items;Ed_SBARepoZipFile.ItemIndex'
-  LCLVersion = '1.7'
+  LCLVersion = '1.6.4.0'
   object LibraryPages: TPageControl
     Left = 0
     Height = 563
@@ -658,7 +658,7 @@ object LibraryForm: TLibraryForm
               AutoSize = True
               Caption = 'IP Core'
               MinWidth = 100
-              Width = 140
+              Width = 53
             end          
             item
               Caption = 'Path'
@@ -885,7 +885,7 @@ object LibraryForm: TLibraryForm
               AutoSize = True
               Caption = 'Programs'
               MinWidth = 100
-              Width = 140
+              Width = 66
             end          
             item
               Caption = 'Path'
@@ -1027,7 +1027,7 @@ object LibraryForm: TLibraryForm
               AutoSize = True
               Caption = 'Snippet'
               MinWidth = 100
-              Width = 140
+              Width = 55
             end          
             item
               Caption = 'Path'

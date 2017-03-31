@@ -9,7 +9,7 @@ object prjWizForm: TprjWizForm
   ClientWidth = 420
   OnShow = FormShow
   Position = poMainFormCenter
-  LCLVersion = '1.7'
+  LCLVersion = '1.6.4.0'
   object NavPanel: TPanel
     Left = 0
     Height = 42
@@ -195,7 +195,7 @@ object prjWizForm: TprjWizForm
     Height = 354
     Top = 35
     Width = 420
-    PageIndex = 0
+    PageIndex = 2
     Align = alClient
     TabOrder = 0
     TabStop = True
@@ -870,7 +870,7 @@ object prjWizForm: TprjWizForm
         )
         ColWidths = (
           120
-          263
+          267
         )
       end
       object Label9: TLabel

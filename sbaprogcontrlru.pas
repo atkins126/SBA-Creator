@@ -266,7 +266,7 @@ begin
     if LeftStr(Prog[i],2)<>'--' then Prog[i]:=S+Prog[i];
     if (pos(cSBAEndUserProg,Prog[i])<>0) then break;
   end;
-  STPCnt:=cnt-1;
+  STPCnt:=cnt;
   Result:=pos(cSBAEndUserProg,Prog[i])<>0;
 end;
 

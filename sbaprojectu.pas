@@ -820,7 +820,7 @@ begin
     CopyFile(location+Name+'_'+cSBAcfg,ExportPath+Name+'_'+cSBAcfg,true);
     CopyFile(location+Name+'_'+cSBAdcdr,ExportPath+Name+'_'+cSBAdcdr,true);
     CopyFile(location+Name+'_'+cSBActrlr,ExportPath+Name+'_'+cSBActrlr,true);
-    if explibfiles then CopyDirTree(loclib,exportpath+'lib\');
+    if explibfiles then CopyDirTree(loclib,exportpath+'lib\',[cffOverwriteFile,cffCreateDestDirectory,cffPreserveTime]);
     ShowMessage('Project was export to: '+exportpath);
   end;
 end;

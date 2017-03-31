@@ -181,13 +181,18 @@ end;
 
 procedure TSBASnippet.AddItemToSnippetsFilter(FileIterator: TFileIterator);
 var
-//  Data:TStringArray;
-  Data:TListViewDataItem;
+  Data:TStringArray;
+//  Data:TListViewDataItem;
 begin
-  Data.Data := nil;
-  SetLength(Data.StringArray,2);
-  Data.StringArray[0]:=ExtractFileNameWithoutExt(FileIterator.FileInfo.Name);
-  Data.StringArray[1]:=AppendPathDelim(FileIterator.Path)+FileIterator.FileInfo.Name;
+  //Data.Data := nil;
+  //SetLength(Data.StringArray,2);
+  //Data.StringArray[0]:=ExtractFileNameWithoutExt(FileIterator.FileInfo.Name);
+  //Data.StringArray[1]:=AppendPathDelim(FileIterator.Path)+FileIterator.FileInfo.Name;
+
+  SetLength(Data,2);
+  Data[0]:=ExtractFileNameWithoutExt(FileIterator.FileInfo.Name);
+  Data[1]:=AppendPathDelim(FileIterator.Path)+FileIterator.FileInfo.Name;
+
   FFilter.Items.Add(Data);
 end;
 

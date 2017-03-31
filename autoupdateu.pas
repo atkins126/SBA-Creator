@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, Forms, SysUtils, IniFilesUTF8, LazFileUtils,
-  Process, AsyncProcess, versionsupportu;
+  Process, AsyncProcess, versionsupportu, DwFileU;
 
 Const
   SBADwUrl='http://sba.accesus.com/%s?attredirects=0';
@@ -37,23 +37,23 @@ Const
   {$ENDIF}
 {$ENDIF}
 
-function NewVersionAvailable:boolean;
-function GetWhatsNew:boolean;
-function DownloadNewVersion:boolean;
+function NewVersionAvailable(DwProcess:TDwProcess):boolean;
+function GetWhatsNew(DwProcess:TDwProcess):boolean;
+function DownloadNewVersion(DwProcess:TDwProcess):boolean;
 function UpdateToNewVersion:boolean;
 function GetNewVersion:string;
-function DownloadInProgress:boolean;
+function DownloadInProgress(DwProcess:TDwProcess):boolean;
 
 implementation
 
 uses
-  UtilsU, DwFileU, DebugFormU, ConfigFormU;
+  MainFormU, UtilsU, DebugFormU, ConfigFormU;
 
 
 var
   VersionStr:string;
 
-function NewVersionAvailable: boolean;
+function NewVersionAvailable(DwProcess:TDwProcess): boolean;
 var
   f:string;
   ini:TiniFile;
@@ -71,7 +71,7 @@ begin
   InfoLn(result);
 end;
 
-function GetWhatsNew:boolean;
+function GetWhatsNew(DwProcess:TDwProcess):boolean;
 var
   f:String;
 begin
@@ -81,7 +81,7 @@ begin
   result:=fileexistsUTF8(f)
 end;
 
-function DownloadNewVersion: boolean;
+function DownloadNewVersion(DwProcess:TDwProcess): boolean;
 var
   f:String;
 begin
@@ -97,25 +97,25 @@ end;
 
 function UpdateToNewVersion: boolean;
 var
-  FUpdateHMProcess: TAsyncProcess;
+  UpdateProcess: TAsyncProcess;
   cCount: cardinal;
 begin
   DeleteFileUTF8(AppDir+WhatsNewFile); //Flag File
   // Update and re-start the app
-  FUpdateHMProcess := TAsyncProcess.Create(nil);
+  UpdateProcess := TAsyncProcess.Create(nil);
   try
-    FUpdateHMProcess.Executable := AppDir + C_LOCALUPDATER;
-    FUpdateHMProcess.CurrentDirectory := AppDir;
-    FUpdateHMProcess.Parameters.Clear;
-    FUpdateHMProcess.Parameters.Add(ExtractFileName(Application.ExeName)); //Param 1 = EXEname
-    FUpdateHMProcess.Parameters.Add('updates'); // Param 2 = updates
-    FUpdateHMProcess.Parameters.Add(WhatsNewFile); // Param 3 = whatsnew.txt
-    FUpdateHMProcess.Parameters.Add(Application.Title); // Param 4 = Prettyname
-    FUpdateHMProcess.Parameters.Add('copytree');
+    UpdateProcess.Executable := AppDir + C_LOCALUPDATER;
+    UpdateProcess.CurrentDirectory := AppDir;
+    UpdateProcess.Parameters.Clear;
+    UpdateProcess.Parameters.Add(ExtractFileName(Application.ExeName)); //Param 1 = EXEname
+    UpdateProcess.Parameters.Add('updates'); // Param 2 = updates
+    UpdateProcess.Parameters.Add(WhatsNewFile); // Param 3 = whatsnew.txt
+    UpdateProcess.Parameters.Add(Application.Title); // Param 4 = Prettyname
+    UpdateProcess.Parameters.Add('copytree');
    // Param 5 = Copy the whole of /updates to the App Folder
-    InfoLn(FUpdateHMProcess.Executable);
-    InfoLn(FUpdateHMProcess.Parameters);
-    FUpdateHMProcess.Execute;
+    InfoLn(UpdateProcess.Executable);
+    InfoLn(UpdateProcess.Parameters);
+    UpdateProcess.Execute;
     // Check for WhatsNewFile in the app directory in a LOOP
     cCount:=0;
     while not FileExistsUTF8(AppDir+WhatsNewFile) do
@@ -128,7 +128,7 @@ begin
     //Shut down the Main app?
     Application.Terminate;
   finally
-    FUpdateHMProcess.Free;
+    UpdateProcess.Free;
   end;
   Result := True;
 end;
@@ -138,7 +138,7 @@ begin
   result:=VersionStr;
 end;
 
-function DownloadInProgress: boolean;
+function DownloadInProgress(DwProcess:TDwProcess): boolean;
 begin
   result:=(DwProcess.Status=dwDownloading) and DwProcess.Running;
 end;

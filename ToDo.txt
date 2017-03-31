@@ -5,7 +5,16 @@ http://forum.codecall.net/topic/76318-monitor-a-folder-for-changes/
 
 Colocar un save all en el editor hdl.
 
-
 Listo: Arreglar las excepciones al validar el código del PRG (el programa se cierra si se presiona Cancel)
 
-Corregir el autoupdate, sourceforge ya no es compatible
+Listo: Corregir el autoupdate, sourceforge ya no es compatible
+
+En la verificación de sintaxis para el caso de un archivo en el editor, cuando este es un testbench y la instanciación
+no se ha hecho declarativamente (component) no precompila el archivo bajo prueba, por lo cual la verificación de 
+sintaxis falla al no encontrar el componente.
+
+Cuando se hace doble click en un archivo asociado, debería de abrirse en una de las instancias ya abiertas de
+SBACreator: http://stackoverflow.com/questions/8688078/preventing-multiple-instances-but-also-handle-the-command-line-parameters
+Puede verse como lo hace lazarus.
+
+

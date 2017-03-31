@@ -664,6 +664,7 @@ end;
 
 function TprjWizForm.NewPrj(Prj: TSBAPrj): TModalResult;
 begin
+  FloatForm.Start(Self);
   WizPages.PageIndex:=0;
   TmpPrj:=Prj;
   ResetFormData;
@@ -673,6 +674,7 @@ end;
 
 function TprjWizForm.EditPrj(Prj: TSBAPrj): TModalResult;
 begin
+  FloatForm.Start(Self);
   Editing:=true;
   WizPages.PageIndex:=0;
   TmpPrj:=Prj;

@@ -31,23 +31,21 @@ Type
    FFileDestiny: String;
    FStatus: tDWProcessStatus;
    FUrlSource: String;
+   WaitingforIdle:Boolean;
    procedure SetFileDestiny(AValue: String);
    procedure SetStatus(AValue: tDWProcessStatus);
    procedure SetUrlSource(AValue: String);
- public
+   procedure DwTerminate(Sender: TObject);
+   procedure DwReadData(Sender: TObject);
+public
    Constructor Create (AOwner : TComponent);override;
    function WGET(url, f: string): boolean;
    function WaitforIdle: boolean;
-   procedure DwTerminate(Sender: TObject);
-   procedure DwReadData(Sender: TObject);
 published
    property Status:tDWProcessStatus read FStatus write SetStatus;
    property UrlSource:String read FUrlSource write SetUrlSource;
    property FileDestiny:String read FFileDestiny write SetFileDestiny;
  end;
-
-var
-  DwProcess:TDwProcess=nil;
 
 function DownloadHTTP(URL, TargetFile: string): boolean;
 function DownloadHTTPEx(URL, TargetFile: string; var ReturnCode, DownloadSize: integer):boolean;
@@ -328,6 +326,7 @@ begin
   Options:=[poUsePipes,poStderrToOutPut];
   PipeBufferSize:=4096;
   ShowWindow:=swoMinimize;
+  WaitingforIdle:=false;
   FStatus:=dwIdle;
   OnTerminate:=@DwTerminate;
   OnReadData:=@DwReadData;
@@ -339,9 +338,9 @@ begin
   if not WaitforIdle then exit;
   FUrlSource:=url;
   FFileDestiny:=f;
-  InfoLn('DwProcess WGET started');
-  InfoLn('DWProcess Url: '+FUrlSource);
-  InfoLn('DWProcess file destiny: '+FFileDestiny);
+  Info('DwProcess.WGET','WGET started');
+  Info('DwProcess.WGET','Url= '+FUrlSource);
+  Info('DwProcess.WGET','file destiny= '+FFileDestiny);
   DeleteFileUTF8(FFileDestiny);
   Parameters.Clear;
   CurrentDirectory:=ConfigDir;
@@ -380,7 +379,7 @@ begin
   Parameters.Add('-o');
   Parameters.Add(FFileDestiny);
   {$ENDIF}
-  infoln(Parameters);
+  info('DwProcess.WGET',Parameters);
   FStatus:=dwDownloading;
   try
     Execute;
@@ -393,7 +392,13 @@ end;
 function TDwProcess.WaitforIdle:boolean;
 var
   TiO:integer;
+  PStr:String;
 begin
+  result:=false;
+  if WaitingforIdle then exit;
+  WaitingforIdle:=true;
+  WriteStr(PStr,FStatus);
+  info('TDwProcess.WaitforIdle','Status='+PStr);
   TiO:=300; // Wait for 30 seconds
   While (TiO>0) and (FStatus<>dwIdle) do
   begin
@@ -404,26 +409,30 @@ begin
 //
   if (FStatus<>dwIdle) and not Running then
   begin
-    infoln('el proceso ya no está en ejecución, forzando un Onterminate');
+    info('TDwProcess.WaitforIdle','el proceso ya no está en ejecución, forzando un Onterminate');
     if OnTerminate<>nil then OnTerminate(Self);
-    infoln('---- forzado----');
+    info('TDwProcess.WaitforIdle','---- Terminate forzado----');
   end;
 //
   result:=FStatus=dwIdle;
-  InfoLn('DwProcess WGET '+IFTHEN(result,'is Idle','can not terminate: Time Out'));
+  Info('TDwProcess.WaitforIdle',IFTHEN(result,'is Idle','can not terminate: Time Out'));
   if not result then
   begin
-    InfoLn('DWProcess timeout in Url: '+FUrlSource);
+    Info('TDwProcess.WaitforIdle','timeout in Url: '+FUrlSource);
     //Terminar el proceso que ejecuta WGet si este falla
     Terminate(0);
     FStatus:=dwTimeOut;
   end;
+  WriteStr(PStr,FStatus);
+  info('TDwProcess.WaitforIdle','Exit Status='+PStr);
+  WaitingforIdle:=false;
 end;
 
 procedure TDwProcess.DwTerminate(Sender: TObject);
 begin
+  Info('TDWProcess.DWterminate: NumBytesAvailable',NumBytesAvailable);
   if NumBytesAvailable>0 then OnReadData(Sender);
-  infoln('DwProcess terminated: '+FFileDestiny);
+  info('TDwProcess.DWterminate',FFileDestiny);
   FStatus:=dwIdle;
 end;
 

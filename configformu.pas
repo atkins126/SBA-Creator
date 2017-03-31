@@ -161,6 +161,7 @@ begin
   if not FileExistsUTF8(ConfigDir+cSBAAdvPrgTemplate) then CopyFile(AppDir+cSBAAdvPrgTemplate,ConfigDir+cSBAAdvPrgTemplate);
   if not FileExistsUTF8(ConfigDir+'newbanner.gif') then CopyFile(AppDir+'banner.gif',ConfigDir+'newbanner.gif');
   if not FileExistsUTF8(ConfigDir+'templates.ini') then CopyFile(AppDir+'templates.ini',ConfigDir+'templates.ini');
+  if not FileExistsUTF8(ConfigDir+'autocomplete.txt') then CopyFile(AppDir+'autocomplete.txt',ConfigDir+'autocomplete.txt');
 
   result:=true;
 end;

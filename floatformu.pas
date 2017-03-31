@@ -28,6 +28,7 @@ type
   public
     { public declarations }
     procedure ShowCoreImage(s:string);
+    procedure Start(F:TForm);
     procedure Hide;
   end;
 
@@ -48,6 +49,14 @@ begin
   L_CoreName.caption:=s;
   TimerShow.Interval:=500;
   TimerShow.Enabled:=true;
+end;
+
+procedure TFloatForm.Start(F:TForm);
+begin
+  Show;
+  Close;
+  PopupParent:=F;
+  FormStyle:=fsSystemStayOnTop;
 end;
 
 procedure TFloatForm.Hide;

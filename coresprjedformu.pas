@@ -50,6 +50,7 @@ var
   S:String;
   h:integer;
 begin
+  FloatForm.Start(Self);
   LibIpCoreList.Items.Assign(IpCoreList);
   PrjIpCoreList.Clear;
   PrjIpCoreList.Items.Assign(Prj.libcores);

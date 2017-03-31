@@ -5,8 +5,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs,
-  StdCtrls, Buttons, ExtCtrls, Clipbrd
-  ;
+  StdCtrls, Buttons, ExtCtrls, Clipbrd;
 
 type
 
@@ -28,6 +27,11 @@ type
 var
   DebugForm: TDebugForm=nil;
 
+function info(L,M:String):boolean;
+function info(L:String;I:integer):boolean;
+function info(L:String;b:boolean):boolean;
+function info(L:String;SL:Tstrings):boolean;
+
 function infoln(M:String):boolean;
 function infoln(I:integer):boolean;
 function infoln(b:boolean):boolean;
@@ -36,6 +40,40 @@ function infoln(l:Tstrings):boolean;
 implementation
 
 {$R *.lfm}
+
+function info(L,M:String):boolean;
+begin
+  {$IFDEF DEBUG}
+  result:=false;
+  if not assigned(DebugForm) then exit;
+  DebugForm.Memo.Append(Format('%:3d: %s: %s',[DebugForm.Memo.Lines.Count,L,M]));
+  {$IFDEF LINUX}
+  DebugForm.Memo.SelStart := Length(DebugForm.Memo.Lines.Text)-1;
+  {$ENDIF}
+  DebugForm.Show;
+  {$ENDIF}
+  result:=true;
+end;
+
+function info(L:string; I: integer): boolean;
+begin
+  result:=info(L,inttostr(i));
+end;
+
+function info(L:string;b: boolean): boolean;
+begin
+  if b then result:=info(L,'true') else result:=info(L,'false');
+end;
+
+function info(L:String;SL: TStrings): boolean;
+var s:string;
+begin
+  result:=true;
+  info(L,'Start of list: ');
+  for s in SL do result:=result and infoln(s);
+  info(L,'End of list');
+end;
+
 
 function infoln(M:String):boolean;
 begin
