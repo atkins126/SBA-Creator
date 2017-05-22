@@ -12,12 +12,12 @@ uses
   Forms, HistoryLazarus, MainFormU, synhighlighterverilog, synhighlightersba,
   versionsupportu, SBAProgContrlrU, AboutFormU, sbasnippetu, configformu,
   PrjWizU, dwfileU, DebugFormU, AutoUpdateU, SBAProjectU, floatformu, CoresPrjEdFormU,
-  LibraryFormU, UtilsU, sbaprogramu, IniFilesUTF8, exportprjformu, UScaleDPI,
+  LibraryFormU, UtilsU, sbaprogramu, exportprjformu, UScaleDPI,
 
   {$IFDEF CODETYPHON}
   bs_controls, lz_rtticontrols, pl_bgrauecontrols
   {$ELSE}
-  lazcontrols, runtimetypeinfocontrols, uecontrols
+  lazcontrols, runtimetypeinfocontrols, uecontrols, SBAIPCoresU
   {$ENDIF}
   {$IFDEF debug}
   , SysUtils

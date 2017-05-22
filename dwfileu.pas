@@ -399,8 +399,12 @@ begin
   WaitingforIdle:=true;
   WriteStr(PStr,FStatus);
   info('TDwProcess.WaitforIdle','Status='+PStr);
-  TiO:=300; // Wait for 30 seconds
-  While (TiO>0) and (FStatus<>dwIdle) do
+  TiO:=200; // Wait for 20 seconds
+  {$IFDEF UNIX}
+  While (TiO>0) and (FStatus<>dwIdle) and Running do
+  {$ELSE}
+  While (TiO>0) and (FStatus<>dwIdle) do // LLamar a Running en el loop en Windows da Error
+  {$ENDIF}
   begin
     Dec(TiO);
     Application.ProcessMessages;

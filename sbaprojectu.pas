@@ -7,7 +7,7 @@ interface
 uses
   Classes, SysUtils, Dialogs, Controls,
   fpjson, jsonparser, fileutil, LazFileUtils, strutils,
-  IniFilesUTF8,StringListUTF8, math;
+  math;
 
 const
   cSBADefaultPrjName='NewProject';
@@ -53,6 +53,7 @@ type
     exportpath:string;
     expmonolithic:boolean;
     explibfiles:boolean;
+    expuserfiles:boolean;
     Modified:boolean;
     constructor Create;
     destructor Destroy; override;
@@ -62,23 +63,21 @@ type
     function Open(f:string):boolean;
     function Fill(Data: string): boolean;
     function Collect:string;
-    function CoreGetReq(const inifile: string): TStringList;
     function PrepareNewFolder: boolean;
     function CustomizeFiles:boolean;
     function SaveAs(f: String):boolean;
     function Save:boolean;
     function PrjExport:boolean;
-    procedure LoadIPData(ipname,instance:String; IP,IPS,STL,AML,DCL:TStrings);
     procedure LoadIPData(ipname: String; IP,IPS,STL,AML,DCL:TStrings);
     function GetConfigConst(sl: TStrings): string;
     function EditLib:boolean;
-    procedure CopyIPCoreFiles(cl: TStrings);
     function RemoveCore(c:string):boolean;
     function UpdateCore(c: string): boolean;
     function CleanUpLibCores(CL: TStrings): boolean;
     function AddUserFile(f:string):boolean;
     function RemUserFile(f:string):boolean;
     function GetUserFilePath(f:string):string;
+    function ListAllPrjFiles(vhdonly: boolean=true): tstringlist;
     function GetAllFileNames(dir: string; vhdonly: boolean=true): string;
   end;
 
@@ -88,7 +87,7 @@ var
 
 implementation
 
-uses DebugFormU, ConfigFormU, CoresPrjEdFormU, UtilsU;
+uses SBAIPCoresU, DebugFormU, ConfigFormU, CoresPrjEdFormU, UtilsU;
 
 var AM:integer; //Address Map pointer
 
@@ -101,6 +100,7 @@ begin
   exportpath:='';
   expmonolithic:=false;
   explibfiles:=true;
+  expuserfiles:=true;
   libcores:=TStringList.create;
   userfiles:=TStringList.create;
   ports:=tstringlist.create;
@@ -140,8 +140,6 @@ begin
     userfiles.Clear;
     try
       name:=J.FindPath('name').AsString;
-      //location:=AppendPathDelim(TrimFilename(J.FindPath('location').AsString));
-      //loclib:=AppendPathDelim(TrimFilename(location+'lib'));
       title:=J.FindPath('title').AsString;
       author:=J.FindPath('author').AsString;
       version:=J.FindPath('version').AsString;
@@ -194,6 +192,7 @@ begin
     if J.FindPath('exportpath')=nil then exportpath:='' else exportpath:=AppendPathDelim(TrimFilename(J.FindPath('exportpath').AsString));
     if J.FindPath('expmonolithic')=nil then expmonolithic:=false else expmonolithic:=J.FindPath('expmonolithic').AsBoolean;
     if J.FindPath('explibfiles')=nil then explibfiles:=true else explibfiles:=J.FindPath('explibfiles').AsBoolean;
+    if J.FindPath('expuserfiles')=nil then expuserfiles:=true else expuserfiles:=J.FindPath('expuserfiles').AsBoolean;
     result:=true;
   finally
     if assigned(J) then FreeAndNil(J);
@@ -207,7 +206,6 @@ var
 begin
   SData:='{'#10+
             '"name": "'+name+'",'#10+
-//            '"location": "'+AppendPathDelim(location)+'",'#10+
             '"title": "'+title+'",'#10+
             '"author": "'+author+'",'#10+
             '"version": "'+version+'",'#10+
@@ -215,7 +213,8 @@ begin
             '"description": "'+description+'",'#10+
             '"exportpath": "'+exportpath+'",'#10+
             '"expmonolithic": '+IfThen(expmonolithic,'true','false')+','#10+
-            '"explibfiles": '+IfThen(explibfiles,'true','false');
+            '"explibfiles": '+IfThen(explibfiles,'true','false')+','#10+
+            '"expuserfiles": '+IfThen(expuserfiles,'true','false');
   S:='';
   for i:=0 to ports.Count-1 do
   begin
@@ -241,40 +240,16 @@ begin
   result:=ReplaceStr(SData,'\','/');
 end;
 
-function TSBAPrj.CoreGetReq(const inifile: string): TStringList;
-var
-  ini: TIniFile;
-  r:string;
-  k,l: TStringList;
-begin
-  k:=TStringList.Create;
-  l:=TStringList.Create;
-  try
-    ini:=TIniFile.Create(inifile);
-    k.DelimitedText:=ini.ReadString('REQUIREMENTS', 'IPCores', '');
-    for r in k do l.Append(r+'=IPCores'); //l.AddStrings(k);
-    k.DelimitedText:=ini.ReadString('REQUIREMENTS', 'Packages', '');
-    for r in k do l.Append(r+'=Packages'); //l.AddStrings(k);
-    k.DelimitedText:=ini.ReadString('REQUIREMENTS', 'UserFiles', '');
-    for r in k do l.Append(r+'=UserFiles'); //l.AddStrings(k);
-  finally
-    if assigned(k) then FreeAndNil(k);
-    if assigned(ini) then FreeAndNil(ini);
-  end;
-  Result:=l;
-end;
-
-
 { TODO : Falta la copia y borrado de archivos de usuario de folder user}
 function TSBAPrj.AddUserFile(f: string): boolean;
 begin
   result:=false;
-  if fileexistsUTF8(f) then
+  if fileexists(f) then
   if UserFiles.IndexOfName(ExtractFileName(f))=-1 then
   begin
     UserFiles.Append(ExtractFileName(f)+'='+extractfilepath(f));
     Modified:=true;
-    Save;
+//    Save;
     result:=true;
   end else ShowMessage('The file '+f+' is already in the list')
   else ShowMessage('The user file: '+f+',could not be found.');
@@ -283,6 +258,7 @@ end;
 function TSBAPrj.RemUserFile(f: string): boolean;
 var
   i:integer;
+  p:string;
 begin
   result:=false;
   i:=UserFiles.IndexOfName(f);
@@ -290,21 +266,26 @@ begin
   try
     UserFiles.Delete(i);
     Modified:=true;
-    Save;
     result:=true;
   except
     on E:Exception do ShowMessage(E.Message);
+  end else
+  begin
+    p:=GetUserFilePath(f);
+    if MessageDlg('Delete user file? ',f, mtConfirmation, [mbYes, mbNo], 0, mbYes) = mryes then
+      result:=DeleteFile(p+f);
   end;
 end;
 
 function TSBAPrj.GetUserFilePath(f: string): string;
 begin
   result:=UserFiles.Values[f];
+  result:=IFTHEN(result='',location+'user'+PathDelim,result);
 end;
 
-function TSBAPrj.GetAllFileNames(dir:string; vhdonly: boolean=true): string;
+function TSBAPrj.ListAllPrjFiles(vhdonly: boolean=true): tstringlist;
 var
-  S,R:string;
+  r:string;
   i,level:integer;
   l,m:tstringlist;
 begin
@@ -319,7 +300,7 @@ begin
     FillRequeriments(libcores,m,level);
     infoln('Cores Requeriments:');
     infoln(m);
-    for R in m do l.add(loclib+R+'.vhd');
+    for r in m do l.add(loclib+r+'.vhd');
     if assigned(m) then freeandnil(m);
   end;
   if userfiles.Count>0 then for i:=0 to userfiles.Count-1 do
@@ -329,9 +310,18 @@ begin
   l.add(location+name+'_'+cSBAdcdr);
   l.add(location+name+'_'+cSBActrlr);
   l.add(location+name+'_'+cSBATop);
+  Result:=l
+end;
+
+function TSBAPrj.GetAllFileNames(dir:string; vhdonly: boolean=true): string;
+var
+  s,r:string;
+  l:tstringlist;
+begin
+  l:=ListAllPrjFiles(vhdonly);
   Result:='';
-  R:=IFTHEN(dir='',location,dir);
-  for S in l do Result+=CreateRelativePath(s,r)+' ';
+  r:=IFTHEN(dir='',location,dir);
+  for s in l do Result+=CreateRelativePath(s,r)+' ';
   Result:=LeftStr(Result,length(Result)-1);
   if assigned(l) then freeandnil(l);
   { TODO : Sería mejor devolver la lista y luego armar el comando sin el .bat }
@@ -344,7 +334,7 @@ var
 begin
   result:=false;
   if name='' then exit;
-  If not ForceDirectoriesUTF8(Location) Then
+  If not ForceDirectories(Location) Then
   begin
     ShowMessage('Failed to create SBA project folder: '+Location);
     exit;
@@ -352,7 +342,7 @@ begin
   If not IsDirectoryEmpty(Location) then
   begin
     l:=TStringList(FindAllFiles(Location,'*.*'));
-    for s in l do FileSetAttrUTF8(s,faArchive);
+    for s in l do FileSetAttr(s,faArchive);
     if assigned(l) then FreeAndNil(l);
   end;
   try
@@ -361,18 +351,18 @@ begin
     CopyFile(SBAbaseDir+cSBAcfg,Location+Name+'_'+cSBAcfg);
     CopyFile(SBAbaseDir+cSBAdcdr,Location+Name+'_'+cSBAdcdr);
     CopyFile(SBAbaseDir+cSBActrlr,Location+Name+'_'+cSBActrlr);
-    CreateDirUTF8(LocLib);
+    CreateDir(LocLib);
     CopyFile(SBAbaseDir+cSBApkg,LocLib+cSBApkg);
     CopyFile(SBAbaseDir+cSyscon,LocLib+cSyscon);
     CopyFile(SBAbaseDir+cDataIntf,LocLib+cDataIntf);
     if LibAsReadOnly then
     begin
-      FileSetAttrUTF8(LocLib+cSBApkg,faReadOnly);
-      FileSetAttrUTF8(LocLib+cSyscon,faReadOnly);
-      FileSetAttrUTF8(LocLib+cDataIntf,faReadOnly);
+      FileSetAttr(LocLib+cSBApkg,faReadOnly);
+      FileSetAttr(LocLib+cSyscon,faReadOnly);
+      FileSetAttr(LocLib+cDataIntf,faReadOnly);
     end;
-    CopyIPCoreFiles(libcores);
-    CreateDirUTF8(Location+'user');
+    CreateDir(Location+'user');
+    CopyIPCoreFiles(libcores,Location);
     result:= CustomizeFiles;
   except
     on E:Exception do
@@ -469,7 +459,7 @@ end;
 
 procedure TSBAPrj.LoadIPData(ipname: String; IP,IPS,STL,AML,DCL:TStrings);
 begin
-  LoadIPData(ipname,ipname,IP,IPS,STL,AML,DCL);
+  AM:=IPCoreData(ipname,ipname,IP,IPS,STL,AML,DCL,AM);
 end;
 
 function TSBAPrj.GetConfigConst(sl:TStrings): string;
@@ -486,172 +476,52 @@ begin
   end;
 end;
 
-procedure TSBAPrj.LoadIPData(ipname,instance: String; IP,IPS,STL,AML,DCL:TStrings);
-// ipname: name of the ipcore
-// IP: instance of the ipcore
-// IPS: additionals signals
-// STL: strobe lines
-// AML: address map
-// DCL: decoder lines
-var
-  INI:TINIFile;
-  GL,CL,AL,IL,SL:TStringList;
-  f:String;
-  i,j,k:integer;
-  DIL,DOL,ADL:Integer;
-  WE,STB:boolean;
-begin
-  ADL:=1;
-  DIL:=16;
-  DOL:=16;
-  WE:=true;
-  STB:=true;
-  if DirectoryExistsUTF8(LibraryDir+ipname) then
-  try
-    GL:=TStringList.Create;
-    CL:=TStringList.Create;
-    AL:=TStringList.Create;
-    IL:=TStringList.Create;
-    SL:=TStringList.Create;
-    f:=LibraryDir+ipname+PathDelim+ipname+'.ini';
-    if fileexistsUTF8(f) then
-    try
-      INI:=TIniFile.Create(f);
-      f:=IfThen(INI.ReadInteger('Config','SBAPORTS',1)>1,'0');
-      WE:=INI.ReadInteger('Config','WE'+f,1)=1;
-      STB:=INI.ReadInteger('Config','STB'+f,1)=1;
-      ADL:=INI.ReadInteger('Config','ADR'+f+'LINES',1);
-      DIL:=INI.ReadInteger('Config','DATI'+f+'LINES',16);
-      DOL:=INI.ReadInteger('Config','DATO'+f+'LINES',16);
-      INI.ReadSectionRaw('Generic',GL);
-      INI.ReadSectionRaw('Address',AL);
-      INI.ReadSectionRaw('Interface',IL);
-      INI.ReadSectionRaw('Signals',SL);
-    finally
-      if assigned(INI) then FreeAndNil(INI);
-    end;
+{
+ procedure TSBAPrj.CopyIPCoreFiles(cl:TStrings);
+ var
+   i,j:integer;
+   r,s,v:string;
+   l:TStringList;
+ begin
+   if cl.Count=0 then exit;
+   for i:=0 to cl.Count-1 do
+   begin
+     v:=cl[i];
+     s:=Copy2SymbDel(v,'=');
+     if not fileExists(LibraryDir+s+PathDelim+s+'.ini') then
+     begin
+       ShowMessage('The IP Core file: '+LibraryDir+S+' was not found.');
+       exit;
+     end else if (v<>'UserFiles') and not FileExists(LocLib+s+'.vhd') then
+     begin
+       infoln('Copiando: '+s+'.vhd');  //Copy IPCore
+       CopyFile(LibraryDir+s+PathDelim+s+'.vhd',LocLib+s+'.vhd');
+       if LibAsReadOnly then FileSetAttr(LocLib+s+'.vhd',faReadOnly);
 
-    IP.add(Format('  %0:s: entity work.%1:s',[instance,ipname]));
-    if GL.Count>0 then
-    begin
-      IP.add('  generic map(');
-      for i:=0 to GL.Count-1 do IP.add('    '+
-        Format('%:-8s=> %s',[GL.names[i],GL.ValueFromIndex[i]])+
-        IfThen(i<GL.Count-1,','));
-      IP.add('  )');
-    end;
-    IP.add('  port map(');
-    IP.add('    -------------');
-    IP.add('    RST_I => RSTi,');
-    IP.add('    CLK_I => CLKi,');
-    if STB then   IP.add('    STB'+f+'_I => STBi(STB_'+instance+'),');
-    if ADL>0 then IP.add('    ADR'+f+'_I => ADRi,');
-    if WE then    IP.add('    WE'+f+'_I  => WEi,');
-    if DIL>0 then IP.add('    DAT'+f+'_I => DATOi,');
-    if DOL>0 then IP.add('    DAT'+f+'_O => DAT_'+instance+',');
-    IP.add('    -------------');
-    if IL.Count>0 then for i:=0 to IL.Count-1 do
-      IP.add(Format('    %:-8s=> %s',[IL.names[i],IL.ValueFromIndex[i]])+
-      IfThen(i<IL.Count-1,','));
-    IP.add('  );');
-    IP.add('');
-    if DOL>0 then
-    begin
-      IP.add(Format('  %:sDataIntf: entity work.DataIntf',[instance]));
-      IP.add('  port map(');
-      IP.add('    STB_I => STBi(STB_'+instance+'),');
-      IP.add('    DAT_I => DAT_'+instance+',');
-      IP.add('    DAT_O => DATIi');
-      IP.add('  );');
-      IP.add('');
-      IPS.add(Format('  Signal %:-11s: DATA_type;',['DAT_'+instance]));
-    end;
-    if STB or (DOL>0) then STL.add(Format('  Constant %:-11s: integer := %d;',['STB_'+instance,STL.count]));
-    if SL.Count>0 then for i:=0 to SL.Count-1 do
-      IPS.add(Format('  Signal %:-11s: %s;',[SL.names[i],SL.ValueFromIndex[i]]));
-    if AL.Count>0 then
-    begin
-      // AL Lista de direcciones y offsets
-      // ADL Ancho del bus de direcciones
-      // AM Siguiente dirección disponible en el mapa de direcciones
-      // AML y DCL salidas para el config y el decoder
-      j:=trunc(intpower(2,ADL));
-      if (AM mod j)>0 then
-      begin
-        AM:= ((AM div j)+1)*j
-      end;
-      for i:=0 to AL.Count-1 do
-      begin
-        f:=AL.ValueFromIndex[i];
-        if (Pos(',',f)=0) and (Pos(':',f)=0) then  //Is not a range value
-        begin
-          j:=StrtoIntDef(f,0);
-          k:=0;
-          f:=AL.Names[i];
-        end else //Is a range from,to
-        begin
-          j:=StrtoIntDef(ExtractDelimited(1,f,[',',':']),0);
-          k:=StrtoIntDef(ExtractDelimited(2,f,[',',':']),0);
-          f:=AL.Names[i]+' to '+AL.Names[i]+'+'+InttoStr(k);
-        end;
-        AML.Add(Format('  Constant %:-11s: integer := %d;',[AL.Names[i],AM+j]));
-        DCL.Add(Format('     When %-20s=> STBi <= stb(%-15s-- %-10s = %d',[f,'STB_'+instance+');',AL.Names[i],AM+j]));
-      end;
-      AM:=IfThen(k=0,AM+j+1,AM+k+1);
-    end;
-  finally
-    if assigned(SL) then FreeAndNil(SL);
-    if assigned(IL) then FreeAndNil(IL);
-    if assigned(AL) then FreeAndNil(AL);
-    if assigned(CL) then FreeAndNil(CL);
-    if assigned(GL) then FreeAndNil(GL);
-  end;
-end;
-
-procedure TSBAPrj.CopyIPCoreFiles(cl:TStrings);
-var
-  i,j:integer;
-  r,s,v:string;
-  l:TStringList;
-begin
-  if cl.Count=0 then exit;
-  for i:=0 to cl.Count-1 do
-  begin
-    v:=cl[i];
-    s:=Copy2SymbDel(v,'=');
-    if not fileExistsUTF8(LibraryDir+s+PathDelim+s+'.ini') then
-    begin
-      ShowMessage('The IP Core file: '+LibraryDir+S+' was not found.');
-      exit;
-    end else if (v<>'UserFiles') and not FileExistsUTF8(LocLib+s+'.vhd') then
-    begin
-      infoln('Copiando: '+s+'.vhd');  //Copy IPCore
-      CopyFile(LibraryDir+s+PathDelim+s+'.vhd',LocLib+s+'.vhd');
-      if LibAsReadOnly then FileSetAttrUTF8(LocLib+s+'.vhd',faReadOnly);
-
-      l:=CoreGetReq(LibraryDir+s+PathDelim+s+'.ini');
-      for j:=0 to l.Count-1 do
-      begin
-        v:=l[j];
-        r:=Copy2SymbDel(v,'=');
-        if FileExistsUTF8(LibraryDir+s+PathDelim+r+'.vhd') then
-        begin
-          infoln('Copiando: '+r+'.vhd'); //Copy Requirements
-          if (v<>'UserFiles') then
-          begin
-            CopyFile(LibraryDir+s+PathDelim+r+'.vhd',LocLib+r+'.vhd');
-            if LibAsReadOnly then FileSetAttrUTF8(LocLib+r+'.vhd',faReadOnly);
-          end else
-          begin
-            CopyFile(LibraryDir+s+PathDelim+r+'.vhd',location+'user'+PathDelim+r+'.vhd');
-            AddUserFile(location+'user'+PathDelim+r+'.vhd');
-          end;
-        end else CopyIPCoreFiles(l);  //If requirement is not in core folder get from lib
-      end;
-      if assigned(l) then freeandnil(l);
-    end;
-  end;
-end;
+       l:=CoreGetReq(LibraryDir+s+PathDelim+s+'.ini');
+       for j:=0 to l.Count-1 do
+       begin
+         v:=l[j];
+         r:=Copy2SymbDel(v,'=');
+         if FileExists(LibraryDir+s+PathDelim+r+'.vhd') then
+         begin
+           infoln('Copiando: '+r+'.vhd'); //Copy Requirements
+           if (v<>'UserFiles') then
+           begin
+             CopyFile(LibraryDir+s+PathDelim+r+'.vhd',LocLib+r+'.vhd');
+             if LibAsReadOnly then FileSetAttr(LocLib+r+'.vhd',faReadOnly);
+           end else
+           begin
+             CopyFile(LibraryDir+s+PathDelim+r+'.vhd',location+'user'+PathDelim+r+'.vhd');
+             AddUserFile(location+'user'+PathDelim+r+'.vhd');
+           end;
+         end else CopyIPCoreFiles(l);  //If requirement is not in core folder get from lib
+       end;
+       if assigned(l) then freeandnil(l);
+     end;
+   end;
+ end;
+}
 
 function TSBAPrj.EditLib: boolean;
 var Prj:TSBAPrj;
@@ -684,7 +554,7 @@ begin
     if m.IndexOf(r)=-1 then
     m.Add(r);
     try
-      k:=CoreGetReq(LibraryDir+r+PathDelim+r+'.ini');
+      k:=CoreGetReq(r);
       FillRequeriments(k,m,level);
     finally
       if assigned(k) then FreeAndNil(k);
@@ -696,7 +566,7 @@ function TSBAPrj.Open(f: string): boolean;
 var SL:TStringList;
 begin
   result:=false;
-  if not FileExistsUTF8(f) then
+  if not FileExists(f) then
   begin
     showmessage('The project '+f+' does not exist');
     exit;
@@ -735,16 +605,17 @@ begin
       n:=extractfilenameonly(s);
       if not AnsiMatchText(n+'.vhd',[cSBApkg,cSyscon,cDataIntf]) and (m.IndexOf(n)=-1) then
       begin
-        FileSetAttrUTF8(s,faArchive);
+        FileSetAttr(s,faArchive);
         infoln('Borrando: '+s);
-        DeleteFileUTF8(s);
+        DeleteFile(s);
       end;
     end;
   finally
     if assigned(m) then FreeAndNil(m);
     if assigned(l) then FreeAndNil(l);
   end;
-  CopyIPCoreFiles(CL);
+  CopyIPCoreFiles(CL,location);
+  Info('CleanUpLibCores',CL);
   libcores.Assign(CL);
   Save;
   result:=true;
@@ -761,6 +632,7 @@ begin
     SL.Text:=Collect;
     SL.SaveToFile(f);
     Modified:=false;
+    Info('TSBAPrj.SaveAs',Name+' Saved');
     result:=true;
   finally
     if assigned(SL) then FreeAndNil(SL);
@@ -775,15 +647,17 @@ end;
 function TSBAPrj.PrjExport: boolean;
 var
   R,S:TStringList;
-  T:String;
+  T,locuser:String;
 begin
   { TODO : Verificar que se exportan los requerimientos de los IPCores y los archivos de usuario }
   result:=false;
-  if not directoryexistsUTF8(ExportPath) then
+  if not directoryexists(ExportPath) then
   begin
     ShowMessage('The Project export path: '+ExportPath+'do not exists');
     exit;
   end;
+//  loclib:=location+'lib'+PathDelim;
+  locuser:=location+'user'+PathDelim;
   if expmonolithic then
   begin
     S:=TStringList.Create;
@@ -821,7 +695,7 @@ begin
     CopyFile(location+Name+'_'+cSBAdcdr,ExportPath+Name+'_'+cSBAdcdr,true);
     CopyFile(location+Name+'_'+cSBActrlr,ExportPath+Name+'_'+cSBActrlr,true);
     if explibfiles then CopyDirTree(loclib,exportpath+'lib\',[cffOverwriteFile,cffCreateDestDirectory,cffPreserveTime]);
-    ShowMessage('Project was export to: '+exportpath);
+    if expuserfiles then CopyDirTree(locuser,exportpath+'user\',[cffOverwriteFile,cffCreateDestDirectory,cffPreserveTime]);
   end;
 end;
 

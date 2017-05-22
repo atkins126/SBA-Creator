@@ -542,65 +542,43 @@ begin
   end else result:='0.0.0';
 end;
 
+{$IFDEF CODETYPHON}
 procedure TLibraryForm.AddItemToIPCoresFilter(FileIterator: TFileIterator);
 var
-  Data:TStringArray;
-//  Data:TListViewDataItem;
+  Data:TListViewDataItem;
   v:integer;
 begin
-  //Data.Data := nil;
-  //SetLength(Data.StringArray,3);
-  //Data.StringArray[0]:=ExtractFileNameWithoutExt(FileIterator.FileInfo.Name);
-  //Data.StringArray[1]:=FileIterator.FileName;
-  //v:=VCmpr(GetVersion(FileIterator.FileName),GetVersion(LibraryDir+Data.StringArray[0]+PathDelim+Data.StringArray[0]+'.ini'));
-  //if IpCoreList.IndexOf(Data.StringArray[0])=-1 then
-  //  Data.StringArray[2]:='N'  // The item is new do not exists in local library
-  //else if v>0 then Data.StringArray[2]:='U' // the item is a new version of the one in the local library
-  //  else if v=0 then Data.StringArray[2]:='=';  // the item is the same as local library
-
-  SetLength(Data,3);
-  Data[0]:=ExtractFileNameWithoutExt(FileIterator.FileInfo.Name);
-  Data[1]:=FileIterator.FileName;
-  v:=VCmpr(GetVersion(FileIterator.FileName),GetVersion(LibraryDir+Data[0]+PathDelim+Data[0]+'.ini'));
-  if IpCoreList.IndexOf(Data[0])=-1 then
-    Data[2]:='N'  // The item is new do not exists in local library
-  else if v>0 then Data[2]:='U' // the item is a new version of the one in the local library
-    else if v=0 then Data[2]:='=';  // the item is the same as local library
-
+  Data.Data := nil;
+  SetLength(Data.StringArray,3);
+  Data.StringArray[0]:=ExtractFileNameWithoutExt(FileIterator.FileInfo.Name);
+  Data.StringArray[1]:=FileIterator.FileName;
+  v:=VCmpr(GetVersion(FileIterator.FileName),GetVersion(LibraryDir+Data.StringArray[0]+PathDelim+Data.StringArray[0]+'.ini'));
+  if IpCoreList.IndexOf(Data.StringArray[0])=-1 then
+    Data.StringArray[2]:='N'  // The item is new do not exists in local library
+  else if v>0 then Data.StringArray[2]:='U' // the item is a new version of the one in the local library
+    else if v=0 then Data.StringArray[2]:='=';  // the item is the same as local library
   IPCoresFilter.Items.Add(Data);
 end;
 
 procedure TLibraryForm.AddItemToProgramsFilter(FileIterator: TFileIterator);
 var
-  Data:TStringArray;
-//  Data:TListViewDataItem;
+  Data:TListViewDataItem;
 begin
-  //Data.Data := nil;
-  //SetLength(Data.StringArray,2);
-  //Data.StringArray[0]:=ExtractFileNameWithoutExt(FileIterator.FileInfo.Name);
-  //Data.StringArray[1]:=FileIterator.FileName;
-
-  SetLength(Data,2);
-  Data[0]:=ExtractFileNameWithoutExt(FileIterator.FileInfo.Name);
-  Data[1]:=FileIterator.FileName;
-
+  Data.Data := nil;
+  SetLength(Data.StringArray,2);
+  Data.StringArray[0]:=ExtractFileNameWithoutExt(FileIterator.FileInfo.Name);
+  Data.StringArray[1]:=FileIterator.FileName;
   ProgramsFilter.Items.Add(Data);
 end;
 
 procedure TLibraryForm.AddItemToSnippetsFilter(FileIterator: TFileIterator);
 var
-  Data:TStringArray;
-//  Data:TListViewDataItem;
+  Data:TListViewDataItem;
 begin
-  //Data.Data := nil;
-  //SetLength(Data.StringArray,2);
-  //Data.StringArray[0]:=ExtractFileNameWithoutExt(FileIterator.FileInfo.Name);
-  //Data.StringArray[1]:=FileIterator.FileName;
-
-  SetLength(Data,2);
-  Data[0]:=ExtractFileNameWithoutExt(FileIterator.FileInfo.Name);
-  Data[1]:=FileIterator.FileName;
-
+  Data.Data := nil;
+  SetLength(Data.StringArray,2);
+  Data.StringArray[0]:=ExtractFileNameWithoutExt(FileIterator.FileInfo.Name);
+  Data.StringArray[1]:=FileIterator.FileName;
   SnippetsFilter.Items.Add(Data);
 end;
 
@@ -612,8 +590,7 @@ begin
   result:=-1; i:=0;
   while (result=-1) and (i<LV.Count) do
   begin
-//    Data:=LV[i].StringArray;
-    Data:=LV[i];
+    Data:=LV[i].StringArray;
     if Data[0]=S then result:=i else inc(i);
   end;
 end;
@@ -621,24 +598,17 @@ end;
 procedure TLibraryForm.UpdateIpCoresList;
 var
   S:String;
-//  Data:TListViewDataItem;
-  Data:TStringArray;
+  Data:TListViewDataItem;
 begin
   IpCoresFilter.Items.Clear;
   SearchForFiles(ConfigDir+'temp'+PathDelim+DefLibraryDir, '*.ini',@AddItemToIpCoresFilter);
   For S in IpCoreList do if LookupFilterItem(S,IPCoresFilter.Items)=-1 then
   begin
-    //Data.Data := nil;
-    //SetLength(Data.StringArray,3);
-    //Data.StringArray[0]:=S;
-    //Data.StringArray[1]:=LibraryDir+S+PathDelim+S+'.ini';
-    //Data.StringArray[2]:='L'; //The item in library is local and do not exist into the repository
-
-    SetLength(Data,3);
-    Data[0]:=S;
-    Data[1]:=LibraryDir+S+PathDelim+S+'.ini';
-    Data[2]:='L'; //The item in library is local and do not exist into the repository
-
+    Data.Data := nil;
+    SetLength(Data.StringArray,3);
+    Data.StringArray[0]:=S;
+    Data.StringArray[1]:=LibraryDir+S+PathDelim+S+'.ini';
+    Data.StringArray[2]:='L'; //The item in library is local and do not exist into the repository
     IPCoresFilter.Items.Add(Data);
   end;
   IpCoresFilter.InvalidateFilter;
@@ -647,22 +617,16 @@ end;
 procedure TLibraryForm.UpdateProgramsList;
 var
   S:String;
-  //  Data:TListViewDataItem;
-  Data:TStringArray;
+  Data:TListViewDataItem;
 begin
   ProgramsFilter.Items.Clear;
   SearchForFiles(ConfigDir+'temp'+PathDelim+DefProgramsDir, '*.prg',@AddItemToProgramsFilter);
   For S in ProgramsList do if LookupFilterItem(S,ProgramsFilter.Items)=-1 then
   begin
-    //Data.Data := nil;
-    //SetLength(Data.StringArray,2);
-    //Data.StringArray[0]:=S;
-    //Data.StringArray[1]:=ProgramsDir+S+'.vhd';
-
-    SetLength(Data,2);
-    Data[0]:=S;
-    Data[1]:=ProgramsDir+S+'.vhd';
-
+    Data.Data := nil;
+    SetLength(Data.StringArray,2);
+    Data.StringArray[0]:=S;
+    Data.StringArray[1]:=ProgramsDir+S+'.vhd';
     ProgramsFilter.Items.Add(Data);
   end;
   ProgramsFilter.InvalidateFilter;
@@ -671,26 +635,122 @@ end;
 procedure TLibraryForm.UpdateSnippetsList;
 var
   S:String;
-  //  Data:TListViewDataItem;
+  Data:TListViewDataItem;
+begin
+  SnippetsFilter.Items.Clear;
+  SearchForFiles(ConfigDir+'temp'+PathDelim+DefSnippetsDir, '*.snp',@AddItemToSnippetsFilter);
+  For S in SnippetsList do if LookupFilterItem(S,SnippetsFilter.Items)=-1 then
+  begin
+    Data.Data := nil;
+    SetLength(Data.StringArray,2);
+    Data.StringArray[0]:=S;
+    Data.StringArray[1]:=SnippetsDir+S+'.snp';
+    SnippetsFilter.Items.Add(Data);
+  end;
+  SnippetsFilter.InvalidateFilter;
+end;
+{$ELSE}
+procedure TLibraryForm.AddItemToIPCoresFilter(FileIterator: TFileIterator);
+var
+  Data:TStringArray;
+  v:integer;
+begin
+  SetLength(Data,3);
+  Data[0]:=ExtractFileNameWithoutExt(FileIterator.FileInfo.Name);
+  Data[1]:=FileIterator.FileName;
+  v:=VCmpr(GetVersion(FileIterator.FileName),GetVersion(LibraryDir+Data[0]+PathDelim+Data[0]+'.ini'));
+  if IpCoreList.IndexOf(Data[0])=-1 then
+    Data[2]:='N'  // The item is new do not exists in local library
+  else if v>0 then Data[2]:='U' // the item is a new version of the one in the local library
+    else if v=0 then Data[2]:='=';  // the item is the same as local library
+  IPCoresFilter.Items.Add(Data);
+end;
+
+procedure TLibraryForm.AddItemToProgramsFilter(FileIterator: TFileIterator);
+var
+  Data:TStringArray;
+begin
+  SetLength(Data,2);
+  Data[0]:=ExtractFileNameWithoutExt(FileIterator.FileInfo.Name);
+  Data[1]:=FileIterator.FileName;
+  ProgramsFilter.Items.Add(Data);
+end;
+
+procedure TLibraryForm.AddItemToSnippetsFilter(FileIterator: TFileIterator);
+var
+  Data:TStringArray;
+begin
+  SetLength(Data,2);
+  Data[0]:=ExtractFileNameWithoutExt(FileIterator.FileInfo.Name);
+  Data[1]:=FileIterator.FileName;
+  SnippetsFilter.Items.Add(Data);
+end;
+
+function TLibraryForm.LookupFilterItem(S:string; LV:TListViewDataList):integer;
+Var
+  i:Integer;
+  Data:TStringArray;
+begin
+  result:=-1; i:=0;
+  while (result=-1) and (i<LV.Count) do
+  begin
+    Data:=LV[i];
+    if Data[0]=S then result:=i else inc(i);
+  end;
+end;
+
+procedure TLibraryForm.UpdateIpCoresList;
+var
+  S:String;
+  Data:TStringArray;
+begin
+  IpCoresFilter.Items.Clear;
+  SearchForFiles(ConfigDir+'temp'+PathDelim+DefLibraryDir, '*.ini',@AddItemToIpCoresFilter);
+  For S in IpCoreList do if LookupFilterItem(S,IPCoresFilter.Items)=-1 then
+  begin
+    SetLength(Data,3);
+    Data[0]:=S;
+    Data[1]:=LibraryDir+S+PathDelim+S+'.ini';
+    Data[2]:='L'; //The item in library is local and do not exist into the repository
+    IPCoresFilter.Items.Add(Data);
+  end;
+  IpCoresFilter.InvalidateFilter;
+end;
+
+procedure TLibraryForm.UpdateProgramsList;
+var
+  S:String;
+  Data:TStringArray;
+begin
+  ProgramsFilter.Items.Clear;
+  SearchForFiles(ConfigDir+'temp'+PathDelim+DefProgramsDir, '*.prg',@AddItemToProgramsFilter);
+  For S in ProgramsList do if LookupFilterItem(S,ProgramsFilter.Items)=-1 then
+  begin
+    SetLength(Data,2);
+    Data[0]:=S;
+    Data[1]:=ProgramsDir+S+'.vhd';
+    ProgramsFilter.Items.Add(Data);
+  end;
+  ProgramsFilter.InvalidateFilter;
+end;
+
+procedure TLibraryForm.UpdateSnippetsList;
+var
+  S:String;
   Data:TStringArray;
 begin
   SnippetsFilter.Items.Clear;
   SearchForFiles(ConfigDir+'temp'+PathDelim+DefSnippetsDir, '*.snp',@AddItemToSnippetsFilter);
   For S in SnippetsList do if LookupFilterItem(S,SnippetsFilter.Items)=-1 then
   begin
-    //Data.Data := nil;
-    //SetLength(Data.StringArray,2);
-    //Data.StringArray[0]:=S;
-    //Data.StringArray[1]:=SnippetsDir+S+'.snp';
-
     SetLength(Data,2);
     Data[0]:=S;
     Data[1]:=SnippetsDir+S+'.snp';
-
     SnippetsFilter.Items.Add(Data);
   end;
   SnippetsFilter.InvalidateFilter;
 end;
+{$ENDIF}
 
 procedure TLibraryForm.UpdateLists;
 begin

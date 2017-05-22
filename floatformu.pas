@@ -53,10 +53,10 @@ end;
 
 procedure TFloatForm.Start(F:TForm);
 begin
-  Show;
-  Close;
   PopupParent:=F;
   FormStyle:=fsSystemStayOnTop;
+  Show;
+  Close;
 end;
 
 procedure TFloatForm.Hide;

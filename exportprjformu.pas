@@ -14,6 +14,7 @@ type
 
   TExportPrjForm = class(TForm)
     ButtonPanel1: TButtonPanel;
+    CB_ExpPrjUser: TCheckBox;
     CB_ExpPrjMonolithic: TCheckBox;
     CB_ExpPrjAllLib: TCheckBox;
     Ed_TargetDir: TDirectoryEdit;

@@ -545,8 +545,8 @@ begin
       '|': fProcTable[I]      := @OrSymbolProc;
       '+': fProcTable[I]      := @PlusProc;
       '.': fProcTable[I]      := @PointProc;
-      ')': fProcTable[I]      := @RoundCloseProc;
       '(': fProcTable[I]      := @RoundOpenProc;
+      ')': fProcTable[I]      := @RoundCloseProc;
       ';': fProcTable[I]      := @SemiColonProc;
       '/': fProcTable[I]      := @SlashProc;
       #1..#9, #11, #12, #14..#32: fProcTable[I] := @SpaceProc;
@@ -908,16 +908,20 @@ end;
 procedure TSynSBASyn.FoldValidProc;
 var
   tmp:integer;
-  found:boolean;
+  found,inRoundbracket:boolean;
 begin
   tmp:=run;
   found:=false;
-{ TODO 1 : No funciona si la función o procedimiento tiene varios parámetros debido al ";" de separación entre parámetros. Se debe elegir otro criterio. }
-  while (not (fLine[tmp] in [#0, #10, #13])) do if fLine[tmp]=';' then
+  while (not (fLine[tmp] in [#0, #10, #13])) do
   begin
-    found:=true;
-    break;
-  end else inc(tmp);
+    if (fLine[tmp]='(') then inRoundbracket:=true;
+    if (fLine[tmp]=')') then inRoundbracket:=false;
+    if (fLine[tmp]=';') and not inRoundbracket then
+    begin
+      found:=true;
+      break;
+    end else inc(tmp);
+  end;
   if not found then StartCodeFoldBlock(Pointer(PtrUInt(FuncProcBlk)));
 end;
 

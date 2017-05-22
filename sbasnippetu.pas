@@ -179,22 +179,28 @@ begin
   end;
 end;
 
+{$IFDEF CODETYPHON}
+procedure TSBASnippet.AddItemToSnippetsFilter(FileIterator: TFileIterator);
+var
+  Data:TListViewDataItem;
+begin
+  Data.Data := nil;
+  SetLength(Data.StringArray,2);
+  Data.StringArray[0]:=ExtractFileNameWithoutExt(FileIterator.FileInfo.Name);
+  Data.StringArray[1]:=AppendPathDelim(FileIterator.Path)+FileIterator.FileInfo.Name;
+  FFilter.Items.Add(Data);
+end;
+{$ELSE}
 procedure TSBASnippet.AddItemToSnippetsFilter(FileIterator: TFileIterator);
 var
   Data:TStringArray;
-//  Data:TListViewDataItem;
 begin
-  //Data.Data := nil;
-  //SetLength(Data.StringArray,2);
-  //Data.StringArray[0]:=ExtractFileNameWithoutExt(FileIterator.FileInfo.Name);
-  //Data.StringArray[1]:=AppendPathDelim(FileIterator.Path)+FileIterator.FileInfo.Name;
-
   SetLength(Data,2);
   Data[0]:=ExtractFileNameWithoutExt(FileIterator.FileInfo.Name);
   Data[1]:=AppendPathDelim(FileIterator.Path)+FileIterator.FileInfo.Name;
-
   FFilter.Items.Add(Data);
 end;
+{$ENDIF}
 
 procedure TSBASnippet.UpdateSnippetsFilter(Filter:TListViewFilterEdit);
 begin

@@ -5,7 +5,7 @@ unit AutoUpdateU;
 interface
 
 uses
-  Classes, Forms, SysUtils, IniFilesUTF8, LazFileUtils,
+  Classes, Forms, SysUtils, IniFilesUTF8, LazFileUtils, StrUtils,
   Process, AsyncProcess, versionsupportu, DwFileU;
 
 Const
@@ -36,6 +36,14 @@ Const
   C_LOCALUPDATER = 'updatehm';
   {$ENDIF}
 {$ENDIF}
+{$IFDEF LCLGTK3}
+  {$IFDEF CPUX86_64}
+  VersionFile='sbamaingtk3.ini';
+  UpdaterZipfile='sbamaingtk3.zip';
+  WhatsNewFile='whatsnewgtk3.txt';
+  C_LOCALUPDATER = 'updatehm';
+  {$ENDIF}
+{$ENDIF}
 
 function NewVersionAvailable(DwProcess:TDwProcess):boolean;
 function GetWhatsNew(DwProcess:TDwProcess):boolean;
@@ -47,7 +55,7 @@ function DownloadInProgress(DwProcess:TDwProcess):boolean;
 implementation
 
 uses
-  MainFormU, UtilsU, DebugFormU, ConfigFormU;
+  UtilsU, DebugFormU, ConfigFormU;
 
 
 var
@@ -141,6 +149,7 @@ end;
 function DownloadInProgress(DwProcess:TDwProcess): boolean;
 begin
   result:=(DwProcess.Status=dwDownloading) and DwProcess.Running;
+  Info('DownloadInProgress',IFTHEN(result,'Is','Is not')+' downloading');
 end;
 
 end.

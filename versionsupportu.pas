@@ -56,7 +56,12 @@ Const
 Implementation
 
 Uses
-  resource, versiontypes, versionresource, LCLVersion, InterfaceBase;
+  resource, versiontypes, versionresource,
+  {$IFDEF CODETYPHON}
+  LCLPlatformDef,
+  {$ENDIF}
+  LCLVersion, InterfaceBase;
+
 
 Type
   TVersionInfo = Class
