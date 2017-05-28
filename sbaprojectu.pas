@@ -21,7 +21,8 @@ const
   cSyscon='Syscon.vhd';
   cDataIntf='DataIntf.vhd';
   cPrjName='%name%';
-  cPrjLoc='%location%';
+  cPrjLib='lib';
+  cPrjUser='user';
   cPrjTitle='%title%';
   cPrjAuthor='%author%';
   cPrjVersion='%version%';
@@ -39,26 +40,40 @@ type
   { TSBAPrj }
 
   TSBAPrj=class(TObject)
-    name:string;
-    location:string;
-    loclib:string;
-    title:string;
-    author:string;
-    version:string;
-    date:string;
-    description:string;
     libcores:tstringlist;
     userfiles:tstringlist;
     ports:tstringlist;
-    exportpath:string;
-    expmonolithic:boolean;
-    explibfiles:boolean;
-    expuserfiles:boolean;
-    Modified:boolean;
     constructor Create;
     destructor Destroy; override;
   private
+    Fauthor: string;
+    Fdate: string;
+    Fdescription: string;
+    Fexplibfiles: boolean;
+    Fexpmonolithic: boolean;
+    Fexportpath: string;
+    Fexpuserfiles: boolean;
+    Flocation: string;
+    Floclib: string;
+    Flocuser: string;
+    FModified: boolean;
+    Fname: string;
+    Ftitle: string;
+    Fversion: string;
+    procedure CopyIPCoreFiles(cl: TStrings);
     procedure FillRequeriments(list, m: TStrings; var level:integer);
+    procedure Setauthor(AValue: string);
+    procedure Setdate(AValue: string);
+    procedure Setdescription(AValue: string);
+    procedure Setexplibfiles(AValue: boolean);
+    procedure Setexpmonolithic(AValue: boolean);
+    procedure Setexportpath(AValue: string);
+    procedure Setexpuserfiles(AValue: boolean);
+    procedure Setlocation(AValue: string);
+    procedure SetModified(AValue: boolean);
+    procedure Setname(AValue: string);
+    procedure Settitle(AValue: string);
+    procedure Setversion(AValue: string);
   public
     function Open(f:string):boolean;
     function Fill(Data: string): boolean;
@@ -79,6 +94,21 @@ type
     function GetUserFilePath(f:string):string;
     function ListAllPrjFiles(vhdonly: boolean=true): tstringlist;
     function GetAllFileNames(dir: string; vhdonly: boolean=true): string;
+  published
+    property exportpath:string read Fexportpath write Setexportpath;
+    property location:string read Flocation write Setlocation;
+    property loclib:string read Floclib;
+    property locuser:string read Flocuser;
+    property Modified:boolean read FModified write SetModified;
+    property expmonolithic:boolean read Fexpmonolithic write Setexpmonolithic;
+    property explibfiles:boolean read Fexplibfiles write Setexplibfiles;
+    property expuserfiles:boolean read Fexpuserfiles write Setexpuserfiles;
+    property name:string read Fname write Setname;
+    property title:string read Ftitle write Settitle;
+    property author:string read Fauthor write Setauthor;
+    property version:string read Fversion write Setversion;
+    property date:string read Fdate write Setdate;
+    property description:string read Fdescription write Setdescription;
   end;
 
 var
@@ -96,15 +126,18 @@ var AM:integer; //Address Map pointer
 constructor TSBAPrj.Create;
 begin
   inherited Create;
-  name:='';
-  exportpath:='';
-  expmonolithic:=false;
-  explibfiles:=true;
-  expuserfiles:=true;
+  Fname:='';
+  Fexportpath:='';
+  FLocation:='';
+  Floclib:='';
+  Flocuser:='';
+  Fmodified:=false;
+  Fexpmonolithic:=false;
+  Fexplibfiles:=true;
+  Fexpuserfiles:=true;
   libcores:=TStringList.create;
   userfiles:=TStringList.create;
   ports:=tstringlist.create;
-  modified:=false;
 end;
 
 destructor TSBAPrj.Destroy;
@@ -133,18 +166,18 @@ begin
     end;
   end;
   try
-    name:='';
-    modified:=true;
+    Fname:='';
+    Fmodified:=true;
     ports.Clear;
     libcores.Clear;
     userfiles.Clear;
     try
-      name:=J.FindPath('name').AsString;
-      title:=J.FindPath('title').AsString;
-      author:=J.FindPath('author').AsString;
-      version:=J.FindPath('version').AsString;
-      date:=J.FindPath('date').AsString;
-      description:=J.FindPath('description').AsString;
+      Fname:=J.FindPath('name').AsString;
+      Ftitle:=J.FindPath('title').AsString;
+      Fauthor:=J.FindPath('author').AsString;
+      Fversion:=J.FindPath('version').AsString;
+      Fdate:=J.FindPath('date').AsString;
+      Fdescription:=J.FindPath('description').AsString;
       if not J.FindPath('interface').IsNull then
       begin
         with J.FindPath('interface') do For i:=0 to count-1 do with Items[i] do
@@ -189,10 +222,10 @@ begin
         exit;
       end;
     end;
-    if J.FindPath('exportpath')=nil then exportpath:='' else exportpath:=AppendPathDelim(TrimFilename(J.FindPath('exportpath').AsString));
-    if J.FindPath('expmonolithic')=nil then expmonolithic:=false else expmonolithic:=J.FindPath('expmonolithic').AsBoolean;
-    if J.FindPath('explibfiles')=nil then explibfiles:=true else explibfiles:=J.FindPath('explibfiles').AsBoolean;
-    if J.FindPath('expuserfiles')=nil then expuserfiles:=true else expuserfiles:=J.FindPath('expuserfiles').AsBoolean;
+    if J.FindPath('exportpath')=nil then Fexportpath:='' else Fexportpath:=AppendPathDelim(TrimFilename(J.FindPath('exportpath').AsString));
+    if J.FindPath('expmonolithic')=nil then Fexpmonolithic:=false else Fexpmonolithic:=J.FindPath('expmonolithic').AsBoolean;
+    if J.FindPath('explibfiles')=nil then Fexplibfiles:=true else Fexplibfiles:=J.FindPath('explibfiles').AsBoolean;
+    if J.FindPath('expuserfiles')=nil then Fexpuserfiles:=true else Fexpuserfiles:=J.FindPath('expuserfiles').AsBoolean;
     result:=true;
   finally
     if assigned(J) then FreeAndNil(J);
@@ -205,16 +238,16 @@ var
   S,SData:String;
 begin
   SData:='{'#10+
-            '"name": "'+name+'",'#10+
-            '"title": "'+title+'",'#10+
-            '"author": "'+author+'",'#10+
-            '"version": "'+version+'",'#10+
-            '"date": "'+date+'",'#10+
-            '"description": "'+description+'",'#10+
-            '"exportpath": "'+exportpath+'",'#10+
-            '"expmonolithic": '+IfThen(expmonolithic,'true','false')+','#10+
-            '"explibfiles": '+IfThen(explibfiles,'true','false')+','#10+
-            '"expuserfiles": '+IfThen(expuserfiles,'true','false');
+            '"name": "'+Fname+'",'#10+
+            '"title": "'+Ftitle+'",'#10+
+            '"author": "'+Fauthor+'",'#10+
+            '"version": "'+Fversion+'",'#10+
+            '"date": "'+Fdate+'",'#10+
+            '"description": "'+Fdescription+'",'#10+
+            '"exportpath": "'+Fexportpath+'",'#10+
+            '"expmonolithic": '+IfThen(Fexpmonolithic,'true','false')+','#10+
+            '"explibfiles": '+IfThen(Fexplibfiles,'true','false')+','#10+
+            '"expuserfiles": '+IfThen(Fexpuserfiles,'true','false');
   S:='';
   for i:=0 to ports.Count-1 do
   begin
@@ -248,8 +281,7 @@ begin
   if UserFiles.IndexOfName(ExtractFileName(f))=-1 then
   begin
     UserFiles.Append(ExtractFileName(f)+'='+extractfilepath(f));
-    Modified:=true;
-//    Save;
+    FModified:=true;
     result:=true;
   end else ShowMessage('The file '+f+' is already in the list')
   else ShowMessage('The user file: '+f+',could not be found.');
@@ -265,7 +297,7 @@ begin
   if i<>-1 then
   try
     UserFiles.Delete(i);
-    Modified:=true;
+    FModified:=true;
     result:=true;
   except
     on E:Exception do ShowMessage(E.Message);
@@ -280,7 +312,7 @@ end;
 function TSBAPrj.GetUserFilePath(f: string): string;
 begin
   result:=UserFiles.Values[f];
-  result:=IFTHEN(result='',location+'user'+PathDelim,result);
+  result:=IFTHEN(result='',FLocUser,result);
 end;
 
 function TSBAPrj.ListAllPrjFiles(vhdonly: boolean=true): tstringlist;
@@ -290,9 +322,9 @@ var
   l,m:tstringlist;
 begin
   l:=tstringlist.create;
-  l.add(loclib+cSBApkg);
-  l.add(loclib+cSyscon);
-  l.add(loclib+cDataIntf);
+  l.add(Floclib+cSBApkg);
+  l.add(Floclib+cSyscon);
+  l.add(Floclib+cDataIntf);
   if libcores.Count>0 then
   begin
     m:=tstringlist.create;
@@ -300,16 +332,21 @@ begin
     FillRequeriments(libcores,m,level);
     infoln('Cores Requeriments:');
     infoln(m);
-    for r in m do l.add(loclib+r+'.vhd');
+    for r in m do l.add(Floclib+r+'.vhd');
     if assigned(m) then freeandnil(m);
   end;
+  m:=FindAllFiles(Flocuser);
+  for r in m do if userfiles.IndexOfName(ExtractFileName(r))=-1 then
+    if not vhdonly or (extractfileext(r)='.vhd') then
+      l.add(r);
   if userfiles.Count>0 then for i:=0 to userfiles.Count-1 do
     if not vhdonly or (extractfileext(userfiles.names[i])='.vhd') then
       l.add(userfiles.ValueFromIndex[i]+userfiles.names[i]);
-  l.add(location+name+'_'+cSBAcfg);
-  l.add(location+name+'_'+cSBAdcdr);
-  l.add(location+name+'_'+cSBActrlr);
-  l.add(location+name+'_'+cSBATop);
+  if assigned(m) then FreeAndNil(m);
+  l.add(Flocation+Fname+'_'+cSBAcfg);
+  l.add(Flocation+Fname+'_'+cSBAdcdr);
+  l.add(Flocation+Fname+'_'+cSBActrlr);
+  l.add(Flocation+Fname+'_'+cSBATop);
   Result:=l
 end;
 
@@ -320,7 +357,7 @@ var
 begin
   l:=ListAllPrjFiles(vhdonly);
   Result:='';
-  r:=IFTHEN(dir='',location,dir);
+  r:=IFTHEN(dir='',Flocation,dir);
   for s in l do Result+=CreateRelativePath(s,r)+' ';
   Result:=LeftStr(Result,length(Result)-1);
   if assigned(l) then freeandnil(l);
@@ -333,36 +370,36 @@ var
   S:String;
 begin
   result:=false;
-  if name='' then exit;
-  If not ForceDirectories(Location) Then
+  if Fname='' then exit;
+  If not ForceDirectories(Flocation) Then
   begin
-    ShowMessage('Failed to create SBA project folder: '+Location);
+    ShowMessage('Failed to create SBA project folder: '+Flocation);
     exit;
   end;
-  If not IsDirectoryEmpty(Location) then
+  If not IsDirectoryEmpty(Flocation) then
   begin
-    l:=TStringList(FindAllFiles(Location,'*.*'));
+    l:=TStringList(FindAllFiles(Flocation,'*.*'));
     for s in l do FileSetAttr(s,faArchive);
     if assigned(l) then FreeAndNil(l);
   end;
   try
     Save;
-    CopyFile(SBAbaseDir+cSBATop,Location+Name+'_'+cSBATop);
-    CopyFile(SBAbaseDir+cSBAcfg,Location+Name+'_'+cSBAcfg);
-    CopyFile(SBAbaseDir+cSBAdcdr,Location+Name+'_'+cSBAdcdr);
-    CopyFile(SBAbaseDir+cSBActrlr,Location+Name+'_'+cSBActrlr);
-    CreateDir(LocLib);
-    CopyFile(SBAbaseDir+cSBApkg,LocLib+cSBApkg);
-    CopyFile(SBAbaseDir+cSyscon,LocLib+cSyscon);
-    CopyFile(SBAbaseDir+cDataIntf,LocLib+cDataIntf);
+    CopyFile(SBAbaseDir+cSBATop,Flocation+Fname+'_'+cSBATop);
+    CopyFile(SBAbaseDir+cSBAcfg,Flocation+Fname+'_'+cSBAcfg);
+    CopyFile(SBAbaseDir+cSBAdcdr,Flocation+Fname+'_'+cSBAdcdr);
+    CopyFile(SBAbaseDir+cSBActrlr,Flocation+Fname+'_'+cSBActrlr);
+    CreateDir(FLocLib);
+    CopyFile(SBAbaseDir+cSBApkg,FLocLib+cSBApkg);
+    CopyFile(SBAbaseDir+cSyscon,FLocLib+cSyscon);
+    CopyFile(SBAbaseDir+cDataIntf,FLocLib+cDataIntf);
     if LibAsReadOnly then
     begin
-      FileSetAttr(LocLib+cSBApkg,faReadOnly);
-      FileSetAttr(LocLib+cSyscon,faReadOnly);
-      FileSetAttr(LocLib+cDataIntf,faReadOnly);
+      FileSetAttr(FLocLib+cSBApkg,faReadOnly);
+      FileSetAttr(FLocLib+cSyscon,faReadOnly);
+      FileSetAttr(FLocLib+cDataIntf,faReadOnly);
     end;
-    CreateDir(Location+'user');
-    CopyIPCoreFiles(libcores,Location);
+    CreateDir(Flocation+cPrjUser);
+    CopyIPCoreFiles(libcores);
     result:= CustomizeFiles;
   except
     on E:Exception do
@@ -402,19 +439,19 @@ begin
       if (i<ports.count-1) then S+=';';
       PL.Add(S);
     end;
-    FL.Add(location+name+'_'+cSBATop);
-    FL.Add(location+name+'_'+cSBAcfg);
-    FL.Add(location+name+'_'+cSBAdcdr);
-    FL.Add(location+name+'_'+cSBActrlr);
+    FL.Add(Flocation+Fname+'_'+cSBATop);
+    FL.Add(Flocation+Fname+'_'+cSBAcfg);
+    FL.Add(Flocation+Fname+'_'+cSBAdcdr);
+    FL.Add(Flocation+Fname+'_'+cSBActrlr);
     for i:=0 to FL.Count-1 do
     begin
       SL.LoadFromFile(FL[i]);
-      SL.text:=StringReplace(SL.text, cPrjName, name, [rfReplaceAll]);
-      SL.text:=StringReplace(SL.text, cPrjTitle, title, []);
-      SL.text:=StringReplace(SL.text, cPrjAuthor, author, []);
-      SL.text:=StringReplace(SL.text, cPrjVersion, version, []);
-      SL.text:=StringReplace(SL.text, cPrjDate, date, []);
-      S:=wraptext(description,LineEnding+'-- ',[' '],60);
+      SL.text:=StringReplace(SL.text, cPrjName, Fname, [rfReplaceAll]);
+      SL.text:=StringReplace(SL.text, cPrjTitle, FTitle, []);
+      SL.text:=StringReplace(SL.text, cPrjAuthor, FAuthor, []);
+      SL.text:=StringReplace(SL.text, cPrjVersion, FVersion, []);
+      SL.text:=StringReplace(SL.text, cPrjDate, FDate, []);
+      S:=wraptext(FDescription,LineEnding+'-- ',[' '],60);
       SL.text:=StringReplace(SL.text, cPrjDescrip, S, []);
       case i of
         0:begin //Top
@@ -459,7 +496,7 @@ end;
 
 procedure TSBAPrj.LoadIPData(ipname: String; IP,IPS,STL,AML,DCL:TStrings);
 begin
-  AM:=IPCoreData(ipname,ipname,IP,IPS,STL,AML,DCL,AM);
+  AM:=SBAIpCore.FormatData(ipname,ipname,IP,IPS,STL,AML,DCL,AM);
 end;
 
 function TSBAPrj.GetConfigConst(sl:TStrings): string;
@@ -475,53 +512,6 @@ begin
     result+=Format('%s=%s',[k,v])+#10;
   end;
 end;
-
-{
- procedure TSBAPrj.CopyIPCoreFiles(cl:TStrings);
- var
-   i,j:integer;
-   r,s,v:string;
-   l:TStringList;
- begin
-   if cl.Count=0 then exit;
-   for i:=0 to cl.Count-1 do
-   begin
-     v:=cl[i];
-     s:=Copy2SymbDel(v,'=');
-     if not fileExists(LibraryDir+s+PathDelim+s+'.ini') then
-     begin
-       ShowMessage('The IP Core file: '+LibraryDir+S+' was not found.');
-       exit;
-     end else if (v<>'UserFiles') and not FileExists(LocLib+s+'.vhd') then
-     begin
-       infoln('Copiando: '+s+'.vhd');  //Copy IPCore
-       CopyFile(LibraryDir+s+PathDelim+s+'.vhd',LocLib+s+'.vhd');
-       if LibAsReadOnly then FileSetAttr(LocLib+s+'.vhd',faReadOnly);
-
-       l:=CoreGetReq(LibraryDir+s+PathDelim+s+'.ini');
-       for j:=0 to l.Count-1 do
-       begin
-         v:=l[j];
-         r:=Copy2SymbDel(v,'=');
-         if FileExists(LibraryDir+s+PathDelim+r+'.vhd') then
-         begin
-           infoln('Copiando: '+r+'.vhd'); //Copy Requirements
-           if (v<>'UserFiles') then
-           begin
-             CopyFile(LibraryDir+s+PathDelim+r+'.vhd',LocLib+r+'.vhd');
-             if LibAsReadOnly then FileSetAttr(LocLib+r+'.vhd',faReadOnly);
-           end else
-           begin
-             CopyFile(LibraryDir+s+PathDelim+r+'.vhd',location+'user'+PathDelim+r+'.vhd');
-             AddUserFile(location+'user'+PathDelim+r+'.vhd');
-           end;
-         end else CopyIPCoreFiles(l);  //If requirement is not in core folder get from lib
-       end;
-       if assigned(l) then freeandnil(l);
-     end;
-   end;
- end;
-}
 
 function TSBAPrj.EditLib: boolean;
 var Prj:TSBAPrj;
@@ -552,14 +542,99 @@ begin
     r:=Copy2SymbDel(v,'=');
     if v='UserFiles' then Continue;
     if m.IndexOf(r)=-1 then
-    m.Add(r);
     try
-      k:=CoreGetReq(r);
+      k:=SBAIpCore.GetReq(r);
       FillRequeriments(k,m,level);
     finally
       if assigned(k) then FreeAndNil(k);
+      m.Add(r);
     end;
   end;
+end;
+
+procedure TSBAPrj.Setauthor(AValue: string);
+begin
+  if Fauthor=AValue then Exit;
+  Fauthor:=AValue;
+  FModified:=true;
+end;
+
+procedure TSBAPrj.Setdate(AValue: string);
+begin
+  if Fdate=AValue then Exit;
+  Fdate:=AValue;
+  FModified:=true;
+end;
+
+procedure TSBAPrj.Setdescription(AValue: string);
+begin
+  if Fdescription=AValue then Exit;
+  Fdescription:=AValue;
+  FModified:=true;
+end;
+
+procedure TSBAPrj.Setexplibfiles(AValue: boolean);
+begin
+  if Fexplibfiles=AValue then Exit;
+  Fexplibfiles:=AValue;
+  FModified:=true;
+end;
+
+procedure TSBAPrj.Setexpmonolithic(AValue: boolean);
+begin
+  if Fexpmonolithic=AValue then Exit;
+  Fexpmonolithic:=AValue;
+  FModified:=true;
+end;
+
+procedure TSBAPrj.Setexportpath(AValue: string);
+begin
+  if Fexportpath=AValue then Exit;
+  Fexportpath:=AValue;
+  FModified:=true;
+end;
+
+procedure TSBAPrj.Setexpuserfiles(AValue: boolean);
+begin
+  if Fexpuserfiles=AValue then Exit;
+  Fexpuserfiles:=AValue;
+  FModified:=true;
+end;
+
+procedure TSBAPrj.Setlocation(AValue: string);
+begin
+  if Flocation=AValue then Exit;
+  Flocation:=AValue;
+  Floclib:=Flocation+cPrjLib+PathDelim;
+  Flocuser:=Flocation+cPrjUser+PathDelim;
+  FModified:=true;
+end;
+
+procedure TSBAPrj.SetModified(AValue: boolean);
+begin
+  if FModified=AValue then Exit;
+  FModified:=AValue;
+end;
+
+procedure TSBAPrj.Setname(AValue: string);
+begin
+  if Fname=AValue then Exit;
+  Fname:=AValue;
+  FModified:=true;
+end;
+
+procedure TSBAPrj.Settitle(AValue: string);
+begin
+  if Ftitle=AValue then Exit;
+  Ftitle:=AValue;
+  FModified:=true;
+end;
+
+procedure TSBAPrj.Setversion(AValue: string);
+begin
+  if Fversion=AValue then Exit;
+  Fversion:=AValue;
+  FModified:=true;
 end;
 
 function TSBAPrj.Open(f: string): boolean;
@@ -575,9 +650,8 @@ begin
     SL:=TStringList.create;
     SL.LoadFromFile(f);
     if not Fill(SL.Text) then exit;
-    location:=ExtractFilePath(f);
-    loclib:=location+'lib'+PathDelim;
-    Modified:=false;
+    SetLocation(ExtractFilePath(f));
+    FModified:=false;
     result:=true;
   finally
     if assigned(SL) then FreeAndNil(SL);
@@ -599,7 +673,7 @@ begin
     m:=TStringList.Create;
     FillRequeriments(cl,m,level);
     //Delete all vhd files not in the m stringlist from the LocLib folder
-    l:=TStringList(FindAllFiles(LocLib,'*.vhd'));
+    l:=TStringList(FindAllFiles(FLocLib,'*.vhd'));
     for s in l do
     begin
       n:=extractfilenameonly(s);
@@ -614,7 +688,7 @@ begin
     if assigned(m) then FreeAndNil(m);
     if assigned(l) then FreeAndNil(l);
   end;
-  CopyIPCoreFiles(CL,location);
+  CopyIPCoreFiles(CL);
   Info('CleanUpLibCores',CL);
   libcores.Assign(CL);
   Save;
@@ -631,8 +705,8 @@ begin
     SL:=TStringList.Create;
     SL.Text:=Collect;
     SL.SaveToFile(f);
-    Modified:=false;
-    Info('TSBAPrj.SaveAs',Name+' Saved');
+    FModified:=false;
+    Info('TSBAPrj.SaveAs',Fname+' Saved');
     result:=true;
   finally
     if assigned(SL) then FreeAndNil(SL);
@@ -641,63 +715,108 @@ end;
 
 function TSBAPrj.Save: boolean;
 begin
-  result:=SaveAs(Location+Name+cSBAPrjExt);
+  result:=SaveAs(Flocation+Fname+cSBAPrjExt);
 end;
 
 function TSBAPrj.PrjExport: boolean;
 var
   R,S:TStringList;
-  T,locuser:String;
+  T:String;
 begin
   { TODO : Verificar que se exportan los requerimientos de los IPCores y los archivos de usuario }
   result:=false;
-  if not directoryexists(ExportPath) then
+  if not directoryexists(FExportPath) then
   begin
-    ShowMessage('The Project export path: '+ExportPath+'do not exists');
+    ShowMessage('The Project export path: '+FExportPath+'do not exists');
     exit;
   end;
-//  loclib:=location+'lib'+PathDelim;
-  locuser:=location+'user'+PathDelim;
-  if expmonolithic then
+  if Fexpmonolithic then
   begin
     S:=TStringList.Create;
     R:=TStringList.Create;
-    R.LoadFromFile(location+Name+'_'+cSBATop);
+    R.LoadFromFile(Flocation+Fname+'_'+cSBATop);
     S.AddStrings(R);
-    R.LoadFromFile(location+Name+'_'+cSBAcfg);
+    R.LoadFromFile(Flocation+Fname+'_'+cSBAcfg);
     S.AddStrings(R);
-    R.LoadFromFile(location+Name+'_'+cSBAdcdr);
+    R.LoadFromFile(Flocation+Fname+'_'+cSBAdcdr);
     S.AddStrings(R);
-    R.LoadFromFile(location+Name+'_'+cSBActrlr);
+    R.LoadFromFile(Flocation+Fname+'_'+cSBActrlr);
     S.AddStrings(R);
-    if explibfiles then
+    if Fexplibfiles then
     begin
-      R.LoadFromFile(loclib+cSBApkg);
+      R.LoadFromFile(Floclib+cSBApkg);
       S.AddStrings(R);
-      R.LoadFromFile(loclib+cSyscon);
+      R.LoadFromFile(Floclib+cSyscon);
       S.AddStrings(R);
-      R.LoadFromFile(loclib+cDataIntf);
+      R.LoadFromFile(Floclib+cDataIntf);
       S.AddStrings(R);
       if libcores.Count>0 then for T in libcores do
       begin
-        R.LoadFromFile(loclib+T+'.vhd');
+        R.LoadFromFile(Floclib+T+'.vhd');
         S.AddStrings(R);
       end;
     end;
     R.Free;
-    S.SaveToFile(ExportPath+Name+'.vhd');
+    S.SaveToFile(FExportPath+Fname+'.vhd');
     S.Free;
-    ShowMessage('Monolithic Project file was create: '+ExportPath+Name+'.vhd');
+    ShowMessage('Monolithic Project file was create: '+FExportPath+Fname+'.vhd');
   end else
   begin
-    CopyFile(location+Name+'_'+cSBATop,ExportPath+Name+'_'+cSBATop,true);
-    CopyFile(location+Name+'_'+cSBAcfg,ExportPath+Name+'_'+cSBAcfg,true);
-    CopyFile(location+Name+'_'+cSBAdcdr,ExportPath+Name+'_'+cSBAdcdr,true);
-    CopyFile(location+Name+'_'+cSBActrlr,ExportPath+Name+'_'+cSBActrlr,true);
-    if explibfiles then CopyDirTree(loclib,exportpath+'lib\',[cffOverwriteFile,cffCreateDestDirectory,cffPreserveTime]);
-    if expuserfiles then CopyDirTree(locuser,exportpath+'user\',[cffOverwriteFile,cffCreateDestDirectory,cffPreserveTime]);
+    CopyFile(Flocation+Fname+'_'+cSBATop,FExportPath+Fname+'_'+cSBATop,true);
+    CopyFile(Flocation+Fname+'_'+cSBAcfg,FExportPath+Fname+'_'+cSBAcfg,true);
+    CopyFile(Flocation+Fname+'_'+cSBAdcdr,FExportPath+Fname+'_'+cSBAdcdr,true);
+    CopyFile(Flocation+Fname+'_'+cSBActrlr,FExportPath+Fname+'_'+cSBActrlr,true);
+    if Fexplibfiles then CopyDirTree(Floclib,Fexportpath+cPrjLib+PathDelim,[cffOverwriteFile,cffCreateDestDirectory,cffPreserveTime]);
+    if Fexpuserfiles then CopyDirTree(Flocuser,Fexportpath+cPrjUser+PathDelim,[cffOverwriteFile,cffCreateDestDirectory,cffPreserveTime]);
   end;
 end;
+
+procedure TSBAPrj.CopyIPCoreFiles(cl: TStrings);
+//IPCores and Packages are copied to FLoclib
+//Userfiles are copied to FLocuser
+var
+  i,j:integer;
+  r,s,v:string;
+  l:TStringList;
+begin
+  if cl.Count=0 then exit;
+  for i:=0 to cl.Count-1 do
+  begin
+    v:=cl[i];
+    s:=Copy2SymbDel(v,'=');
+    if not isIpCore(s) then
+    begin
+      ShowMessage('The IP Core file: '+LibraryDir+S+' was not found.');
+      exit;
+    end else if (v<>'UserFiles') and not FileExists(FlocLib+s+'.vhd') then
+    begin
+      infoln('Copiando: '+s+'.vhd');  //Copy IPCore
+      CopyFile(LibraryDir+s+PathDelim+s+'.vhd',FlocLib+s+'.vhd');
+      if LibAsReadOnly then FileSetAttr(FlocLib+s+'.vhd',faReadOnly);
+
+      l:=SBAIpCore.GetReq(s);
+      for j:=0 to l.Count-1 do
+      begin
+        v:=l[j];
+        r:=Copy2SymbDel(v,'=');
+        if FileExists(LibraryDir+s+PathDelim+r+'.vhd') then
+        begin
+          infoln('Copiando: '+r+'.vhd'); //Copy Requirements
+          if (v<>'UserFiles') then
+          begin
+            CopyFile(LibraryDir+s+PathDelim+r+'.vhd',FlocLib+r+'.vhd');
+            if LibAsReadOnly then FileSetAttr(FlocLib+r+'.vhd',faReadOnly);
+          end else
+          begin
+            CopyFile(LibraryDir+s+PathDelim+r+'.vhd',FlocUser+r+'.vhd');
+          end;
+        end else CopyIPCoreFiles(l);  //If requirement is not in core folder get from lib
+      end;
+      if assigned(l) then freeandnil(l);
+    end;
+  end;
+end;
+
 
 end.
 

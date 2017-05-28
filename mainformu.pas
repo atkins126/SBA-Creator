@@ -27,6 +27,7 @@ type
   { TMainForm }
 
   TMainForm = class(TForm)
+    FileOpenLoc: TAction;
     FileSaveAll: TAction;
     EditInsertAuthor: TAction;
     HelpSettings: TAction;
@@ -54,6 +55,7 @@ type
     MenuItem88: TMenuItem;
     MenuItem89: TMenuItem;
     MenuItem90: TMenuItem;
+    TabOpenLoc: TMenuItem;
     MI_OpenTreeItem: TMenuItem;
     ProjectOpenItem: TAction;
     ProjectUpdCore: TAction;
@@ -144,8 +146,8 @@ type
     L_SBALabels: TListBox;
     SnippetDescription: TMemo;
     EdTabMenu: TPopupMenu;
-    MenuItem10: TMenuItem;
-    MenuItem4: TMenuItem;
+    TabFileNew: TMenuItem;
+    TabFileClose: TMenuItem;
     P_Project: TPanel;
     P_Editors: TPanel;
     P_AuxEditor: TPanel;
@@ -378,6 +380,7 @@ type
     procedure EditRedoExecute(Sender: TObject);
     procedure EditSelectAllExecute(Sender: TObject);
     procedure EditUndoExecute(Sender: TObject);
+    procedure FileOpenLocExecute(Sender: TObject);
     procedure FileSaveAllExecute(Sender: TObject);
     procedure FileSaveAsExecute(Sender: TObject);
     procedure FormActivate(Sender: TObject);
@@ -502,7 +505,7 @@ type
     procedure LoadRsvWordsFile;
     procedure LoadAnnouncement;
     function ToolProcessWaitforIdle: boolean;
-    function IsShortCut(var Message: TLMKey): Boolean; override;
+//    function IsShortCut(var Message: TLMKey): Boolean; override;
   protected
   public
     { public declarations }
@@ -1057,6 +1060,17 @@ begin
     ActiveEditor.Undo;
 end;
 
+procedure TMainForm.FileOpenLocExecute(Sender: TObject);
+var
+  EditorF:TEditorF;
+  d:string;
+begin
+  EditorF:=GetActiveEditorPage;
+  d:=ExtractFilePath(EditorF.FileName);
+  Infoln('Try to open folder : '+d);
+  if DirectoryExists(d) then OpenDocument(d);
+end;
+
 function TMainForm.SaveFile(f:String; Src:TStrings):Boolean;
 begin
   result:=false;
@@ -1379,7 +1393,7 @@ begin
     iname:=TN.Text+'_'+inttostr(random(99));
     if InputQuery ('Add IP Core instance', 'Please type the name of the new instance:',iname) then
     try
-      IPCoreData(TN.Text,iname,IP,IPS,STL,AML,DCL,0);
+      SBAIpCore.FormatData(TN.Text,iname,IP,IPS,STL,AML,DCL,0);
       ActiveEditor.CaretX:=0;
       ActiveEditor.InsertTextAtCaret(IP.Text);
     except
@@ -1438,7 +1452,7 @@ procedure TMainForm.ProjectExportExecute(Sender: TObject);
 begin
   { TODO : Grabar también archivos de proyecto antes de exportar }
   If SBAPrj.Modified and (MessageDlg('The Project was modified', 'Save Project and its files? ', mtConfirmation, [mbYes, mbNo],0)=mrYes) then
-    ProjectSaveExecute(Sender); //SBAPrj.Save;
+    ProjectSaveExecute(Sender);
   ExportPrjForm.L_PrjDir.Caption:='Project folder: '+SBAPrj.location;
   ExportPrjForm.Ed_TargetDir.Directory:=SBAPrj.exportpath;
   ExportPrjForm.CB_ExpPrjMonolithic.Checked:=SBAPrj.expmonolithic;
@@ -1450,7 +1464,6 @@ begin
     expmonolithic:=CB_ExpPrjMonolithic.Checked;
     explibfiles:=CB_ExpPrjAllLib.Checked;
     expuserfiles:=CB_ExpPrjUser.Checked;
-    Modified:=true;
     If SBAPrj.PrjExport then StatusBar1.Panels[1].Text:='Project was export to: '+exportpath;
   end;
 end;
@@ -1840,7 +1853,11 @@ begin
   ToolsFileSyntaxCheck.Enabled:=false;
   { TODO : Esta parte debe mejorarse para poder verificar sintaxis adecuadamente
 de archivos individales, cores y requerimientos; y proyectos. }
-  if SBAPrj.name='' then SyntaxCheck(s,'',hdltype) else SyntaxCheck(s,SBAPrj.GetAllFileNames(extractfilepath(s)),hdltype);
+  if SBAPrj.name<>'' then
+    SyntaxCheck(s,SBAPrj.GetAllFileNames(extractfilepath(s)),hdltype)
+  else if isIPCore(s) then
+    SyntaxCheck(s,SBAIpCore.GetFiles(s),hdltype)
+  else SyntaxCheck(s,'',hdltype);
 end;
 
 procedure TMainForm.FormCloseQuery(Sender: TObject; var CanClose: boolean);
@@ -1885,8 +1902,10 @@ end;
 procedure TMainForm.FormCreate(Sender: TObject);
 var Success:Boolean;
 begin
+  {$IFDEF DEBUG}
   DebugForm:=TDebugForm.Create(Self);
-  infoln('Start of create method');
+  info('TMainForm','Start of create method');
+  {$ENDIF}
   Success:=false;
   try
     Success:=GetConfigValues;
@@ -2914,7 +2933,7 @@ begin
   PrjTree.BeginUpdate;
   PrjTree.Items.Clear;
 
-  t:=PrjTree.Items.AddChild(nil, IFTHEN(SBAPrj.Modified,'*'+SBAPrj.Name,SBAPrj.Name));
+  t:=PrjTree.Items.AddChild(nil,SBAPrj.Name);
   PrjTree.Items.AddChild(t, 'Top').StateIndex:=2;
   PrjTree.Items.AddChild(t, 'SBAcfg').StateIndex:=2;
   PrjTree.Items.AddChild(t, 'SBActrlr').StateIndex:=2;
@@ -2933,6 +2952,7 @@ begin
 
   PrjTree.FullExpand;
   PrjTree.EndUpdate;
+  PrjGroupBox.Caption:=IFTHEN(SBAPrj.Modified,'Project Modified','Project Info');
 end;
 
 procedure TMainForm.AddIPCoresToTree(t:TTreeNode;cl:TStrings);
@@ -2960,7 +2980,7 @@ begin
         'Packages'  :c.StateIndex:=3;
         else c.StateIndex:=5;
       end;
-      l:=CoreGetReq(s);
+      l:=SBAIpCore.GetReq(s);
       AddIPCoresToTree(c,l);
       if assigned(l) then freeandnil(l);
     end;
@@ -2973,7 +2993,7 @@ var
   s: string;
   i: integer;
 begin
-  l:=FindAllFiles(SBAPrj.location+'user');
+  l:=FindAllFiles(SBAPrj.location+CPrjUser);
   for s in l do if cl.IndexOfName(ExtractFileName(s))=-1 then
       PrjTree.Items.AddChild(t, ExtractFileName(s)).StateIndex:=5;
   if cl.Count>0 then for i:=0 to cl.Count-1 do
@@ -3091,16 +3111,16 @@ begin
   LoadAnnouncement;
 end;
 
-function TMainForm.IsShortCut(var Message: TLMKey): Boolean;
-var
-wnd: HWND;
-begin
-//wnd:= GetLastactivePopup( application.handle );
-//if (wnd <>0) and (wnd <>application.handle) then
-//result := false
-//else
-result := inherited IsShortcut( Message );
-end;
+//function TMainForm.IsShortCut(var Message: TLMKey): Boolean;
+//var
+//wnd: HWND;
+//begin
+////wnd:= GetLastactivePopup( application.handle );
+////if (wnd <>0) and (wnd <>application.handle) then
+////result := false
+////else
+//result := inherited IsShortcut( Message );
+//end;
 
 end.
 

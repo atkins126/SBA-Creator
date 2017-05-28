@@ -440,14 +440,16 @@ begin
          KeyComp('string')
       then fTokenID := tkIeee;
       //SBA
-      if KeyComp('sbaconfig') or
+      if KeyComp('sbacall') or
+         KeyComp('sbaconfig') or
+         KeyComp('sbainte') or
+         KeyComp('sbajump') or
          KeyComp('sbapackage') or
          KeyComp('sbaread') or
-         KeyComp('sbawrite') or
-         KeyComp('sbacall') or
          KeyComp('sbaret') or
-         KeyComp('sbajump') or
-         KeyComp('sbawait')
+         KeyComp('sbareti') or
+         KeyComp('sbawait') or
+         KeyComp('sbawrite')
       then fTokenID := tkSBA;
     end;
     'T':begin

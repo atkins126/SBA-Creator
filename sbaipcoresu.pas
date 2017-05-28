@@ -9,37 +9,63 @@ uses
   Classes, SysUtils, Dialogs, fileutil, LazFileUtils, strutils, math,
   IniFiles;
 
-function CoreGetReq(const f: string): TStringList;
-function IPCoreData(ipname,instance: String; IP,IPS,STL,AML,DCL:TStrings; AM:integer):integer;
-procedure CopyIPCoreFiles(cl:TStrings; Destination:String);
+const
+  cIPCores='IPCores';
+  cIpPackages='Packages';
+  cIpUserFiles='UserFiles';
+
+type
+
+  { TSBAIpCore }
+
+  TSBAIpCore=class(TObject)
+  public
+    class function GetReq(const id: string):TStringList; static;
+    class function FormatData(ipname,instance: String; IP,IPS,STL,AML,DCL:TStrings; AM:integer):integer; static;
+    class function GetFiles(const c:string):String; static;
+  end;
+
+var
+  SBAIpCore:TSBAIpcore;
+
+  function isIPCore(const f:string):boolean;
 
 implementation
 
 uses DebugFormU, ConfigFormU;
 
-function CoreGetReq(const f: string): TStringList;
+function isIPCore(const f:string):boolean;
+var n:string;
+begin
+  n:=ExtractFileNameOnly(f);
+  result:=FileExists(LibraryDir+n+PathDelim+n+'.ini');
+end;
+
+class function TSBAIpCore.GetReq(const id: string): TStringList;
+//Extrae los requerimientos del núcleo "id" y los coloca en una lista
+//ordenada: id=tipo
 var
   ini: TIniFile;
   r,n:string;
   k,l: TStringList;
 begin
-  n:=LibraryDir+f+PathDelim+f+'.ini';
+  n:=LibraryDir+id+PathDelim+id+'.ini';
   l:=TStringList.Create;
   if not FileExists(n) then
   begin
-    Info('CoreGetReq','Core '+n+' File not found');
+    Info('GetReq','Core '+n+' File not found');
     result:=l;  // Return empty list
     exit;
   end;
   k:=TStringList.Create;
   try
     ini:=TIniFile.Create(n);
-    k.DelimitedText:=ini.ReadString('REQUIREMENTS', 'IPCores', '');
-    for r in k do l.Append(r+'=IPCores');
-    k.DelimitedText:=ini.ReadString('REQUIREMENTS', 'Packages', '');
-    for r in k do l.Append(r+'=Packages');
-    k.DelimitedText:=ini.ReadString('REQUIREMENTS', 'UserFiles', '');
-    for r in k do l.Append(r+'=UserFiles');
+    k.DelimitedText:=ini.ReadString('REQUIREMENTS', cIpPackages, '');
+    for r in k do l.Append(r+'='+cIpPackages);
+    k.DelimitedText:=ini.ReadString('REQUIREMENTS', cIpUserFiles, '');
+    for r in k do l.Append(r+'='+cIpUserFiles);
+    k.DelimitedText:=ini.ReadString('REQUIREMENTS', cIpCores, '');
+    for r in k do l.Append(r+'='+cIpCores);
   finally
     if assigned(k) then FreeAndNil(k);
     if assigned(ini) then FreeAndNil(ini);
@@ -47,7 +73,8 @@ begin
   Result:=l;
 end;
 
-function IPCoreData(ipname,instance: String; IP,IPS,STL,AML,DCL:TStrings; AM:integer):integer;
+class function TSBAIpCore.FormatData(ipname, instance: String; IP, IPS, STL,
+  AML, DCL: TStrings; AM: integer): integer;
 // ipname: name of the ipcore
 // IP: instance of the ipcore
 // IPS: additionals signals
@@ -116,7 +143,7 @@ begin
     if INT then   IP.add('    INT'+f+'_O => INT_'+instance+',');
     IP.add('    -------------');
     if IL.Count>0 then for i:=0 to IL.Count-1 do
-      IP.add(Format('    %:-8s=> %s',[IL.names[i],IL.ValueFromIndex[i]])+
+      IP.add(Format('    %:-6s=> %s',[IL.names[i],IL.ValueFromIndex[i]])+
       IfThen(i<IL.Count-1,','));
     IP.add('  );');
     IP.add('');
@@ -131,7 +158,7 @@ begin
       IP.add('');
       IPS.add(Format('  Signal %:-11s: DATA_type;',['DAT_'+instance]));
     end;
-    if INT then IPS.add(Format('  Signal %:-11s: DATA_type;',['INT_'+instance]));
+    if INT then IPS.add(Format('  Signal %:-11s: std_logic;',['INT_'+instance]));
     if STB or (DOL>0) then STL.add(Format('  Constant %:-11s: integer := %d;',['STB_'+instance,STL.count]));
     if SL.Count>0 then for i:=0 to SL.Count-1 do
       IPS.add(Format('  Signal %:-11s: %s;',[SL.names[i],SL.ValueFromIndex[i]]));
@@ -175,53 +202,65 @@ begin
   result:=AM;
 end;
 
-procedure CopyIPCoreFiles(cl:TStrings; Destination:String);
-//IPCores are copied to Destination/lib
-//Userfiles are copied to Destination/user
+class function TSBAIpCore.GetFiles(const c:string): String;
+//Colecta todos los archivos que forman parte del path/núcleo incluyendo
+//sus requerimientos en una lista hasta el nivel 10 en forma recursiva
 var
-  i,j:integer;
-  r,s,v,loclib,locuser:string;
-  l:TStringList;
-begin
-  if cl.Count=0 then exit;
-  loclib:=Destination+'lib'+PathDelim;
-  locuser:=Destination+'user'+PathDelim;
-  for i:=0 to cl.Count-1 do
-  begin
-    v:=cl[i];
-    s:=Copy2SymbDel(v,'=');
-    if not fileExists(LibraryDir+s+PathDelim+s+'.ini') then
-    begin
-      ShowMessage('The IP Core file: '+LibraryDir+S+' was not found.');
-      exit;
-    end else if (v<>'UserFiles') and not FileExists(loclib+s+'.vhd') then
-    begin
-      infoln('Copiando: '+s+'.vhd');  //Copy IPCore
-      CopyFile(LibraryDir+s+PathDelim+s+'.vhd',loclib+s+'.vhd');
-      if LibAsReadOnly then FileSetAttr(loclib+s+'.vhd',faReadOnly);
+  l,m:TStringList;
+  level:integer;
+  path:string;
+  i:integer;
+  s:string;
 
-      l:=CoreGetReq(s);
-      for j:=0 to l.Count-1 do
-      begin
-        v:=l[j];
-        r:=Copy2SymbDel(v,'=');
-        if FileExists(LibraryDir+s+PathDelim+r+'.vhd') then
-        begin
-          infoln('Copiando: '+r+'.vhd'); //Copy Requirements
-          if (v<>'UserFiles') then
-          begin
-            CopyFile(LibraryDir+s+PathDelim+r+'.vhd',loclib+r+'.vhd');
-            if LibAsReadOnly then FileSetAttr(loclib+r+'.vhd',faReadOnly);
-          end else
-          begin
-            CopyFile(LibraryDir+s+PathDelim+r+'.vhd',locuser+r+'.vhd');
-          end;
-        end else CopyIPCoreFiles(l,Destination);  //If requirement is not in core folder get from lib
+  procedure GetList(list,m:TStrings; var level:integer);
+  var
+    i:integer;
+    v:string;
+    k:TStringList;
+  begin
+    if list.Count=0 then exit;
+    if level<10 then inc(level) else exit;
+
+    for i:=0 to list.Count-1 do
+    begin
+      v:=list[i];
+      v:=Copy2SymbDel(v,'=');
+      if m.IndexOfName(v)=-1 then
+      try
+        k:=GetReq(v);
+        GetList(k,m,level);
+      finally
+        if assigned(k) then FreeAndNil(k);
+        m.Add(v);
       end;
-      if assigned(l) then freeandnil(l);
     end;
+  end;
+
+begin
+  Result:='';
+  try
+    l:=TStringList.Create;
+    m:=TStringList.Create;
+    path:=ExtractFilePath(c);
+    l.add(ExtractFileNameOnly(c)); level:=0;
+    GetList(l,m,level);
+  finally
+    if assigned(l) then FreeAndNil(l);
+  end;
+  if assigned(m) then
+  begin
+    for i:=0 to m.Count-1 do
+    begin
+      if fileexists(path+m[i]+'.vhd') then
+        s:=m[i]+'.vhd'
+      else
+        s:=CreateRelativePath(LibraryDir+m[i]+PathDelim+m[i]+'.vhd',path);
+      m[i]:=s;
+    end;
+    m.Delimiter:=' ';
+    Result:=m.DelimitedText;
   end;
 end;
 
-end.
 
+end.

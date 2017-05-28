@@ -18,6 +18,7 @@ type
     Panel1: TPanel;
     procedure B_MemoClearClick(Sender: TObject);
     procedure B_MemoClpbrdCopyClick(Sender: TObject);
+    procedure FormCloseQuery(Sender: TObject; var CanClose: boolean);
   private
     { private declarations }
   public
@@ -50,7 +51,6 @@ begin
   {$IFDEF LINUX}
   DebugForm.Memo.SelStart := Length(DebugForm.Memo.Lines.Text)-1;
   {$ENDIF}
-  DebugForm.Show;
   {$ENDIF}
   result:=true;
 end;
@@ -84,7 +84,6 @@ begin
   {$IFDEF LINUX}
   DebugForm.Memo.SelStart := Length(DebugForm.Memo.Lines.Text)-1;
   {$ENDIF}
-  DebugForm.Show;
   {$ENDIF}
   result:=true;
 end;
@@ -118,6 +117,11 @@ end;
 procedure TDebugForm.B_MemoClpbrdCopyClick(Sender: TObject);
 begin
   Clipboard.AsText:=Memo.Text;
+end;
+
+procedure TDebugForm.FormCloseQuery(Sender: TObject; var CanClose: boolean);
+begin
+  CanClose:=false;
 end;
 
 end.

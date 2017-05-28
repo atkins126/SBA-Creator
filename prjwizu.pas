@@ -219,7 +219,6 @@ begin
   begin
     name:=Ed_PrjName.text;
     location:=AppendPathDelim(L_PrjFinalLoc.caption);
-    loclib:=location+'lib'+PathDelim;
     title:=Ed_Prjtitle.text;
     author:=Ed_PrjAuthor.text;
     version:=L_PrjVersion.caption;
@@ -230,7 +229,6 @@ begin
       if Cells[0, i]<>'' then ports.Append(Rows[i].CommaText);
     libcores.Assign(PrjIpCoreList.Items);
     userfiles.Assign(UserFileList.Strings);
-    modified:=true;
   end;
 end;
 
