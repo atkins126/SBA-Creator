@@ -5,24 +5,18 @@ unit MainFormU;
 interface
 
 uses
-  Classes, SysUtils, LMessages, Forms, Controls, Graphics, Dialogs, StdCtrls, Buttons,
+  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, Buttons,
   ComCtrls, AsyncProcess, ExtCtrls, Menus, ActnList, SynHighlighterSBA,
   SynHighlighterVerilog, SynHighlighterJSON, SynEditMarkupHighAll, SynEdit,
   SynEditTypes, SynEditKeyCmds, SynPluginSyncroEdit, SynHighlighterIni,
   SynCompletion, SynPluginMulticaret, FileUtil, LazFileUtils, dateutils,
   ListViewFilterEdit, ExtendedNotebook, strutils, Clipbrd, IniPropStorage, StdActns,
   BGRASpriteAnimation, uebutton, uETilePanel, versionsupportu, types, lclintf,
-  LCLType, HistoryFiles, IniFiles, WAPageControl;
+  LCLType, HistoryFiles, IniFiles, WAPageControl, EditorU;
 
 type
   thdltype=(vhdl, prg, verilog, systemverilog, ini, json, other);
   tProcessStatus=(Idle,TimeOut,SyntaxChk,Obfusct,exePlugIn);
-
-  TEditorF = record
-    FileName : String;
-    Editor : TSynEdit;
-    Page : TTabSheet;
-  end;
 
   { TMainForm }
 
@@ -65,7 +59,6 @@ type
     EditBlkUnindent: TAction;
     EditBlkIndent: TAction;
     B_SBAAdress: TBitBtn;
-    IdleTimer1: TIdleTimer;
     header_text: TImage;
     L_SBAAddress: TListBox;
     MenuItem56: TMenuItem;
@@ -197,6 +190,7 @@ type
     SynEdit1: TSynEdit;
     SynIniSyn: TSynIniSyn;
     HidenPage: TTabSheet;
+    EndProcTimer: TTimer;
     ToolButton60: TToolButton;
     UpdGuiTimer: TTimer;
     ToolButton23: TToolButton;
@@ -404,6 +398,7 @@ type
     procedure PrjTreeMouseLeave(Sender: TObject);
     procedure PrjTreeMouseMove(Sender: TObject; Shift: TShiftState; X,
       Y: Integer);
+    procedure EndProcTimerTimer(Sender: TObject);
     procedure ProjectAddUserFilesExecute(Sender: TObject);
     procedure ProjectCoresAddInstExecute(Sender: TObject);
     procedure ProjectCloseExecute(Sender: TObject);
@@ -492,6 +487,7 @@ type
     procedure OpenProject(const f:string);
     procedure OpenTreeItem(TN: TTreeNode);
     procedure Reformat(osl,nsl: Tstrings);
+    procedure RegExpKey;
     procedure ReOpenEditorFiles;
     function EditorSaveAs(EditorF: TEditorF): boolean;
     function  SaveFile(f:String; Src:TStrings):Boolean;
@@ -1218,12 +1214,7 @@ end;
 
 procedure TMainForm.IdleTimer1Timer(Sender: TObject);
 begin
-  { TODO : WorkAround En Linux el método OnTerminate no es ejecutado por lo cual se incluye la condición Running para saber si continúa la ejecución del proceso. }
-  //Si se corrije el comportamiento en Linux, se puede prescindir de la evaluación a Running
-  if (not ToolProcess.Running) and (ProcessStatus<>Idle) then
-    ToolProcessTerminate(Sender);
-  Info('IdleTimer1','DwProcess.Status is '+IFTHEN(DwProcess.Status<>dwIdle,'not')+' idle');
-  if (DwProcess.Status<>dwIdle) then DwProcess.WaitforIdle;
+
 end;
 
 procedure TMainForm.LogoImageDblClick(Sender: TObject);
@@ -1366,6 +1357,26 @@ begin
   end else begin
     FloatForm.L_CoreName.caption:='';
     FloatForm.hide;
+  end;
+end;
+
+procedure TMainForm.EndProcTimerTimer(Sender: TObject);
+var PStr:String;
+begin
+  { TODO : WorkAround En Linux el método OnTerminate no es ejecutado por lo cual se incluye la condición Running para saber si continúa la ejecución del proceso. }
+  //Si se corrije el comportamiento en Linux, se puede prescindir de la evaluación a Running
+  if (not ToolProcess.Running) and (ProcessStatus<>Idle) then
+  begin
+    {IFDEF Debug}
+      WriteStr(PStr,ProcessStatus);
+      Info('EndProcTimer','ProcessStatus is '+PStr);
+    {ENDIF}
+    ToolProcessTerminate(Sender);
+  end;
+  if (DwProcess.Status<>dwIdle) then
+  begin
+    Info('EndProcTimer','DwProcess.Status is '+IFTHEN(DwProcess.Status<>dwIdle,'not')+' idle');
+    DwProcess.WaitforIdle;
   end;
 end;
 
@@ -3039,15 +3050,70 @@ end;
 procedure TMainForm.Check;
 Var ExpDate : TDateTime;
 begin
-  ExpDate:=EncodeDate(2017,07,31);
+  ExpDate:=EncodeDate(2017,10,31);
   if CompareDate(Today,ExpDate)>0 then
   begin
-    ShowMessage('Sorry, this beta version has expired. You can download the new version from http://sba.accesus.com, thanks you for your help!');
+    ShowMessage('Sorry, this beta version has expired. You can download the new version from http://sba.accesus.com, thanks you for your support!');
     AutoUpdate;
     If Assigned(DwProcess) then FreeAndNil(DwProcess);
     halt;
   end;
 end;
+
+//procedure TMainForm.Check;
+//Var
+//  ExpDate : TDateTime;
+//  ExpKeyA,ExpKeyB:String;
+//  Y,M,D,K :integer;
+//begin
+//  ExpKeyA:=IniStor.ReadString('LibSet','');
+//  ExpKeyB:=IniStor.ReadString('LibVal','');
+//  If ExpKeyA='' then RegExpKey;
+//  K:=StrToInTDef(ExpKeyA,0)-StrToInTDef(ExpKeyB,0);
+//  if K<>-19690722 then
+//  begin
+//    ShowMessage('Error severo, desconecte todo el equipo y reinicie el sistema');
+//    halt;
+//  end;
+//  K:=StrToInTDef(ExpKeyA,0)-40030201;
+//  D:=K mod 100;
+//  M:=K mod 10000; M:=M div 100;
+//  Y:=K div 10000;
+//  ExpDate:=EncodeDate(Y,M,D);
+//  if CompareDate(Today,ExpDate)>0 then RegExpKey;
+//end;
+
+procedure TMainForm.RegExpKey;
+var
+  key:string;
+  KeyDate:TDateTime;
+  KA,KB:integer;
+begin
+  key:=PasswordBox('Reset expiration','Insert password');
+  try
+    KeyDate:=ScanDateTime('YYYYMMDD',key,1);
+  except
+    KeyDate:=Today;
+  end;
+  if DaysBetween(Today,KeyDate)=15 then
+  begin
+    KeyDate:=IncDay(Today,30);
+    key:=FormatDateTime('YYYYMMDD',KeyDate);
+    KA:=StrToInTDef(key,0)+40030201;
+    KB:=KA+19690722;
+    IniStor.WriteString('LibSet',IntToStr(KA));
+    IniStor.WriteString('LibVal',IntToStr(KB));
+    ShowMessage('Clave correcta, reinicie el programa');
+  end
+  else
+    ShowMessage('Clave errónea, reinicie el programa');
+  If Assigned(DwProcess) then FreeAndNil(DwProcess);
+  halt;
+end;
+
+
+
+
 
 procedure TMainForm.hdltypeselect(const ts: string);
 begin

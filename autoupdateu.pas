@@ -129,8 +129,9 @@ begin
     while not FileExistsUTF8(AppDir+WhatsNewFile) do
     begin
       Application.ProcessMessages;
+      sleep(100);
       Inc(CCount);
-      if cCount > 10000000 then
+      if cCount > 100000 then
         Break; // Get out of jail in case updatehm.exe fails to copy file
     end;
     //Shut down the Main app?

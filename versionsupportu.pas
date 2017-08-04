@@ -31,7 +31,7 @@ Interface
 *)
 
 Uses
-  Classes, SysUtils;
+  Classes, SysUtils, LCLVersion;
 
 Function GetFileVersion: String;
 Function GetProductVersion: String;
@@ -57,10 +57,10 @@ Implementation
 
 Uses
   resource, versiontypes, versionresource,
-  {$IFDEF CODETYPHON}
+  {$if defined(CODETYPHON) or (lcl_fullversion >= 1070000) }
   LCLPlatformDef,
-  {$ENDIF}
-  LCLVersion, InterfaceBase;
+  {$endif}
+  InterfaceBase;
 
 
 Type

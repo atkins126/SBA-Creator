@@ -274,7 +274,7 @@ begin
     'F':begin
       //vhdl
       if KeyComp('file') then fTokenID := tkKey;
-      if KeyComp('for') then begin fTokenID := tkKey; StartCodeFoldBlock(Pointer(PtrUInt(ForBlk))); end;
+      if KeyComp('for') then  fTokenID := tkKey;
       if KeyComp('function')then begin fTokenID := tkKey; FoldValidProc; end;
       //ieee
       if KeyComp('falling_edge') or
@@ -320,9 +320,9 @@ begin
       if KeyComp('label') or
          KeyComp('library') or
          KeyComp('linkage') or
-         KeyComp('literal') or
-         KeyComp('loop')
+         KeyComp('literal')
       then fTokenID := tkKey;
+      if KeyComp('loop') then begin fTokenID := tkKey; StartCodeFoldBlock(Pointer(PtrUInt(ForBlk))); end;
     end;
     'M':begin
       //vhdl

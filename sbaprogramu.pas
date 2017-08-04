@@ -5,7 +5,7 @@ unit SBAProgramU;
 interface
 
 uses
-  Dialogs, Classes, SysUtils, SBAProgContrlrU, ListViewFilterEdit, FileUtil,
+  LCLVersion, Dialogs, Classes, SysUtils, SBAProgContrlrU, ListViewFilterEdit, FileUtil,
   LazFileUtils;
 
 const
@@ -120,7 +120,7 @@ begin
   end;
 end;
 
-{$IFDEF CODETYPHON}
+{$if defined(CODETYPHON) or (lcl_fullversion >= 1070000) }
 procedure TSBAProgram.AddItemToProgramsFilter(FileIterator: TFileIterator);
 var
   Data:TListViewDataItem;

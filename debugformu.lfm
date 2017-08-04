@@ -6,6 +6,7 @@ object DebugForm: TDebugForm
   Caption = 'DebugForm'
   ClientHeight = 240
   ClientWidth = 504
+  FormStyle = fsStayOnTop
   OnCloseQuery = FormCloseQuery
   Position = poMainFormCenter
   LCLVersion = '1.6.4.0'

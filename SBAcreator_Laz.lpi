@@ -21,8 +21,8 @@
       <UseVersionInfo Value="True"/>
       <AutoIncrementBuild Value="True"/>
       <MinorVersionNr Value="3"/>
-      <RevisionNr Value="33"/>
-      <BuildNr Value="92"/>
+      <RevisionNr Value="34"/>
+      <BuildNr Value="95"/>
       <Attributes pvaPreRelease="True"/>
       <StringTable CompanyName="uE Peru" FileDescription="SBA System Creator" LegalCopyright="(c) Miguel A. Risco-Castillo" ProductVersion="Public Beta"/>
     </VersionInfo>
@@ -108,15 +108,16 @@
           </Other>
         </CompilerOptions>
       </Item3>
-      <Item4 Name="Linux x64 Release">
+      <Item4 Name="Release Linux x64">
         <CompilerOptions>
           <Version Value="11"/>
           <PathDelim Value="\"/>
           <Target>
-            <Filename Value="$Env(PRJOUT)\SBAcreator\SBAcreator"/>
+            <Filename Value="$Env(PRJOUT)\SBAcreator\Release\Linux_x86_64\SBAcreator"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
+            <Libraries Value="C:\Codetyphon\binLibraries\x86_64-linux\"/>
             <UnitOutputDirectory Value="$Env(TEMP)\lazarus\lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <CodeGeneration>
@@ -149,7 +150,7 @@
     </BuildModes>
     <PublishOptions>
       <Version Value="2"/>
-      <DestinationDirectory Value="T:\SBACreator"/>
+      <DestinationDirectory Value="T:\SBACreator\Published"/>
       <IncludeFileFilter Value="*.(pas|pp|inc|lfm|lpr|lrs|lpi|lpk|sh|xml)"/>
       <ExcludeFileFilter Value="*.(bak|ppu|o|so);*~;backup"/>
     </PublishOptions>
@@ -193,7 +194,7 @@
         <PackageName Value="LCL"/>
       </Item11>
     </RequiredPackages>
-    <Units Count="23">
+    <Units Count="24">
       <Unit0>
         <Filename Value="SBAcreator.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -333,6 +334,11 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="SBAIPCoresU"/>
       </Unit22>
+      <Unit23>
+        <Filename Value="editoru.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="EditorU"/>
+      </Unit23>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

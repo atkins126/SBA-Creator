@@ -5,7 +5,7 @@ unit LibraryFormU;
 interface
 
 uses
-  Classes, SysUtils, ListViewFilterEdit, Forms,
+  LCLVersion, Classes, SysUtils, ListViewFilterEdit, Forms,
   Controls, Graphics, Dialogs, ComCtrls, Buttons, ExtCtrls,
   FileUtil,
   LazFileUtils,
@@ -542,7 +542,7 @@ begin
   end else result:='0.0.0';
 end;
 
-{$IFDEF CODETYPHON}
+{$if defined(CODETYPHON) or (lcl_fullversion >= 1070000) }
 procedure TLibraryForm.AddItemToIPCoresFilter(FileIterator: TFileIterator);
 var
   Data:TListViewDataItem;

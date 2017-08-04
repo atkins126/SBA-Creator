@@ -5,7 +5,7 @@ unit SBASnippetU;
 interface
 
 uses
-  Dialogs, Classes, SysUtils, SBAProgContrlrU, ListViewFilterEdit,
+  LCLVersion, Dialogs, Classes, SysUtils, SBAProgContrlrU, ListViewFilterEdit,
   FileUtil, LazFileUtils;
 
 const
@@ -179,7 +179,7 @@ begin
   end;
 end;
 
-{$IFDEF CODETYPHON}
+{$if defined(CODETYPHON) or (lcl_fullversion >= 1070000) }
 procedure TSBASnippet.AddItemToSnippetsFilter(FileIterator: TFileIterator);
 var
   Data:TListViewDataItem;

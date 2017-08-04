@@ -15,7 +15,7 @@ uses
   LibraryFormU, UtilsU, sbaprogramu, exportprjformu, UScaleDPI,
 
   {$IFDEF CODETYPHON}
-  bs_controls, lz_rtticontrols, pl_bgrauecontrols
+  bs_controls, lz_rtticontrols, pl_bgrauecontrols, unit1
   {$ELSE}
   lazcontrols, runtimetypeinfocontrols, uecontrols, SBAIPCoresU
   {$ENDIF}

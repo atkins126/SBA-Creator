@@ -27,11 +27,11 @@ object MainForm: TMainForm
     Height = 655
     Top = 0
     Width = 765
-    ActivePage = SystemTab
+    ActivePage = ProgEditTab
     Align = alClient
     ParentShowHint = False
     ShowHint = True
-    TabIndex = 0
+    TabIndex = 2
     TabOrder = 0
     TabPosition = tpBottom
     OnChange = MainPagesChange
@@ -9880,13 +9880,6 @@ object MainForm: TMainForm
     left = 220
     top = 508
   end
-  object IdleTimer1: TIdleTimer
-    AutoEnabled = True
-    Interval = 2000
-    OnTimer = IdleTimer1Timer
-    left = 524
-    top = 564
-  end
   object EditorPopUp: TPopupMenu
     Images = ImageList
     left = 523
@@ -9961,6 +9954,11 @@ object MainForm: TMainForm
     Interval = 300
     OnTimer = UpdGuiTimerTimer
     left = 602
+    top = 564
+  end
+  object EndProcTimer: TTimer
+    OnTimer = EndProcTimerTimer
+    left = 528
     top = 564
   end
 end
