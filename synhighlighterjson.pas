@@ -127,6 +127,7 @@ type
     property SpaceAttri: TSynHighLighterAttributes read fSpaceAttri write fSpaceAttri;
     property SymbolAttri: TSynHighLighterAttributes read fSymbolAttri write fSymbolAttri;
     property AttribAttri: TSynHighLighterAttributes read fAttribAttri write fAttribAttri;
+    property ValueAttri: TSynHighLighterAttributes read fValueAttri write fValueAttri;
     property HLWordsList: TStringList read FHLWordsList write SetHLWordsList;
   end;
 

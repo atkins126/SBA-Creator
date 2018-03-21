@@ -3319,6 +3319,7 @@ var
           TSynJSONSyn(Hl).AttribAttri.Foreground:=StringToColor(ReadString('Editor','HighlighterAttribFg','$000080FF'));
           TSynJSONSyn(Hl).NumberAttri.Foreground:=StringToColor(ReadString('Editor','HighlighterNumberAttriFg','clRed'));
           TSynJSONSyn(Hl).IdentifierAttri.Foreground:=StringToColor(ReadString('Editor','HighlighterIdentifierFg','clWindowText'));
+          TSynJSONSyn(Hl).ValueAttri.Foreground:=StringToColor(ReadString('Editor','HighlighterIdentifierFg','clWindowText'));
         end;
         'TSynVerilogSyn': begin
           TSynVerilogSyn(Hl).CommentAttribute.Foreground:=StringToColor(ReadString('Editor','HighlighterCommentFg','clGreen'));

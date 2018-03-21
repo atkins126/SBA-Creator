@@ -8,12 +8,10 @@
       <Unit0>
         <Filename Value="SBAcreator.lpr"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
-        <EditorIndex Value="2"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="19"/>
         <CursorPos Y="51"/>
         <UsageCount Value="202"/>
-        <Loaded Value="True"/>
       </Unit0>
       <Unit1>
         <Filename Value="mainformu.pas"/>
@@ -22,8 +20,9 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="MainFormU"/>
-        <TopLine Value="1474"/>
-        <CursorPos X="16" Y="1476"/>
+        <IsVisibleTab Value="True"/>
+        <TopLine Value="3297"/>
+        <CursorPos X="29" Y="3320"/>
         <ExtraEditorCount Value="1"/>
         <ExtraEditor1>
           <EditorIndex Value="-1"/>
@@ -96,8 +95,8 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="SBAProjectU"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="539"/>
-        <CursorPos X="24" Y="544"/>
+        <TopLine Value="669"/>
+        <CursorPos X="27" Y="674"/>
         <UsageCount Value="232"/>
       </Unit8>
       <Unit9>
@@ -130,10 +129,9 @@
         <Filename Value="dwfileu.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="DwFileU"/>
-        <EditorIndex Value="1"/>
+        <EditorIndex Value="-1"/>
         <CursorPos X="21" Y="21"/>
         <UsageCount Value="202"/>
-        <Loaded Value="True"/>
       </Unit11>
       <Unit12>
         <Filename Value="debugformu.pas"/>
@@ -224,8 +222,8 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="SynHighlighterJSON"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="611"/>
-        <CursorPos X="30" Y="626"/>
+        <TopLine Value="580"/>
+        <CursorPos X="17" Y="608"/>
         <UsageCount Value="200"/>
       </Unit20>
       <Unit21>
@@ -377,9 +375,9 @@
         <Filename Value="D:\lazarus\components\synedit\synedithighlighter.pp"/>
         <UnitName Value="SynEditHighlighter"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="726"/>
-        <CursorPos Y="743"/>
-        <UsageCount Value="5"/>
+        <TopLine Value="235"/>
+        <CursorPos X="3" Y="252"/>
+        <UsageCount Value="10"/>
       </Unit39>
       <Unit40>
         <Filename Value="D:\lazarus\components\synedit\syngutter.pp"/>
@@ -417,7 +415,7 @@
     <OtherDefines Count="1">
       <Define0 Value="DEBUG"/>
     </OtherDefines>
-    <JumpHistory Count="18" HistoryIndex="17">
+    <JumpHistory Count="19" HistoryIndex="18">
       <Position1>
         <Filename Value="mainformu.pas"/>
         <Caret Line="504" Column="15" TopLine="489"/>
@@ -483,13 +481,17 @@
         <Caret Line="1476" Column="16" TopLine="1474"/>
       </Position16>
       <Position17>
-        <Filename Value="dwfileu.pas"/>
-        <Caret Line="14" Column="33" TopLine="56"/>
+        <Filename Value="mainformu.pas"/>
+        <Caret Line="1476" Column="16" TopLine="1474"/>
       </Position17>
       <Position18>
-        <Filename Value="dwfileu.pas"/>
-        <Caret Line="21" Column="21"/>
+        <Filename Value="mainformu.pas"/>
+        <Caret Line="1712" Column="11" TopLine="1709"/>
       </Position18>
+      <Position19>
+        <Filename Value="mainformu.pas"/>
+        <Caret Line="3323" Column="11" TopLine="3297"/>
+      </Position19>
     </JumpHistory>
   </ProjectSession>
   <Debugging>

@@ -668,7 +668,7 @@ end;
 
 function TSBAPrj.GetSBAverStr: string;
 begin
-  SBAVersionToStr(FSBAver);
+  Result:=SBAVersionToStr(FSBAver);
 end;
 
 function TSBAPrj.Open(f: string): boolean;
