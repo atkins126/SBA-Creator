@@ -9,7 +9,7 @@ uses
 
 type
 
-TEdType=(vhdl, prg, verilog, systemverilog, ini, json, other);
+TEdType=(vhdl, prg, verilog, systemverilog, ini, json, markdown, other);
 
 TEditorF = record
   FileName: String;
@@ -19,6 +19,8 @@ TEditorF = record
   HasError: boolean;
 end;
 
+var
+  EditorList:TFPList;
 
 implementation
 

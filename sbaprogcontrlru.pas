@@ -5,7 +5,7 @@ unit SBAProgContrlrU;
 interface
 
 uses
-  Classes, SysUtils, Math;
+  Classes, SysUtils, ComCtrls, Math;
 
 const
   cSBACtrlrSignatr='-- /SBA: Controller';
@@ -41,15 +41,15 @@ type
   public
     constructor Create;
     function DetectSBAContrlr(Src:TStrings):boolean;
-    function ExtractSBALbls(Prog, Labels: TStrings): boolean;
+    function ExtractSBALbls(Prog:TStrings; Labels:TListItems): boolean;
     function CpyUBlock(Prog,Src:TStrings;BStart,BEnd:String):boolean;
     function CpySrc2Prog(Src,Prog:TStrings):boolean;
     function CpyProgDetails(Prog,Src:TStrings):boolean;
     function CpyUSignals(Prog,Src:TStrings):boolean;
     function CpyUProcedures(Prog, Src: TStrings): boolean;
     function CpyProgUReg(Prog,Src:TStrings):boolean;
-    function GenLblandProgFormat(Prog, Labels: TStrings): boolean;
-    function CpyProgLabels(Labels,Src:TStrings):boolean;
+    function GenLblandProgFormat(Prog:TStrings; Labels:TListItems ): boolean;
+    function CpyProgLabels(Labels:TListItems;Src:TStrings):boolean;
     function CpyUserProg(Prog,Src:TStrings):boolean;
     function CpyUStatements(Prog, Src: TStrings): boolean;
     property Filename : String read FFilename write SetFilename;
@@ -72,8 +72,10 @@ begin
   end;
 end;
 
-function TSBAContrlrProg.ExtractSBALbls(Prog, Labels: TStrings): boolean;
-var i,iPos,sblock:integer;
+function TSBAContrlrProg.ExtractSBALbls(Prog: TStrings; Labels: TListItems
+  ): boolean;
+var
+  i,iPos,sblock:integer;
 begin
   Result:=false;
   Labels.Clear;
@@ -82,7 +84,7 @@ begin
   for i:=sblock to Prog.Count-1 do
   begin
     iPos := Pos(cSBALblSignatr, Prog[i]);
-    if (iPos<>0) then Labels.AddText(Copy(Prog[i],iPos+length(cSBALblSignatr),100));
+    if (iPos<>0) then Labels.Add.Caption:=Copy(Prog[i],iPos+length(cSBALblSignatr),100);
     if (pos(cSBAEndUserProg,Prog[i])<>0) then break;
   end;
   Result:=pos(cSBAEndUserProg,Prog[i])<>0;
@@ -238,14 +240,14 @@ begin
 end;
 
 // Extract Labels and complete steps numbers
-function TSBAContrlrProg.GenLblandProgFormat(Prog,Labels:TStrings):boolean;
+function TSBAContrlrProg.GenLblandProgFormat(Prog: TStrings; Labels: TListItems
+  ): boolean;
 const
   sizestep = 3;  //Number of digits for the step
 var
   i,sblock:integer;
   iPos,cnt:integer;
   s:String;
-
 begin
   Result:=false;
   Labels.Clear;
@@ -256,7 +258,7 @@ begin
   for i:=sblock to Prog.Count-1 do
   begin
     iPos := Pos(cSBALblSignatr, Prog[i]);
-    if (iPos<>0) then Labels.AddText('  constant '+Copy(Prog[i],iPos+length(cSBALblSignatr),100)+': integer := '+Format('%.*d;', [sizestep,cnt]));
+    if (iPos<>0) then Labels.Add.Caption:='  constant '+Copy(Prog[i],iPos+length(cSBALblSignatr),100)+': integer := '+Format('%.*d;', [sizestep,cnt]);
     iPos := Pos('=>', Prog[i]);
     if (iPos=1) then
     begin
@@ -271,7 +273,8 @@ begin
 end;
 
 // Copy program labels
-function TSBAContrlrProg.CpyProgLabels(Labels, Src: TStrings): boolean;
+function TSBAContrlrProg.CpyProgLabels(Labels: TListItems; Src: TStrings
+  ): boolean;
 var i,iPos:integer;
 begin
   Result:=false;
@@ -280,7 +283,7 @@ begin
   Inc(iPos);
   while (pos(cSBAEndProgLabels,Src[iPos])=0) and (Src.Count>iPos) do Src.Delete(iPos);
   if (pos(cSBAEndProgLabels,Src[iPos])=0) then exit;
-  For i:=Labels.Count-1 downto 0 do Src.Insert(iPos,Labels[i]);
+  For i:=Labels.Count-1 downto 0 do Src.Insert(iPos,Labels[i].Caption);
   iPos:=GetPosList(cSBASTPTypedef,Src);
   infoln(iPos);
   if iPos<>-1 then Src[iPos]:='  subtype STP_type is integer range 0 to '+inttostr(STPCnt)+';';

@@ -97,6 +97,7 @@ type
     procedure Ed_TopInterfaceExit(Sender: TObject);
     procedure Ed_TopInterfacePrepareCanvas(sender: TObject; aCol,
       aRow: Integer; aState: TGridDrawState);
+    procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure InsertRowClick(Sender: TObject);
     procedure LibIpCoreListDblClick(Sender: TObject);
@@ -133,6 +134,7 @@ implementation
 
 uses ConfigFormU, UtilsU, DebugFormU, FloatFormU;
 
+var isClosing:boolean=false;
 
 { TprjWizForm }
 
@@ -163,12 +165,10 @@ begin
   end;
 end;
 
-
-
-
 procedure TprjWizForm.PageBeforeShow(ASender: TObject; ANewPage: TPage;
   ANewIndex: Integer);
 begin
+  if IsClosing then exit;
   case ANewIndex of
   0://if ANewPage=StartPage then
   begin
@@ -222,6 +222,7 @@ begin
     title:=Ed_Prjtitle.text;
     author:=Ed_PrjAuthor.text;
     version:=L_PrjVersion.caption;
+    sbaver:=SBAVersion;
     date:=Ed_Date.text;
     description:=Ed_Description.text;
     ports.Clear;
@@ -244,6 +245,7 @@ begin
      'Title: '+Prj.title+LineEnding+
      'Author: '+Prj.author+LineEnding+
      'Version: '+Prj.version+LineEnding+
+     'SBA Version: '+Prj.GetSBAverStr+LineEnding+
      'Date: '+Prj.date+LineEnding+
      'Description: '+Prj.description+LineEnding+
      LineEnding;
@@ -631,6 +633,12 @@ begin
   end;
 end;
 
+procedure TprjWizForm.FormDestroy(Sender: TObject);
+begin
+  Info('TprjWizForm','FormDestroy');
+  isClosing:=true;
+end;
+
 procedure TprjWizForm.FormShow(Sender: TObject);
 begin
   Ed_Prjname.SetFocus;
@@ -738,7 +746,7 @@ begin
   i:=L.GetIndexAtXY(X,Y);
   if i>=0 then
   begin
-    FloatForm.ShowCoreImage(L.Items[i]);
+    FloatForm.ShowCoreInfo(L.Items[i]);
   end else begin
     FloatForm.L_CoreName.caption:='';
     FloatForm.hide;

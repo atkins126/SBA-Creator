@@ -1,18 +1,19 @@
 object FloatForm: TFloatForm
-  Left = 1352
+  Left = 1197
   Height = 324
-  Top = 436
+  Top = 484
   Width = 320
-  BorderIcons = [biSystemMenu]
+  BorderIcons = []
   BorderStyle = bsNone
   BorderWidth = 1
   ClientHeight = 324
   ClientWidth = 320
   Color = clBlack
   FormStyle = fsSystemStayOnTop
+  OnDestroy = FormDestroy
   PopupMode = pmExplicit
   ShowInTaskBar = stNever
-  LCLVersion = '1.6.4.0'
+  LCLVersion = '1.8.0.6'
   object Panel1: TPanel
     Left = 1
     Height = 322

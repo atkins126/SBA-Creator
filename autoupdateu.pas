@@ -45,65 +45,161 @@ Const
   {$ENDIF}
 {$ENDIF}
 
-function NewVersionAvailable(DwProcess:TDwProcess):boolean;
-function GetWhatsNew(DwProcess:TDwProcess):boolean;
-function DownloadNewVersion(DwProcess:TDwProcess):boolean;
-function UpdateToNewVersion:boolean;
-function GetNewVersion:string;
-function DownloadInProgress(DwProcess:TDwProcess):boolean;
+type
+
+  { TAutoUpdate }
+  TUpdateStatus=(upStGetVersionFile,upStGetWhatsNew,upStDwNewVersion,upStUpdating,upStIdle);
+
+  TAutoUpdate=class(TObject)
+  public
+    upStatus:TUpdateStatus;
+    upStError:boolean;
+    constructor Create;
+    function NewVersionAvailable:boolean;
+    function GetWhatsNew: boolean;
+    function DownloadNewVersion:boolean;
+    function UpdateToNewVersion:boolean;
+    function GetNewVersion:string;
+    function DownloadInProgress:boolean;
+  private
+    Fupdatefolder: string;
+    procedure FileDownloaded;
+    procedure WaitForIdle;
+  published
+    property updatefolder:string read Fupdatefolder write Fupdatefolder;
+  end;
+
 
 implementation
 
 uses
   UtilsU, DebugFormU, ConfigFormU;
 
-
 var
   VersionStr:string;
 
-function NewVersionAvailable(DwProcess:TDwProcess): boolean;
+{
+  function NewVersionAvailable(DwProcess:TDwProcess): boolean;
+  var
+    f:string;
+    ini:TiniFile;
+  begin
+    result:=false;
+    f:=ConfigDir+VersionFile;
+    DwProcess.WGET(Format(SBADwUrl,[VersionFile]),f);
+    DwProcess.WaitforIdle(5);
+    if not fileexistsUTF8(f) then exit;
+    ini:=TIniFile.Create(ConfigDir+VersionFile);
+    VersionStr:=Ini.ReadString('versions','GUI','0.0.0.1');
+    if assigned(ini) then FreeAndNil(ini);
+    result:=VCmpr(GetFileVersion,VersionStr)<0;
+    InfoLn('Online version: '+VersionStr);
+    InfoLn(result);
+  end;
+
+  function GetWhatsNew(DwProcess:TDwProcess):boolean;
+  var
+    f:String;
+  begin
+    f:=ConfigDir+WhatsNewFile;
+    DwProcess.WGET(Format(SBADwUrl,[WhatsNewFile]),f);
+    DwProcess.WaitforIdle(5);
+    result:=fileexistsUTF8(f)
+  end;
+
+  function DownloadNewVersion(DwProcess:TDwProcess): boolean;
+  var
+    f:String;
+  begin
+    result:=false;
+    f:=ConfigDir+UpdaterZipfile;
+    DwProcess.WGET(Format(SBADwUrl,[UpdaterZipfile]),f);
+    DwProcess.WaitforIdle(60);
+    if not fileexistsUTF8(f) then exit;
+    Unzip(f,AppDir+'updates');
+    DeleteFileUTF8(f);
+    result:=true;
+  end;
+}
+
+
+procedure TAutoUpdate.FileDownloaded;
+begin
+  case upStatus of
+    upStGetVersionFile:upStatus:=upStIdle;
+    upStGetWhatsNew:upStatus:=upStIdle;
+    upStDwNewVersion:upStatus:=upStIdle;
+    upStUpdating:upStatus:=upStIdle;
+  end;
+end;
+
+procedure TAutoUpdate.WaitForIdle;
+begin
+  while upStatus<>upStIdle do Application.ProcessMessages;
+end;
+
+constructor TAutoUpdate.Create;
+begin
+  upStatus:=upStIdle;
+  upStError:=false;
+  inherited Create;
+end;
+
+function TAutoUpdate.NewVersionAvailable: boolean;
 var
   f:string;
   ini:TiniFile;
+  Dwt:TDownloadThread;
 begin
   result:=false;
   f:=ConfigDir+VersionFile;
-  DwProcess.WGET(Format(SBADwUrl,[VersionFile]),f);
-  DwProcess.WaitforIdle;
+  upStatus:=upStGetVersionFile;
+  DwT:=TDownloadThread.create(Format(SBADwUrl,[VersionFile]),f);
+  DwT.OnDownloaded:=@FileDownloaded;
+  DwT.start;
+  WaitForIdle;
   if not fileexistsUTF8(f) then exit;
-  ini:=TIniFile.Create(ConfigDir+VersionFile);
+  ini:=TIniFile.Create(f);
   VersionStr:=Ini.ReadString('versions','GUI','0.0.0.1');
   if assigned(ini) then FreeAndNil(ini);
   result:=VCmpr(GetFileVersion,VersionStr)<0;
-  InfoLn('Online version: '+VersionStr);
-  InfoLn(result);
+  Info('TAutoUpdate','Online version: '+VersionStr);
+  Info('TAutoUpdate.NewVersionAvailable',result);
 end;
 
-function GetWhatsNew(DwProcess:TDwProcess):boolean;
+function TAutoUpdate.GetWhatsNew:boolean;
 var
   f:String;
+  Dwt:TDownloadThread;
 begin
   f:=ConfigDir+WhatsNewFile;
-  DwProcess.WGET(Format(SBADwUrl,[WhatsNewFile]),f);
-  DwProcess.WaitforIdle;
+  upStatus:=upStGetWhatsNew;
+  DwT:=TDownloadThread.create(Format(SBADwUrl,[WhatsNewFile]),f);
+  DwT.OnDownloaded:=@FileDownloaded;
+  DwT.start;
+  WaitForIdle;
   result:=fileexistsUTF8(f)
 end;
 
-function DownloadNewVersion(DwProcess:TDwProcess): boolean;
+function TAutoUpdate.DownloadNewVersion: boolean;
 var
   f:String;
+  Dwt:TDownloadThread;
 begin
   result:=false;
   f:=ConfigDir+UpdaterZipfile;
-  DwProcess.WGET(Format(SBADwUrl,[UpdaterZipfile]),f);
-  DwProcess.WaitforIdle;
+  upStatus:=upStDwNewVersion;
+  DwT:=TDownloadThread.create(Format(SBADwUrl,[UpdaterZipfile]),f);
+  DwT.OnDownloaded:=@FileDownloaded;
+  DwT.start;
+  WaitForIdle;
   if not fileexistsUTF8(f) then exit;
   Unzip(f,AppDir+'updates');
   DeleteFileUTF8(f);
   result:=true;
 end;
 
-function UpdateToNewVersion: boolean;
+function TAutoUpdate.UpdateToNewVersion: boolean;
 var
   UpdateProcess: TAsyncProcess;
   cCount: cardinal;
@@ -142,14 +238,14 @@ begin
   Result := True;
 end;
 
-function GetNewVersion: string;
+function TAutoUpdate.GetNewVersion: string;
 begin
   result:=VersionStr;
 end;
 
-function DownloadInProgress(DwProcess:TDwProcess): boolean;
+function TAutoUpdate.DownloadInProgress: boolean;
 begin
-  result:=(DwProcess.Status=dwDownloading) and DwProcess.Running;
+  result:=(upStatus<>upStIdle);
   Info('DownloadInProgress',IFTHEN(result,'Is','Is not')+' downloading');
 end;
 

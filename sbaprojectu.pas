@@ -15,7 +15,8 @@ const
   cSBAPrjExt='.sba';
   cSBATop='Top.vhd';
   cSBAcfg='SBAcfg.vhd';
-  cSBAdcdr='SBAdcdr.vhd';
+  cSBAdcdr='SBAdcdr.vhd'; // SBA v1.1
+  cSBAmux='SBAmux.vhd';   // SBA v1.2
   cSBActrlr='SBActrlr.vhd';
   cSBApkg='SBApkg.vhd';
   cSyscon='Syscon.vhd';
@@ -33,6 +34,7 @@ const
   cPrjIpCSgnls='%ipcoressignals%';
   cPrjSTB='%stblines%';
   cPrjAddress='%addressmap%';
+  cPrjMux='%mux%';        // SBA v1.2
   cPrjDcdr='%dcdr%';
 
 type
@@ -51,7 +53,6 @@ type
     Fdescription: string;
     Fexplibfiles: boolean;
     Fexpmonolithic: boolean;
-    Fexportpath: string;
     Fexpuserfiles: boolean;
     Flocation: string;
     Floclib: string;
@@ -60,6 +61,7 @@ type
     Fname: string;
     Ftitle: string;
     Fversion: string;
+    FSBAver: integer;
     procedure CopyIPCoreFiles(cl: TStrings);
     procedure FillRequeriments(list, m: TStrings; var level:integer);
     procedure Setauthor(AValue: string);
@@ -67,13 +69,14 @@ type
     procedure Setdescription(AValue: string);
     procedure Setexplibfiles(AValue: boolean);
     procedure Setexpmonolithic(AValue: boolean);
-    procedure Setexportpath(AValue: string);
     procedure Setexpuserfiles(AValue: boolean);
     procedure Setlocation(AValue: string);
     procedure SetModified(AValue: boolean);
     procedure Setname(AValue: string);
     procedure Settitle(AValue: string);
     procedure Setversion(AValue: string);
+    procedure SetSBAversion(AValue: integer);
+    procedure SetSBAversion(AValue: string);
   public
     function Open(f:string):boolean;
     function Fill(Data: string): boolean;
@@ -82,8 +85,8 @@ type
     function CustomizeFiles:boolean;
     function SaveAs(f: String):boolean;
     function Save:boolean;
-    function PrjExport:boolean;
-    procedure LoadIPData(ipname: String; IP,IPS,STL,AML,DCL:TStrings);
+    function PrjExport(ExportPath: string): boolean;
+    procedure LoadIPData(ipname: String; IP,IPS,STL,AML,DCL,MXL:TStrings);
     function GetConfigConst(sl: TStrings): string;
     function EditLib:boolean;
     function RemoveCore(c:string):boolean;
@@ -94,8 +97,8 @@ type
     function GetUserFilePath(f:string):string;
     function ListAllPrjFiles(vhdonly: boolean=true): tstringlist;
     function GetAllFileNames(dir: string; vhdonly: boolean=true): string;
+    function GetSBAverStr:string;
   published
-    property exportpath:string read Fexportpath write Setexportpath;
     property location:string read Flocation write Setlocation;
     property loclib:string read Floclib;
     property locuser:string read Flocuser;
@@ -107,6 +110,7 @@ type
     property title:string read Ftitle write Settitle;
     property author:string read Fauthor write Setauthor;
     property version:string read Fversion write Setversion;
+    property SBAver:integer read FSBAver write SetSBAversion;
     property date:string read Fdate write Setdate;
     property description:string read Fdescription write Setdescription;
   end;
@@ -114,23 +118,26 @@ type
 var
   SBAPrj:TSBAPrj=nil;
 
-
 implementation
 
 uses SBAIPCoresU, DebugFormU, ConfigFormU, CoresPrjEdFormU, UtilsU;
 
 var AM:integer; //Address Map pointer
 
+
+
 { TSBAPrj }
+
 
 constructor TSBAPrj.Create;
 begin
   inherited Create;
   Fname:='';
-  Fexportpath:='';
   FLocation:='';
   Floclib:='';
   Flocuser:='';
+  Fversion:='0.1.1';
+  FSBAver:=SBAversion;
   Fmodified:=false;
   Fexpmonolithic:=false;
   Fexplibfiles:=true;
@@ -176,6 +183,10 @@ begin
       Ftitle:=J.FindPath('title').AsString;
       Fauthor:=J.FindPath('author').AsString;
       Fversion:=J.FindPath('version').AsString;
+      if J.FindPath('sbaversion')<>nil then
+        SetSBAversion(J.FindPath('sbaversion').AsString)
+      else
+        SetSBAVersion(0);
       Fdate:=J.FindPath('date').AsString;
       Fdescription:=J.FindPath('description').AsString;
       if not J.FindPath('interface').IsNull then
@@ -222,7 +233,6 @@ begin
         exit;
       end;
     end;
-    if J.FindPath('exportpath')=nil then Fexportpath:='' else Fexportpath:=AppendPathDelim(TrimFilename(J.FindPath('exportpath').AsString));
     if J.FindPath('expmonolithic')=nil then Fexpmonolithic:=false else Fexpmonolithic:=J.FindPath('expmonolithic').AsBoolean;
     if J.FindPath('explibfiles')=nil then Fexplibfiles:=true else Fexplibfiles:=J.FindPath('explibfiles').AsBoolean;
     if J.FindPath('expuserfiles')=nil then Fexpuserfiles:=true else Fexpuserfiles:=J.FindPath('expuserfiles').AsBoolean;
@@ -242,9 +252,9 @@ begin
             '"title": "'+Ftitle+'",'#10+
             '"author": "'+Fauthor+'",'#10+
             '"version": "'+Fversion+'",'#10+
+            '"sbaversion": "'+GetSBAverStr+'",'#10+
             '"date": "'+Fdate+'",'#10+
             '"description": "'+Fdescription+'",'#10+
-            '"exportpath": "'+Fexportpath+'",'#10+
             '"expmonolithic": '+IfThen(Fexpmonolithic,'true','false')+','#10+
             '"explibfiles": '+IfThen(Fexplibfiles,'true','false')+','#10+
             '"expuserfiles": '+IfThen(Fexpuserfiles,'true','false');
@@ -344,7 +354,10 @@ begin
       l.add(userfiles.ValueFromIndex[i]+userfiles.names[i]);
   if assigned(m) then FreeAndNil(m);
   l.add(Flocation+Fname+'_'+cSBAcfg);
-  l.add(Flocation+Fname+'_'+cSBAdcdr);
+  case SBAversion of
+    0 : l.add(Flocation+Fname+'_'+cSBAdcdr);
+    1 : l.add(Flocation+Fname+'_'+cSBAmux);
+  end;
   l.add(Flocation+Fname+'_'+cSBActrlr);
   l.add(Flocation+Fname+'_'+cSBATop);
   Result:=l
@@ -386,7 +399,10 @@ begin
     Save;
     CopyFile(SBAbaseDir+cSBATop,Flocation+Fname+'_'+cSBATop);
     CopyFile(SBAbaseDir+cSBAcfg,Flocation+Fname+'_'+cSBAcfg);
-    CopyFile(SBAbaseDir+cSBAdcdr,Flocation+Fname+'_'+cSBAdcdr);
+    case SBAversion of
+      0 : CopyFile(SBAbaseDir+cSBAdcdr,Flocation+Fname+'_'+cSBAdcdr);
+      1 : CopyFile(SBAbaseDir+cSBAmux,Flocation+Fname+'_'+cSBAmux);
+    end;
     CopyFile(SBAbaseDir+cSBActrlr,Flocation+Fname+'_'+cSBActrlr);
     CreateDir(FLocLib);
     CopyFile(SBAbaseDir+cSBApkg,FLocLib+cSBApkg);
@@ -413,7 +429,7 @@ end;
 function TSBAPrj.CustomizeFiles: boolean;
 var
   S:String;
-  FL,SL,PL,IP,IPS,STL,AML,DCL:TStringList;
+  FL,SL,PL,IP,IPS,STL,AML,DCL,MXL:TStringList;
   i:integer;
 begin
   result:=false;
@@ -426,8 +442,9 @@ begin
     STL:=TStringList.Create;
     AML:=TStringList.Create;
     DCL:=TStringList.Create;
+    MXL:=TStringList.Create;
     AM:=0;
-    for i:=0 to libcores.Count-1 do LoadIPData(libcores[i],IP,IPS,STL,AML,DCL);
+    for i:=0 to libcores.Count-1 do LoadIPData(libcores[i],IP,IPS,STL,AML,DCL,MXL);
 { TODO : en el archivo json están definidos los puertos agregados al interfaz del top provenientes de los IP Core, pero sería mas legible agregar los puertos en forma posterior y agregar un comentario al inicio de la definición de cada puerto para separarlos: -- DEMO interface, -- GPIO1 interface, -- Video1 interface, etc. }
     for i:=0 to ports.count-1 do
     begin
@@ -441,7 +458,10 @@ begin
     end;
     FL.Add(Flocation+Fname+'_'+cSBATop);
     FL.Add(Flocation+Fname+'_'+cSBAcfg);
-    FL.Add(Flocation+Fname+'_'+cSBAdcdr);
+    case SBAversion of
+      0 : FL.Add(Flocation+Fname+'_'+cSBAdcdr);
+      1 : FL.Add(Flocation+Fname+'_'+cSBAmux);
+    end;
     FL.Add(Flocation+Fname+'_'+cSBActrlr);
     for i:=0 to FL.Count-1 do
     begin
@@ -465,12 +485,14 @@ begin
         end;
         2:begin //SBAdcdr
           SL.text:=StringReplace(SL.text, cPrjDcdr, DCL.text, []);
+          SL.text:=StringReplace(SL.text, cPrjmux, MXL.text, []);
         end;
       end;
       SL.SaveToFile(FL[i]);
     end;
     result:=true;
   finally
+    if assigned(MXL) then FreeAndNil(DCL);
     if assigned(DCL) then FreeAndNil(DCL);
     if assigned(AML) then FreeAndNil(AML);
     if assigned(STL) then FreeAndNil(STL);
@@ -494,9 +516,10 @@ begin
   result:=false;
 end;
 
-procedure TSBAPrj.LoadIPData(ipname: String; IP,IPS,STL,AML,DCL:TStrings);
+procedure TSBAPrj.LoadIPData(ipname: String; IP, IPS, STL, AML, DCL,
+  MXL: TStrings);
 begin
-  AM:=SBAIpCore.FormatData(ipname,ipname,IP,IPS,STL,AML,DCL,AM);
+  AM:=SBAIpCore.FormatData(ipname,ipname,IP,IPS,STL,AML,DCL,MXL,AM);
 end;
 
 function TSBAPrj.GetConfigConst(sl:TStrings): string;
@@ -587,13 +610,6 @@ begin
   FModified:=true;
 end;
 
-procedure TSBAPrj.Setexportpath(AValue: string);
-begin
-  if Fexportpath=AValue then Exit;
-  Fexportpath:=AValue;
-  FModified:=true;
-end;
-
 procedure TSBAPrj.Setexpuserfiles(AValue: boolean);
 begin
   if Fexpuserfiles=AValue then Exit;
@@ -635,6 +651,24 @@ begin
   if Fversion=AValue then Exit;
   Fversion:=AValue;
   FModified:=true;
+end;
+
+procedure TSBAPrj.SetSBAversion(AValue: integer);
+begin
+  if FSBAver=AValue then Exit;
+  FSBAver:=AValue;
+  SBAVersion:=AValue;
+  FModified:=true;
+end;
+
+procedure TSBAPrj.SetSBAversion(AValue: string);
+begin
+  SetSBAversion(StrToSBAVersion(AValue));
+end;
+
+function TSBAPrj.GetSBAverStr: string;
+begin
+  SBAVersionToStr(FSBAver);
 end;
 
 function TSBAPrj.Open(f: string): boolean;
@@ -718,16 +752,16 @@ begin
   result:=SaveAs(Flocation+Fname+cSBAPrjExt);
 end;
 
-function TSBAPrj.PrjExport: boolean;
+function TSBAPrj.PrjExport(ExportPath:string): boolean;
 var
   R,S:TStringList;
   T:String;
 begin
   { TODO : Verificar que se exportan los requerimientos de los IPCores y los archivos de usuario }
   result:=false;
-  if not directoryexists(FExportPath) then
+  if not directoryexists(ExportPath) then
   begin
-    ShowMessage('The Project export path: '+FExportPath+'do not exists');
+    ShowMessage('The Project export path: '+ExportPath+'do not exists');
     exit;
   end;
   if Fexpmonolithic then
@@ -738,7 +772,10 @@ begin
     S.AddStrings(R);
     R.LoadFromFile(Flocation+Fname+'_'+cSBAcfg);
     S.AddStrings(R);
-    R.LoadFromFile(Flocation+Fname+'_'+cSBAdcdr);
+    case SBAversion of
+      0 : R.LoadFromFile(Flocation+Fname+'_'+cSBAdcdr);
+      1 : R.LoadFromFile(Flocation+Fname+'_'+cSBAmux);
+    end;
     S.AddStrings(R);
     R.LoadFromFile(Flocation+Fname+'_'+cSBActrlr);
     S.AddStrings(R);
@@ -757,17 +794,20 @@ begin
       end;
     end;
     R.Free;
-    S.SaveToFile(FExportPath+Fname+'.vhd');
+    S.SaveToFile(ExportPath+Fname+'.vhd');
     S.Free;
-    ShowMessage('Monolithic Project file was create: '+FExportPath+Fname+'.vhd');
+    ShowMessage('Monolithic Project file was create: '+ExportPath+Fname+'.vhd');
   end else
   begin
-    CopyFile(Flocation+Fname+'_'+cSBATop,FExportPath+Fname+'_'+cSBATop,true);
-    CopyFile(Flocation+Fname+'_'+cSBAcfg,FExportPath+Fname+'_'+cSBAcfg,true);
-    CopyFile(Flocation+Fname+'_'+cSBAdcdr,FExportPath+Fname+'_'+cSBAdcdr,true);
-    CopyFile(Flocation+Fname+'_'+cSBActrlr,FExportPath+Fname+'_'+cSBActrlr,true);
-    if Fexplibfiles then CopyDirTree(Floclib,Fexportpath+cPrjLib+PathDelim,[cffOverwriteFile,cffCreateDestDirectory,cffPreserveTime]);
-    if Fexpuserfiles then CopyDirTree(Flocuser,Fexportpath+cPrjUser+PathDelim,[cffOverwriteFile,cffCreateDestDirectory,cffPreserveTime]);
+    CopyFile(Flocation+Fname+'_'+cSBATop,ExportPath+Fname+'_'+cSBATop,true);
+    CopyFile(Flocation+Fname+'_'+cSBAcfg,ExportPath+Fname+'_'+cSBAcfg,true);
+    case SBAversion of
+      0 : CopyFile(Flocation+Fname+'_'+cSBAdcdr,ExportPath+Fname+'_'+cSBAdcdr,true);
+      1 : CopyFile(Flocation+Fname+'_'+cSBAmux,ExportPath+Fname+'_'+cSBAmux,true);
+    end;
+    CopyFile(Flocation+Fname+'_'+cSBActrlr,ExportPath+Fname+'_'+cSBActrlr,true);
+    if Fexplibfiles then CopyDirTree(Floclib,ExportPath+cPrjLib+PathDelim,[cffOverwriteFile,cffCreateDestDirectory,cffPreserveTime]);
+    if Fexpuserfiles then CopyDirTree(Flocuser,ExportPath+cPrjUser+PathDelim,[cffOverwriteFile,cffCreateDestDirectory,cffPreserveTime]);
   end;
 end;
 

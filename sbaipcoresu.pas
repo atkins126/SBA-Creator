@@ -21,7 +21,7 @@ type
   TSBAIpCore=class(TObject)
   public
     class function GetReq(const id: string):TStringList; static;
-    class function FormatData(ipname,instance: String; IP,IPS,STL,AML,DCL:TStrings; AM:integer):integer; static;
+    class function FormatData(ipname,instance: String; IP,IPS,STL,AML,DCL,MXL:TStrings; AM:integer):integer; static;
     class function GetFiles(const c:string):String; static;
   end;
 
@@ -74,7 +74,7 @@ begin
 end;
 
 class function TSBAIpCore.FormatData(ipname, instance: String; IP, IPS, STL,
-  AML, DCL: TStrings; AM: integer): integer;
+  AML, DCL, MXL: TStrings; AM: integer): integer;
 // ipname: name of the ipcore
 // IP: instance of the ipcore
 // IPS: additionals signals
@@ -139,7 +139,10 @@ begin
     if ADL>0 then IP.add('    ADR'+f+'_I => ADRi,');
     if WE then    IP.add('    WE'+f+'_I  => WEi,');
     if DIL>0 then IP.add('    DAT'+f+'_I => DATOi,');
-    if DOL>0 then IP.add('    DAT'+f+'_O => DAT_'+instance+',');
+    if DOL>0 then case SBAversion of
+      0: IP.add('    DAT'+f+'_O => DAT_'+instance+',');
+      1: IP.add('    DAT'+f+'_O => ADATi(STB_'+instance+'),');
+    end;
     if INT then   IP.add('    INT'+f+'_O => INT_'+instance+',');
     IP.add('    -------------');
     if IL.Count>0 then for i:=0 to IL.Count-1 do
@@ -147,7 +150,7 @@ begin
       IfThen(i<IL.Count-1,','));
     IP.add('  );');
     IP.add('');
-    if DOL>0 then
+    if (DOL>0) and (SBAversion=0) then
     begin
       IP.add(Format('  %:sDataIntf: entity work.DataIntf',[instance]));
       IP.add('  port map(');
@@ -167,7 +170,9 @@ begin
       // AL Lista de direcciones y offsets
       // ADL Ancho del bus de direcciones
       // AM Siguiente dirección disponible en el mapa de direcciones
-      // AML y DCL salidas para el config y el decoder
+      // AML salidas para el config
+      // DCL Address decoder
+      // MXL Data mux
       j:=trunc(intpower(2,ADL));
       if (AM mod j)>0 then
       begin
@@ -189,6 +194,7 @@ begin
         end;
         AML.Add(Format('  Constant %:-11s: integer := %d;',[AL.Names[i],AM+j]));
         DCL.Add(Format('     When %-20s=> STBi <= stb(%-15s-- %-10s = %d',[f,'STB_'+instance+');',AL.Names[i],AM+j]));
+        if DOL>0 then MXL.Add(Format('     When %-20s=> DAT_O <= ADAT_I(%-15s-- %-10s = %d',[f,'STB_'+instance+');',AL.Names[i],AM+j]));
       end;
       AM:=IfThen(k=0,AM+j+1,AM+k+1);
     end;

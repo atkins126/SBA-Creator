@@ -5,12 +5,11 @@ unit LibraryFormU;
 interface
 
 uses
-  LCLVersion, Classes, SysUtils, ListViewFilterEdit, Forms,
-  Controls, Graphics, Dialogs, ComCtrls, Buttons, ExtCtrls,
-  FileUtil,
-  LazFileUtils,
-  AsyncProcess, lclintf, StdCtrls, EditBtn, IniPropStorage, Menus,
-  SBASnippetU, SBAProgramU, IniFilesUTF8;
+  LCLVersion, Classes, SysUtils, ListViewFilterEdit, Forms, Controls, Graphics,
+  Dialogs, ComCtrls, Buttons, ExtCtrls, FileUtil, LazFileUtils, SynExportHTML,
+  StrUtils, SynHighlighterPas, SynHighlighterHTML, SynHighlighterCpp, AsyncProcess,
+  lclintf, StdCtrls, EditBtn, Menus, SBASnippetU, SBAProgramU, IniFilesUTF8,
+  SynHighlighterSBA, MarkdownProcessor, MarkdownUtils;
 
 type
   tLibDwStatus=(Idle,GetBase, GetLibrary, GetPrograms, GetSnippets);
@@ -20,6 +19,8 @@ type
 
   { TLibraryForm }
   TLibraryForm = class(TForm)
+    B_OpenRepo: TBitBtn;
+    B_OpenDS: TBitBtn;
     B_AddtoLibrary: TBitBtn;
     B_AddtoPrograms: TBitBtn;
     B_AddtoSnippets: TBitBtn;
@@ -40,10 +41,10 @@ type
     GB_SBAlibrary: TGroupBox;
     GB_SBAprograms: TGroupBox;
     GB_SBAsnippets: TGroupBox;
-    IniPS: TIniPropStorage;
     IPCoreImage: TImage;
     Label1: TLabel;
     Label10: TLabel;
+    Label11: TLabel;
     Label2: TLabel;
     Label3: TLabel;
     Label4: TLabel;
@@ -53,6 +54,7 @@ type
     MenuItem1: TMenuItem;
     Panel7: TPanel;
     ItemsMenu: TPopupMenu;
+    Panel8: TPanel;
     ProgramDescription: TMemo;
     Label5: TLabel;
     Label6: TLabel;
@@ -80,9 +82,12 @@ type
     LV_IPCores: TListView;
     LV_Programs: TListView;
     SB: TStatusBar;
-    KillProcTimer: TTimer;
+    SynCppSyn1: TSynCppSyn;
+    SynExporterHTML1: TSynExporterHTML;
+    SynFreePascalSyn1: TSynFreePascalSyn;
+    SynHTMLSyn1: TSynHTMLSyn;
     UpdateRep: TTabSheet;
-    URL_IpCore: TStaticText;
+    procedure B_OpenDSClick(Sender: TObject);
     procedure B_AddtoSnippetsClick(Sender: TObject);
     procedure B_AddtoProgramsClick(Sender: TObject);
     procedure B_AddtoLibraryClick(Sender: TObject);
@@ -99,8 +104,6 @@ type
     procedure Ed_SBAsnippetsButtonClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
-    procedure IdleTimer1Timer(Sender: TObject);
-    procedure KillProcTimerTimer(Sender: TObject);
     procedure LV_IPCoresCustomDrawItem(Sender: TCustomListView;
       Item: TListItem; State: TCustomDrawState; var DefaultDraw: Boolean);
     procedure LV_IPCoresSelectItem(Sender: TObject; Item: TListItem;
@@ -119,7 +122,7 @@ type
     procedure AddItemToIPCoresFilter(FileIterator: TFileIterator);
     procedure AddItemToProgramsFilter(FileIterator: TFileIterator);
     procedure AddItemToSnippetsFilter(FileIterator: TFileIterator);
-    procedure dwTerminate(Sender: TObject);
+    procedure dwTerminate;
     function EndGet(zfile, defdir: string): boolean;
     function EndGetBase: boolean;
     procedure EndGetLibrary;
@@ -127,7 +130,8 @@ type
     procedure EndGetSnippets;
     function GetVersion(f: string): string;
     function LookupFilterItem(S: string; LV: TListViewDataList): integer;
-    function GetFile(url, f: string; status: TLibDwStatus): boolean;
+    procedure GetFile(url, f: string; status: TLibDwStatus);
+    function Md2Html(fi: string): string;
     procedure UpdateIpCoresList;
     procedure UpdateProgramsList;
     procedure UpdateSnippetsList;
@@ -137,6 +141,13 @@ type
     SBASnippet:TSBASnippet;
     SBAProgram:TSBAProgram;
     procedure UpdateLists;
+  end;
+
+  { TCodeEmiter }
+
+  TCodeEmiter = class(TBlockEmitter)
+  public
+    procedure emitBlock(out_: TStringBuilder; lines: TStringList; meta: String); override;
   end;
 
 var
@@ -152,13 +163,111 @@ uses ConfigFormU, UtilsU, DWFileU, DebugFormU;
 
 var
   LibDwStatus:TLibDwStatus=Idle;
-  DwProcess:TDwProcess=nil;
-  TempDwTerminate:TNotifyEvent;
+  URL_IpCore:String='';
+  IpCoreDatasheet:String='';
+
+const
+  CSSDecoration = '<style type="text/css">'#10+
+                  'code{'#10+
+                  '  color: #A00;'#10+
+                  '}'#10+
+                  'pre{'#10+
+                  '  background: #f4f4f4;'#10+
+                  '  border: 1px solid #ddd;'#10+
+                  '  border-left: 3px solid #f36d33;'#10+
+                  '  color: #555;'#10+
+                  '  overflow: auto;'#10+
+                  '  padding: 1em 1.5em;'#10+
+                  '  display: block;'#10+
+                  '}'#10+
+                  'pre code{'#10+
+                  '  color: inherit;'#10+
+                  '}'#10+
+                  'Blockquote{'#10+
+                  '  border-left: 3px solid #d0d0d0;'#10+
+                  '  padding-left: 0.5em;'#10+
+                  '  margin-left:1em;'#10+
+                  '}'#10+
+                  'Blockquote p{'#10+
+                  '  margin: 0;'#10+
+                  '}'#10+
+                  'table{'#10+
+                  '  border:1px solid;'#10+
+                  '  border-collapse:collapse;'#10+
+                  '}'#10+
+                  'th{'+
+                  '  padding:5px;'#10+
+                  '  background: #e0e0e0;'#10+
+                  '  border:1px solid;'#10+
+                  '}'#10+
+                  'td{'#10+
+                  '  padding:5px;'#10+
+                  '  border:1px solid;'#10+
+                  '}'#10+
+                  '</style>'#10;
+
 
 function ShowLibraryForm: TModalResult;
 begin
   LibraryForm.UpdateLists;
   result:=LibraryForm.ShowModal;
+end;
+
+{ TCodeEmiter }
+
+procedure TCodeEmiter.emitBlock(out_: TStringBuilder; lines: TStringList;
+  meta: String);
+var
+  s:string;
+
+  procedure exportlines;
+  var
+    sstream: TStringStream;
+  begin
+    LibraryForm.SynExporterHTML1.ExportAll(lines);
+    try
+      sstream:=TStringStream.Create('');
+      LibraryForm.SynExporterHTML1.SaveToStream(sstream);
+      out_.Append(sstream.DataString);
+    finally
+      if assigned(sstream) then freeandnil(sstream);
+    end;
+  end;
+
+begin
+  case meta of
+    'vhdl':
+      begin
+        LibraryForm.SynExporterHTML1.Highlighter:=TSynSBASyn.Create(LibraryForm);
+        exportlines;
+      end;
+    'html':
+      begin
+        LibraryForm.SynExporterHTML1.Highlighter:=LibraryForm.SynHTMLSyn1;
+        exportlines;
+      end;
+    'fpc','pas','pascal':
+      begin
+        LibraryForm.SynExporterHTML1.Highlighter:=LibraryForm.SynFreePascalSyn1;
+        exportlines;
+      end;
+    'cpp','c++','c':
+      begin
+        LibraryForm.SynExporterHTML1.Highlighter:=LibraryForm.SynCppSyn1;
+        exportlines;
+      end
+    else
+      begin
+        if meta='' then   out_.append('<pre><code>')
+        else out_.append('<pre><code class="'+meta+'">');
+        for s in lines do
+        begin
+          TUtils.appendValue(out_,s,0,Length(s));
+          out_.append(#10);
+        end;
+        out_.append('</code></pre>'#10);
+      end;
+  end;
 end;
 
 { TLibraryForm }
@@ -214,7 +323,7 @@ end;
 
 procedure TLibraryForm.URL_IpCoreClick(Sender: TObject);
 begin
-  OpenURL(URL_IpCore.Caption);
+  OpenURL(URL_IpCore);
 end;
 
 procedure TLibraryForm.B_SBAbaseSurfClick(Sender: TObject);
@@ -275,10 +384,9 @@ end;
 
 procedure TLibraryForm.FormCreate(Sender: TObject);
 begin
-  IniPS.IniFileName:=GetAppConfigFile(false);
   SBASnippet:=TSBASnippet.Create;
   SBAProgram:=TSBAProgram.Create;
-  DwProcess:=TDwProcess.Create(Self);
+  LibraryPages.ActivePageIndex:=0;
   {$IFDEF LINUX}
   //BUG:Workaround to correct an exception when the focus return to "update repositories" page-
   Ed_SBAbase.Enabled:=false;
@@ -287,22 +395,9 @@ end;
 
 procedure TLibraryForm.FormDestroy(Sender: TObject);
 begin
-  If Assigned(DwProcess) then FreeAndNil(DwProcess);
+  Info('TLibraryForm','FormDestroy');
   if assigned(SBASnippet) then FreeAndNil(SBASnippet);
   if assigned(SBAProgram) then FreeAndNil(SBAProgram);
-end;
-
-procedure TLibraryForm.IdleTimer1Timer(Sender: TObject);
-begin
-end;
-
-procedure TLibraryForm.KillProcTimerTimer(Sender: TObject);
-begin
-  { TODO : WorkAround En Linux el método OnTerminate no es ejecutado por lo cual se incluye la condición Running para saber si continúa la ejecución del proceso. }
-  //Si se corrije el comportamiento en Linux, se puede prescindir de la evaluación a Running
-  if not assigned(DwProcess) then exit;
-  if (not DwProcess.Running) and (DwProcess.Status<>dwIdle) then
-    DwProcess.OnTerminate(Sender);
 end;
 
 procedure TLibraryForm.LV_IPCoresCustomDrawItem(Sender: TCustomListView;
@@ -330,7 +425,7 @@ end;
 procedure TLibraryForm.LV_IPCoresSelectItem(Sender: TObject; Item: TListItem;
   Selected: Boolean);
 var
-  f:string;
+  f,path,Img:string;
   l:TListItem;
   Ini:TIniFile;
 begin
@@ -342,14 +437,17 @@ begin
   if f<>'' then
   try
     Ini:=TINIFile.Create(f);
+    Path:=ExtractFilePath(f);
     IpCoreDescription.Caption:=Ini.ReadString('MAIN','Description','');
     L_TitleIpCore.Caption:=Ini.ReadString('MAIN','Title','');
-    URL_IpCore.Caption:=Ini.ReadString('MAIN','DataSheetURL','');
+    URL_IpCore:=Ini.ReadString('MAIN','RepositoryURL','');
+    IpCoreDataSheet:=Path+Ini.ReadString('MAIN','DataSheet','readme.md');
+    Img:=Path+Ini.ReadString('MAIN','Image','image.png');
   finally
     Ini.free;
   end;
   try
-    IPCoreImage.Picture.LoadFromFile(ExtractFilePath(f)+'image.png');
+    IPCoreImage.Picture.LoadFromFile(Img);
   except
     ON E:Exception do IPCoreImage.Picture.Clear;
   end;
@@ -450,6 +548,59 @@ begin
   UpdateSnippetsList;
   LV_Snippets.Invalidate;
   B_AddtoSnippets.Enabled:=SnippetsList.IndexOf(L.Caption)=-1;
+end;
+
+function TLibraryForm.Md2Html(fi:string):string;
+var
+  md:TMarkdownProcessor=nil;
+  fo,fn:string;
+  html:TStringList;
+begin
+  result:=fi;
+  fo:=extractFilePath(fi);
+  fn:=extractFileNameOnly(fi)+'.html';
+  try
+    html := TStringList.Create;
+    md := TMarkdownProcessor.createDialect(mdCommonMark);
+    md.UnSafe := false;
+    md.config.codeBlockEmitter:=TCodeEmiter.Create;
+    fo:=IfThen(DirectoryIsWritable(fo),fo+fn,GetTempDir+fn);
+    try
+      html.Text := md.processFile(fi);
+      if html.Text<>'' then
+      begin
+        html.Text:=CSSDecoration+html.Text;
+        html.SaveToFile(fo);
+        result:=fo;
+      end;
+    except
+      ShowMessage('Can not create or process the temp html file');
+    end;
+  finally
+    if assigned(md) then md.Free;
+    if assigned(html) then html.Free;
+  end;
+end;
+
+procedure TLibraryForm.B_OpenDSClick(Sender: TObject);
+var
+  ftype:string;
+begin
+  ftype:=ExtractFileExt(IpCoreDatasheet);
+  case lowerCase(ftype) of
+    '.markdown','.mdown','.mkdn',
+    '.md','.mkd','.mdwn',
+    '.mdtxt','.mdtext','.text',
+    '.rmd':
+      begin
+        OpenURL('file://'+Md2Html(IpCoreDatasheet));
+      end;
+    '.htm','.html':OpenURL('file://'+IpCoreDatasheet);
+  else
+    OpenDocument(IpCoreDatasheet);
+  end;
+
+  //
 end;
 
 function TLibraryForm.EndGetBase:boolean;
@@ -759,28 +910,20 @@ begin
   UpdateSnippetsList
 end;
 
-function TLibraryForm.GetFile(url,f:string;status:TLibDwStatus):boolean;
+procedure TLibraryForm.GetFile(url,f:string;status:TLibDwStatus);
+var DwT:TDownloadThread;
 begin
-  result:=false;
-  if not assigned(DwProcess) then exit;
-  result:=DwProcess.WGET(url,f);
-  if result then
-  begin
-    LibDwStatus:=status;
-    { TODO : WARNING: DwProcess también es usado en AutoUpdate, debería tenerse cuidado cuando se cambia el evento }
-    TempDwTerminate:=DwProcess.OnTerminate;
-    DwProcess.OnTerminate:=@dwTerminate;
-  end;
+  DwT:=TDownloadThread.create(url,f);
+  DwT.OnDownloaded:=@dwTerminate;
+  LibDwStatus:=status;
+  DwT.start;
 end;
 
-procedure TLibraryForm.dwTerminate(Sender: TObject);
+procedure TLibraryForm.dwTerminate;
 var
   PS:TLibDwStatus;
   S:String;
 begin
-{ TODO : WARNING: DwProcess también es usado en AutoUpdate, debería tenerse cuidado cuando se cambia el evento }
-  DwProcess.OnTerminate:=TempDwTerminate;
-  DwProcess.OnTerminate(Sender);
   PS:=LibDwStatus;
   LibDwStatus:=Idle;
   case PS of

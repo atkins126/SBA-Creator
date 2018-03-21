@@ -19,6 +19,7 @@ type
     L_Description: TLabel;
     Panel1: TPanel;
     TimerShow: TTimer;
+    procedure FormDestroy(Sender: TObject);
     procedure TimerShowTimer(Sender: TObject);
   protected
     procedure CreateParams(var Params: TCreateParams); override;
@@ -27,7 +28,7 @@ type
     INI:TIniFile;
   public
     { public declarations }
-    procedure ShowCoreImage(s:string);
+    procedure ShowCoreInfo(s:string);
     procedure Start(F:TForm);
     procedure Hide;
   end;
@@ -39,11 +40,11 @@ implementation
 
 {$R *.lfm}
 
-uses ConfigFormU;
+uses ConfigFormU, DebugFormU;
 
 { TFloatForm }
 
-procedure TFloatForm.ShowCoreImage(s: string);
+procedure TFloatForm.ShowCoreInfo(s: string);
 begin
   if s=L_CoreName.caption then exit;
   L_CoreName.caption:=s;
@@ -53,10 +54,11 @@ end;
 
 procedure TFloatForm.Start(F:TForm);
 begin
+  Info('TFloatForm.Start','Parent = '+F.Name);
+  PopupParent:=nil;
+  Hide;
   PopupParent:=F;
   FormStyle:=fsSystemStayOnTop;
-  Show;
-  Close;
 end;
 
 procedure TFloatForm.Hide;
@@ -67,6 +69,7 @@ end;
 
 procedure TFloatForm.TimerShowTimer(Sender: TObject);
 begin
+  Info('TFloatForm','ShowCore= '+L_CoreName.caption);
   TimerShow.Enabled:=false;
   try
     Image.Picture.LoadFromFile(LibraryDir+L_CoreName.caption+PathDelim+'image.png');
@@ -88,6 +91,11 @@ begin
       Visible := False;
     end;
   end;
+end;
+
+procedure TFloatForm.FormDestroy(Sender: TObject);
+begin
+  Info('TFloatForm','FormDestroy');
 end;
 
 procedure TFloatForm.CreateParams(var Params: TCreateParams); // override;

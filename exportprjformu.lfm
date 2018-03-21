@@ -7,8 +7,9 @@ object ExportPrjForm: TExportPrjForm
   Caption = 'Export project files'
   ClientHeight = 233
   ClientWidth = 398
+  OnDestroy = FormDestroy
   Position = poMainFormCenter
-  LCLVersion = '1.6.4.0'
+  LCLVersion = '1.8.0.6'
   object Label3: TLabel
     Left = 8
     Height = 15

@@ -6,37 +6,52 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, LazFileUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls,
-  StdCtrls, Buttons, EditBtn, ButtonPanel;
+  StdCtrls, Buttons, EditBtn, ButtonPanel, ComCtrls;
 
 type
 
   { TConfigForm }
 
   TConfigForm = class(TForm)
+    B_LoadTheme: TBitBtn;
     ButtonPanel1: TButtonPanel;
-    CB_LibAsReadOnly: TCheckBox;
+    B_FontSelect: TSpeedButton;
+    CB_AutoOpenEdfiles: TCheckBox;
     CB_AutoOpenPrjF: TCheckBox;
     CB_CtrlAdvMode: TCheckBox;
-    CB_AutoOpenEdfiles: TCheckBox;
-    Ed_EditorFontSize: TComboBox;
+    CB_LibAsReadOnly: TCheckBox;
+    Ed_DefAuthor: TLabeledEdit;
     Ed_EditorFontName: TComboBox;
+    Ed_EditorFontSize: TComboBox;
     Ed_LibraryDir: TDirectoryEdit;
-    Ed_SnippetsDir: TDirectoryEdit;
-    Ed_ProjectsDir: TDirectoryEdit;
     Ed_ProgramsDir: TDirectoryEdit;
+    Ed_ProjectsDir: TDirectoryEdit;
+    Ed_SnippetsDir: TDirectoryEdit;
     FontDialog1: TFontDialog;
     Label1: TLabel;
     Label2: TLabel;
     Label3: TLabel;
-    Ed_DefAuthor: TLabeledEdit;
     Label4: TLabel;
     Label5: TLabel;
     Label6: TLabel;
-    B_FontSelect: TSpeedButton;
     L_ConfigDir: TLabel;
+    Notebook1: TNotebook;
+    ed_SelTheme: TRadioGroup;
+    Theme: TPage;
+    Paths: TPage;
+    Parameters: TPage;
+    Editor: TPage;
+    Panel2: TPanel;
+    Ed_SBAversion: TRadioGroup;
+    Splitter1: TSplitter;
+    TreeView1: TTreeView;
     procedure B_FontSelectClick(Sender: TObject);
+    procedure B_LoadThemeClick(Sender: TObject);
+    procedure ed_SelThemeSelectionChanged(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    procedure TreeView1Change(Sender: TObject; Node: TTreeNode);
   private
     { private declarations }
   public
@@ -57,11 +72,13 @@ const  //based in sub dirs in zip file from Github
   cSBAsnippetsZipFile='sbasnippets.zip';
   cSBARepoZipFile='/archive/master.zip';
   cSBAthemeZipFile='theme.zip';
+  cLocSBAprjparams='lprjparams.ini';
   cSBApluginsZipFile='plugins.zip';
 
 var
   ConfigForm: TConfigForm;
   AppDir,ConfigDir,LibraryDir,SnippetsDir,ProgramsDir,ProjectsDir,SBAbaseDir:string;
+  LocSBAPrjParams:string;  //Local associated Prj parameters ini file
   DefAuthor,EditorFontName:string;
   EditorFontSize:integer;
   LibAsReadOnly:Boolean;
@@ -69,10 +86,14 @@ var
   AutoOpenEdFiles:Boolean;
   CtrlAdvMode:Boolean;
   IpCoreList,SnippetsList,ProgramsList,PlugInsList:Tstringlist;
+  SBAversion:integer;
+  SelTheme:integer;
 
 function GetConfigValues:boolean;
 function SetConfigValues:boolean;
 function SetUpConfig:boolean;
+function SBAVersionToStr(v:integer):string;
+function StrToSBAVersion(s:string):integer;
 procedure UpdateLists;
 
 implementation
@@ -80,6 +101,24 @@ implementation
 uses MainFormU, SBAProgContrlrU, UtilsU, DebugFormU;
 
 {$R *.lfm}
+
+function SBAVersionToStr(v: integer): string;
+begin
+  case v of
+    0: Result:='1.1';
+    1: Result:='1.2';
+    else Result:='1.1';
+  end;
+end;
+
+function StrToSBAVersion(s:string): integer;
+begin
+  case s of
+    '1.1' : Exit(0);
+    '1.2' : Exit(1);
+    else Exit(0);
+  end;
+end;
 
 procedure UpdateLists;
 begin
@@ -89,7 +128,7 @@ begin
   GetAllFileNamesAndPaths(ConfigDir+'plugins','*.ini',PlugInsList);
 end;
 
-function SetupConfig:boolean;
+function SetUpConfig: boolean;
 begin
   result:=false;
   InfoLn('ConfigDir: '+ConfigDir);
@@ -189,6 +228,7 @@ begin
     SnippetsDir:=ReadString('SnippetsDir',ConfigDir+DefSnippetsDir+PathDelim);
     ProgramsDir:=ReadString('ProgramsDir',ConfigDir+DefProgramsDir+PathDelim);
     ProjectsDir:=ReadString('ProjectsDir',GetUserDir+DefProjectsDir+PathDelim);
+    LocSBAPrjParams:=ConfigDir+cLocSBAprjparams;
     DefAuthor:=ReadString('DefAuthor','Author');
     EditorFontName:=ReadString('EditorFontName','Courier New');
     EditorFontSize:=ReadInteger('EditorFontSize',10);
@@ -197,6 +237,8 @@ begin
     AutoOpenPrjF:=ReadBoolean('AutoOpenPrjF',true);
     AutoOpenEdFiles:=ReadBoolean('AutoOpenEdFiles',true);
     CtrlAdvMode:=ReadBoolean('CtrlAdvMode',false);
+    SBAversion:=ReadInteger('SBAversion',0);
+    SelTheme:=ReadInteger('SelTheme',0);
   end;
   result:=true;
 end;
@@ -268,13 +310,17 @@ begin
     //
     EditorFontName:=Ed_EditorFontName.Text;
     WriteString('EditorFontName',EditorFontName);
-    MainForm.SynEdit_X.Font.Name:=EditorFontName;
     //
     EditorFontSize:=StrToIntDef(Ed_EditorFontSize.Text,10);
     WriteInteger('EditorFontSize',EditorFontSize);
-    MainForm.SynEdit_X.Font.Size:=EditorFontSize;
     //
     WriteString('SBAbaseDir',SBAbaseDir);
+    //
+    SBAversion:=Ed_SBAversion.ItemIndex;
+    WriteInteger('SBAversion',SBAversion);
+    //
+    SelTheme:=Ed_SelTheme.ItemIndex;
+    WriteInteger('SelTheme',SelTheme);
   end;
   result:=true;
 end;
@@ -294,11 +340,26 @@ begin
   CB_AutoOpenEdfiles.Checked:=AutoOpenEdfiles;
   CB_CtrlAdvMode.Checked:=CtrlAdvMode;
   Ed_EditorFontName.Text:=EditorFontName;
+  Ed_SBAversion.ItemIndex:=SBAversion;
+  Ed_SelTheme.ItemIndex:=SelTheme;
+end;
+
+procedure TConfigForm.TreeView1Change(Sender: TObject; Node: TTreeNode);
+var index:Integer;
+begin
+  index:=Notebook1.Pages.IndexOf(Node.Text);
+  if index>=0 then Notebook1.PageIndex:=Index;
 end;
 
 procedure TConfigForm.FormCreate(Sender: TObject);
 begin
   Ed_EditorFontName.items.assign(screen.fonts);
+  TreeView1.Selected:=TreeView1.Items[0];
+end;
+
+procedure TConfigForm.FormDestroy(Sender: TObject);
+begin
+  Info('TConfigForm','FormDestroy');
 end;
 
 procedure TConfigForm.B_FontSelectClick(Sender: TObject);
@@ -310,6 +371,16 @@ begin
     Ed_EditorFontName.Text:=FontDialog1.Font.Name;
     Ed_EditorFontSize.Text:=IntToStr(FontDialog1.Font.Size);
   end;
+end;
+
+procedure TConfigForm.B_LoadThemeClick(Sender: TObject);
+begin
+  MainForm.LoadTheme(ConfigDir+'theme'+PathDelim);
+end;
+
+procedure TConfigForm.ed_SelThemeSelectionChanged(Sender: TObject);
+begin
+  SelTheme:=Ed_SelTheme.ItemIndex;
 end;
 
 end.

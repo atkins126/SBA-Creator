@@ -5,6 +5,8 @@ Unit versionsupportu;
 Interface
 
 (*
+  Version = 1.01
+
   Building on the excellent vinfo.pas supplied by Paul Ishenin and available elsewhere on these Lazarus
   Forums
     - I hid the TVersionInfo class from the end user to simplify their (mine) number of required Uses...
@@ -28,6 +30,9 @@ Interface
 
   Mike Thompson - mike.cornflake@gmail.com
   July 24 2011
+  
+  Miguel A. Risco-Castillo
+  Update to support LCL > 1070000
 *)
 
 Uses

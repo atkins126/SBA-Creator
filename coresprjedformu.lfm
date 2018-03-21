@@ -1,15 +1,19 @@
 object CoresPrjEdForm: TCoresPrjEdForm
-  Left = 1021
+  Left = 1261
   Height = 224
-  Top = 480
+  Top = 366
   Width = 401
   BorderIcons = [biSystemMenu]
   BorderStyle = bsDialog
   Caption = 'Add/Remove Cores from Project'
   ClientHeight = 224
   ClientWidth = 401
+  OnDestroy = FormDestroy
+  PopupMode = pmAuto
   Position = poMainFormCenter
-  LCLVersion = '1.6.4.0'
+  ShowHint = True
+  ShowInTaskBar = stNever
+  LCLVersion = '1.8.0.6'
   object Label1: TLabel
     Left = 9
     Height = 15
@@ -33,6 +37,7 @@ object CoresPrjEdForm: TCoresPrjEdForm
   object B_CoreAdd: TBitBtn
     Left = 161
     Height = 30
+    Hint = 'Copy IPCore from Library to Project'
     Top = 57
     Width = 80
     Caption = 'Add'
@@ -78,6 +83,7 @@ object CoresPrjEdForm: TCoresPrjEdForm
   object B_CoreDel: TBitBtn
     Left = 161
     Height = 30
+    Hint = 'Remove IPCore from Project'
     Top = 105
     Width = 80
     Caption = 'Remove'

@@ -23,6 +23,7 @@ type
     PrjIpCoreList: TListBox;
     procedure B_CoreAddClick(Sender: TObject);
     procedure B_CoreDelClick(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
     procedure LibIpCoreListDblClick(Sender: TObject);
     procedure PrjIpCoreListDblClick(Sender: TObject);
     procedure ListMouseMove(Sender: TObject;Shift: TShiftState; X, Y: Integer);
@@ -41,7 +42,7 @@ implementation
 
 {$R *.lfm}
 
-uses ConfigFormU, FloatFormU;
+uses ConfigFormU, FloatFormU, DebugFormU;
 
 { TCoresPrjEdForm }
 
@@ -87,7 +88,7 @@ begin
   i:=L.GetIndexAtXY(X,Y);
   if i>=0 then
   begin
-    FloatForm.ShowCoreImage(L.Items[i]);
+    FloatForm.ShowCoreInfo(L.Items[i]);
   end else begin
     FloatForm.L_CoreName.caption:='';
     FloatForm.hide;
@@ -130,6 +131,11 @@ begin
   begin
       ShowMessage('Please select an item first!');
   end;
+end;
+
+procedure TCoresPrjEdForm.FormDestroy(Sender: TObject);
+begin
+  Info('TCoresPrjEdForm','FormDestroy');
 end;
 
 procedure TCoresPrjEdForm.PrjIpCoreListDblClick(Sender: TObject);

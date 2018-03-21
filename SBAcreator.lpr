@@ -9,10 +9,11 @@ uses
   {$ENDIF}{$ENDIF}
 
   Interfaces, // this includes the LCL widgetset
-  Forms, HistoryLazarus, MainFormU, synhighlighterverilog, synhighlightersba,
-  versionsupportu, SBAProgContrlrU, AboutFormU, sbasnippetu, configformu,
-  PrjWizU, dwfileU, DebugFormU, AutoUpdateU, SBAProjectU, floatformu, CoresPrjEdFormU,
-  LibraryFormU, UtilsU, sbaprogramu, exportprjformu, UScaleDPI,
+  Forms, FrameViewer09, HistoryLazarus, MainFormU, synhighlighterverilog,
+  synhighlightersba, versionsupportu, SBAProgContrlrU, AboutFormU, sbasnippetu,
+  configformu, PrjWizU, dwfileU, DebugFormU, AutoUpdateU, SBAProjectU,
+  floatformu, CoresPrjEdFormU, LibraryFormU, UtilsU, sbaprogramu,
+  exportprjformu, UScaleDPI,
 
   {$IFDEF CODETYPHON}
   bs_controls, lz_rtticontrols, pl_bgrauecontrols, unit1
@@ -40,10 +41,10 @@ begin
   Application.CreateForm(TMainForm, MainForm);
   Application.CreateForm(TAboutForm, AboutForm);
   Application.CreateForm(TConfigForm, ConfigForm);
+  Application.CreateForm(TprjWizForm, prjWizForm);
   Application.CreateForm(TCoresPrjEdForm, CoresPrjEdForm);
   Application.CreateForm(TFloatForm, FloatForm);
   Application.CreateForm(TLibraryForm, LibraryForm);
-  Application.CreateForm(TprjWizForm, prjWizForm);
   Application.CreateForm(TExportPrjForm, ExportPrjForm);
   HighDPI(96);
   Application.Run;

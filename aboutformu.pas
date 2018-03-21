@@ -15,6 +15,7 @@ type
   TAboutForm = class(TForm)
     BitBtn1: TBitBtn;
     Image1: TImage;
+    procedure FormDestroy(Sender: TObject);
   private
     { private declarations }
   public
@@ -28,7 +29,14 @@ implementation
 
 {$R *.lfm}
 
-uses MainFormU;
+uses DebugFormU;
+
+{ TAboutForm }
+
+procedure TAboutForm.FormDestroy(Sender: TObject);
+begin
+  Info('TAboutForm','FormDestroy');
+end;
 
 { TAboutForm }
 

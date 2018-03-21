@@ -8,8 +8,9 @@ object AboutForm: TAboutForm
   Caption = 'About'
   ClientHeight = 209
   ClientWidth = 320
+  OnDestroy = FormDestroy
   Position = poMainFormCenter
-  LCLVersion = '5.9'
+  LCLVersion = '1.8.0.6'
   object Image1: TImage
     Left = 0
     Height = 209

@@ -7,9 +7,10 @@ object prjWizForm: TprjWizForm
   Caption = 'Project Wizard'
   ClientHeight = 431
   ClientWidth = 420
+  OnDestroy = FormDestroy
   OnShow = FormShow
   Position = poMainFormCenter
-  LCLVersion = '1.6.4.0'
+  LCLVersion = '1.8.0.6'
   object NavPanel: TPanel
     Left = 0
     Height = 42
@@ -195,7 +196,7 @@ object prjWizForm: TprjWizForm
     Height = 354
     Top = 35
     Width = 420
-    PageIndex = 2
+    PageIndex = 4
     Align = alClient
     TabOrder = 0
     TabStop = True
@@ -870,7 +871,7 @@ object prjWizForm: TprjWizForm
         )
         ColWidths = (
           120
-          267
+          263
         )
       end
       object Label9: TLabel

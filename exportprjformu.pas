@@ -20,6 +20,7 @@ type
     Ed_TargetDir: TDirectoryEdit;
     Label3: TLabel;
     L_PrjDir: TLabel;
+    procedure FormDestroy(Sender: TObject);
   private
     { private declarations }
   public
@@ -32,6 +33,15 @@ var
 implementation
 
 {$R *.lfm}
+
+Uses DebugFormU;
+
+{ TExportPrjForm }
+
+procedure TExportPrjForm.FormDestroy(Sender: TObject);
+begin
+  Info('TExportPrjForm','FormDestroy');
+end;
 
 end.
 
