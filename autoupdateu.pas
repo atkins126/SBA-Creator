@@ -5,15 +5,22 @@ unit AutoUpdateU;
 interface
 
 uses
-  Classes, Forms, SysUtils, IniFilesUTF8, LazFileUtils, StrUtils,
+  Classes, Forms, SysUtils, Dialogs, IniFiles, LazFileUtils, StrUtils,
   Process, AsyncProcess, versionsupportu, DwFileU;
 
 Const
   SBADwUrl='http://sba.accesus.com/%s?attredirects=0';
 {$IFDEF WINDOWS}
+  {$IFDEF WIN32}
   VersionFile='sbamainexe.ini';
   UpdaterZipfile='sbamainexe.zip';
   WhatsNewFile='whatsnew.txt';
+  {$ENDIF}
+  {$IFDEF WIN64}
+  VersionFile='sbamainx64.ini';
+  UpdaterZipfile='sbamainx64.zip';
+  WhatsNewFile='whatsnewx64.txt';
+  {$ENDIF}
   C_LOCALUPDATER = 'updatehm.exe';
 {$ENDIF}
 {$IFDEF LCLGTK2}
@@ -69,7 +76,6 @@ type
     property updatefolder:string read Fupdatefolder write Fupdatefolder;
   end;
 
-
 implementation
 
 uses
@@ -78,51 +84,6 @@ uses
 var
   VersionStr:string;
 
-{
-  function NewVersionAvailable(DwProcess:TDwProcess): boolean;
-  var
-    f:string;
-    ini:TiniFile;
-  begin
-    result:=false;
-    f:=ConfigDir+VersionFile;
-    DwProcess.WGET(Format(SBADwUrl,[VersionFile]),f);
-    DwProcess.WaitforIdle(5);
-    if not fileexistsUTF8(f) then exit;
-    ini:=TIniFile.Create(ConfigDir+VersionFile);
-    VersionStr:=Ini.ReadString('versions','GUI','0.0.0.1');
-    if assigned(ini) then FreeAndNil(ini);
-    result:=VCmpr(GetFileVersion,VersionStr)<0;
-    InfoLn('Online version: '+VersionStr);
-    InfoLn(result);
-  end;
-
-  function GetWhatsNew(DwProcess:TDwProcess):boolean;
-  var
-    f:String;
-  begin
-    f:=ConfigDir+WhatsNewFile;
-    DwProcess.WGET(Format(SBADwUrl,[WhatsNewFile]),f);
-    DwProcess.WaitforIdle(5);
-    result:=fileexistsUTF8(f)
-  end;
-
-  function DownloadNewVersion(DwProcess:TDwProcess): boolean;
-  var
-    f:String;
-  begin
-    result:=false;
-    f:=ConfigDir+UpdaterZipfile;
-    DwProcess.WGET(Format(SBADwUrl,[UpdaterZipfile]),f);
-    DwProcess.WaitforIdle(60);
-    if not fileexistsUTF8(f) then exit;
-    Unzip(f,AppDir+'updates');
-    DeleteFileUTF8(f);
-    result:=true;
-  end;
-}
-
-
 procedure TAutoUpdate.FileDownloaded;
 begin
   case upStatus of
@@ -130,12 +91,20 @@ begin
     upStGetWhatsNew:upStatus:=upStIdle;
     upStDwNewVersion:upStatus:=upStIdle;
     upStUpdating:upStatus:=upStIdle;
+  else upStatus:=upStIdle;
   end;
 end;
 
 procedure TAutoUpdate.WaitForIdle;
+var TimeOut:integer;
 begin
-  while upStatus<>upStIdle do Application.ProcessMessages;
+  TimeOut:=10000;
+  while (upStatus<>upStIdle) and (TimeOut>0) do
+  begin
+    Application.ProcessMessages;
+    Dec(TimeOut);
+    sleep(2);
+  end;
 end;
 
 constructor TAutoUpdate.Create;
@@ -153,12 +122,13 @@ var
 begin
   result:=false;
   f:=ConfigDir+VersionFile;
+  Deletefile(f);
   upStatus:=upStGetVersionFile;
   DwT:=TDownloadThread.create(Format(SBADwUrl,[VersionFile]),f);
   DwT.OnDownloaded:=@FileDownloaded;
   DwT.start;
   WaitForIdle;
-  if not fileexistsUTF8(f) then exit;
+  if not fileexists(f) then exit;
   ini:=TIniFile.Create(f);
   VersionStr:=Ini.ReadString('versions','GUI','0.0.0.1');
   if assigned(ini) then FreeAndNil(ini);
@@ -191,11 +161,11 @@ begin
   upStatus:=upStDwNewVersion;
   DwT:=TDownloadThread.create(Format(SBADwUrl,[UpdaterZipfile]),f);
   DwT.OnDownloaded:=@FileDownloaded;
-  DwT.start;
+  DwT.Start;
   WaitForIdle;
-  if not fileexistsUTF8(f) then exit;
+  if not fileexists(f) then exit;
   Unzip(f,AppDir+'updates');
-  DeleteFileUTF8(f);
+  DeleteFile(f);
   result:=true;
 end;
 
@@ -204,7 +174,7 @@ var
   UpdateProcess: TAsyncProcess;
   cCount: cardinal;
 begin
-  DeleteFileUTF8(AppDir+WhatsNewFile); //Flag File
+  DeleteFile(AppDir+WhatsNewFile); //Flag File
   // Update and re-start the app
   UpdateProcess := TAsyncProcess.Create(nil);
   try
@@ -217,21 +187,22 @@ begin
     UpdateProcess.Parameters.Add(Application.Title); // Param 4 = Prettyname
     UpdateProcess.Parameters.Add('copytree');
    // Param 5 = Copy the whole of /updates to the App Folder
-    InfoLn(UpdateProcess.Executable);
-    InfoLn(UpdateProcess.Parameters);
+    Info('TAutoUpdate.UpdateToNewVersion',UpdateProcess.Executable);
+    Info('TAutoUpdate.UpdateToNewVersion',UpdateProcess.Parameters);
     UpdateProcess.Execute;
     // Check for WhatsNewFile in the app directory in a LOOP
-    cCount:=0;
-    while not FileExistsUTF8(AppDir+WhatsNewFile) do
+    cCount:=100000; // Timeout
+    while (cCount>0) and not FileExists(AppDir+WhatsNewFile) do
     begin
       Application.ProcessMessages;
       sleep(100);
-      Inc(CCount);
-      if cCount > 100000 then
-        Break; // Get out of jail in case updatehm.exe fails to copy file
+      Dec(CCount);
     end;
-    //Shut down the Main app?
-    Application.Terminate;
+    //Terminate the Main application
+    if FileExists(AppDir+WhatsNewFile) then Application.Terminate
+    else begin
+      ShowMessage('There was an error updating the application, please check permissions');
+    end;
   finally
     UpdateProcess.Free;
   end;

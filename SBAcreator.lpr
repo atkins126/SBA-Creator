@@ -18,7 +18,7 @@ uses
   {$IFDEF CODETYPHON}
   bs_controls, lz_rtticontrols, pl_bgrauecontrols, unit1
   {$ELSE}
-  lazcontrols, runtimetypeinfocontrols, uecontrols, SBAIPCoresU
+  lazcontrols, uecontrols, SBAIPCoresU
   {$ENDIF}
   {$IFDEF debug}
   , SysUtils
@@ -32,20 +32,19 @@ begin
   // Assuming your build mode sets -dDEBUG in Project Options/Other when defining -gh
   // This avoids interference when running a production/default build without -gh
   // Set up -gh output for the Leakview package:
-  if FileExists('heap.trc') then
-    DeleteFile('heap.trc');
+  if FileExists('heap.trc') then DeleteFile('heap.trc');
   SetHeapTraceOutput('heap.trc');
   {$ENDIF DEBUG}
   Application.Title:='SBACreator';
   Application.Initialize;
   Application.CreateForm(TMainForm, MainForm);
-  Application.CreateForm(TAboutForm, AboutForm);
   Application.CreateForm(TConfigForm, ConfigForm);
-  Application.CreateForm(TprjWizForm, prjWizForm);
-  Application.CreateForm(TCoresPrjEdForm, CoresPrjEdForm);
   Application.CreateForm(TFloatForm, FloatForm);
-  Application.CreateForm(TLibraryForm, LibraryForm);
+  Application.CreateForm(TCoresPrjEdForm, CoresPrjEdForm);
   Application.CreateForm(TExportPrjForm, ExportPrjForm);
+  Application.CreateForm(TLibraryForm, LibraryForm);
+  Application.CreateForm(TprjWizForm, prjWizForm);
+  Application.CreateForm(TAboutForm, AboutForm);
   HighDPI(96);
   Application.Run;
 end.

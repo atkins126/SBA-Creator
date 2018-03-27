@@ -69,13 +69,13 @@ begin
   result:=false;
   list.Clear;
   try
-    if FindFirstUTF8(IncludeTrailingPathDelimiter(directory) + mask, faAnyFile, sr) < 0 then Exit
+    if FindFirst(IncludeTrailingPathDelimiter(directory) + mask, faAnyFile, sr) < 0 then Exit
     else
     repeat
       if (sr.Attr and faDirectory = 0) then List.Add(sr.Name+'='+directory);
-    until FindNextUTF8(sr) <> 0;
+    until FindNext(sr) <> 0;
   finally
-    FindCloseUTF8(sr);
+    FindClose(sr);
   end;
   result:=true;
 end;
@@ -95,7 +95,7 @@ begin
     try
       UnZipper.Examine;
 {$ifdef debug}
-      for i:=0 to UnZipper.Entries.Count-1 do infoln(UnZipper.Entries.Entries[i].ArchiveFileName);
+      for i:=0 to UnZipper.Entries.Count-1 do info('UnZip',UnZipper.Entries.Entries[i].ArchiveFileName);
 {$endif}
       UnZipper.UnZipAllFiles;
     except
@@ -141,14 +141,14 @@ begin
   result:=false;
   list.Clear;
   try
-    if FindFirstUTF8(IncludeTrailingPathDelimiter(directory) + '*.*', faDirectory, sr) < 0 then Exit
+    if FindFirst(IncludeTrailingPathDelimiter(directory) + '*.*', faDirectory, sr) < 0 then Exit
     else
     repeat
       if ((sr.Attr and faDirectory <> 0) AND (sr.Name <> '.') AND (sr.Name <> '..')) then
         List.Add(sr.Name);
-    until FindNextUTF8(sr) <> 0;
+    until FindNext(sr) <> 0;
   finally
-    FindCloseUTF8(sr);
+    FindClose(sr);
   end;
   result:=true;
 end;
@@ -158,11 +158,11 @@ var
   searchRec :TSearchRec;
 begin
   try
-    result := (FindFirstUTF8(directory+'\*.*', faAnyFile, searchRec) = 0) AND
-              (FindNextUTF8(searchRec) = 0) AND
-              (FindNextUTF8(searchRec) <> 0);
+    result := (FindFirst(directory+'\*.*', faAnyFile, searchRec) = 0) AND
+              (FindNext(searchRec) = 0) AND
+              (FindNext(searchRec) <> 0);
   finally
-    FindCloseUTF8(searchRec);
+    FindClose(searchRec);
   end;
 end;
 
@@ -170,28 +170,32 @@ function GetPosList(s: string; list: Tstrings; start: integer=0): integer;
 var
   i: integer;
 begin
-  if start<0 then begin result:=-1; exit; end;
-  For i:=start to list.Count-1 do if pos(s,list[i])<>0 then break;
-  if pos(s,list[i])<>0 then Result:=i else Result:=-1;
+  if start<0 then exit(-1);
+  For i:=start to list.Count-1 do if pos(s,list[i])<>0 then exit(i);
+  exit(-1);
 end;
 
 function DirReplace(s,d:string): boolean;
 begin
-  Result:= DirDelete(d) and RenameFileUTF8(s,d);
+  if DirDelete(d) then
+  begin
+    Sleep(10);
+    Result:=RenameFile(s,d);
+  end else exit(false);
 end;
 
 function DirDelete(d: string): boolean;
 var i:integer;
 begin
-  infoln('Deleting: '+d);
-  if not DirectoryExistsUTF8(d) then
+  info('DirDelete',d);
+  if not DirectoryExists(d) then
   begin
-    infoln('The folder '+d+' do not exists.');
+    info('DirDelete','The folder '+d+' do not exists.');
     Result:=true;
     exit;
   end;
   Result:=DeleteDirectoryEx(d);
-  for i:=0 to 10 do if DirectoryExistsUTF8(d) then sleep(300) else break;
+  for i:=0 to 10 do if DirectoryExists(d) then sleep(300) else break;
 end;
 
 function DeleteDirectoryEx(DirectoryName: string): boolean;
@@ -207,7 +211,7 @@ var
 begin
   Result:=false;
   CurSrcDir:=CleanAndExpandDirectory(DirectoryName);
-  if FindFirstUTF8(CurSrcDir+GetAllFilesMask,faAnyFile,FileInfo)=0 then
+  if FindFirst(CurSrcDir+GetAllFilesMask,faAnyFile,FileInfo)=0 then
   begin
     repeat
       // Ignore directories and files without name:
@@ -217,7 +221,7 @@ begin
         CurFilename:=CurSrcDir+FileInfo.Name;
         // Remove read-only file attribute so we can delete it:
         if (FileInfo.Attr and faReadOnly)>0 then
-          FileSetAttrUTF8(CurFilename, FileInfo.Attr-faReadOnly);
+          FileSetAttr(CurFilename, FileInfo.Attr-faReadOnly);
         if (FileInfo.Attr and faDirectory)>0 then
         begin
           // Directory; exit with failure on error
@@ -226,14 +230,14 @@ begin
         else
         begin
           // File; exit with failure on error
-          if not DeleteFileUTF8(CurFilename) then exit;
+          if not DeleteFile(CurFilename) then exit;
         end;
       end;
-    until FindNextUTF8(FileInfo)<>0;
+    until FindNext(FileInfo)<>0;
   end;
-  FindCloseUTF8(FileInfo);
+  FindClose(FileInfo);
   // Remove "root" directory; exit with failure on error:
-  if (not RemoveDirUTF8(CurSrcDir)) then exit;
+  if (not RemoveDir(CurSrcDir)) then exit;
   Result:=true;
 end;
 

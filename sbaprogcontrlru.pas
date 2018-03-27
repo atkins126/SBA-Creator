@@ -114,6 +114,8 @@ var
 
 begin
   Result:=false;
+  Prog.Clear;
+  Info('TSBAContrlrProg.CpySrc2Prog - Prog.count',Prog.Count);
 
   // Program Details
   if not CopyS2P(cSBAStartProgDetails,cSBAEndProgDetails) then exit;
@@ -285,7 +287,6 @@ begin
   if (pos(cSBAEndProgLabels,Src[iPos])=0) then exit;
   For i:=Labels.Count-1 downto 0 do Src.Insert(iPos,Labels[i].Caption);
   iPos:=GetPosList(cSBASTPTypedef,Src);
-  infoln(iPos);
   if iPos<>-1 then Src[iPos]:='  subtype STP_type is integer range 0 to '+inttostr(STPCnt)+';';
   Result:=true;
 end;

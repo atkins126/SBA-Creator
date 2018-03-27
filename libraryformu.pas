@@ -5,9 +5,9 @@ unit LibraryFormU;
 interface
 
 uses
-  LCLVersion, Classes, SysUtils, ListViewFilterEdit, Forms, Controls, Graphics,
+  Classes, SysUtils, ListViewFilterEdit, Forms, Controls, Graphics,
   Dialogs, ComCtrls, Buttons, ExtCtrls, FileUtil, LazFileUtils, SynExportHTML,
-  StrUtils, SynHighlighterPas, SynHighlighterHTML, SynHighlighterCpp, AsyncProcess,
+  StrUtils, SynHighlighterPas, SynHighlighterHTML, SynHighlighterCpp,
   lclintf, StdCtrls, EditBtn, Menus, SBASnippetU, SBAProgramU, IniFilesUTF8,
   SynHighlighterSBA, MarkdownProcessor, MarkdownUtils;
 
@@ -292,7 +292,6 @@ begin
   B_AddtoSnippets.Enabled:=SnippetsList.IndexOf(L.Caption)=-1;
   f:=L.SubItems[0];
   if FileExists(f) then
-//  if f<>'' then
   begin
     SBASnippet.filename:=f;
     if SBASnippet.description.count>0 then SnippetDescription.Lines.Assign(SBASnippet.description);
@@ -316,7 +315,7 @@ begin
     2 : d:=ProgramsDir;
     3 : d:=SnippetsDir;
   end;
-  Infoln('Try to open folder : '+d);
+  Info('MenuItem1Click','Try to open folder : '+d);
   if DirectoryExists(d) then OpenDocument(d);
 end;
 
@@ -335,6 +334,7 @@ procedure TLibraryForm.B_SBAlibraryGetClick(Sender: TObject);
 begin
   PB_SBALibrary.Style:=pbstMarquee;
   SB.SimpleText:='Downloading file '+cSBAlibraryZipFile;
+  DeleteFile(ConfigDir+cSBAlibraryZipFile);
   GetFile(Ed_SBAlibrary.Text+Ed_SBARepoZipFile.Text,ConfigDir+cSBAlibraryZipFile,GetLibrary);
 end;
 
@@ -347,6 +347,7 @@ procedure TLibraryForm.B_SBAprogramsGetClick(Sender: TObject);
 begin
   PB_SBAprograms.Style:=pbstMarquee;
   SB.SimpleText:='Downloading file '+cSBAprogramsZipFile;
+  DeleteFile(ConfigDir+cSBAprogramsZipFile);
   GetFile(Ed_SBAprograms.Text+Ed_SBARepoZipFile.Text,ConfigDir+cSBAprogramsZipFile,Getprograms);
 end;
 
@@ -359,6 +360,7 @@ procedure TLibraryForm.B_SBAsnippetsGetClick(Sender: TObject);
 begin
   PB_SBAsnippets.Style:=pbstMarquee;
   SB.SimpleText:='Downloading file '+cSBAsnippetsZipFile;
+  DeleteFile(ConfigDir+cSBAsnippetsZipFile);
   GetFile(Ed_SBAsnippets.Text+Ed_SBARepoZipFile.Text,ConfigDir+cSBAsnippetsZipFile,Getsnippets);
 end;
 
@@ -483,6 +485,7 @@ procedure TLibraryForm.B_SBAbaseGetClick(Sender: TObject);
 begin
   PB_SBABase.Style:=pbstMarquee;
   SB.SimpleText:='Downloading file '+cSBABaseZipFile;
+  DeleteFile(ConfigDir+cSBABaseZipFile);
   GetFile(Ed_SBAbase.Text+Ed_SBARepoZipFile.Text,ConfigDir+cSBABaseZipFile,GetBase);
 end;
 
@@ -521,7 +524,7 @@ begin
     if FileExistsUTF8(d) or not CopyFile(f,d) then
       ShowMessage('The Program could not be copied to the local library.');
   except
-    on E:Exception do Infoln(E.Message);
+    on E:Exception do Info('TLibraryForm.B_AddtoProgramsClick',E.Message);
   end;
   GetAllFileNames(ProgramsDir,'*.prg',ProgramsList);
   UpdateProgramsList;
@@ -542,7 +545,7 @@ begin
     if FileExistsUTF8(d) or not CopyFile(f,d) then
       ShowMessage('The Snippet could not be copied to the local library.');
   except
-    on E:Exception do Infoln(E.Message);
+    on E:Exception do Info('TLibraryForm.B_AddtoSnippetsClick',E.Message);
   end;
   GetAllFileNames(SnippetsDir,'*.snp',SnippetsList);
   UpdateSnippetsList;
@@ -605,11 +608,18 @@ end;
 
 function TLibraryForm.EndGetBase:boolean;
 begin
-  result:=true;
+  result:=false;
+  if FileSize(ConfigDir+cSBABaseZipFile)<1 then
+  begin
+    SB.SimpleText:='Invalid or missing zip file';
+    ShowMessage('Was not possible to get the main base files from the repository');
+    PB_SBABase.Style:=pbstNormal;
+    exit(false);
+  end;
   SB.SimpleText:='Unziping file '+cSBABaseZipFile;
   if UnZip(ConfigDir+cSBABaseZipFile,ConfigDir+'temp') then
   begin
-    infoln('Unziping file and copy '+cSBABaseZipFile);
+    info('TLibraryForm.EndGetBase','Unziping file and copy '+cSBABaseZipFile);
     SB.SimpleText:='';
     DirDelete(SBAbaseDir);
     result:=(not DirectoryExistsUTF8(SBAbaseDir)) and
@@ -650,14 +660,15 @@ begin
   PB_SBAsnippets.Style:=pbstNormal;
 end;
 
+//Common EndGet function for all repo request
 function TLibraryForm.EndGet(zfile,defdir:string):boolean;
 var ZipMainFolder:String;
 begin
   result:=false;
-  if FileSize(ConfigDir+zfile)=0 then
+  if FileSize(ConfigDir+zfile)<1 then
   begin
     SB.SimpleText:='Invalid or missing zip file';
-    ShowMessage('The repository do not gives a valid zip file');
+    ShowMessage('Was not possible to get the files from the repository');
     exit;
   end;
   SB.SimpleText:='Unziping file '+zfile;
@@ -668,7 +679,6 @@ begin
     SB.SimpleText:='Unziping successful';
     if DirReplace(ConfigDir+'temp'+PathDelim+ZipMainFolder,ConfigDir+'temp'+PathDelim+DefDir) then
     begin
-//      UpdateLists; //Update list in each endget___
       SB.SimpleText:='New items loaded from remote repository';
       if (Trim(Ed_SBARepoZipFile.Text)<>'') and (Ed_SBARepoZipFile.Items.IndexOf(Ed_SBARepoZipFile.Text)=-1) then
       begin
@@ -693,7 +703,6 @@ begin
   end else result:='0.0.0';
 end;
 
-{$if defined(CODETYPHON) or (lcl_fullversion >= 1070000) }
 procedure TLibraryForm.AddItemToIPCoresFilter(FileIterator: TFileIterator);
 var
   Data:TListViewDataItem;
@@ -800,108 +809,6 @@ begin
   end;
   SnippetsFilter.InvalidateFilter;
 end;
-{$ELSE}
-procedure TLibraryForm.AddItemToIPCoresFilter(FileIterator: TFileIterator);
-var
-  Data:TStringArray;
-  v:integer;
-begin
-  SetLength(Data,3);
-  Data[0]:=ExtractFileNameWithoutExt(FileIterator.FileInfo.Name);
-  Data[1]:=FileIterator.FileName;
-  v:=VCmpr(GetVersion(FileIterator.FileName),GetVersion(LibraryDir+Data[0]+PathDelim+Data[0]+'.ini'));
-  if IpCoreList.IndexOf(Data[0])=-1 then
-    Data[2]:='N'  // The item is new do not exists in local library
-  else if v>0 then Data[2]:='U' // the item is a new version of the one in the local library
-    else if v=0 then Data[2]:='=';  // the item is the same as local library
-  IPCoresFilter.Items.Add(Data);
-end;
-
-procedure TLibraryForm.AddItemToProgramsFilter(FileIterator: TFileIterator);
-var
-  Data:TStringArray;
-begin
-  SetLength(Data,2);
-  Data[0]:=ExtractFileNameWithoutExt(FileIterator.FileInfo.Name);
-  Data[1]:=FileIterator.FileName;
-  ProgramsFilter.Items.Add(Data);
-end;
-
-procedure TLibraryForm.AddItemToSnippetsFilter(FileIterator: TFileIterator);
-var
-  Data:TStringArray;
-begin
-  SetLength(Data,2);
-  Data[0]:=ExtractFileNameWithoutExt(FileIterator.FileInfo.Name);
-  Data[1]:=FileIterator.FileName;
-  SnippetsFilter.Items.Add(Data);
-end;
-
-function TLibraryForm.LookupFilterItem(S:string; LV:TListViewDataList):integer;
-Var
-  i:Integer;
-  Data:TStringArray;
-begin
-  result:=-1; i:=0;
-  while (result=-1) and (i<LV.Count) do
-  begin
-    Data:=LV[i];
-    if Data[0]=S then result:=i else inc(i);
-  end;
-end;
-
-procedure TLibraryForm.UpdateIpCoresList;
-var
-  S:String;
-  Data:TStringArray;
-begin
-  IpCoresFilter.Items.Clear;
-  SearchForFiles(ConfigDir+'temp'+PathDelim+DefLibraryDir, '*.ini',@AddItemToIpCoresFilter);
-  For S in IpCoreList do if LookupFilterItem(S,IPCoresFilter.Items)=-1 then
-  begin
-    SetLength(Data,3);
-    Data[0]:=S;
-    Data[1]:=LibraryDir+S+PathDelim+S+'.ini';
-    Data[2]:='L'; //The item in library is local and do not exist into the repository
-    IPCoresFilter.Items.Add(Data);
-  end;
-  IpCoresFilter.InvalidateFilter;
-end;
-
-procedure TLibraryForm.UpdateProgramsList;
-var
-  S:String;
-  Data:TStringArray;
-begin
-  ProgramsFilter.Items.Clear;
-  SearchForFiles(ConfigDir+'temp'+PathDelim+DefProgramsDir, '*.prg',@AddItemToProgramsFilter);
-  For S in ProgramsList do if LookupFilterItem(S,ProgramsFilter.Items)=-1 then
-  begin
-    SetLength(Data,2);
-    Data[0]:=S;
-    Data[1]:=ProgramsDir+S+'.vhd';
-    ProgramsFilter.Items.Add(Data);
-  end;
-  ProgramsFilter.InvalidateFilter;
-end;
-
-procedure TLibraryForm.UpdateSnippetsList;
-var
-  S:String;
-  Data:TStringArray;
-begin
-  SnippetsFilter.Items.Clear;
-  SearchForFiles(ConfigDir+'temp'+PathDelim+DefSnippetsDir, '*.snp',@AddItemToSnippetsFilter);
-  For S in SnippetsList do if LookupFilterItem(S,SnippetsFilter.Items)=-1 then
-  begin
-    SetLength(Data,2);
-    Data[0]:=S;
-    Data[1]:=SnippetsDir+S+'.snp';
-    SnippetsFilter.Items.Add(Data);
-  end;
-  SnippetsFilter.InvalidateFilter;
-end;
-{$ENDIF}
 
 procedure TLibraryForm.UpdateLists;
 begin
@@ -933,7 +840,7 @@ begin
     GetSnippets: EndGetSnippets;
   end;
   WriteStr(S,PS);
-  InfoLn('LibDWTerminate: '+S);
+  Info('TLibraryForm.dwTerminate',S);
 end;
 
 end.

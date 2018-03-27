@@ -1,21 +1,22 @@
 object DebugForm: TDebugForm
-  Left = 1185
+  Left = 1152
   Height = 240
-  Top = 518
-  Width = 504
+  Top = 639
+  Width = 634
   Caption = 'DebugForm'
   ClientHeight = 240
-  ClientWidth = 504
+  ClientWidth = 634
   FormStyle = fsStayOnTop
   OnCloseQuery = FormCloseQuery
+  OnCreate = FormCreate
   Position = poMainFormCenter
-  LCLVersion = '1.6.4.0'
+  LCLVersion = '1.8.2.0'
   Visible = True
   object Memo: TMemo
     Left = 0
     Height = 206
     Top = 0
-    Width = 504
+    Width = 634
     Align = alClient
     ScrollBars = ssAutoBoth
     TabOrder = 0
@@ -24,18 +25,17 @@ object DebugForm: TDebugForm
     Left = 0
     Height = 34
     Top = 206
-    Width = 504
+    Width = 634
     Align = alBottom
     BevelOuter = bvNone
-    Caption = 'Panel1'
     ClientHeight = 34
-    ClientWidth = 504
+    ClientWidth = 634
     TabOrder = 1
     object B_MemoClear: TBitBtn
       Left = 0
       Height = 34
       Top = 0
-      Width = 255
+      Width = 328
       Align = alLeft
       Caption = 'Clear debug'
       Glyph.Data = {
@@ -78,10 +78,10 @@ object DebugForm: TDebugForm
       TabOrder = 0
     end
     object B_MemoClpbrdCopy: TBitBtn
-      Left = 255
+      Left = 328
       Height = 34
       Top = 0
-      Width = 249
+      Width = 306
       Align = alClient
       Caption = 'Copy to Clipboard'
       Glyph.Data = {

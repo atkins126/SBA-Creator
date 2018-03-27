@@ -194,6 +194,7 @@ type
     Splitter6: TSplitter;
     HidenPage: TTabSheet;
     EndProcTimer: TTimer;
+    DeferredTimer: TTimer;
     ToolBar4: TToolBar;
     ToolButton15: TToolButton;
     ToolButton16: TToolButton;
@@ -360,6 +361,7 @@ type
     procedure btn_sba_libraryClick(Sender: TObject);
     procedure B_InsertSnippedClick(Sender: TObject);
     procedure B_SBALabelsClick(Sender: TObject);
+    procedure DeferredTimerTimer(Sender: TObject);
     procedure EditBlkCommentExecute(Sender: TObject);
     procedure EditBlkIndentExecute(Sender: TObject);
     procedure EditBlkUncommentExecute(Sender: TObject);
@@ -382,7 +384,6 @@ type
     procedure FileOpenLocExecute(Sender: TObject);
     procedure FileSaveAllExecute(Sender: TObject);
     procedure FileSaveAsExecute(Sender: TObject);
-    procedure FormActivate(Sender: TObject);
     procedure FormResize(Sender: TObject);
     procedure HelpCheckUpdateExecute(Sender: TObject);
     procedure HelpGotoSBAForumExecute(Sender: TObject);
@@ -421,7 +422,6 @@ type
     procedure ProjectSaveExecute(Sender: TObject);
     procedure ProjectsHistory2Click(Sender: TObject);
     procedure ProjectUpdCoreExecute(Sender: TObject);
-    procedure P_ProjectClick(Sender: TObject);
     procedure SBA_cancelExecute(Sender: TObject);
     procedure SBA_EditProgramExecute(Sender: TObject);
     procedure B_ObfClick(Sender: TObject);
@@ -525,7 +525,7 @@ implementation
 {$R *.lfm}
 
 uses DebugFormU, SBAProgContrlrU, SBAProjectU, ConfigFormU, AboutFormU, sbasnippetu, PrjWizU,
-     SBAIPCoresU, DwFileU, FloatFormU, LibraryFormU, ExportPrjFormU, UtilsU, AutoUpdateU;
+     SBAIPCoresU, DwFileU, FloatFormU, LibraryFormU, ExportPrjFormU, AutoUpdateU;
 
 var
   SynMarkup:TSynEditMarkupHighlightAllCaret;
@@ -542,8 +542,6 @@ var
   EditorCnt:integer=1;
   PrgReturnTab:TTabSheet=nil;
   ProcessStatus:TProcessStatus=Idle;
-  UpdtFlag:boolean=false;
-  DwProcess:TDwProcess=nil;
 
 { TMainForm }
 
@@ -769,9 +767,8 @@ end;
 
 procedure TMainForm.SBA_EditProgramExecute(Sender: TObject);
 begin
-{ TODO : Ver por que se inserta espacio inicial demás  }
   SynEdit_X.BeginUpdate(false);
-  SynEdit_X.ClearAll;
+  SynEdit_X.ClearUndo;
   if SBAContrlrProg.CpySrc2Prog(ActiveEditor.Lines,SynEdit_X.Lines) then
   begin
     PrgReturnTab:=EditorsTab;
@@ -788,6 +785,20 @@ end;
 procedure TMainForm.B_SBALabelsClick(Sender: TObject);
 begin
   ExtractSBALabels;
+end;
+
+procedure TMainForm.DeferredTimerTimer(Sender: TObject);
+begin
+  DeferredTimer.Enabled:=false;
+  StatusBar1.Panels[1].Text:='Checking for internet connection...';
+  if CheckNetworkConnection then
+  begin
+    GetFile('newbanner.gif');
+    CheckUpdate;
+  end else
+  begin
+    ShowMessage('The application does not have an active internet connection, some features could be disabled');
+  end;
 end;
 
 procedure TMainForm.EditBlkCommentExecute(Sender: TObject);
@@ -870,44 +881,27 @@ end;
 
 procedure TMainForm.B_InsertSnippedClick(Sender: TObject);
 var
-  sblk,eblk,y:integer;
   success:boolean;
 
-  function InsertSnp(BStart,BEnd,t:String):boolean;
+  function InsertSnp:boolean;
+  var EditorF:TEditorF;
   begin
-    result:=false;
-    sblk:=GetPosList(BStart,ActiveEditor.Lines)+1;
-    eblk:=GetPosList(BEnd,ActiveEditor.Lines,sblk);
-    if (sblk<>-1) and (eblk<>-1) then
-    begin
-      if (ActiveEditor.CaretY<sblk+1) or (ActiveEditor.CaretY>eblk+1) then
-      begin
-        while ActiveEditor.Lines[eblk-1]='' do dec(eblk);
-        ActiveEditor.CaretY:=eblk+1;
-        ActiveEditor.InsertTextAtCaret(LineEnding);
-      end;
-      ActiveEditor.InsertTextAtCaret(t);
-      result:=true;
-    end else ShowMessage('Error in User block definitions, check "-- /SBA:" keywords');
-    success:=success and result;
+    EditorF.Editor:=ActiveEditor;
+    if not EditorF.InsertBlock(cSBAStartUserProg,cSBAEndUserProg,SBASnippet.code) then exit(false);
+    if not EditorF.InsertBlock(cSBAStartProgUReg,cSBAEndProgUReg,SBASnippet.registers) then exit(false);
+    if not EditorF.InsertBlock(cSBAStartUSignals,cSBAEndUSignals,SBASnippet.USignals) then exit(false);
+    if not EditorF.InsertBlock(cSBAStartUProc,cSBAEndUProc,SBASnippet.UProc) then exit(false);
+    if not EditorF.InsertBlock(cSBAStartUStatements,cSBAEndUStatements,SBASnippet.UStatements) then exit(false);
+    exit(true);
   end;
 
 begin
-  ActiveEditor.BeginUpdate(true);
-  ActiveEditor.BeginUndoBlock;
-  ActiveEditor.CaretX:=0;
   success:=true;
-  Y:=ActiveEditor.CaretY;
   try
-    InsertSnp(cSBAStartUserProg,cSBAEndUserProg,SBASnippet.code.Text);
-    ActiveEditor.CaretY:=Y;
-    InsertSnp(cSBAStartProgUReg,cSBAEndProgUReg,SBASnippet.registers.Text);
-    ActiveEditor.CaretY:=Y;
-    InsertSnp(cSBAStartUSignals,cSBAEndUSignals,SBASnippet.USignals.Text);
-    ActiveEditor.CaretY:=Y;
-    InsertSnp(cSBAStartUProc,cSBAEndUProc,SBASnippet.UProc.Text);
-    ActiveEditor.CaretY:=Y;
-    InsertSnp(cSBAStartUStatements,cSBAEndUStatements,SBASnippet.UStatements.Text);
+    ActiveEditor.BeginUpdate(true);
+    ActiveEditor.BeginUndoBlock;
+    ActiveEditor.CaretX:=0;
+    success:=InsertSnp;
     ActiveEditor.EndUndoBlock;
   finally
     If success then ExtractSBALabels else ActiveEditor.Undo;
@@ -1008,7 +1002,7 @@ var
   SL:TStringList;
   j,n:integer;
 begin
-  Infoln('Menu: '+TMenuItem(Sender).Caption);
+  Info('TMainForm.EditInsertTemplateExecute','Menu: '+TMenuItem(Sender).Caption);
   if (Sender.ClassName='TMenuItem') and assigned(ActiveEditor) then
   begin
     ActiveEditor.CaretX:=0;
@@ -1084,7 +1078,7 @@ var
 begin
   EditorF:=GetActiveEditorPage;
   d:=ExtractFilePath(EditorF.FileName);
-  Infoln('Try to open folder : '+d);
+  Info('TMainForm.FileOpenLocExecute','Try to open folder : '+d);
   if DirectoryExists(d) then OpenDocument(d);
 end;
 
@@ -1169,19 +1163,12 @@ begin
   end;
 end;
 
-procedure TMainForm.FormActivate(Sender: TObject);
-begin
-  Info('TMainForm','FormActivate');
-  if not UpdtFlag then CheckUpdate;
-end;
-
 procedure TMainForm.CheckUpdate;
 var
   wn:TStringList;
   s:string;
   p:integer;
 begin
-  UpdtFlag:=true;
   StatusBar1.Panels[1].Text:='Online check for updates...';
   s:='';
   If AutoUpdate.NewVersionAvailable Then
@@ -1189,12 +1176,12 @@ begin
     StatusBar1.Panels[1].Text:='A new version is available, getting what is new file.';
     if AutoUpdate.GetWhatsNew then
     try
-      infoln('What is new file was downloaded.');
+      info('TMainForm.CheckUpdate','What is new file was downloaded.');
       wn:=TStringList.Create;
       wn.LoadFromFile(ConfigDir+WhatsNewFile);
       p:=Pos('Old Releases',wn.text);
       s:=IFTHEN(p>1,Copy(wn.text,1,p-1),wn.text);
-      infoln(wn);
+      info('TMainForm.CheckUpdate',wn);
     finally
       if assigned(wn) then FreeAndNil(wn);
     end;
@@ -1210,7 +1197,7 @@ begin
       end Else ShowMessage('Sorry, download of new version failed');
     end else StatusBar1.Panels[1].Text:='';
   end else StatusBar1.Panels[1].Text:='A new version is not available or not detected.';
-  infoln('End of search for new version');
+  info('TMainForm.CheckUpdate','End of search for new version');
 end;
 
 procedure TMainForm.FormResize(Sender: TObject);
@@ -1618,15 +1605,18 @@ begin
   CopyPrjHistory;
   P_Project.Visible:=true;
   If MainPages.ActivePage=SystemTab then GotoEditor;
-  S:=SBAPrj.location+SBAPrj.name+'_Top.vhd';
+  S:=SBAPrj.location+SBAPrj.name+'_'+cSBATop;
   OpenInEditor(S);
   if AutoOpenPrjF then
   begin
-    S:=SBAPrj.location+SBAPrj.name+'_SBAcfg.vhd';
+    S:=SBAPrj.location+SBAPrj.name+'_'+cSBAcfg;
     OpenInEditor(S);
-    S:=SBAPrj.location+SBAPrj.name+'_SBAdcdr.vhd';
+    case SBAPrj.SBAver of
+      0:S:=SBAPrj.location+SBAPrj.name+'_'+cSBAdcdr;
+      1:S:=SBAPrj.location+SBAPrj.name+'_'+cSBAmux;
+    end;
     OpenInEditor(S);
-    S:=SBAPrj.location+SBAPrj.name+'_SBActrlr.vhd';
+    S:=SBAPrj.location+SBAPrj.name+'_'+cSBActrlr;
     OpenInEditor(S);
   end;
   Log.clear;
@@ -1634,6 +1624,7 @@ end;
 
 procedure TMainForm.MainPagesChange(Sender: TObject);
 begin
+  Info('TMainForm.MainPagesChange',MainPages.ActivePage.Caption);
   If MainPages.ActivePage=EditorsTab then
   begin
     if P_Project.visible then
@@ -1727,11 +1718,6 @@ begin
   TN:=PrjTree.Selected;
   if (TN<>nil) and (TN.Parent<>nil) and (TN.GetParentNodeOfAbsoluteLevel(0).Text='Lib') then
       SBAPrj.UpdateCore(TN.Text);
-end;
-
-procedure TMainForm.P_ProjectClick(Sender: TObject);
-begin
-
 end;
 
 procedure TMainForm.SBA_cancelExecute(Sender: TObject);
@@ -1947,7 +1933,7 @@ begin
     CanClose:=CloseEditor(EditorPages.ActivePage);
   end;
   if CanClose and assigned(SBAPrj) and SBAPrj.Modified then CanClose:=CloseProject;
-  CanClose:=CanClose and not AutoUpdate.DownloadInProgress;
+//  CanClose:=CanClose and not AutoUpdate.DownloadInProgress;
   Info('TMainForm FormCloseQuery CanClose?',CanClose);
 end;
 
@@ -1995,19 +1981,17 @@ begin
   finally
     if not Success then
     begin
-     infoln('There was an error in Create Method');
+     info('TMainForm.FormCreate','There was an error in Create Method');
      ShowMessage('Sorry, an unrecoverable error has occurred, the application is going to exit now');
      Halt;
     end else begin
-      infoln('Config values OK '+ConfigDir);
+      info('TMainForm.FormCreate','Config values OK '+ConfigDir);
       caption:='SBA Creator v'+GetFileVersion;
-      infoln(caption);
+      info('TMainForm.FormCreate',caption);
       wdir:=ProjectsDir;
-      DwProcess:=TDwProcess.Create(Self);
       AutoUpdate:=TAutoUpdate.Create;
       Check;
       LoadAnnouncement;
-      GetFile('newbanner.gif');
       MainPages.ShowTabs:=false;
       MainPages.ActivePage:=SystemTab;
       SBAPrj:=TSBAPrj.Create;
@@ -2027,7 +2011,6 @@ begin
       SetupSynMarkup(SynEdit_X);
       SynEdit_X.Font.Name:=EditorFontName;
       SynEdit_X.Font.Size:=EditorFontSize;
-      LoadTheme(ConfigDir+'theme'+PathDelim);
       SetupEditorPopupMenu;
       SetupPrgTmplMenu;
       SetupEdTmplMenu;
@@ -2037,9 +2020,11 @@ begin
       EditorHistory.UpdateParentMenu;
       CopyPrjHistory;
       CreatePlugInsBtns;
+      LoadTheme(ConfigDir+'theme'+PathDelim);
       ReOpenEditorFiles;
       CheckStartParams;
-      infoln('All FormCreate tasks finished');
+      DeferredTimer.Enabled:=true;
+      info('TMainForm.FormCreate','All tasks finished');
     end;
   end;
 end;
@@ -2280,8 +2265,10 @@ begin
   If Assigned(SBAContrlrProg) then FreeandNil(SBAContrlrProg);
   if assigned(SBAPrj) then FreeAndNil(SBAPrj);
   if assigned(AutoUpdate) then FreeAndNil(AutoUpdate);
+  {$IFDEF DEBUG}
   Info('TMainForm','End of FormDestroy');
   if Assigned(DebugForm) then FreeandNil(DebugForm);
+  {$ENDIF}
 end;
 
 procedure TMainForm.FormDropFiles(Sender: TObject;
@@ -2606,7 +2593,7 @@ begin
    t:=TStringList.Create;
    t.LoadFromStream(ToolProcess.Output);
    Log.Items.AddStrings(t);
-infoln(t.Text);
+   info('TMainForm.ToolProcessReadData',t);
    t.free;
 end;
 
@@ -2625,7 +2612,7 @@ begin
   end;
 {IFDEF Debug}
   WriteStr(PStr,PS);
-  infoln('End of process: '+PStr);
+  info('TMainForm.ToolProcessTerminate','End of process: '+PStr);
 {ENDIF}
 end;
 
@@ -2702,7 +2689,7 @@ begin
     StatusBar1.Panels[0].Text:=Format('%4d:%-4d',[TSynEdit(Sender).CaretY,TSynEdit(Sender).CaretX]);
   if scModified in Changes then
   begin
-    UpdGuiTimer.Enabled:=true; //ChangeEditorButtons(TSynEdit(Sender));
+    UpdGuiTimer.Enabled:=true;
     Info('SysEditStatusChange','scModified is in Changes');
   end;
 end;
@@ -2969,7 +2956,7 @@ begin
     else
       ToolProcess.Parameters.Add(AppDir+checkbat+' '+fname);
   {$ENDIF}
-  infoln(ToolProcess.Parameters);
+  info('TMainForm.SyntaxCheck',ToolProcess.Parameters);
   ToolProcess.Execute;
   { TODO : Pensar en eliminar el .bat y usar una lista para crear los parámetros debido a las posibles rutas con espacios. }
 end;
@@ -2989,17 +2976,17 @@ begin
 //
   if (ProcessStatus<>Idle) and not ToolProcess.Running then
   begin
-    infoln('el proceso ya no está en ejecución, forzando un Onterminate');
+    info('TMainForm.ToolProcessWaitforIdle','el proceso ya no está en ejecución, forzando un Onterminate');
     if ToolProcess.OnTerminate<>nil then ToolProcess.OnTerminate(Self);
-    infoln('---- forzado----');
+    info('TMainForm.ToolProcessWaitforIdle','---- forzado----');
   end;
 //
   result:=ProcessStatus=Idle;
-  InfoLn('ToolProcess '+IFTHEN(result,'is Idle','can not terminate: Time Out'));
+  Info('TMainForm.ToolProcessWaitforIdle',IFTHEN(result,'is Idle','can not terminate: Time Out'));
   if not result then
   begin
     WriteStr(S,ProcessStatus);
-    InfoLn('ToolProcess timeout: '+S);
+    Info('TMainForm.ToolProcessWaitforIdle','timeout: '+S);
     //Terminar el proceso que ejecuta si este falla
     ToolProcess.Terminate(0);
     ProcessStatus:=TimeOut;
@@ -3137,7 +3124,6 @@ begin
     ShowMessage('Sorry, this beta version has expired. You can download the new version from http://sba.accesus.com, thanks you for your support!');
     CheckUpdate;
     If Assigned(AutoUpdate) then FreeAndNil(AutoUpdate);
-    If Assigned(DwProcess) then FreeAndNil(DwProcess);
     halt;
   end;
 end;
@@ -3189,7 +3175,6 @@ begin
   end
   else
     ShowMessage('Clave errónea, reinicie el programa');
-  If Assigned(DwProcess) then FreeAndNil(DwProcess);
   halt;
 end;
 
@@ -3267,12 +3252,12 @@ begin
   if Fileexists(ConfigDir+'newbanner.gif') then
   try
     AnnouncementImage.AnimatedGifToSprite(ConfigDir+'newbanner.gif');
-    infoln('Banner loaded');
+    info('TMainForm.LoadAnnouncement','Banner loaded');
   except
     ON E:Exception do
     begin
       DeleteFile(ConfigDir+'newbanner.gif');
-      Infoln('Error loading new banner:'+E.Message);
+      Info('TMainForm.LoadAnnouncement','Error loading new banner:'+E.Message);
     end;
   end;
 end;

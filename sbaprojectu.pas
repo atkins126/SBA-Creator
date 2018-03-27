@@ -340,8 +340,8 @@ begin
     m:=tstringlist.create;
     level:=0;
     FillRequeriments(libcores,m,level);
-    infoln('Cores Requeriments:');
-    infoln(m);
+    info('ListAllPrjFiles','Cores Requeriments:');
+    info('',m);
     for r in m do l.add(Floclib+r+'.vhd');
     if assigned(m) then freeandnil(m);
   end;
@@ -714,7 +714,7 @@ begin
       if not AnsiMatchText(n+'.vhd',[cSBApkg,cSyscon,cDataIntf]) and (m.IndexOf(n)=-1) then
       begin
         FileSetAttr(s,faArchive);
-        infoln('Borrando: '+s);
+        info('CleanUpLibCores',s);
         DeleteFile(s);
       end;
     end;
@@ -830,7 +830,7 @@ begin
       exit;
     end else if (v<>'UserFiles') and not FileExists(FlocLib+s+'.vhd') then
     begin
-      infoln('Copiando: '+s+'.vhd');  //Copy IPCore
+      info('CopyIPCoreFiles','Copiando: '+s+'.vhd');  //Copy IPCore
       CopyFile(LibraryDir+s+PathDelim+s+'.vhd',FlocLib+s+'.vhd');
       if LibAsReadOnly then FileSetAttr(FlocLib+s+'.vhd',faReadOnly);
 
@@ -841,7 +841,7 @@ begin
         r:=Copy2SymbDel(v,'=');
         if FileExists(LibraryDir+s+PathDelim+r+'.vhd') then
         begin
-          infoln('Copiando: '+r+'.vhd'); //Copy Requirements
+          info('CopyIPCoreFiles','Copiando: '+r+'.vhd'); //Copy Requirements
           if (v<>'UserFiles') then
           begin
             CopyFile(LibraryDir+s+PathDelim+r+'.vhd',FlocLib+r+'.vhd');
