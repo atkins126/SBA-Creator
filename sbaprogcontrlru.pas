@@ -115,7 +115,6 @@ var
 begin
   Result:=false;
   Prog.Clear;
-  Info('TSBAContrlrProg.CpySrc2Prog - Prog.count',Prog.Count);
 
   // Program Details
   if not CopyS2P(cSBAStartProgDetails,cSBAEndProgDetails) then exit;

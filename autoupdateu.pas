@@ -14,13 +14,12 @@ Const
   {$IFDEF WIN32}
   VersionFile='sbamainexe.ini';
   UpdaterZipfile='sbamainexe.zip';
-  WhatsNewFile='whatsnew.txt';
   {$ENDIF}
   {$IFDEF WIN64}
   VersionFile='sbamainx64.ini';
   UpdaterZipfile='sbamainx64.zip';
-  WhatsNewFile='whatsnewx64.txt';
   {$ENDIF}
+  WhatsNewFile='whatsnew.txt';
   C_LOCALUPDATER = 'updatehm.exe';
 {$ENDIF}
 {$IFDEF LCLGTK2}

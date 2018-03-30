@@ -6,7 +6,8 @@ interface
 
 uses
   Classes, SysUtils, Dialogs, FileUtil, LazFileUtils, StrUtils, DateUtils,
-  Zipper, DebugFormU;
+  lclintf, Zipper, DebugFormU;
+
 
 function SearchForFiles(const dir,mask: string; Onfind:TFileFoundEvent):boolean;
 function PopulateDirList(const directory : string; list : TStrings): boolean;
@@ -269,7 +270,6 @@ begin
   TimeGoal := MilliSecondOfTheDay(Now)+Milliseconds;
   while MilliSecondOfTheDay(Now) < (TimeGoal) do ;
 end;
-
 
 end.
 

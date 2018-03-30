@@ -1,7 +1,7 @@
 object DebugForm: TDebugForm
-  Left = 1152
+  Left = -7
   Height = 240
-  Top = 639
+  Top = 40
   Width = 634
   Caption = 'DebugForm'
   ClientHeight = 240
@@ -9,7 +9,6 @@ object DebugForm: TDebugForm
   FormStyle = fsStayOnTop
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
-  Position = poMainFormCenter
   LCLVersion = '1.8.2.0'
   Visible = True
   object Memo: TMemo

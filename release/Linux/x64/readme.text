@@ -1,0 +1,20 @@
+Installing SBACreator on Linux x64
+==================================
+
+Extract the compressed folder in home (or any path with write permission)
+allow executing SBACreator as program (`chmod +x SBACreator`) also for
+the shell scripts 
+
+Install ghdl
+------------
+- <https://github.com/ghdl/ghdl/releases>
+- <https://launchpad.net/~pgavin/+archive/ubuntu/ghdl>
+
+Install Java
+------------
+(UBUNTU) `sudo apt-get install openjdk-6-jre`  
+
+Install SSL libraries
+---------------------
+(UBUNTU) `sudo apt-get install libssl-dev`  
+(CentOS) `install openssl-devel`

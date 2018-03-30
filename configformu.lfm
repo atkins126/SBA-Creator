@@ -1,23 +1,23 @@
 object ConfigForm: TConfigForm
-  Left = 1217
+  Left = 1114
   Height = 290
-  Top = 351
-  Width = 520
+  Top = 499
+  Width = 539
   Caption = 'ConfigForm'
   ClientHeight = 290
-  ClientWidth = 520
+  ClientWidth = 539
   Constraints.MinHeight = 290
   Constraints.MinWidth = 520
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnShow = FormShow
   Position = poMainFormCenter
-  LCLVersion = '1.8.0.6'
+  LCLVersion = '1.8.2.0'
   object ButtonPanel1: TButtonPanel
     Left = 6
     Height = 34
     Top = 250
-    Width = 508
+    Width = 527
     OKButton.Name = 'OKButton'
     OKButton.DefaultCaption = True
     HelpButton.Name = 'HelpButton'
@@ -67,8 +67,8 @@ object ConfigForm: TConfigForm
     Left = 135
     Height = 244
     Top = 0
-    Width = 385
-    PageIndex = 0
+    Width = 404
+    PageIndex = 1
     Align = alClient
     TabOrder = 2
     object Paths: TPage
@@ -94,7 +94,7 @@ object ConfigForm: TConfigForm
         Left = 8
         Height = 23
         Top = 56
-        Width = 368
+        Width = 387
         ShowHidden = False
         ButtonWidth = 23
         NumGlyphs = 1
@@ -107,7 +107,7 @@ object ConfigForm: TConfigForm
         Left = 8
         Height = 23
         Top = 104
-        Width = 368
+        Width = 387
         ShowHidden = False
         ButtonWidth = 23
         NumGlyphs = 1
@@ -120,7 +120,7 @@ object ConfigForm: TConfigForm
         Left = 8
         Height = 23
         Top = 199
-        Width = 368
+        Width = 387
         ShowHidden = False
         ButtonWidth = 23
         NumGlyphs = 1
@@ -142,7 +142,7 @@ object ConfigForm: TConfigForm
         Left = 8
         Height = 23
         Top = 151
-        Width = 368
+        Width = 387
         ShowHidden = False
         ButtonWidth = 23
         NumGlyphs = 1
@@ -175,7 +175,7 @@ object ConfigForm: TConfigForm
         Left = 8
         Height = 23
         Top = 31
-        Width = 350
+        Width = 375
         Anchors = [akTop, akLeft, akRight]
         EditLabel.AnchorSideLeft.Control = Ed_DefAuthor
         EditLabel.AnchorSideRight.Control = Ed_DefAuthor
@@ -184,7 +184,7 @@ object ConfigForm: TConfigForm
         EditLabel.Left = 8
         EditLabel.Height = 15
         EditLabel.Top = 13
-        EditLabel.Width = 350
+        EditLabel.Width = 375
         EditLabel.Caption = 'Default Author name:'
         EditLabel.ParentColor = False
         TabOrder = 0
@@ -228,10 +228,10 @@ object ConfigForm: TConfigForm
         TabOrder = 4
       end
       object Ed_SBAversion: TRadioGroup
-        Left = 272
+        Left = 280
         Height = 72
         Top = 80
-        Width = 86
+        Width = 103
         AutoFill = True
         Caption = 'SBA Version'
         ChildSizing.LeftRightSpacing = 6
@@ -242,7 +242,7 @@ object ConfigForm: TConfigForm
         ChildSizing.Layout = cclLeftToRightThenTopToBottom
         ChildSizing.ControlsPerLine = 1
         ClientHeight = 52
-        ClientWidth = 82
+        ClientWidth = 99
         ItemIndex = 1
         Items.Strings = (
           '1.1'

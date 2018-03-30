@@ -3,14 +3,13 @@
   <ProjectSession>
     <PathDelim Value="\"/>
     <Version Value="10"/>
-    <BuildModes Active="Release"/>
-    <Units Count="47">
+    <BuildModes Active="Release x64"/>
+    <Units Count="40">
       <Unit0>
         <Filename Value="SBAcreator.lpr"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="18"/>
-        <CursorPos X="28" Y="45"/>
+        <CursorPos Y="4"/>
         <UsageCount Value="202"/>
       </Unit0>
       <Unit1>
@@ -21,8 +20,8 @@
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="MainFormU"/>
         <IsVisibleTab Value="True"/>
-        <TopLine Value="785"/>
-        <CursorPos Y="802"/>
+        <TopLine Value="2171"/>
+        <CursorPos X="105" Y="2184"/>
         <ExtraEditorCount Value="1"/>
         <ExtraEditor1>
           <EditorIndex Value="-1"/>
@@ -30,9 +29,9 @@
         </ExtraEditor1>
         <UsageCount Value="202"/>
         <Bookmarks Count="3">
-          <Item0 X="6" Y="1570"/>
-          <Item1 Y="1992" ID="1"/>
-          <Item2 X="3" Y="2255" ID="2"/>
+          <Item0 X="6" Y="1655"/>
+          <Item1 Y="981" ID="2"/>
+          <Item2 Y="738" ID="1"/>
         </Bookmarks>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -66,8 +65,8 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="SBAProgContrlrU"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="78"/>
-        <CursorPos X="3" Y="119"/>
+        <TopLine Value="43"/>
+        <CursorPos X="27" Y="60"/>
         <UsageCount Value="264"/>
       </Unit5>
       <Unit6>
@@ -106,8 +105,8 @@
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="ConfigFormU"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="353"/>
-        <CursorPos X="45" Y="226"/>
+        <TopLine Value="140"/>
+        <CursorPos X="19" Y="161"/>
         <UsageCount Value="205"/>
       </Unit9>
       <Unit10>
@@ -130,8 +129,8 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="DwFileU"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="34"/>
-        <CursorPos X="14" Y="55"/>
+        <TopLine Value="55"/>
+        <CursorPos X="44" Y="15"/>
         <UsageCount Value="202"/>
       </Unit11>
       <Unit12>
@@ -142,8 +141,8 @@
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="DebugFormU"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="24"/>
-        <CursorPos X="42" Y="40"/>
+        <TopLine Value="19"/>
+        <CursorPos X="17" Y="36"/>
         <UsageCount Value="208"/>
       </Unit12>
       <Unit13>
@@ -178,9 +177,11 @@
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="LibraryFormU"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="123"/>
-        <CursorPos X="5" Y="137"/>
+        <CursorPos X="22" Y="144"/>
         <UsageCount Value="283"/>
+        <Bookmarks Count="1">
+          <Item0 X="16" Y="557" ID="1"/>
+        </Bookmarks>
       </Unit15>
       <Unit16>
         <Filename Value="utilsu.pas"/>
@@ -188,7 +189,7 @@
         <UnitName Value="UtilsU"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="83"/>
-        <CursorPos X="3" Y="90"/>
+        <CursorPos Y="97"/>
         <UsageCount Value="271"/>
       </Unit16>
       <Unit17>
@@ -215,11 +216,10 @@
         <Filename Value="autoupdateu.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="AutoUpdateU"/>
-        <EditorIndex Value="1"/>
-        <TopLine Value="8"/>
-        <CursorPos X="11" Y="24"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="24"/>
+        <CursorPos X="15" Y="38"/>
         <UsageCount Value="200"/>
-        <Loaded Value="True"/>
       </Unit19>
       <Unit20>
         <Filename Value="synhighlighterjson.pas"/>
@@ -255,8 +255,7 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="EditorU"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="25"/>
-        <CursorPos X="46" Y="22"/>
+        <CursorPos X="4" Y="41"/>
         <UsageCount Value="209"/>
       </Unit23>
       <Unit24>
@@ -265,14 +264,14 @@
         <UnitName Value="WGetFileU"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="47" Y="12"/>
-        <UsageCount Value="61"/>
+        <UsageCount Value="181"/>
       </Unit24>
       <Unit25>
         <Filename Value="inifilesutf8.pas"/>
         <UnitName Value="IniFilesUTF8"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="8" Y="17"/>
-        <UsageCount Value="160"/>
+        <UsageCount Value="148"/>
       </Unit25>
       <Unit26>
         <Filename Value="stringlistutf8.pas"/>
@@ -280,7 +279,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="3"/>
         <CursorPos Y="19"/>
-        <UsageCount Value="169"/>
+        <UsageCount Value="157"/>
       </Unit26>
       <Unit27>
         <Filename Value="usyneditpopupedit.pas"/>
@@ -288,254 +287,212 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="133"/>
         <CursorPos X="22" Y="146"/>
-        <UsageCount Value="99"/>
+        <UsageCount Value="87"/>
       </Unit27>
       <Unit28>
-        <Filename Value="D:\Lazarus\fpc\3.0.4\source\rtl\inc\objpash.inc"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="177"/>
-        <CursorPos X="23" Y="194"/>
-        <UsageCount Value="5"/>
-      </Unit28>
-      <Unit29>
-        <Filename Value="D:\Lazarus\components\lazutils\lazfileutils.pas"/>
-        <UnitName Value="LazFileUtils"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="79"/>
-        <CursorPos X="10" Y="96"/>
-        <UsageCount Value="7"/>
-      </Unit29>
-      <Unit30>
-        <Filename Value="D:\Lazarus\onlinepackagemanager\packages\internettools-master\internet\simpleinternet.pas"/>
-        <EditorIndex Value="-1"/>
-        <CursorPos X="10" Y="342"/>
-        <UsageCount Value="6"/>
-      </Unit30>
-      <Unit31>
-        <Filename Value="D:\Lazarus\onlinepackagemanager\packages\internettools-master\data\bbutils.pas"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="3871"/>
-        <UsageCount Value="6"/>
-      </Unit31>
-      <Unit32>
-        <Filename Value="D:\Lazarus\onlinepackagemanager\packages\internettools-master\data\bbutils.inc"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="1966"/>
-        <UsageCount Value="6"/>
-      </Unit32>
-      <Unit33>
-        <Filename Value="..\..\Libs\InternetTools\data\simplehtmltreeparser.pas"/>
-        <EditorIndex Value="-1"/>
-        <CursorPos X="74" Y="33"/>
-        <UsageCount Value="7"/>
-      </Unit33>
-      <Unit34>
         <Filename Value="..\..\Libs\InternetTools\data\xquery__regex.pas"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="192"/>
         <CursorPos X="54" Y="200"/>
-        <UsageCount Value="7"/>
-      </Unit34>
-      <Unit35>
-        <Filename Value="D:\Lazarus\lcl\lclversion.pas"/>
-        <UnitName Value="LCLVersion"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="12"/>
-        <CursorPos X="18" Y="39"/>
-        <UsageCount Value="6"/>
-      </Unit35>
-      <Unit36>
-        <Filename Value="D:\Lazarus\onlinepackagemanager\packages\synapse40.1\httpsend.pas"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="121"/>
-        <CursorPos X="20" Y="137"/>
-        <UsageCount Value="8"/>
-      </Unit36>
-      <Unit37>
+        <UsageCount Value="5"/>
+      </Unit28>
+      <Unit29>
         <Filename Value="D:\Lazarus\fpc\3.0.4\source\rtl\objpas\sysutils\sysstrh.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="206"/>
         <CursorPos X="14" Y="222"/>
-        <UsageCount Value="7"/>
-      </Unit37>
-      <Unit38>
+        <UsageCount Value="5"/>
+      </Unit29>
+      <Unit30>
         <Filename Value="D:\Lazarus\fpc\3.0.4\source\rtl\objpas\sysutils\syssr.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="2"/>
         <CursorPos X="18" Y="7"/>
-        <UsageCount Value="7"/>
-      </Unit38>
-      <Unit39>
+        <UsageCount Value="5"/>
+      </Unit30>
+      <Unit31>
         <Filename Value="..\..\Libs\InternetTools\data\xquery_schemas.inc"/>
         <EditorIndex Value="-1"/>
-        <UsageCount Value="7"/>
-      </Unit39>
-      <Unit40>
+        <UsageCount Value="5"/>
+      </Unit31>
+      <Unit32>
         <Filename Value="D:\Lazarus\fpc\3.0.4\source\packages\fcl-process\src\dbugintf.pp"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="30" Y="16"/>
-        <UsageCount Value="7"/>
-      </Unit40>
-      <Unit41>
-        <Filename Value="D:\Lazarus\components\lazutils\winlazfileutils.inc"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="230"/>
-        <CursorPos X="3" Y="232"/>
-        <UsageCount Value="7"/>
-      </Unit41>
-      <Unit42>
-        <Filename Value="D:\Lazarus\fpc\3.0.4\source\rtl\objpas\sysutils\filutilh.inc"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="140"/>
-        <CursorPos X="10" Y="157"/>
-        <UsageCount Value="7"/>
-      </Unit42>
-      <Unit43>
-        <Filename Value="D:\Lazarus\fpc\3.0.4\source\rtl\objpas\sysutils\filutil.inc"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="276"/>
-        <CursorPos X="3" Y="278"/>
-        <UsageCount Value="7"/>
-      </Unit43>
-      <Unit44>
+        <UsageCount Value="5"/>
+      </Unit32>
+      <Unit33>
         <Filename Value="..\..\Libs\InternetTools\internet\simpleinternet.pas"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="82"/>
-        <CursorPos X="20" Y="107"/>
-        <UsageCount Value="9"/>
-      </Unit44>
-      <Unit45>
-        <Filename Value="D:\Lazarus\fpc\3.0.4\source\rtl\objpas\classes\classesh.inc"/>
+        <CursorPos X="3" Y="296"/>
+        <UsageCount Value="1"/>
+      </Unit33>
+      <Unit34>
+        <Filename Value="..\..\Libs\InternetTools\internet\internetaccess.pas"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="1668"/>
-        <CursorPos X="16" Y="1669"/>
-        <UsageCount Value="9"/>
-      </Unit45>
-      <Unit46>
-        <Filename Value="..\..\Libs\InternetTools\data\bbutils.pas"/>
+        <TopLine Value="74"/>
+        <CursorPos X="4" Y="118"/>
+        <UsageCount Value="10"/>
+      </Unit34>
+      <Unit35>
+        <Filename Value="D:\fpcup\lazarus\lcl\lclintf.pas"/>
+        <UnitName Value="LCLIntf"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="582"/>
-        <CursorPos X="11" Y="382"/>
-        <UsageCount Value="9"/>
-      </Unit46>
+        <TopLine Value="67"/>
+        <CursorPos X="10" Y="83"/>
+        <UsageCount Value="5"/>
+      </Unit35>
+      <Unit36>
+        <Filename Value="D:\fpcup\Lazarus\lcl\asyncprocess.pp"/>
+        <UnitName Value="AsyncProcess"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="9" Y="87"/>
+        <UsageCount Value="5"/>
+      </Unit36>
+      <Unit37>
+        <Filename Value="D:\fpcup\Lazarus\lcl\comctrls.pp"/>
+        <UnitName Value="ComCtrls"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="554"/>
+        <CursorPos X="24" Y="571"/>
+        <UsageCount Value="6"/>
+      </Unit37>
+      <Unit38>
+        <Filename Value="D:\fpcup\fpcsrc\packages\fcl-process\src\process.pp"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="157"/>
+        <CursorPos X="10" Y="182"/>
+        <UsageCount Value="5"/>
+      </Unit38>
+      <Unit39>
+        <Filename Value="D:\fpcup\Lazarus\lcl\include\pagecontrol.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="20"/>
+        <CursorPos X="3" Y="22"/>
+        <UsageCount Value="6"/>
+      </Unit39>
     </Units>
-    <JumpHistory Count="29" HistoryIndex="28">
+    <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
         <Filename Value="mainformu.pas"/>
-        <Caret Line="526" Column="30" TopLine="511"/>
+        <Caret Line="378" Column="53" TopLine="362"/>
       </Position1>
       <Position2>
         <Filename Value="mainformu.pas"/>
-        <Caret Line="532" Column="43" TopLine="511"/>
+        <Caret Line="379" Column="27" TopLine="363"/>
       </Position2>
       <Position3>
         <Filename Value="mainformu.pas"/>
-        <Caret Line="608" Column="32" TopLine="588"/>
+        <Caret Line="381" Column="11" TopLine="365"/>
       </Position3>
       <Position4>
         <Filename Value="mainformu.pas"/>
-        <Caret Line="1974" Column="14" TopLine="1971"/>
+        <Caret Line="398" Column="59" TopLine="383"/>
       </Position4>
       <Position5>
         <Filename Value="mainformu.pas"/>
-        <Caret Line="10" Column="12"/>
+        <Caret Line="11" Column="11"/>
       </Position5>
       <Position6>
         <Filename Value="mainformu.pas"/>
-        <Caret Line="16" Column="25" TopLine="323"/>
+        <Caret Line="4" Column="8"/>
       </Position6>
       <Position7>
         <Filename Value="mainformu.pas"/>
-        <Caret Line="2228" Column="17" TopLine="2220"/>
+        <Caret Line="971" Column="23" TopLine="944"/>
       </Position7>
       <Position8>
         <Filename Value="mainformu.pas"/>
-        <Caret Line="1993" Column="9" TopLine="2197"/>
+        <Caret Line="974" Column="23" TopLine="947"/>
       </Position8>
       <Position9>
         <Filename Value="mainformu.pas"/>
-        <Caret Line="1156" Column="19" TopLine="1153"/>
+        <Caret Line="2842" Column="21" TopLine="2815"/>
       </Position9>
       <Position10>
         <Filename Value="mainformu.pas"/>
-        <Caret Line="545" Column="3" TopLine="528"/>
+        <Caret Line="2847" Column="21" TopLine="2820"/>
       </Position10>
       <Position11>
         <Filename Value="mainformu.pas"/>
-        <Caret Line="1156" Column="6" TopLine="1139"/>
+        <Caret Line="2850" Column="21" TopLine="2823"/>
       </Position11>
       <Position12>
         <Filename Value="mainformu.pas"/>
-        <Caret Line="1165" Column="18" TopLine="1139"/>
+        <Caret Line="2854" Column="21" TopLine="2828"/>
       </Position12>
       <Position13>
         <Filename Value="mainformu.pas"/>
-        <Caret Line="2025" Column="15" TopLine="2005"/>
+        <Caret Line="2855" Column="21" TopLine="2829"/>
       </Position13>
       <Position14>
         <Filename Value="mainformu.pas"/>
-        <Caret Line="1165" Column="3" TopLine="1147"/>
+        <Caret Line="3040" Column="21" TopLine="3014"/>
       </Position14>
       <Position15>
         <Filename Value="mainformu.pas"/>
-        <Caret Line="1993" Column="9" TopLine="1976"/>
+        <Caret Line="3044" Column="21" TopLine="3018"/>
       </Position15>
       <Position16>
         <Filename Value="mainformu.pas"/>
-        <Caret Line="545" Column="3" TopLine="528"/>
+        <Caret Line="3048" Column="23" TopLine="3022"/>
       </Position16>
       <Position17>
         <Filename Value="mainformu.pas"/>
-        <Caret Line="1156" Column="6" TopLine="1139"/>
+        <Caret Line="3059" Column="25" TopLine="3033"/>
       </Position17>
       <Position18>
         <Filename Value="mainformu.pas"/>
-        <Caret Line="1163" Column="5" TopLine="1139"/>
+        <Caret Line="3061" Column="25" TopLine="3035"/>
       </Position18>
       <Position19>
         <Filename Value="mainformu.pas"/>
-        <Caret Line="1173" TopLine="1156"/>
+        <Caret Line="3065" Column="21" TopLine="3039"/>
       </Position19>
       <Position20>
         <Filename Value="mainformu.pas"/>
-        <Caret Line="1160" TopLine="1137"/>
+        <Caret Line="3067" Column="23" TopLine="3041"/>
       </Position20>
       <Position21>
         <Filename Value="mainformu.pas"/>
-        <Caret Line="1152" Column="18" TopLine="1147"/>
+        <Caret Line="3072" Column="25" TopLine="3046"/>
       </Position21>
       <Position22>
         <Filename Value="mainformu.pas"/>
-        <Caret Line="1164" Column="19" TopLine="1147"/>
+        <Caret Line="3074" Column="25" TopLine="3048"/>
       </Position22>
       <Position23>
         <Filename Value="mainformu.pas"/>
-        <Caret Line="1162" Column="33" TopLine="1146"/>
+        <Caret Line="3078" Column="21" TopLine="3052"/>
       </Position23>
       <Position24>
         <Filename Value="mainformu.pas"/>
-        <Caret Line="1165" Column="21" TopLine="1153"/>
+        <Caret Line="3080" Column="23" TopLine="3054"/>
       </Position24>
       <Position25>
         <Filename Value="mainformu.pas"/>
-        <Caret Line="806" Column="33" TopLine="777"/>
+        <Caret Line="3085" Column="25" TopLine="3059"/>
       </Position25>
       <Position26>
         <Filename Value="mainformu.pas"/>
-        <Caret Line="1179" Column="17" TopLine="1170"/>
+        <Caret Line="3087" Column="25" TopLine="3061"/>
       </Position26>
       <Position27>
-        <Filename Value="autoupdateu.pas"/>
-        <Caret Line="25" Column="32" TopLine="4"/>
+        <Filename Value="mainformu.pas"/>
+        <Caret Line="3089" Column="50" TopLine="3063"/>
       </Position27>
       <Position28>
-        <Filename Value="autoupdateu.pas"/>
-        <Caret Line="24" Column="11" TopLine="8"/>
+        <Filename Value="mainformu.pas"/>
+        <Caret Line="971" Column="23" TopLine="620"/>
       </Position28>
       <Position29>
         <Filename Value="mainformu.pas"/>
-        <Caret Line="545" TopLine="528"/>
+        <Caret Line="2153" Column="10" TopLine="2127"/>
       </Position29>
+      <Position30>
+        <Filename Value="mainformu.pas"/>
+        <Caret Line="473" Column="15" TopLine="457"/>
+      </Position30>
     </JumpHistory>
   </ProjectSession>
   <Debugging>

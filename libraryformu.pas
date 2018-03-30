@@ -141,6 +141,7 @@ type
     SBASnippet:TSBASnippet;
     SBAProgram:TSBAProgram;
     procedure UpdateLists;
+    procedure OpenDataSheet(f: string);
   end;
 
   { TCodeEmiter }
@@ -553,57 +554,9 @@ begin
   B_AddtoSnippets.Enabled:=SnippetsList.IndexOf(L.Caption)=-1;
 end;
 
-function TLibraryForm.Md2Html(fi:string):string;
-var
-  md:TMarkdownProcessor=nil;
-  fo,fn:string;
-  html:TStringList;
-begin
-  result:=fi;
-  fo:=extractFilePath(fi);
-  fn:=extractFileNameOnly(fi)+'.html';
-  try
-    html := TStringList.Create;
-    md := TMarkdownProcessor.createDialect(mdCommonMark);
-    md.UnSafe := false;
-    md.config.codeBlockEmitter:=TCodeEmiter.Create;
-    fo:=IfThen(DirectoryIsWritable(fo),fo+fn,GetTempDir+fn);
-    try
-      html.Text := md.processFile(fi);
-      if html.Text<>'' then
-      begin
-        html.Text:=CSSDecoration+html.Text;
-        html.SaveToFile(fo);
-        result:=fo;
-      end;
-    except
-      ShowMessage('Can not create or process the temp html file');
-    end;
-  finally
-    if assigned(md) then md.Free;
-    if assigned(html) then html.Free;
-  end;
-end;
-
 procedure TLibraryForm.B_OpenDSClick(Sender: TObject);
-var
-  ftype:string;
 begin
-  ftype:=ExtractFileExt(IpCoreDatasheet);
-  case lowerCase(ftype) of
-    '.markdown','.mdown','.mkdn',
-    '.md','.mkd','.mdwn',
-    '.mdtxt','.mdtext','.text',
-    '.rmd':
-      begin
-        OpenURL('file://'+Md2Html(IpCoreDatasheet));
-      end;
-    '.htm','.html':OpenURL('file://'+IpCoreDatasheet);
-  else
-    OpenDocument(IpCoreDatasheet);
-  end;
-
-  //
+  OpenDataSheet(IpCoreDatasheet);
 end;
 
 function TLibraryForm.EndGetBase:boolean;
@@ -841,6 +794,59 @@ begin
   end;
   WriteStr(S,PS);
   Info('TLibraryForm.dwTerminate',S);
+end;
+
+function TLibraryForm.Md2Html(fi:string):string;
+var
+  md:TMarkdownProcessor=nil;
+  fo,fn:string;
+  html:TStringList;
+begin
+  result:=fi;
+  fo:=extractFilePath(fi);
+  fn:=extractFileNameOnly(fi)+'.html';
+  try
+    html := TStringList.Create;
+    md := TMarkdownProcessor.createDialect(mdCommonMark);
+    md.UnSafe := false;
+    md.config.codeBlockEmitter:=TCodeEmiter.Create;
+    fo:=IfThen(DirectoryIsWritable(fo),fo+fn,GetTempDir+fn);
+    try
+      html.Text := md.processFile(fi);
+      if html.Text<>'' then
+      begin
+        html.Text:=CSSDecoration+html.Text;
+        html.SaveToFile(fo);
+        result:=fo;
+      end;
+    except
+      ShowMessage('Can not create or process the temp html file');
+    end;
+  finally
+    if assigned(md) then md.Free;
+    if assigned(html) then html.Free;
+  end;
+end;
+
+procedure TLibraryForm.OpenDataSheet(f:string);
+var
+  ftype:string;
+begin
+
+
+  ftype:=ExtractFileExt(f);
+  case lowerCase(ftype) of
+    '.markdown','.mdown','.mkdn',
+    '.md','.mkd','.mdwn',
+    '.mdtxt','.mdtext','.text',
+    '.rmd':
+      begin
+        OpenURL('file://'+Md2Html(f));
+      end;
+    '.htm','.html':OpenURL('file://'+f);
+  else
+    OpenDocument(f);
+  end;
 end;
 
 end.

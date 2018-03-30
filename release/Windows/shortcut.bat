@@ -1,9 +1,9 @@
 @echo off
 REM Generate Shorcut in user desktop
 REM (c) Miguel Risco-Castillo
-REM v1.0 2017/08/04
+REM v2.0 2018/03/26
 
-SETLOCAL
+SETLOCAL EnableDelayedExpansion
 
 set _=%CD%
 
@@ -18,16 +18,16 @@ pause
 GOTO EXIT
 
 :D0
-FOR /F "usebackq" %%f IN (`PowerShell -NoProfile -Command "Write-Host([Environment]::GetFolderPath('Desktop'))"`) DO (
-  SET "DESKTOP=%%f"
-  )
-IF NOT EXIST %DESKTOP% GOTO D1
+for /f "usebackq tokens=1,2,*" %%B IN (`reg query "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\User Shell Folders" /v Desktop`) do call set "DESKTOP=%%D"
+
+IF NOT EXIST !DESKTOP! GOTO DESKTOPNOTFOUND
+
+:CREATESHORTCUT
 @"%_%\tools\Shortcut.exe" /f:"%DESKTOP%\SBACreator.lnk" /a:c /t:"%_%\SBACreator.exe" /w:"%_%"
 GOTO EXIT
 
-:D1
-echo No se pudo encontrar la ruta hacia el escritorio del usuario: %DESKTOP%
+:DESKTOPNOTFOUND
+echo No se pudo encontrar la ruta hacia el escritorio del usuario: !DESKTOP!
 pause
 
 :EXIT
-

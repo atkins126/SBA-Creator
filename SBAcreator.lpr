@@ -45,7 +45,7 @@ begin
   Application.CreateForm(TLibraryForm, LibraryForm);
   Application.CreateForm(TprjWizForm, prjWizForm);
   Application.CreateForm(TAboutForm, AboutForm);
-  HighDPI(96);
+  //HighDPI(96);
   Application.Run;
 end.
 

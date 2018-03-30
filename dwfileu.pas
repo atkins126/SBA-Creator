@@ -1,7 +1,7 @@
 unit DwFileU;
 {
  Author: Miguel A. Risco-Castillo
- Version 3.1
+ Version 3.2
  Use of InternetTools
 }
 {$mode objfpc}{$H+}
@@ -11,11 +11,13 @@ interface
 
 uses
   Classes, Forms, Dialogs, SysUtils,
-  bbutils, simpleinternet,
+  bbutils, simpleinternet, internetaccess,
   LazFileUtils;
 
 function DownloadFile(UrlSource,FileDestiny:string):boolean;
 function CheckNetworkConnection:boolean;
+procedure CheckNetworkThread;
+function IsNetworkEnabled:boolean;
 
 Type
 
@@ -47,6 +49,15 @@ Type
    property OnDownloaded:TOnDownloaded read FOnDownloaded write FOnDownloaded;
  end;
 
+ { TCheckNetworkConnectionThread }
+
+ TCheckNetworkConnectionThread = class(TThread)
+ protected
+   procedure Execute; override;
+ public
+   Constructor Create;
+ end;
+
 implementation
 
 uses DebugFormU;
@@ -58,7 +69,7 @@ function DownloadFile(UrlSource,FileDestiny:string):boolean;
 begin
   result:=false;
   if NetworkEnabled then try
-    strSaveToFile(FileDestiny, retrieve(UrlSource));
+    strSaveToFileUTF8(FileDestiny, retrieve(UrlSource));
   finally
     freeThreadVars;
   end;
@@ -79,6 +90,38 @@ begin
   exit(NetworkEnabled);
 end;
 
+procedure CheckNetworkThread;
+begin
+  TCheckNetworkConnectionThread.Create;
+end;
+
+function IsNetworkEnabled: boolean;
+begin
+  exit(NetworkEnabled);
+end;
+
+{ TCheckNetworkConnectionThread }
+
+constructor TCheckNetworkConnectionThread.Create;
+begin
+  FreeOnTerminate := True;
+  inherited Create(false);
+end;
+
+procedure TCheckNetworkConnectionThread.Execute;
+var s:String;
+begin
+  s:='';
+  if (not Terminated) then
+  try
+    s:=httpRequest('https://www.example.org');
+  except
+    On E :Exception do Info('CheckNetworkConnection error',E.Message);
+  end;
+  freeThreadVars;
+  NetworkEnabled:=s<>'';
+end;
+
 { TDownloadThread }
 
 constructor TDownloadThread.Create(UrlSource, FileDestiny: string);
@@ -95,6 +138,7 @@ end;
 procedure TDownloadThread.ShowStatus;
 // this method is executed by the mainthread and can therefore access all GUI elements.
 begin
+  if not NetworkEnabled then Info('TDownloadThread','Warning, Network is disabled');
   case FStatus of
     dwStart: fStatusText := 'Url:'+FUrlSource+' Starting...';
     dwDownloading  :fStatusText := 'Downloading '+FFileDestiny+'...';
@@ -131,12 +175,16 @@ begin
   FStatus:=dwDownloading;
   Synchronize(@Showstatus);
   if (not Terminated) and NetworkEnabled then
+  try
     try
-      strSaveToFile(FFileDestiny, retrieve(FUrlSource));
-    finally
-      // Free Memory from InternetTools
-      freeThreadVars;
+      strSaveToFileUTF8(FFileDestiny, retrieve(FUrlSource));
+    except
+      On E :Exception do Info('TDownloadThread error',E.Message);
     end;
+  finally
+    // Free Memory from InternetTools
+    freeThreadVars;
+  end;
   FStatus:=dwIdle;
   Synchronize(@Showstatus);
   Synchronize(@Downloaded);

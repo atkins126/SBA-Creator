@@ -31,7 +31,7 @@ function TEditorF.InsertBlock(BStart,BEnd:string;t:TStrings):boolean;
 var
   sblk,eblk,y:integer;
 begin
-  if t.Count=0 then exit(false);
+  if t.Count=0 then exit(true);
   result:=false;
   Y:=Editor.CaretY;
   sblk:=GetPosList(BStart,Editor.Lines);
@@ -43,11 +43,12 @@ begin
     begin
       while Editor.Lines[eblk-1]='' do dec(eblk);
       Editor.CaretY:=eblk+1;
-      Editor.InsertTextAtCaret(LineEnding);
+      Editor.InsertTextAtCaret(LineEnding); //Add a blank line
       if Y>=eblk+1 then Inc(Y);
     end;
     while (t.count>0) and (t[t.count-1]='') do t.Delete(t.count-1);
     sblk:=Editor.CaretY;
+    Info('TEditor.InsertBlock Insert At:',Editor.CaretY);
     Editor.InsertTextAtCaret(t.Text);
     if Y<sblk then Editor.CaretY:=Y else Editor.CaretY:=Y+t.Count;
     result:=true;

@@ -20,7 +20,7 @@ object MainForm: TMainForm
   OnDropFiles = FormDropFiles
   OnResize = FormResize
   SessionProperties = 'CoreImage.Height;Height;Left;Log.Height;P_ProgAddress.Height;P_ProgLabels.Height;P_Project.Width;SnippetsList.Height;Top;Width;WindowState;P_AuxProg.Width'
-  LCLVersion = '1.8.2.0'
+  LCLVersion = '1.8.3.0'
   object MainPages: TPageControl
     Left = 0
     Height = 656
@@ -2307,14 +2307,14 @@ object MainForm: TMainForm
           end
           object ToolButton11: TToolButton
             Left = 466
-            Height = 22
+            Height = 5
             Top = 0
             Caption = 'ToolButton11'
             Style = tbsDivider
           end
           object ToolButton17: TToolButton
             Left = 111
-            Height = 22
+            Height = 5
             Top = 0
             Caption = 'ToolButton17'
             Style = tbsDivider
@@ -2326,7 +2326,7 @@ object MainForm: TMainForm
           end
           object ToolButton25: TToolButton
             Left = 373
-            Height = 22
+            Height = 5
             Top = 0
             Caption = 'ToolButton25'
             Style = tbsDivider
@@ -2363,7 +2363,7 @@ object MainForm: TMainForm
           end
           object ToolButton19: TToolButton
             Left = 160
-            Height = 22
+            Height = 5
             Top = 0
             Caption = 'ToolButton19'
             Style = tbsDivider
@@ -2403,14 +2403,14 @@ object MainForm: TMainForm
           end
           object ToolButton58: TToolButton
             Left = 324
-            Height = 22
+            Height = 5
             Top = 0
             Caption = 'ToolButton58'
             Style = tbsDivider
           end
           object ToolButton59: TToolButton
             Left = 231
-            Height = 22
+            Height = 5
             Top = 0
             Caption = 'ToolButton59'
             Style = tbsDivider
@@ -2676,7 +2676,7 @@ object MainForm: TMainForm
           end
           object ToolButton48: TToolButton
             Left = 89
-            Height = 23
+            Height = 5
             Top = 0
             Caption = 'ToolButton48'
             Style = tbsDivider
@@ -2747,18 +2747,17 @@ object MainForm: TMainForm
       ClientWidth = 757
       object ToolBar3: TToolBar
         Left = 0
-        Height = 22
+        Height = 25
         Top = 0
         Width = 757
-        AutoSize = True
-        BorderSpacing.Bottom = 4
         ButtonHeight = 22
         ButtonWidth = 22
         Caption = 'ToolBar3'
+        Color = clWhite
         EdgeBorders = []
         Images = ImageList
+        ParentColor = False
         TabOrder = 0
-        Transparent = True
         Wrapable = False
         object ToolButton20: TToolButton
           Left = 23
@@ -2782,14 +2781,14 @@ object MainForm: TMainForm
         end
         object ToolButton28: TToolButton
           Left = 45
-          Height = 22
+          Height = 5
           Top = 0
           Caption = 'ToolButton28'
           Style = tbsDivider
         end
         object ToolButton29: TToolButton
           Left = 116
-          Height = 22
+          Height = 5
           Top = 0
           Caption = 'ToolButton29'
           Style = tbsDivider
@@ -2806,7 +2805,7 @@ object MainForm: TMainForm
         end
         object ToolButton32: TToolButton
           Left = 165
-          Height = 22
+          Height = 5
           Top = 0
           Caption = 'ToolButton32'
           Style = tbsDivider
@@ -2828,7 +2827,7 @@ object MainForm: TMainForm
         end
         object ToolButton37: TToolButton
           Left = 329
-          Height = 22
+          Height = 5
           Top = 0
           Caption = 'ToolButton37'
           Style = tbsDivider
@@ -2858,7 +2857,7 @@ object MainForm: TMainForm
         end
         object ToolButton47: TToolButton
           Left = 378
-          Height = 22
+          Height = 5
           Top = 0
           Caption = 'ToolButton47'
           Style = tbsDivider
@@ -2885,7 +2884,7 @@ object MainForm: TMainForm
         end
         object ToolButton53: TToolButton
           Left = 236
-          Height = 22
+          Height = 5
           Top = 0
           Caption = 'ToolButton53'
           Style = tbsDivider
@@ -2893,12 +2892,12 @@ object MainForm: TMainForm
       end
       object P_AuxProg: TPanel
         Left = 627
-        Height = 602
-        Top = 26
+        Height = 603
+        Top = 25
         Width = 130
         Align = alRight
         BevelOuter = bvNone
-        ClientHeight = 602
+        ClientHeight = 603
         ClientWidth = 130
         TabOrder = 1
         object Splitter_ProgAddress: TSplitter
@@ -3003,19 +3002,28 @@ object MainForm: TMainForm
               item
                 AutoSize = True
                 Caption = 'Labels'
-                Visible = False
-                Width = 200
+                MinWidth = 100
+                Width = 38
               end>
+            ColumnClick = False
+            HideSelection = False
+            Items.LazData = {
+              8500000005000000FFFFFFFFFFFFFFFFFFFFFFFF00000000050000004974656D
+              30FFFFFFFFFFFFFFFFFFFFFFFF00000000050000004974656D31FFFFFFFFFFFF
+              FFFFFFFFFFFF00000000050000004974656D32FFFFFFFFFFFFFFFFFFFFFFFF00
+              000000050000004974656D33FFFFFFFFFFFFFFFFFFFFFFFF0000000005000000
+              4974656D34
+            }
             ParentColor = True
             ReadOnly = True
             RowSelect = True
-            ScrollBars = ssAutoHorizontal
+            ScrollBars = ssVertical
             ShowColumnHeaders = False
             SortType = stText
             TabOrder = 1
             ViewStyle = vsReport
+            OnClick = L_SBALabelsClick
             OnDblClick = L_SBALabelsDblClick
-            OnSelectItem = ListSelectItem
           end
         end
         object P_ProgAddress: TPanel
@@ -3103,13 +3111,14 @@ object MainForm: TMainForm
                 AutoSize = True
                 Caption = 'Address'
                 MinWidth = 100
-                Visible = False
-                Width = 200
+                Width = 57
               end>
+            ColumnClick = False
+            HideSelection = False
             ParentColor = True
             ReadOnly = True
             RowSelect = True
-            ScrollBars = ssAutoHorizontal
+            ScrollBars = ssVertical
             ShowColumnHeaders = False
             SortType = stText
             TabOrder = 1
@@ -3118,7 +3127,7 @@ object MainForm: TMainForm
         end
         object P_CodeSnippets: TPanel
           Left = 2
-          Height = 305
+          Height = 306
           Top = 294
           Width = 126
           Align = alClient
@@ -3126,7 +3135,7 @@ object MainForm: TMainForm
           BorderSpacing.Right = 2
           BorderSpacing.Bottom = 3
           BevelOuter = bvNone
-          ClientHeight = 305
+          ClientHeight = 306
           ClientWidth = 126
           Constraints.MinHeight = 290
           TabOrder = 4
@@ -3144,7 +3153,7 @@ object MainForm: TMainForm
           end
           object SnippetDescription: TMemo
             Left = 3
-            Height = 84
+            Height = 85
             Top = 185
             Width = 120
             Align = alClient
@@ -3165,7 +3174,7 @@ object MainForm: TMainForm
           object B_InsertSnipped: TBitBtn
             Left = 3
             Height = 30
-            Top = 272
+            Top = 273
             Width = 120
             Align = alBottom
             BorderSpacing.Around = 3
@@ -3230,10 +3239,12 @@ object MainForm: TMainForm
                 MinWidth = 100
                 Width = 55
               end>
+            ColumnClick = False
+            HideSelection = False
             ParentColor = True
             ReadOnly = True
             RowSelect = True
-            ScrollBars = ssAutoHorizontal
+            ScrollBars = ssVertical
             ShowColumnHeaders = False
             SortType = stText
             TabOrder = 4
@@ -3254,8 +3265,8 @@ object MainForm: TMainForm
       end
       inline SynEdit_X: TSynEdit
         Left = 0
-        Height = 602
-        Top = 26
+        Height = 603
+        Top = 25
         Width = 622
         Align = alClient
         Font.Height = -12
@@ -3747,7 +3758,7 @@ object MainForm: TMainForm
           object SynGutterSeparator1: TSynGutterSeparator
             Width = 2
             MouseActions = <>
-            MarkupInfo.Background = clWhite
+            MarkupInfo.Background = clBtnFace
             MarkupInfo.Foreground = clGray
           end
           object SynGutterCodeFolding1: TSynGutterCodeFolding
@@ -3761,8 +3772,8 @@ object MainForm: TMainForm
       end
       object Splitter2: TSplitter
         Left = 622
-        Height = 602
-        Top = 26
+        Height = 603
+        Top = 25
         Width = 5
         Align = alRight
         ResizeAnchor = akRight
@@ -6201,6 +6212,13 @@ object MainForm: TMainForm
       ImageIndex = 42
       OnExecute = FileOpenLocExecute
     end
+    object ProjectItemDataSheet: TAction
+      Category = 'Project'
+      Caption = 'Open datasheet'
+      Hint = 'Open Item Datasheet'
+      ImageIndex = 38
+      OnExecute = ProjectItemDataSheetExecute
+    end
   end
   object OpenDialog: TOpenDialog
     Title = 'Open File'
@@ -7088,6 +7106,9 @@ object MainForm: TMainForm
     object MI_OpenTreeItem: TMenuItem
       Action = ProjectOpenItem
     end
+    object MI_OpenDataSheet: TMenuItem
+      Action = ProjectItemDataSheet
+    end
     object MI_AddCore: TMenuItem
       Action = ProjectEditCoreList
     end
@@ -7175,6 +7196,7 @@ object MainForm: TMainForm
   end
   object DeferredTimer: TTimer
     Enabled = False
+    Interval = 10000
     OnTimer = DeferredTimerTimer
     left = 672
     top = 564

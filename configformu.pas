@@ -161,7 +161,7 @@ begin
     If not Unzip(AppDir+cSBAsnippetsZipFile,ConfigDir) then
     begin
       ShowMessage('Failed to create code snippets folder: '+SnippetsDir);
-      Exit;
+//      Exit; // Non Critical
     end;
 
   Info('SetUpConfig','ProgramsDir= '+ProgramsDir);
@@ -169,7 +169,7 @@ begin
     If not Unzip(AppDir+cSBAprogramsZipFile,ConfigDir) then
     begin
       ShowMessage('Failed to create code programs folder: '+ProgramsDir);
-      Exit;
+//      Exit; // Non Critical
     end;
 
   Info('SetUpConfig','SBAbaseDir= '+SBAbaseDir);
@@ -185,7 +185,7 @@ begin
     If Unzip(AppDir+cSBAthemeZipFile,ConfigDir+'theme') then DeleteFile(AppDir+cSBAthemeZipFile)
     else begin
       ShowMessage('Failed to create theme folder: '+ConfigDir+'theme');
-      Exit;
+//      Exit; // Non Critical
     end;
 
   Info('SetUpConfig','PlugInsDir= '+ConfigDir+'plugins');
@@ -193,7 +193,7 @@ begin
     If Unzip(AppDir+cSBApluginsZipFile,ConfigDir+'plugins') then DeleteFile(AppDir+cSBApluginsZipFile)
     else begin
       ShowMessage('Failed to create plugins folder: '+ConfigDir+'plugins');
-      Exit;
+//      Exit;  // Non Critical
     end;
 
   if FileExists(AppDir+cSBADefPrgTemplate) then if CopyFile(AppDir+cSBADefPrgTemplate,ConfigDir+cSBADefPrgTemplate) then DeleteFile(AppDir+cSBADefPrgTemplate);

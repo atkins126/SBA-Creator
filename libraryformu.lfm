@@ -12,7 +12,7 @@ object LibraryForm: TLibraryForm
   OnDestroy = FormDestroy
   Position = poMainFormCenter
   SessionProperties = 'Ed_SBAbase.Text;Ed_SBAlibrary.Text;Ed_SBAprograms.Text;Ed_SBARepoZipFile.Text;Ed_SBAsnippets.Text;Ed_SBARepoZipFile.Items;Ed_SBARepoZipFile.ItemIndex'
-  LCLVersion = '1.8.2.0'
+  LCLVersion = '1.8.3.0'
   object LibraryPages: TPageControl
     Left = 0
     Height = 570
