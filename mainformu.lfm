@@ -1,14 +1,14 @@
 object MainForm: TMainForm
   Left = 1146
-  Height = 699
-  Top = 40
+  Height = 698
+  Top = 58
   Width = 765
   HorzScrollBar.Page = 765
   HorzScrollBar.Range = 765
   VertScrollBar.Page = 639
   VertScrollBar.Range = 639
   AllowDropFiles = True
-  ClientHeight = 679
+  ClientHeight = 678
   ClientWidth = 765
   Constraints.MinHeight = 698
   Constraints.MinWidth = 765
@@ -23,7 +23,7 @@ object MainForm: TMainForm
   LCLVersion = '1.8.3.0'
   object MainPages: TPageControl
     Left = 0
-    Height = 656
+    Height = 655
     Top = 0
     Width = 765
     ActivePage = SystemTab
@@ -36,7 +36,7 @@ object MainForm: TMainForm
     OnChange = MainPagesChange
     object SystemTab: TTabSheet
       Caption = 'SystemTab'
-      ClientHeight = 628
+      ClientHeight = 627
       ClientWidth = 757
       ImageIndex = 0
       object Shape1: TShape
@@ -624,7 +624,7 @@ object MainForm: TMainForm
       object AnnouncementPanel: TPanel
         Left = 0
         Height = 100
-        Top = 528
+        Top = 527
         Width = 757
         Align = alBottom
         BorderSpacing.InnerBorder = 10
@@ -663,7 +663,7 @@ object MainForm: TMainForm
       end
       object MainPanel: TuETilePanel
         Left = 0
-        Height = 398
+        Height = 397
         Top = 130
         Width = 757
         Align = alClient
@@ -674,7 +674,7 @@ object MainForm: TMainForm
         ChildSizing.ShrinkVertical = crsHomogenousSpaceResize
         ChildSizing.Layout = cclLeftToRightThenTopToBottom
         ChildSizing.ControlsPerLine = 4
-        ClientHeight = 398
+        ClientHeight = 397
         ClientWidth = 757
         Color = 6308640
         Font.Color = clWhite
@@ -687,7 +687,7 @@ object MainForm: TMainForm
         object btn_new_project: TuEButton
           Left = 40
           Height = 140
-          Top = 40
+          Top = 39
           Width = 140
           Debug = False
           Layout = blGlyphTop
@@ -708,7 +708,7 @@ object MainForm: TMainForm
         object btn_open_project: TuEButton
           Left = 220
           Height = 140
-          Top = 40
+          Top = 39
           Width = 140
           Debug = False
           Layout = blGlyphTop
@@ -729,7 +729,7 @@ object MainForm: TMainForm
         object btn_prj_editor: TuEButton
           Left = 400
           Height = 140
-          Top = 40
+          Top = 39
           Width = 140
           Debug = False
           Layout = blGlyphTop
@@ -750,7 +750,7 @@ object MainForm: TMainForm
         object btn_prj_prgeditor: TuEButton
           Left = 580
           Height = 140
-          Top = 40
+          Top = 39
           Width = 140
           Debug = False
           Layout = blGlyphTop
@@ -771,7 +771,7 @@ object MainForm: TMainForm
         object btn_sba_library: TuEButton
           Left = 40
           Height = 140
-          Top = 220
+          Top = 218
           Width = 140
           Debug = False
           Layout = blGlyphTop
@@ -792,7 +792,7 @@ object MainForm: TMainForm
         object btn_sba_website: TuEButton
           Left = 220
           Height = 140
-          Top = 220
+          Top = 218
           Width = 140
           Debug = False
           Layout = blGlyphTop
@@ -813,7 +813,7 @@ object MainForm: TMainForm
         object btn_sba_forum: TuEButton
           Left = 400
           Height = 140
-          Top = 220
+          Top = 218
           Width = 140
           Debug = False
           Layout = blGlyphTop
@@ -834,7 +834,7 @@ object MainForm: TMainForm
         object btn_config: TuEButton
           Left = 580
           Height = 140
-          Top = 220
+          Top = 218
           Width = 140
           Debug = False
           Layout = blGlyphTop
@@ -2211,25 +2211,25 @@ object MainForm: TMainForm
     end
     object EditorsTab: TTabSheet
       Caption = 'EditorsTab'
-      ClientHeight = 628
+      ClientHeight = 627
       ClientWidth = 757
       ImageIndex = 1
       OnContextPopup = EditorsTabContextPopup
       object P_Editors: TPanel
         Left = 152
-        Height = 628
+        Height = 627
         Top = 0
         Width = 605
         Align = alClient
         BevelOuter = bvNone
-        ClientHeight = 628
+        ClientHeight = 627
         ClientWidth = 605
         TabOrder = 0
         object Splitter1: TSplitter
           Cursor = crVSplit
           Left = 0
           Height = 6
-          Top = 527
+          Top = 526
           Width = 605
           Align = alBottom
           ResizeAnchor = akBottom
@@ -2237,7 +2237,7 @@ object MainForm: TMainForm
         object Log: TListBox
           Left = 0
           Height = 95
-          Top = 533
+          Top = 532
           Width = 605
           Align = alBottom
           BorderStyle = bsNone
@@ -2289,16 +2289,11 @@ object MainForm: TMainForm
             Action = FileClose
           end
           object ToolButton12: TToolButton
-            Left = 378
+            Left = 400
             Top = 0
             Action = ToolsFileObf
             Marked = True
             Style = tbsCheck
-          end
-          object ToolButton13: TToolButton
-            Left = 400
-            Top = 0
-            Action = ToolsFileReformat
           end
           object ToolButton14: TToolButton
             Left = 422
@@ -2307,14 +2302,14 @@ object MainForm: TMainForm
           end
           object ToolButton11: TToolButton
             Left = 466
-            Height = 5
+            Height = 22
             Top = 0
             Caption = 'ToolButton11'
             Style = tbsDivider
           end
           object ToolButton17: TToolButton
             Left = 111
-            Height = 5
+            Height = 22
             Top = 0
             Caption = 'ToolButton17'
             Style = tbsDivider
@@ -2326,7 +2321,7 @@ object MainForm: TMainForm
           end
           object ToolButton25: TToolButton
             Left = 373
-            Height = 5
+            Height = 22
             Top = 0
             Caption = 'ToolButton25'
             Style = tbsDivider
@@ -2363,7 +2358,7 @@ object MainForm: TMainForm
           end
           object ToolButton19: TToolButton
             Left = 160
-            Height = 5
+            Height = 22
             Top = 0
             Caption = 'ToolButton19'
             Style = tbsDivider
@@ -2403,14 +2398,14 @@ object MainForm: TMainForm
           end
           object ToolButton58: TToolButton
             Left = 324
-            Height = 5
+            Height = 22
             Top = 0
             Caption = 'ToolButton58'
             Style = tbsDivider
           end
           object ToolButton59: TToolButton
             Left = 231
-            Height = 5
+            Height = 22
             Top = 0
             Caption = 'ToolButton59'
             Style = tbsDivider
@@ -2420,16 +2415,21 @@ object MainForm: TMainForm
             Top = 0
             Action = FileSaveAll
           end
+          object ToolButton13: TToolButton
+            Left = 378
+            Top = 0
+            Action = ToolsExporttoHtml
+          end
         end
         object P_AuxEditor: TPanel
           Left = 474
-          Height = 502
+          Height = 501
           Top = 25
           Width = 131
           Align = alRight
           AutoSize = True
           BevelOuter = bvNone
-          ClientHeight = 502
+          ClientHeight = 501
           ClientWidth = 131
           TabOrder = 2
           object P_Obf: TPanel
@@ -2446,8 +2446,8 @@ object MainForm: TMainForm
             Visible = False
             object L_RsvWord: TListBox
               Left = 5
-              Height = 255
-              Top = 80
+              Height = 220
+              Top = 115
               Width = 121
               Align = alClient
               BorderSpacing.Left = 5
@@ -2464,7 +2464,7 @@ object MainForm: TMainForm
             object Label3: TLabel
               Left = 5
               Height = 18
-              Top = 40
+              Top = 75
               Width = 126
               Align = alTop
               AutoSize = False
@@ -2476,7 +2476,7 @@ object MainForm: TMainForm
             object ToolBar1: TToolBar
               Left = 5
               Height = 22
-              Top = 58
+              Top = 93
               Width = 121
               BorderSpacing.Left = 5
               BorderSpacing.Right = 5
@@ -2560,19 +2560,29 @@ object MainForm: TMainForm
               ParentFont = False
               TabOrder = 2
             end
+            object BitBtn1: TBitBtn
+              Left = 5
+              Height = 30
+              Top = 40
+              Width = 121
+              Action = ToolsFileReformat
+              Align = alTop
+              BorderSpacing.Around = 5
+              TabOrder = 3
+            end
           end
         end
         object EditorPages: TExtendedNotebook
           Left = 0
-          Height = 502
+          Height = 501
           Top = 25
           Width = 474
           Align = alClient
           ParentShowHint = False
+          ShowHint = True
           TabOrder = 4
           OnChange = EditorPagesChange
           OnCloseTabClicked = FileCloseExecute
-          OnMouseDown = EditorPagesMouseDown
           Options = [nboShowCloseButtons]
           TabDragMode = dmAutomatic
           TabDragAcceptMode = dmAutomatic
@@ -2580,14 +2590,14 @@ object MainForm: TMainForm
       end
       object P_Project: TPanel
         Left = 0
-        Height = 628
+        Height = 627
         Top = 0
         Width = 147
         Align = alLeft
         BevelColor = clGray
         BevelOuter = bvNone
         BorderStyle = bsSingle
-        ClientHeight = 624
+        ClientHeight = 623
         ClientWidth = 143
         TabOrder = 1
         Visible = False
@@ -2606,7 +2616,7 @@ object MainForm: TMainForm
         object CoreImage: TImage
           Left = 0
           Height = 148
-          Top = 476
+          Top = 475
           Width = 143
           AntialiasingMode = amOn
           Align = alBottom
@@ -2618,7 +2628,7 @@ object MainForm: TMainForm
           Cursor = crVSplit
           Left = 0
           Height = 6
-          Top = 470
+          Top = 469
           Width = 143
           Align = alBottom
           ParentColor = False
@@ -2676,7 +2686,7 @@ object MainForm: TMainForm
           end
           object ToolButton48: TToolButton
             Left = 89
-            Height = 5
+            Height = 23
             Top = 0
             Caption = 'ToolButton48'
             Style = tbsDivider
@@ -2684,7 +2694,7 @@ object MainForm: TMainForm
         end
         object PrjTree: TTreeView
           Left = 0
-          Height = 423
+          Height = 422
           Top = 47
           Width = 143
           Align = alClient
@@ -2735,7 +2745,7 @@ object MainForm: TMainForm
       end
       object Splitter4: TSplitter
         Left = 147
-        Height = 628
+        Height = 627
         Top = 0
         Width = 5
         ParentColor = False
@@ -2743,7 +2753,7 @@ object MainForm: TMainForm
     end
     object ProgEditTab: TTabSheet
       Caption = 'ProgEditTab'
-      ClientHeight = 628
+      ClientHeight = 627
       ClientWidth = 757
       object ToolBar3: TToolBar
         Left = 0
@@ -2848,7 +2858,7 @@ object MainForm: TMainForm
           Action = SBA_NewPrg
         end
         object PrgTemplateButton: TToolButton
-          Left = 383
+          Left = 405
           Hint = 'Templates'
           Top = 0
           Caption = '&Templates'
@@ -2889,15 +2899,20 @@ object MainForm: TMainForm
           Caption = 'ToolButton53'
           Style = tbsDivider
         end
+        object ToolButton61: TToolButton
+          Left = 383
+          Top = 0
+          Action = ToolsExporttoHtml
+        end
       end
       object P_AuxProg: TPanel
         Left = 627
-        Height = 603
+        Height = 602
         Top = 25
         Width = 130
         Align = alRight
         BevelOuter = bvNone
-        ClientHeight = 603
+        ClientHeight = 602
         ClientWidth = 130
         TabOrder = 1
         object Splitter_ProgAddress: TSplitter
@@ -3019,6 +3034,7 @@ object MainForm: TMainForm
             RowSelect = True
             ScrollBars = ssVertical
             ShowColumnHeaders = False
+            SortColumn = 0
             SortType = stText
             TabOrder = 1
             ViewStyle = vsReport
@@ -3120,6 +3136,7 @@ object MainForm: TMainForm
             RowSelect = True
             ScrollBars = ssVertical
             ShowColumnHeaders = False
+            SortColumn = 0
             SortType = stText
             TabOrder = 1
             ViewStyle = vsReport
@@ -3127,7 +3144,7 @@ object MainForm: TMainForm
         end
         object P_CodeSnippets: TPanel
           Left = 2
-          Height = 306
+          Height = 305
           Top = 294
           Width = 126
           Align = alClient
@@ -3135,7 +3152,7 @@ object MainForm: TMainForm
           BorderSpacing.Right = 2
           BorderSpacing.Bottom = 3
           BevelOuter = bvNone
-          ClientHeight = 306
+          ClientHeight = 305
           ClientWidth = 126
           Constraints.MinHeight = 290
           TabOrder = 4
@@ -3153,7 +3170,7 @@ object MainForm: TMainForm
           end
           object SnippetDescription: TMemo
             Left = 3
-            Height = 85
+            Height = 84
             Top = 185
             Width = 120
             Align = alClient
@@ -3174,7 +3191,7 @@ object MainForm: TMainForm
           object B_InsertSnipped: TBitBtn
             Left = 3
             Height = 30
-            Top = 273
+            Top = 272
             Width = 120
             Align = alBottom
             BorderSpacing.Around = 3
@@ -3265,7 +3282,7 @@ object MainForm: TMainForm
       end
       inline SynEdit_X: TSynEdit
         Left = 0
-        Height = 603
+        Height = 602
         Top = 25
         Width = 622
         Align = alClient
@@ -3772,22 +3789,22 @@ object MainForm: TMainForm
       end
       object Splitter2: TSplitter
         Left = 622
-        Height = 603
+        Height = 602
         Top = 25
         Width = 5
         Align = alRight
         ResizeAnchor = akRight
       end
     end
-    object HidenPage: TTabSheet
-      Caption = 'HidenPage'
+    object HiddenPage: TTabSheet
+      Caption = 'HiddenPage'
       ClientHeight = 628
       ClientWidth = 757
       ParentFont = False
-      inline SynEdit1: TSynEdit
+      inline SynEdit_Test: TSynEdit
         Left = 0
-        Height = 578
-        Top = 50
+        Height = 551
+        Top = 77
         Width = 757
         Align = alClient
         Font.Height = -12
@@ -4225,18 +4242,6 @@ object MainForm: TMainForm
         MouseActions = <>
         MouseTextActions = <>
         MouseSelActions = <>
-        Lines.Strings = (
-          'SBA'
-          '==='
-          ''
-          '**Simple Bus Architecture**  '
-          '![](image.png)'
-          ''
-          '+ [IP Cores Library](http://sbalibrary.accesus.com)'
-          '+ [Controller Snippets](http://sbasnippets.accesus.com)'
-          '+ [Controller Programs](http://sbaprograms.accesus.com)'
-          '                                                            '
-        )
         VisibleSpecialChars = [vscSpace, vscTabAtLast]
         SelectedColor.BackPriority = 50
         SelectedColor.ForePriority = 50
@@ -4319,12 +4324,40 @@ object MainForm: TMainForm
           TabOrder = 1
         end
       end
+      object ATTabs1: TATTabs
+        Left = 0
+        Height = 27
+        Top = 50
+        Width = 757
+        Align = alTop
+        Tabs = <        
+          item
+            TabCaption = 'Test'
+          end        
+          item
+            TabCaption = 'Tab2'
+          end>
+        DoubleBuffered = True
+        ColorBg = clBtnFace
+        ColorBorderActive = clActiveBorder
+        ColorBorderPassive = cl3DLight
+        ColorTabActive = clHighlightText
+        ColorTabPassive = clBtnFace
+        ColorCloseX = clMaroon
+        ColorCloseXOver = clRed
+        ColorArrow = clBlack
+        ColorArrowOver = clWhite
+        OptButtonLayout = '<>,v'
+        OptTabHeight = 22
+        OptSpacer = 2
+        OptShowModifiedText = '*'
+      end
     end
   end
   object StatusBar1: TStatusBar
     Left = 0
     Height = 23
-    Top = 656
+    Top = 655
     Width = 765
     Panels = <    
       item
@@ -4340,7 +4373,7 @@ object MainForm: TMainForm
     left = 20
     top = 508
     Bitmap = {
-      4C692B0000001000000010000000FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      4C692D0000001000000010000000FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
       FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00006699FF006699FF006699FF0066
       99FF006699FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
       FF00FFFFFF00FFFFFF00FFFFFF00006699FFFFFFFF00FFFFFF00FFFFFF00FFFF
@@ -5686,37 +5719,101 @@ object MainForm: TMainForm
       FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
       FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
       FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF000000
-      0002000000090505054E0C0C0CAE0F0F0FDB0F0F0FDF0F0F0FDF0F0F0FDE0F0F
-      0FB20F0F0F5A10101004FFFFFF00101010FA101010FF101010FF0F0F0FFF0C0C
-      0CFF090909FC0F0F0FFD333334FF88817CFFC3B5AAFFC9BCAFFF958B85FF4342
-      43FF131313FF0F0F0F7E00000000101010FFF6CB95FFFFFEECFFFBEEDBFFBFA9
-      8DFF191510FF414040FFECD6BEFFFFFFF1FFFFFFFEFFFFFFFDFFFFFFF8FFFEE2
-      C6FF5E5956FF101010EB00000002101010FFFED29FFFFFFEEEFFECDDC9FFABA3
-      96FF201E1DFFB3957CFFFFDBA0FFFFE5B7FFFFE0AEFFFFE0ADFFFFE1AEFFFFCB
-      82FFD2A073FF0F0F0FF00000000B101010FFDCA564FFFFDDB3FFE1BC91FF9B80
-      5FFF1E1B18FFB59172FFFFB45BFFFFD392FFFFD394FFFFD394FFFFD594FFFFB9
-      63FFD5A06FFF0E0E0EF300000019101010EFC98C46FFF9BA71FFDB9C56FF976F
-      41FF1E1A15FF424243FFEBAD77FFFFD090FFFFE0AEFFFFE1AFFFFFD69AFFFAB5
-      74FF5F5A56FF0E0E0EF40000001F0F0F0FDCB7762AFFF19632FFDD9B4FFFA48B
-      69FF514638FF131111FF39393BFF99816DFFE2C3A8FFEBCCB3FFA68B76FF4B47
-      45FF131313FF000000B8000000200E0E0EC9A46824FFF1952FFFEAAA62FFC199
-      6CFF8F693EFF574025FF2C2216FF151411FF555F67FF747478FF111111FF1611
-      0BFF010101EA000000660000001D0E0E0EB6966024FFF09733FFEF9B3BFFDD8C
-      2EFFBA6F1BFF90540EFF573306FF0A1E29FF95C2D6FFCEE6EFFF103141FF150F
-      09FF000000AE0000004F000000150C0C0CA38B5A23FFF0962FFFF09731FFEE96
-      33FFE09036FFB47329FF623E16FF042C42FF41DFFFFF4FECFFFF094663FF0707
-      07EA0000007A000000350000000C0C0C0C95855620FFF4A141FFF6AD56FFF6AB
-      56FFECA34FFFAF7431FF4C2F10FF022C41FF00CBFFFF00D8FFFF004363FF0000
-      00C9000000520000001F000000050C0C0C8E825522FFF4A448FFB77D3CFF8359
-      28FF54391BFF25180AFF060200FF0B1922FF3B8FB0FF59AAC6FF0A2534FF0000
-      009F000000310000000D000000010C0C0C85101010FF101010FF101010FE0707
-      07E0000000BD000000A9000000B6050505EC0A0A0AF30A0A0AF00C0C0CE80000
-      00540000001200000000000000000000000C0000003000000054000000600000
-      005C000000520000005300000067000000710000006E0000005A0000002E0000
-      000D00000003000000000000000000000000000000100000001C000000200000
-      001E00000019000000170000001D0000001F0000001E000000170000000B0000
-      0002000000000000000000000000
+      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF0034B4D9D05EC2E1FA60C3E2FA60C3
+      E2FA60C3E2FA5FC3E2FA3CB6DBDD2CB2D8162CB2D80F2CB2D80F2CB2D80F2CB2
+      D80F2CB3D80F2CB3D804FFFFFF00FFFFFF0036B3DAF8FDFEFEFFFEFFFFFFFEFE
+      FFFFFDFEFFFFFEFFFFFFEAF7FBFF6BC7E4F96BC7E3F86BC7E3F86BC7E3F879CD
+      E6F774CAE5E132B1D956FFFFFF00FFFFFF0035AFDAF0F7FCFEFF8EE4F8FF91DE
+      F5FF9FE0F5FFACE1F6FFEFFBFEFFF4FDFEFFF3FCFEFFF1FCFEFFEFFBFEFFEEFB
+      FEFFFAFDFFF936AFDAD4FFFFFF00FFFFFF0036AADAF2F1FAFDFF94DEF5FF93DC
+      F4FF81D5F2FF6ACAEDFF6CCBEAFF85D3EFFF80D2EFFF7AD0EFFF76CFEEFF72CF
+      EEFFE9F7FBFF34AEDAF3FFFFFF00FFFFFF0035ABDAFAE8F6FBFF94D4EFFF88CE
+      EEFF73C1E9FFC9E9F6FFF2FCFEFFF3FCFEFFF2FCFEFFF0FCFEFFEFFBFEFFEEFB
+      FEFFFEFFFFFF36ABDAF7FFFFFF00FFFFFF0037A6DAFAFEFFFFFFF8FDFFFFF6FD
+      FFFFF5FCFFFFF3FCFEFFD8F6FCFF94E6F8FF85E3F7FF3CA876FF319F65FF5CD8
+      F4FFD7F4FCFF35A4DAF7FFFFFF00FFFFFF0036A1DAF9F6FCFEFFC8F2FCFFB9EF
+      FBFFACECFAFF9CE8F9FF8BE3F7FF7CE0F6FF6CDCF6FF34A46EFF5AB381FF2898
+      57FFD0F3FCFF359FDAF7FFFFFF00FFFFFF00369ADAF8F2FAFDFFB3EDFAFFA4E9
+      F9FF95E6F8FF3DA56FFF38A46FFF34A269FF309E63FF55AF7CFF91CBAAFF4FAB
+      74FF1A9148FF3598D9F7FFFFFF00FFFFFF003594DAF7EFFAFEFFA1E9F9FF91E5
+      F8FF81E1F7FF37A36BFF96CEB0FF94CDADFF91CBAAFF90CBA8FF74BC90FF8AC7
+      A1FF46A568FF088738FF01832D01FFFFFF00338ED9E6DCF0FAF0A7DDF4FD9EDB
+      F4FF96DAF3FF319F63FF94CDADFF6FBA8EFF6BB889FF66B685FF61B380FF67B5
+      82FF83C298FF3CA05CFF007F25F9FFFFFF002C86D8702D88D8A62D87D8EA2D88
+      D8F72D88D8F7299B5BFF90CAA9FF8DC8A5FF8AC6A1FF88C59EFF6AB685FF82C2
+      97FF48A566FF047E33EE00791B09FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00219751FD1B9149FD158F43FD0F8B3BFD3A9F5EFF80C196FF46A3
+      62FF007D1FD100791907FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF0001832BEB43A15FFF007B
+      1FCC00791906FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00007D21EB037B1EFF0079
+      1504FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00C17D4460C88B4DBBC88C
+      4FEEC88C4FF6C88C4FF7C88C4FF7C88D4FF7C98C4FF7C78B4FF7C5894BD4C476
+      3B91B3683C06FFFFFF00FFFFFF00FFFFFF00FFFFFF00C48549C3F7F2ECECF8F4
+      EEFCF8F4EDFFF8F3EDFFF8F3EDFFF8F3EDFFF8F2ECFFF7F2ECFFF2E6D7FFE2B2
+      7DFFDB9465F5B3683B07FFFFFF00FFFFFF00FFFFFF00C5884BEAFAF6F2FCFAE0
+      C7FFFBE1C9FFFBE2C9FFFBE0C8FFF9DFC5FFF8DBC1FFF4D6B8FFFFFBF8FFF6D8
+      B4FFE1B07DFFDB9264F6B46B3E07FFFFFF00FFFFFF00A5894CF88ABD91FF78B7
+      80FF74B478FF79B37BFF96B889FFE1D4B7FFF8DCC2FFF5D6BAFFFDFBF8FFFCE6
+      CDFFFAE5C9FFE2B684FFBF7942A6FFFFFF00479351607DBD8DFFBDE3CEFFCFE8
+      CEFFD7DEB7FFD0D5ABFFA6C394FF70A973FFD3CAAAFFF6D9BCFFF4E9DFFFF7F2
+      ECFFFBF7F3FFF5EFE9FFC27E45FB428B4A3D77BF8CF9BEEFD2FFCDF2CFFFD4E4
+      BEFFDBDBA3FFDAC384FFD1C38CFFA6D2ACFF649F68FFD9CBACFFF5D6BBFFF3D4
+      B5FFF1D2B3FFF8F4F0FFC48246F756A263B0A7E0C1FFBBF1ABFFC9ECBAFFD8D5
+      9AFFD6C07AFFB7BC67FF93D671FF8BDF91FF7AB790FF86A175FFF8DCC2FFF6DA
+      BDFFF6D8BBFFFAF4EFFFC68346F76FB680EDA1E4B0FFA1E78CFFD5EABDFFCCB4
+      6AFFC5C877FF7DDB5BFF5FDA45FF61C35BFF92CAABFF649162FFFAE0C7FFF9DD
+      C3FFF8DCC2FFFAF4EDFFC68245F774BA86F690DCA0FF95D979FFCAC682FFCDA6
+      59FFC0BC70FFACCF6CFF9CB955FF64A552FF90C9AAFF5E8E5DFFFBE3CCFFFADF
+      C7FFFADFC6FFFAF2EAFFC68042F767AE78E398DCADFFB0D583FFC8AE63FFDBAB
+      57FFD3A150FFC08945FFC0914FFF83A366FF83C0A0FF658D5FFFFCE2CDFFFBE1
+      CBFFFBE1C9FFFBF7F2FFC57C3FF7448F4E9390CDA7FF74C57CFFAAB56AFFD5A5
+      58FFE1A956FFBC984DFF8AA156FF7CB288FF5D9B6DFF95A27DFFFCE2CCFFFBE0
+      C9FFFBE1C8FFFDFAF7FFC1763BF735753B2051965FE186CAA3FFAFCA8EFFCEAE
+      6EFFD9AC68FFA2A567FF6DB98AFF6DA983FF6C803BFFEBAE4FFFF7B251FFF7B2
+      4FFFF7B24FFFFCF9F5FFBF6F36F7FFFFFF002F6C332E558249FE89B588FFB7BA
+      92FFBDB78EFF9EC09BFF5A9E6CFF708B52FFF0CD8EFFFFD695FFFFD594FFFFD4
+      93FFFBBE65FFFBF7F4FFBB6731F7FFFFFF00FFFFFF00A76E35F681A07AFF5F81
+      44FF5B7F42FF648446FF958F46FFF2B961FFFCBD62FFFBBD63FFFBBC61FFFCBE
+      60FFFCBC62FFFDFBF8FDB9642DF3FFFFFF00FFFFFF00BC6933DEF8F1EAF2F7EC
+      DFFDF6EBDEFFF6EADEFFF6EADCFFF6EADCFFFAF3EBFFFAF3EBFFFAF2EAFFFCF7
+      F3FFFCF8F4FDFEFEFDF0B7602AD5FFFFFF00FFFFFF00BB6A346BBA6530BCBB66
+      31EDBA6630F7BA6630F7BA6630F7BA6530F7BA652FF7B9652EF7B9652EF7B964
+      2EF7B9642EEFB7622CBDB7622E63FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00419C46553D9841EEFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF0055B25D1C50AC573BFFFFFF00FFFF
+      FF00419C464E3D9841FC56AF5CFFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00FFFFFF00FFFFFF0055B25D2450AC574F4AA651FD46A14B44419C
+      464C3D9841FC53AD59FF37913AF2FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00FFFFFF00FFFFFF0050AC57354AA651FC65BB6DFF419C46FE3D98
+      41FD59B360FF37913AF237913A24A4BA7AFFA4BA7AFFA2B978FFA0B676FF9EB4
+      73FF9CB170FF98AE6BFF95A866FF90A35FFF749F55FF4EA854FF5BB563FF51AB
+      57FF3B913AFF758A3CFF7E8538FFEAAB80FFF3D0B7FFF3D0B7FFF3D0B7FFF2D0
+      B7FFF1CEB3FFF0CBB0FFEFC9ACFFEEC6A8FFEDC2A3FFB6B482FF429641FF4394
+      40FFCDAF83FFE4B089FFCD6E23FFEAAB80FFF3D0B7FFEFC6A9FFEFC4A6FFEEC2
+      A2FFECBF9EFFEBBC98FFE9B893FFE8B48EFFE6B088FFE3AC81FFCBA472FFCAA1
+      6CFFDE9E6EFFE2AA80FFC9621AFFEAAB80FFF2CFB5FFFCF4EEFFECBF9FFFFBF3
+      EDFFFDF8F4FFFDF7F4FFFCF7F3FFF4DBC9FFE7B48EFFF7E6DAFFE3AD83FFF6E4
+      D6FFDB9762FFDFA376FFC45918FFE6A779FFF0CBB0FFFDF8F5FFEABA98FFFDF8
+      F4FFE7B38CFFFDF8F5FFE3AA80FFF9EEE5FFEECDB4FFFDF8F5FFE5B38EFFFDF9
+      F6FFD88F57FFDD9E6DFFC04E16FFE2A06EFFEEC7A8FFFEFDFCFFFDF7F3FFFEFA
+      F8FFE3AC81FFFCF7F4FFE0A374FFF9ECE3FFFAF2EBFFFDF8F4FFE3AE86FFFAF1
+      EAFFD5894DFFDA9966FFBD4315FFE19762FFECC1A1FFFCF7F3FFE5AD84FFFCF6
+      F2FFE1A477FFFCF7F3FFDD9B69FFF8EBE0FFF0D3BEFFF3DECEFFE0A97FFFFAF0
+      E9FFD28344FFD9945EFFB73C13FFDB8E53FFEABB99FFFCF6F2FFE1A679FFFCF5
+      F1FFDD9D6BFFFCF6F2FFDA945EFFF7E9DEFFD68C51FFEFD1BAFFDEA477FFFDFA
+      F7FFF7E8DDFFD78F59FFB63512FFD68443FFE7B590FFE0A374FFDE9E6EFFDC9A
+      67FFDB9560FFD9915AFFD78D53FFD5894DFFD38548FFD28143FFD07E3EFFCF7B
+      39FFCE7935FFD58D54FFB43312FFD27735FFE4AF87FFE3AB81FFE1A87BFFDFA3
+      76FFDEA171FFDC9D6DFFDB9968FFDA9763FFD9945EFFD7915BFFD78F57FFD58D
+      54FFD58C53FFD58C53FFB43312FFCD6E23FFC9651BFFC8601AFFC65918FFC253
+      17FFC04E16FFBD4715FFBB4115FFB93E14FFB73913FFB63512FFB43312FFB433
+      12FFB43312FFB43312FFB43312FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00FFFFFF00FFFFFF00
     }
   end
   object ToolProcess: TAsyncProcess
@@ -5950,14 +6047,6 @@ object MainForm: TMainForm
       OnExecute = EditCopyExecute
       ShortCut = 16451
     end
-    object EditPaste: TEditPaste
-      Category = 'Edit'
-      Caption = '&Paste'
-      Hint = 'Paste'
-      ImageIndex = 22
-      OnExecute = EditPasteExecute
-      ShortCut = 16470
-    end
     object SearchFind: TSearchFind
       Category = 'Search'
       Caption = '&Find ...'
@@ -6028,14 +6117,6 @@ object MainForm: TMainForm
       Hint = 'Insert template'
       ImageIndex = 27
       OnExecute = SBA_InsertTemplateExecute
-    end
-    object EditInsertDate: TAction
-      Category = 'Edit'
-      Caption = 'Insert &Date'
-      Hint = 'Insert current date at cursor'
-      ImageIndex = 28
-      OnExecute = EditInsertDateExecute
-      ShortCut = 24644
     end
     object ProjectEditCoreList: TAction
       Category = 'Project'
@@ -6114,6 +6195,7 @@ object MainForm: TMainForm
       Category = 'Help'
       Caption = 'SBA &Website'
       Hint = 'Open SBA Website'
+      ImageIndex = 43
       OnExecute = HelpGotoSBAWebsiteExecute
     end
     object HelpGotoSBAForum: TAction
@@ -6127,6 +6209,7 @@ object MainForm: TMainForm
       Category = 'Help'
       Caption = '&Check for Updates'
       Hint = 'Online Check for Updates'
+      ImageIndex = 26
       OnExecute = HelpCheckUpdateExecute
     end
     object HelpSettings: TAction
@@ -6135,6 +6218,73 @@ object MainForm: TMainForm
       Hint = 'Open Configuration Form'
       ImageIndex = 40
       OnExecute = HelpSettingsExecute
+    end
+    object FileSaveAll: TAction
+      Category = 'File'
+      Caption = 'Save All'
+      Hint = 'Save All Open files'
+      ImageIndex = 33
+      OnExecute = FileSaveAllExecute
+    end
+    object FileClose: TAction
+      Category = 'File'
+      Caption = '&Close'
+      Hint = 'Close File'
+      ImageIndex = 11
+      OnExecute = FileCloseExecute
+    end
+    object FileRevert: TAction
+      Category = 'File'
+      Caption = '&Revert'
+      Enabled = False
+      Hint = 'Revert File to saved version'
+      ImageIndex = 12
+      OnExecute = FileRevertExecute
+    end
+    object FileOpenLoc: TAction
+      Category = 'File'
+      Caption = 'Open &Location'
+      Hint = 'Open File Location'
+      ImageIndex = 42
+      OnExecute = FileOpenLocExecute
+    end
+    object ProjectItemDataSheet: TAction
+      Category = 'Project'
+      Caption = 'Open datasheet'
+      Hint = 'Open Item Datasheet'
+      ImageIndex = 38
+      OnExecute = ProjectItemDataSheetExecute
+    end
+    object ToolsExporttoHtml: TAction
+      Category = 'Tools'
+      Caption = 'Export HTML'
+      Enabled = False
+      Hint = 'Export file to HTML'
+      ImageIndex = 43
+      OnExecute = ToolsExporttoHtmlExecute
+    end
+    object EditCopyAsHtml: TAction
+      Category = 'Edit'
+      Caption = 'Copy as Html'
+      Hint = 'Copy Selected Text as HTML to Clipboard'
+      ImageIndex = 44
+      OnExecute = EditCopyAsHtmlExecute
+    end
+    object EditPaste: TEditPaste
+      Category = 'Edit'
+      Caption = '&Paste'
+      Hint = 'Paste'
+      ImageIndex = 22
+      OnExecute = EditPasteExecute
+      ShortCut = 16470
+    end
+    object EditInsertDate: TAction
+      Category = 'Edit'
+      Caption = 'Insert &Date'
+      Hint = 'Insert current date at cursor'
+      ImageIndex = 28
+      OnExecute = EditInsertDateExecute
+      ShortCut = 24644
     end
     object EditInsertAuthor: TAction
       Category = 'Edit'
@@ -6183,41 +6333,12 @@ object MainForm: TMainForm
       ImageIndex = 27
       OnExecute = EditInsertTemplateExecute
     end
-    object FileSaveAll: TAction
-      Category = 'File'
-      Caption = 'Save All'
-      Hint = 'Save All Open files'
-      ImageIndex = 33
-      OnExecute = FileSaveAllExecute
-    end
-    object FileClose: TAction
-      Category = 'File'
-      Caption = '&Close'
-      Hint = 'Close File'
-      ImageIndex = 11
-      OnExecute = FileCloseExecute
-    end
-    object FileRevert: TAction
-      Category = 'File'
-      Caption = '&Revert'
-      Enabled = False
-      Hint = 'Revert File to saved version'
-      ImageIndex = 12
-      OnExecute = FileRevertExecute
-    end
-    object FileOpenLoc: TAction
-      Category = 'File'
-      Caption = 'Open &Location'
-      Hint = 'Open File Location'
-      ImageIndex = 42
-      OnExecute = FileOpenLocExecute
-    end
-    object ProjectItemDataSheet: TAction
-      Category = 'Project'
-      Caption = 'Open datasheet'
-      Hint = 'Open Item Datasheet'
-      ImageIndex = 38
-      OnExecute = ProjectItemDataSheetExecute
+    object ToolsReloadPlugIns: TAction
+      Category = 'Tools'
+      Caption = 'Reload'
+      Hint = 'Reaload Plugins'
+      ImageIndex = 40
+      OnExecute = ToolsReloadPlugInsExecute
     end
   end
   object OpenDialog: TOpenDialog
@@ -6352,8 +6473,8 @@ object MainForm: TMainForm
     MarkupInfoSync.FrameColor = clFuchsia
     MarkupInfoArea.Background = clMoneyGreen
     MarkupInfoArea.Foreground = clNone
-    left = 364
-    top = 508
+    left = 444
+    top = 400
   end
   object IniStor: TIniPropStorage
     StoredValues = <>
@@ -6441,6 +6562,9 @@ object MainForm: TMainForm
       object MenuItem24: TMenuItem
         Action = EditCopy
       end
+      object MenuItem10: TMenuItem
+        Action = EditCopyAsHtml
+      end
       object MenuItem25: TMenuItem
         Action = EditPaste
       end
@@ -6487,15 +6611,20 @@ object MainForm: TMainForm
         Action = ToolsFileObf
         AutoCheck = True
       end
-      object MenuItem16: TMenuItem
-        Action = ToolsFileReformat
-      end
       object MenuItem17: TMenuItem
         Action = ToolsFileSyntaxCheck
       end
       object MenuItem19: TMenuItem
         Action = SBA_EditProgram
       end
+      object MenuItem4: TMenuItem
+        Action = ToolsExporttoHtml
+        ImageIndex = 44
+      end
+    end
+    object PlugInsMenu: TMenuItem
+      Caption = 'PlugIns'
+      Visible = False
     end
     object HelpMenuItem: TMenuItem
       Caption = '&Help'
@@ -6717,7 +6846,7 @@ object MainForm: TMainForm
   end
   object ProgMenu: TMainMenu
     Images = ImageList
-    left = 220
+    left = 148
     top = 452
     object MenuItem32: TMenuItem
       Caption = '&File'
@@ -6882,7 +7011,7 @@ object MainForm: TMainForm
     end
   end
   object PrgTemplates: TPopupMenu
-    left = 148
+    left = 220
     top = 452
     object MenuItem14: TMenuItem
       Caption = 'New Item1'
@@ -6896,183 +7025,183 @@ object MainForm: TMainForm
     Bitmap = {
       4C690A0000000C0000000C000000666600FF666600FF666600FF666600FF6666
       00FF666600FF666600FF666600FF666600FF666600FF666600FF666600FF6666
-      00FF000000000000000000000000000000000000000000000000000000000000
-      00000000000000000000666600FF666600FF0000000000000000000000003040
-      00FF304000FF304000FF304000FF000000000000000000000000666600FF6666
-      00FF0000000000000000304000FF000000000000000000000000000000003040
-      00FF0000000000000000666600FF666600FF0000000000000000304000FF0000
-      0000000000000000000000000000304000FF0000000000000000666600FF6666
-      00FF0000000000000000304000FF000000000000000000000000000000003040
-      00FF0000000000000000666600FF666600FF0000000000000000304000FF0000
-      0000000000000000000000000000304000FF0000000000000000666600FF6666
-      00FF0000000000000000304000FF000000000000000000000000000000003040
-      00FF0000000000000000666600FF666600FF0000000000000000304000FF0000
-      0000000000000000000000000000304000FF0000000000000000666600FF6666
-      00FF000000000000000000000000304000FF304000FF304000FF304000FF0000
-      00000000000000000000666600FF666600FF0000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000666600FF6666
+      00FFFFFFFF80FFFFFF80FFFFFF80FFFFFF80FFFFFF80FFFFFF80FFFFFF80FFFF
+      FF80FFFFFF80FFFFFF80666600FF666600FFFFFFFF80FFFFFF80FFFFFF80303F
+      00FF303F00FF303F00FF303F00FFFFFFFF80FFFFFF80FFFFFF80666600FF6666
+      00FFFFFFFF80FFFFFF80303F00FFFFFFFF80FFFFFF80FFFFFF80FFFFFF80303F
+      00FFFFFFFF80FFFFFF80666600FF666600FFFFFFFF80FFFFFF80303F00FFFFFF
+      FF80FFFFFF80FFFFFF80FFFFFF80303F00FFFFFFFF80FFFFFF80666600FF6666
+      00FFFFFFFF80FFFFFF80303F00FFFFFFFF80FFFFFF80FFFFFF80FFFFFF80303F
+      00FFFFFFFF80FFFFFF80666600FF666600FFFFFFFF80FFFFFF80303F00FFFFFF
+      FF80FFFFFF80FFFFFF80FFFFFF80303F00FFFFFFFF80FFFFFF80666600FF6666
+      00FFFFFFFF80FFFFFF80303F00FFFFFFFF80FFFFFF80FFFFFF80FFFFFF80303F
+      00FFFFFFFF80FFFFFF80666600FF666600FFFFFFFF80FFFFFF80303F00FFFFFF
+      FF80FFFFFF80FFFFFF80FFFFFF80303F00FFFFFFFF80FFFFFF80666600FF6666
+      00FFFFFFFF80FFFFFF80FFFFFF80303F00FF303F00FF303F00FF303F00FFFFFF
+      FF80FFFFFF80FFFFFF80666600FF666600FFFFFFFF80FFFFFF80FFFFFF80FFFF
+      FF80FFFFFF80FFFFFF80FFFFFF80FFFFFF80FFFFFF80FFFFFF80666600FF6666
       00FF666600FF666600FF666600FF666600FF666600FF666600FF666600FF6666
       00FF666600FF666600FF666600FF666600FF666600FF666600FF666600FF6666
       00FF666600FF666600FF666600FF666600FF666600FF666600FF666600FF6666
-      00FF000000000000000000000000000000000000000000000000000000000000
-      00000000000000000000666600FF666600FF0000000000000000000000000000
-      000000000000304000FF00000000000000000000000000000000666600FF6666
-      00FF00000000000000000000000000000000304000FF304000FF000000000000
-      00000000000000000000666600FF666600FF0000000000000000000000003040
-      00FF00000000304000FF00000000000000000000000000000000666600FF6666
-      00FF0000000000000000000000000000000000000000304000FF000000000000
-      00000000000000000000666600FF666600FF0000000000000000000000000000
-      000000000000304000FF00000000000000000000000000000000666600FF6666
-      00FF0000000000000000000000000000000000000000304000FF000000000000
-      00000000000000000000666600FF666600FF0000000000000000000000000000
-      000000000000304000FF00000000000000000000000000000000666600FF6666
-      00FF0000000000000000000000000000000000000000304000FF000000000000
-      00000000000000000000666600FF666600FF0000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000666600FF6666
+      00FFFFFFFF80FFFFFF80FFFFFF80FFFFFF80FFFFFF80FFFFFF80FFFFFF80FFFF
+      FF80FFFFFF80FFFFFF80666600FF666600FFFFFFFF80FFFFFF80FFFFFF80FFFF
+      FF80FFFFFF80304000FFFFFFFF80FFFFFF80FFFFFF80FFFFFF80666600FF6666
+      00FFFFFFFF80FFFFFF80FFFFFF80FFFFFF80304000FF304000FFFFFFFF80FFFF
+      FF80FFFFFF80FFFFFF80666600FF666600FFFFFFFF80FFFFFF80FFFFFF803040
+      00FFFFFFFF80304000FFFFFFFF80FFFFFF80FFFFFF80FFFFFF80666600FF6666
+      00FFFFFFFF80FFFFFF80FFFFFF80FFFFFF80FFFFFF80304000FFFFFFFF80FFFF
+      FF80FFFFFF80FFFFFF80666600FF666600FFFFFFFF80FFFFFF80FFFFFF80FFFF
+      FF80FFFFFF80304000FFFFFFFF80FFFFFF80FFFFFF80FFFFFF80666600FF6666
+      00FFFFFFFF80FFFFFF80FFFFFF80FFFFFF80FFFFFF80304000FFFFFFFF80FFFF
+      FF80FFFFFF80FFFFFF80666600FF666600FFFFFFFF80FFFFFF80FFFFFF80FFFF
+      FF80FFFFFF80304000FFFFFFFF80FFFFFF80FFFFFF80FFFFFF80666600FF6666
+      00FFFFFFFF80FFFFFF80FFFFFF80FFFFFF80FFFFFF80304000FFFFFFFF80FFFF
+      FF80FFFFFF80FFFFFF80666600FF666600FFFFFFFF80FFFFFF80FFFFFF80FFFF
+      FF80FFFFFF80FFFFFF80FFFFFF80FFFFFF80FFFFFF80FFFFFF80666600FF6666
       00FF666600FF666600FF666600FF666600FF666600FF666600FF666600FF6666
       00FF666600FF666600FF666600FF666600FF666600FF666600FF666600FF6666
       00FF666600FF666600FF666600FF666600FF666600FF666600FF666600FF6666
-      00FF000000000000000000000000000000000000000000000000000000000000
-      00000000000000000000666600FF666600FF0000000000000000000000003040
-      00FF304000FF304000FF304000FF000000000000000000000000666600FF6666
-      00FF0000000000000000304000FF000000000000000000000000000000003040
-      00FF0000000000000000666600FF666600FF0000000000000000000000000000
-      0000000000000000000000000000304000FF0000000000000000666600FF6666
-      00FF000000000000000000000000000000000000000000000000000000003040
-      00FF0000000000000000666600FF666600FF0000000000000000000000000000
-      00000000000000000000304000FF000000000000000000000000666600FF6666
-      00FF0000000000000000000000000000000000000000304000FF000000000000
-      00000000000000000000666600FF666600FF0000000000000000000000003040
-      00FF304000FF0000000000000000000000000000000000000000666600FF6666
-      00FF0000000000000000304000FF304000FF304000FF304000FF304000FF3040
-      00FF0000000000000000666600FF666600FF0000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000666600FF6666
+      00FFFFFFFF80FFFFFF80FFFFFF80FFFFFF80FFFFFF80FFFFFF80FFFFFF80FFFF
+      FF80FFFFFF80FFFFFF80666600FF666600FFFFFFFF80FFFFFF80FFFFFF803040
+      00FF304000FF304000FF304000FFFFFFFF80FFFFFF80FFFFFF80666600FF6666
+      00FFFFFFFF80FFFFFF80304000FFFFFFFF80FFFFFF80FFFFFF80FFFFFF803040
+      00FFFFFFFF80FFFFFF80666600FF666600FFFFFFFF80FFFFFF80FFFFFF80FFFF
+      FF80FFFFFF80FFFFFF80FFFFFF80304000FFFFFFFF80FFFFFF80666600FF6666
+      00FFFFFFFF80FFFFFF80FFFFFF80FFFFFF80FFFFFF80FFFFFF80FFFFFF803040
+      00FFFFFFFF80FFFFFF80666600FF666600FFFFFFFF80FFFFFF80FFFFFF80FFFF
+      FF80FFFFFF80FFFFFF80304000FFFFFFFF80FFFFFF80FFFFFF80666600FF6666
+      00FFFFFFFF80FFFFFF80FFFFFF80FFFFFF80FFFFFF80304000FFFFFFFF80FFFF
+      FF80FFFFFF80FFFFFF80666600FF666600FFFFFFFF80FFFFFF80FFFFFF803040
+      00FF304000FFFFFFFF80FFFFFF80FFFFFF80FFFFFF80FFFFFF80666600FF6666
+      00FFFFFFFF80FFFFFF80304000FF304000FF304000FF304000FF304000FF3040
+      00FFFFFFFF80FFFFFF80666600FF666600FFFFFFFF80FFFFFF80FFFFFF80FFFF
+      FF80FFFFFF80FFFFFF80FFFFFF80FFFFFF80FFFFFF80FFFFFF80666600FF6666
       00FF666600FF666600FF666600FF666600FF666600FF666600FF666600FF6666
       00FF666600FF666600FF666600FF666600FF666600FF666600FF666600FF6666
       00FF666600FF666600FF666600FF666600FF666600FF666600FF666600FF6666
-      00FF000000000000000000000000000000000000000000000000000000000000
-      00000000000000000000666600FF666600FF0000000000000000000000003040
-      00FF304000FF304000FF304000FF000000000000000000000000666600FF6666
-      00FF0000000000000000304000FF000000000000000000000000000000003040
-      00FF0000000000000000666600FF666600FF0000000000000000000000000000
-      0000000000000000000000000000304000FF0000000000000000666600FF6666
-      00FF00000000000000000000000000000000304000FF304000FF304000FF0000
-      00000000000000000000666600FF666600FF0000000000000000000000000000
-      0000000000000000000000000000304000FF0000000000000000666600FF6666
-      00FF000000000000000000000000000000000000000000000000000000003040
-      00FF0000000000000000666600FF666600FF0000000000000000304000FF0000
-      0000000000000000000000000000304000FF0000000000000000666600FF6666
-      00FF000000000000000000000000304000FF304000FF304000FF304000FF0000
-      00000000000000000000666600FF666600FF0000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000666600FF6666
+      00FFFFFFFF80FFFFFF80FFFFFF80FFFFFF80FFFFFF80FFFFFF80FFFFFF80FFFF
+      FF80FFFFFF80FFFFFF80666600FF666600FFFFFFFF80FFFFFF80FFFFFF803040
+      00FF304000FF304000FF304000FFFFFFFF80FFFFFF80FFFFFF80666600FF6666
+      00FFFFFFFF80FFFFFF80304000FFFFFFFF80FFFFFF80FFFFFF80FFFFFF803040
+      00FFFFFFFF80FFFFFF80666600FF666600FFFFFFFF80FFFFFF80FFFFFF80FFFF
+      FF80FFFFFF80FFFFFF80FFFFFF80304000FFFFFFFF80FFFFFF80666600FF6666
+      00FFFFFFFF80FFFFFF80FFFFFF80FFFFFF80304000FF304000FF304000FFFFFF
+      FF80FFFFFF80FFFFFF80666600FF666600FFFFFFFF80FFFFFF80FFFFFF80FFFF
+      FF80FFFFFF80FFFFFF80FFFFFF80304000FFFFFFFF80FFFFFF80666600FF6666
+      00FFFFFFFF80FFFFFF80FFFFFF80FFFFFF80FFFFFF80FFFFFF80FFFFFF803040
+      00FFFFFFFF80FFFFFF80666600FF666600FFFFFFFF80FFFFFF80304000FFFFFF
+      FF80FFFFFF80FFFFFF80FFFFFF80304000FFFFFFFF80FFFFFF80666600FF6666
+      00FFFFFFFF80FFFFFF80FFFFFF80304000FF304000FF304000FF304000FFFFFF
+      FF80FFFFFF80FFFFFF80666600FF666600FFFFFFFF80FFFFFF80FFFFFF80FFFF
+      FF80FFFFFF80FFFFFF80FFFFFF80FFFFFF80FFFFFF80FFFFFF80666600FF6666
       00FF666600FF666600FF666600FF666600FF666600FF666600FF666600FF6666
       00FF666600FF666600FF666600FF666600FF666600FF666600FF666600FF6666
       00FF666600FF666600FF666600FF666600FF666600FF666600FF666600FF6666
-      00FF000000000000000000000000000000000000000000000000000000000000
-      00000000000000000000666600FF666600FF0000000000000000000000000000
-      00000000000000000000304000FF000000000000000000000000666600FF6666
-      00FF00000000000000000000000000000000304000FF304000FF304000FF0000
-      00000000000000000000666600FF666600FF0000000000000000000000000000
-      0000304000FF00000000304000FF000000000000000000000000666600FF6666
-      00FF000000000000000000000000304000FF0000000000000000304000FF0000
-      00000000000000000000666600FF666600FF0000000000000000000000003040
-      00FF0000000000000000304000FF000000000000000000000000666600FF6666
-      00FF0000000000000000304000FF304000FF304000FF304000FF304000FF3040
-      00FF0000000000000000666600FF666600FF0000000000000000000000000000
-      00000000000000000000304000FF000000000000000000000000666600FF6666
-      00FF000000000000000000000000000000000000000000000000304000FF0000
-      00000000000000000000666600FF666600FF0000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000666600FF6666
+      00FFFFFFFF80FFFFFF80FFFFFF80FFFFFF80FFFFFF80FFFFFF80FFFFFF80FFFF
+      FF80FFFFFF80FFFFFF80666600FF666600FFFFFFFF80FFFFFF80FFFFFF80FFFF
+      FF80FFFFFF80FFFFFF80304000FFFFFFFF80FFFFFF80FFFFFF80666600FF6666
+      00FFFFFFFF80FFFFFF80FFFFFF80FFFFFF80304000FF304000FF304000FFFFFF
+      FF80FFFFFF80FFFFFF80666600FF666600FFFFFFFF80FFFFFF80FFFFFF80FFFF
+      FF80304000FFFFFFFF80304000FFFFFFFF80FFFFFF80FFFFFF80666600FF6666
+      00FFFFFFFF80FFFFFF80FFFFFF80304000FFFFFFFF80FFFFFF80304000FFFFFF
+      FF80FFFFFF80FFFFFF80666600FF666600FFFFFFFF80FFFFFF80FFFFFF803040
+      00FFFFFFFF80FFFFFF80304000FFFFFFFF80FFFFFF80FFFFFF80666600FF6666
+      00FFFFFFFF80FFFFFF80304000FF304000FF304000FF304000FF304000FF3040
+      00FFFFFFFF80FFFFFF80666600FF666600FFFFFFFF80FFFFFF80FFFFFF80FFFF
+      FF80FFFFFF80FFFFFF80304000FFFFFFFF80FFFFFF80FFFFFF80666600FF6666
+      00FFFFFFFF80FFFFFF80FFFFFF80FFFFFF80FFFFFF80FFFFFF80304000FFFFFF
+      FF80FFFFFF80FFFFFF80666600FF666600FFFFFFFF80FFFFFF80FFFFFF80FFFF
+      FF80FFFFFF80FFFFFF80FFFFFF80FFFFFF80FFFFFF80FFFFFF80666600FF6666
       00FF666600FF666600FF666600FF666600FF666600FF666600FF666600FF6666
       00FF666600FF666600FF666600FF666600FF666600FF666600FF666600FF6666
       00FF666600FF666600FF666600FF666600FF666600FF666600FF666600FF6666
-      00FF000000000000000000000000000000000000000000000000000000000000
-      00000000000000000000666600FF666600FF0000000000000000000000003040
-      00FF304000FF304000FF304000FF304000FF0000000000000000666600FF6666
-      00FF000000000000000000000000304000FF0000000000000000000000000000
-      00000000000000000000666600FF666600FF0000000000000000304000FF0000
-      0000000000000000000000000000000000000000000000000000666600FF6666
-      00FF0000000000000000304000FF304000FF304000FF304000FF304000FF0000
-      00000000000000000000666600FF666600FF0000000000000000000000000000
-      0000000000000000000000000000304000FF0000000000000000666600FF6666
-      00FF000000000000000000000000000000000000000000000000000000003040
-      00FF0000000000000000666600FF666600FF0000000000000000304000FF0000
-      0000000000000000000000000000304000FF0000000000000000666600FF6666
-      00FF000000000000000000000000304000FF304000FF304000FF304000FF0000
-      00000000000000000000666600FF666600FF0000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000666600FF6666
+      00FFFFFFFF80FFFFFF80FFFFFF80FFFFFF80FFFFFF80FFFFFF80FFFFFF80FFFF
+      FF80FFFFFF80FFFFFF80666600FF666600FFFFFFFF80FFFFFF80FFFFFF803040
+      00FF304000FF304000FF304000FF304000FFFFFFFF80FFFFFF80666600FF6666
+      00FFFFFFFF80FFFFFF80FFFFFF80304000FFFFFFFF80FFFFFF80FFFFFF80FFFF
+      FF80FFFFFF80FFFFFF80666600FF666600FFFFFFFF80FFFFFF80304000FFFFFF
+      FF80FFFFFF80FFFFFF80FFFFFF80FFFFFF80FFFFFF80FFFFFF80666600FF6666
+      00FFFFFFFF80FFFFFF80304000FF304000FF304000FF304000FF304000FFFFFF
+      FF80FFFFFF80FFFFFF80666600FF666600FFFFFFFF80FFFFFF80FFFFFF80FFFF
+      FF80FFFFFF80FFFFFF80FFFFFF80304000FFFFFFFF80FFFFFF80666600FF6666
+      00FFFFFFFF80FFFFFF80FFFFFF80FFFFFF80FFFFFF80FFFFFF80FFFFFF803040
+      00FFFFFFFF80FFFFFF80666600FF666600FFFFFFFF80FFFFFF80304000FFFFFF
+      FF80FFFFFF80FFFFFF80FFFFFF80304000FFFFFFFF80FFFFFF80666600FF6666
+      00FFFFFFFF80FFFFFF80FFFFFF80304000FF304000FF304000FF304000FFFFFF
+      FF80FFFFFF80FFFFFF80666600FF666600FFFFFFFF80FFFFFF80FFFFFF80FFFF
+      FF80FFFFFF80FFFFFF80FFFFFF80FFFFFF80FFFFFF80FFFFFF80666600FF6666
       00FF666600FF666600FF666600FF666600FF666600FF666600FF666600FF6666
       00FF666600FF666600FF666600FF666600FF666600FF666600FF666600FF6666
       00FF666600FF666600FF666600FF666600FF666600FF666600FF666600FF6666
-      00FF000000000000000000000000000000000000000000000000000000000000
-      00000000000000000000666600FF666600FF0000000000000000000000003040
-      00FF304000FF304000FF304000FF000000000000000000000000666600FF6666
-      00FF0000000000000000304000FF000000000000000000000000000000003040
-      00FF0000000000000000666600FF666600FF0000000000000000304000FF0000
-      0000000000000000000000000000000000000000000000000000666600FF6666
-      00FF0000000000000000304000FF00000000304000FF304000FF304000FF0000
-      00000000000000000000666600FF666600FF0000000000000000304000FF3040
-      00FF000000000000000000000000304000FF0000000000000000666600FF6666
-      00FF0000000000000000304000FF000000000000000000000000000000003040
-      00FF0000000000000000666600FF666600FF0000000000000000304000FF0000
-      0000000000000000000000000000304000FF0000000000000000666600FF6666
-      00FF000000000000000000000000304000FF304000FF304000FF304000FF0000
-      00000000000000000000666600FF666600FF0000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000666600FF6666
+      00FFFFFFFF80FFFFFF80FFFFFF80FFFFFF80FFFFFF80FFFFFF80FFFFFF80FFFF
+      FF80FFFFFF80FFFFFF80666600FF666600FFFFFFFF80FFFFFF80FFFFFF803040
+      00FF304000FF304000FF304000FFFFFFFF80FFFFFF80FFFFFF80666600FF6666
+      00FFFFFFFF80FFFFFF80304000FFFFFFFF80FFFFFF80FFFFFF80FFFFFF803040
+      00FFFFFFFF80FFFFFF80666600FF666600FFFFFFFF80FFFFFF80304000FFFFFF
+      FF80FFFFFF80FFFFFF80FFFFFF80FFFFFF80FFFFFF80FFFFFF80666600FF6666
+      00FFFFFFFF80FFFFFF80304000FFFFFFFF80304000FF304000FF304000FFFFFF
+      FF80FFFFFF80FFFFFF80666600FF666600FFFFFFFF80FFFFFF80304000FF3040
+      00FFFFFFFF80FFFFFF80FFFFFF80304000FFFFFFFF80FFFFFF80666600FF6666
+      00FFFFFFFF80FFFFFF80304000FFFFFFFF80FFFFFF80FFFFFF80FFFFFF803040
+      00FFFFFFFF80FFFFFF80666600FF666600FFFFFFFF80FFFFFF80304000FFFFFF
+      FF80FFFFFF80FFFFFF80FFFFFF80304000FFFFFFFF80FFFFFF80666600FF6666
+      00FFFFFFFF80FFFFFF80FFFFFF80304000FF304000FF304000FF304000FFFFFF
+      FF80FFFFFF80FFFFFF80666600FF666600FFFFFFFF80FFFFFF80FFFFFF80FFFF
+      FF80FFFFFF80FFFFFF80FFFFFF80FFFFFF80FFFFFF80FFFFFF80666600FF6666
       00FF666600FF666600FF666600FF666600FF666600FF666600FF666600FF6666
       00FF666600FF666600FF666600FF666600FF666600FF666600FF666600FF6666
       00FF666600FF666600FF666600FF666600FF666600FF666600FF666600FF6666
-      00FF000000000000000000000000000000000000000000000000000000000000
-      00000000000000000000666600FF666600FF0000000000000000304000FF3040
-      00FF304000FF304000FF304000FF304000FF0000000000000000666600FF6666
-      00FF000000000000000000000000000000000000000000000000304000FF0000
-      00000000000000000000666600FF666600FF0000000000000000000000000000
-      000000000000304000FF00000000000000000000000000000000666600FF6666
-      00FF0000000000000000000000000000000000000000304000FF000000000000
-      00000000000000000000666600FF666600FF0000000000000000000000000000
-      0000304000FF0000000000000000000000000000000000000000666600FF6666
-      00FF00000000000000000000000000000000304000FF00000000000000000000
-      00000000000000000000666600FF666600FF0000000000000000000000003040
-      00FF000000000000000000000000000000000000000000000000666600FF6666
-      00FF000000000000000000000000304000FF0000000000000000000000000000
-      00000000000000000000666600FF666600FF0000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000666600FF6666
+      00FFFFFFFF80FFFFFF80FFFFFF80FFFFFF80FFFFFF80FFFFFF80FFFFFF80FFFF
+      FF80FFFFFF80FFFFFF80666600FF666600FFFFFFFF80FFFFFF80304000FF3040
+      00FF304000FF304000FF304000FF304000FFFFFFFF80FFFFFF80666600FF6666
+      00FFFFFFFF80FFFFFF80FFFFFF80FFFFFF80FFFFFF80FFFFFF80304000FFFFFF
+      FF80FFFFFF80FFFFFF80666600FF666600FFFFFFFF80FFFFFF80FFFFFF80FFFF
+      FF80FFFFFF80304000FFFFFFFF80FFFFFF80FFFFFF80FFFFFF80666600FF6666
+      00FFFFFFFF80FFFFFF80FFFFFF80FFFFFF80FFFFFF80304000FFFFFFFF80FFFF
+      FF80FFFFFF80FFFFFF80666600FF666600FFFFFFFF80FFFFFF80FFFFFF80FFFF
+      FF80304000FFFFFFFF80FFFFFF80FFFFFF80FFFFFF80FFFFFF80666600FF6666
+      00FFFFFFFF80FFFFFF80FFFFFF80FFFFFF80304000FFFFFFFF80FFFFFF80FFFF
+      FF80FFFFFF80FFFFFF80666600FF666600FFFFFFFF80FFFFFF80FFFFFF803040
+      00FFFFFFFF80FFFFFF80FFFFFF80FFFFFF80FFFFFF80FFFFFF80666600FF6666
+      00FFFFFFFF80FFFFFF80FFFFFF80304000FFFFFFFF80FFFFFF80FFFFFF80FFFF
+      FF80FFFFFF80FFFFFF80666600FF666600FFFFFFFF80FFFFFF80FFFFFF80FFFF
+      FF80FFFFFF80FFFFFF80FFFFFF80FFFFFF80FFFFFF80FFFFFF80666600FF6666
       00FF666600FF666600FF666600FF666600FF666600FF666600FF666600FF6666
       00FF666600FF666600FF666600FF666600FF666600FF666600FF666600FF6666
       00FF666600FF666600FF666600FF666600FF666600FF666600FF666600FF6666
-      00FF000000000000000000000000000000000000000000000000000000000000
-      00000000000000000000666600FF666600FF0000000000000000000000003040
-      00FF304000FF304000FF304000FF000000000000000000000000666600FF6666
-      00FF0000000000000000304000FF000000000000000000000000000000003040
-      00FF0000000000000000666600FF666600FF0000000000000000304000FF0000
-      0000000000000000000000000000304000FF0000000000000000666600FF6666
-      00FF000000000000000000000000304000FF304000FF304000FF304000FF0000
-      00000000000000000000666600FF666600FF0000000000000000304000FF0000
-      0000000000000000000000000000304000FF0000000000000000666600FF6666
-      00FF0000000000000000304000FF000000000000000000000000000000003040
-      00FF0000000000000000666600FF666600FF0000000000000000304000FF0000
-      0000000000000000000000000000304000FF0000000000000000666600FF6666
-      00FF000000000000000000000000304000FF304000FF304000FF304000FF0000
-      00000000000000000000666600FF666600FF0000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000666600FF6666
+      00FFFFFFFF80FFFFFF80FFFFFF80FFFFFF80FFFFFF80FFFFFF80FFFFFF80FFFF
+      FF80FFFFFF80FFFFFF80666600FF666600FFFFFFFF80FFFFFF80FFFFFF803040
+      00FF304000FF304000FF304000FFFFFFFF80FFFFFF80FFFFFF80666600FF6666
+      00FFFFFFFF80FFFFFF80304000FFFFFFFF80FFFFFF80FFFFFF80FFFFFF803040
+      00FFFFFFFF80FFFFFF80666600FF666600FFFFFFFF80FFFFFF80304000FFFFFF
+      FF80FFFFFF80FFFFFF80FFFFFF80304000FFFFFFFF80FFFFFF80666600FF6666
+      00FFFFFFFF80FFFFFF80FFFFFF80304000FF304000FF304000FF304000FFFFFF
+      FF80FFFFFF80FFFFFF80666600FF666600FFFFFFFF80FFFFFF80304000FFFFFF
+      FF80FFFFFF80FFFFFF80FFFFFF80304000FFFFFFFF80FFFFFF80666600FF6666
+      00FFFFFFFF80FFFFFF80304000FFFFFFFF80FFFFFF80FFFFFF80FFFFFF803040
+      00FFFFFFFF80FFFFFF80666600FF666600FFFFFFFF80FFFFFF80304000FFFFFF
+      FF80FFFFFF80FFFFFF80FFFFFF80304000FFFFFFFF80FFFFFF80666600FF6666
+      00FFFFFFFF80FFFFFF80FFFFFF80304000FF304000FF304000FF304000FFFFFF
+      FF80FFFFFF80FFFFFF80666600FF666600FFFFFFFF80FFFFFF80FFFFFF80FFFF
+      FF80FFFFFF80FFFFFF80FFFFFF80FFFFFF80FFFFFF80FFFFFF80666600FF6666
       00FF666600FF666600FF666600FF666600FF666600FF666600FF666600FF6666
       00FF666600FF666600FF666600FF666600FF666600FF666600FF666600FF6666
       00FF666600FF666600FF666600FF666600FF666600FF666600FF666600FF6666
-      00FF000000000000000000000000000000000000000000000000000000000000
-      00000000000000000000666600FF666600FF0000000000000000000000003040
-      00FF304000FF304000FF304000FF000000000000000000000000666600FF6666
-      00FF0000000000000000304000FF000000000000000000000000000000003040
-      00FF0000000000000000666600FF666600FF0000000000000000304000FF0000
-      0000000000000000000000000000304000FF0000000000000000666600FF6666
-      00FF0000000000000000304000FF000000000000000000000000000000003040
-      00FF0000000000000000666600FF666600FF0000000000000000000000003040
-      00FF304000FF304000FF304000FF304000FF0000000000000000666600FF6666
-      00FF000000000000000000000000000000000000000000000000000000003040
-      00FF0000000000000000666600FF666600FF0000000000000000304000FF0000
-      00000000000000000000304000FF000000000000000000000000666600FF6666
-      00FF000000000000000000000000304000FF304000FF304000FF304000FF0000
-      00000000000000000000666600FF666600FF0000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000666600FF6666
+      00FFFFFFFF80FFFFFF80FFFFFF80FFFFFF80FFFFFF80FFFFFF80FFFFFF80FFFF
+      FF80FFFFFF80FFFFFF80666600FF666600FFFFFFFF80FFFFFF80FFFFFF803040
+      00FF304000FF304000FF304000FFFFFFFF80FFFFFF80FFFFFF80666600FF6666
+      00FFFFFFFF80FFFFFF80304000FFFFFFFF80FFFFFF80FFFFFF80FFFFFF803040
+      00FFFFFFFF80FFFFFF80666600FF666600FFFFFFFF80FFFFFF80304000FFFFFF
+      FF80FFFFFF80FFFFFF80FFFFFF80304000FFFFFFFF80FFFFFF80666600FF6666
+      00FFFFFFFF80FFFFFF80304000FFFFFFFF80FFFFFF80FFFFFF80FFFFFF803040
+      00FFFFFFFF80FFFFFF80666600FF666600FFFFFFFF80FFFFFF80FFFFFF803040
+      00FF304000FF304000FF304000FF304000FFFFFFFF80FFFFFF80666600FF6666
+      00FFFFFFFF80FFFFFF80FFFFFF80FFFFFF80FFFFFF80FFFFFF80FFFFFF803040
+      00FFFFFFFF80FFFFFF80666600FF666600FFFFFFFF80FFFFFF80304000FFFFFF
+      FF80FFFFFF80FFFFFF80304000FFFFFFFF80FFFFFF80FFFFFF80666600FF6666
+      00FFFFFFFF80FFFFFF80FFFFFF80304000FF304000FF304000FF304000FFFFFF
+      FF80FFFFFF80FFFFFF80666600FF666600FFFFFFFF80FFFFFF80FFFFFF80FFFF
+      FF80FFFFFF80FFFFFF80FFFFFF80FFFFFF80FFFFFF80FFFFFF80666600FF6666
       00FF666600FF666600FF666600FF666600FF666600FF666600FF666600FF6666
       00FF666600FF666600FF666600FF
     }
@@ -7085,7 +7214,7 @@ object MainForm: TMainForm
     FileMustExist = True
     OnClickHistoryItem = EditorHistoryClickHistoryItem
     CheckLastItem = True
-    left = 372
+    left = 368
     top = 564
   end
   object PrjHistory: THistoryFiles
@@ -7096,7 +7225,7 @@ object MainForm: TMainForm
     FileMustExist = True
     OnClickHistoryItem = PrjHistoryClickHistoryItem
     CheckLastItem = True
-    left = 452
+    left = 444
     top = 564
   end
   object PrjTreeMenu: TPopupMenu
@@ -7132,7 +7261,7 @@ object MainForm: TMainForm
     DefaultFilter = 'INI Files (*.ini)|*.ini'
     Enabled = False
     left = 220
-    top = 508
+    top = 400
   end
   object EditorPopUp: TPopupMenu
     Images = ImageList
@@ -7144,8 +7273,8 @@ object MainForm: TMainForm
   end
   object EdTemplates: TPopupMenu
     Images = ImageList
-    left = 523
-    top = 512
+    left = 602
+    top = 452
     object MenuItem84: TMenuItem
       Caption = 'New Item1'
       GlyphShowMode = gsmAlways
@@ -7165,20 +7294,20 @@ object MainForm: TMainForm
     ExecCommandID = ecSynCompletionExecute
     Editor = SynEdit_X
     ToggleReplaceWhole = False
-    left = 292
-    top = 508
+    left = 364
+    top = 400
   end
   object UpdGuiTimer: TTimer
     Enabled = False
     Interval = 300
     OnTimer = UpdGuiTimerTimer
-    left = 602
-    top = 564
+    left = 292
+    top = 512
   end
   object EndProcTimer: TTimer
     OnTimer = EndProcTimerTimer
-    left = 528
-    top = 564
+    left = 220
+    top = 512
   end
   object SynHTMLSyn: TSynHTMLSyn
     DefaultFilter = 'Documento HTML (*.htm,*.html)|*.htm;*.html'
@@ -7191,14 +7320,51 @@ object MainForm: TMainForm
     SymbolAttri.Foreground = clBlue
     SymbolAttri.Style = []
     UndefKeyAttri.Style = []
-    left = 440
-    top = 508
+    left = 84
+    top = 400
   end
   object DeferredTimer: TTimer
     Enabled = False
     Interval = 10000
     OnTimer = DeferredTimerTimer
-    left = 672
-    top = 564
+    left = 364
+    top = 512
+  end
+  object SynExporterHTML: TSynExporterHTML
+    Color = clWindow
+    CreateHTMLFragment = True
+    DefaultFilter = 'Documento HTML (*.htm,*.html)|*.htm;*.html'
+    Options = [heoFragmentOnly]
+    Font.Color = clBlack
+    Font.Height = -13
+    Font.Name = 'Courier New'
+    HTMLFontSize = fs02
+    Title = 'SBACreator HTML Exported file'
+    UseBackground = False
+    left = 292
+    top = 400
+  end
+  object SynFreePascalSyn: TSynFreePascalSyn
+    Enabled = False
+    CommentAttri.Foreground = clGreen
+    NumberAttri.Foreground = clNavy
+    StringAttri.Foreground = clBlue
+    SymbolAttri.Foreground = clRed
+    CompilerMode = pcmObjFPC
+    NestedComments = True
+    left = 20
+    top = 400
+  end
+  object SynCppSyn: TSynCppSyn
+    DefaultFilter = 'Ficheros C++ (*.c,*.cpp,*.h,*.hpp,*.hh)|*.c;*.cpp;*.h;*.hpp;*.hh'
+    Enabled = False
+    CommentAttri.Foreground = clGreen
+    DirecAttri.Foreground = clNavy
+    IdentifierAttri.Foreground = 12615680
+    KeyAttri.Foreground = clRed
+    NumberAttri.Foreground = clGreen
+    StringAttri.Foreground = clBlue
+    left = 148
+    top = 400
   end
 end

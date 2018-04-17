@@ -21,12 +21,12 @@
       <UseVersionInfo Value="True"/>
       <AutoIncrementBuild Value="True"/>
       <MinorVersionNr Value="4"/>
-      <RevisionNr Value="4"/>
-      <BuildNr Value="14"/>
+      <RevisionNr Value="5"/>
+      <BuildNr Value="19"/>
       <Attributes pvaPreRelease="True"/>
       <StringTable CompanyName="uE Peru" FileDescription="SBA System Creator" LegalCopyright="(c) Miguel A. Risco-Castillo" ProductVersion="Public Beta"/>
     </VersionInfo>
-    <BuildModes Count="9">
+    <BuildModes Count="11">
       <Item1 Name="Default" Default="True"/>
       <Item2 Name="Debug x64">
         <CompilerOptions>
@@ -341,6 +341,86 @@
           </Linking>
         </CompilerOptions>
       </Item9>
+      <Item10 Name="Release Linux ARMV7A">
+        <CompilerOptions>
+          <Version Value="11"/>
+          <PathDelim Value="\"/>
+          <Target>
+            <Filename Value="$Env(PRJOUT)\SBAcreator\Release\Linux_ARM\SBAcreator"/>
+          </Target>
+          <SearchPaths>
+            <IncludeFiles Value="$(ProjOutDir)"/>
+            <OtherUnitFiles Value="..\..\Libs\InternetTools\data;..\..\Libs\InternetTools\internet;..\..\Libs\InternetTools\system"/>
+            <UnitOutputDirectory Value="$Env(TEMP)\lazarus\lib\$(TargetCPU)-$(TargetOS)"/>
+          </SearchPaths>
+          <CodeGeneration>
+            <SmartLinkUnit Value="True"/>
+            <TargetProcessor Value="ARMV7A"/>
+            <TargetCPU Value="arm"/>
+            <TargetOS Value="linux"/>
+            <Optimizations>
+              <OptimizationLevel Value="3"/>
+            </Optimizations>
+          </CodeGeneration>
+          <Linking>
+            <Debugging>
+              <GenerateDebugInfo Value="False"/>
+              <StripSymbols Value="True"/>
+            </Debugging>
+            <LinkSmart Value="True"/>
+            <Options>
+              <Win32>
+                <GraphicApplication Value="True"/>
+              </Win32>
+            </Options>
+          </Linking>
+        </CompilerOptions>
+      </Item10>
+      <Item11 Name="Debug Linux ARMV7A">
+        <CompilerOptions>
+          <Version Value="11"/>
+          <PathDelim Value="\"/>
+          <Target>
+            <Filename Value="$Env(PRJOUT)\SBAcreator\Release\Linux_ARM\SBAcreator"/>
+          </Target>
+          <SearchPaths>
+            <IncludeFiles Value="$(ProjOutDir)"/>
+            <OtherUnitFiles Value="..\..\Libs\InternetTools\data;..\..\Libs\InternetTools\internet;..\..\Libs\InternetTools\system"/>
+            <UnitOutputDirectory Value="$Env(TEMP)\lazarus\lib\$(TargetCPU)-$(TargetOS)"/>
+          </SearchPaths>
+          <Parsing>
+            <SyntaxOptions>
+              <IncludeAssertionCode Value="True"/>
+            </SyntaxOptions>
+          </Parsing>
+          <CodeGeneration>
+            <Checks>
+              <IOChecks Value="True"/>
+              <RangeChecks Value="True"/>
+              <OverflowChecks Value="True"/>
+              <StackChecks Value="True"/>
+            </Checks>
+            <TargetProcessor Value="ARMV7A"/>
+            <TargetCPU Value="arm"/>
+            <TargetOS Value="linux"/>
+          </CodeGeneration>
+          <Linking>
+            <Debugging>
+              <DebugInfoType Value="dsDwarf2Set"/>
+              <UseHeaptrc Value="True"/>
+              <UseExternalDbgSyms Value="True"/>
+            </Debugging>
+            <Options>
+              <Win32>
+                <GraphicApplication Value="True"/>
+              </Win32>
+            </Options>
+          </Linking>
+          <Other>
+            <CustomOptions Value="-dDEBUG"/>
+          </Other>
+        </CompilerOptions>
+      </Item11>
     </BuildModes>
     <PublishOptions>
       <Version Value="2"/>
@@ -353,39 +433,48 @@
         <FormatVersion Value="1"/>
       </local>
     </RunParams>
-    <RequiredPackages Count="10">
+    <RequiredPackages Count="13">
       <Item1>
-        <PackageName Value="internettools"/>
+        <PackageName Value="eccontrols"/>
       </Item1>
       <Item2>
-        <PackageName Value="fpc_markdown"/>
+        <PackageName Value="attabs_package"/>
       </Item2>
       <Item3>
-        <PackageName Value="FrameViewer09"/>
+        <PackageName Value="atflatcontrols_package"/>
       </Item3>
       <Item4>
-        <PackageName Value="LazUtils"/>
+        <PackageName Value="internettools"/>
       </Item4>
       <Item5>
-        <PackageName Value="LazControls"/>
+        <PackageName Value="fpc_markdown"/>
       </Item5>
       <Item6>
-        <PackageName Value="HistoryLazarus"/>
+        <PackageName Value="FrameViewer09"/>
       </Item6>
       <Item7>
-        <PackageName Value="bgracontrols"/>
+        <PackageName Value="LazUtils"/>
       </Item7>
       <Item8>
-        <PackageName Value="uEControls"/>
+        <PackageName Value="LazControls"/>
       </Item8>
       <Item9>
-        <PackageName Value="SynEdit"/>
+        <PackageName Value="HistoryLazarus"/>
       </Item9>
       <Item10>
-        <PackageName Value="LCL"/>
+        <PackageName Value="bgracontrols"/>
       </Item10>
+      <Item11>
+        <PackageName Value="uEControls"/>
+      </Item11>
+      <Item12>
+        <PackageName Value="SynEdit"/>
+      </Item12>
+      <Item13>
+        <PackageName Value="LCL"/>
+      </Item13>
     </RequiredPackages>
-    <Units Count="25">
+    <Units Count="26">
       <Unit0>
         <Filename Value="SBAcreator.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -516,25 +605,30 @@
         <UnitName Value="SynHighlighterJSON"/>
       </Unit20>
       <Unit21>
-        <Filename Value="wapagecontrol.pas"/>
-        <IsPartOfProject Value="True"/>
-        <UnitName Value="WAPageControl"/>
-      </Unit21>
-      <Unit22>
         <Filename Value="sbaipcoresu.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="SBAIPCoresU"/>
-      </Unit22>
-      <Unit23>
+      </Unit21>
+      <Unit22>
         <Filename Value="editoru.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="EditorU"/>
-      </Unit23>
-      <Unit24>
+      </Unit22>
+      <Unit23>
         <Filename Value="wgetfileu.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="WGetFileU"/>
+      </Unit23>
+      <Unit24>
+        <Filename Value="pluginu.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="PlugInU"/>
       </Unit24>
+      <Unit25>
+        <Filename Value="filemonitoru.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="FileMonitorU"/>
+      </Unit25>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

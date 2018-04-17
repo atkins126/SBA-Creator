@@ -6,14 +6,15 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, Buttons,
-  ComCtrls, Process, AsyncProcess, ExtCtrls, Menus, ActnList, SynHighlighterSBA,
+  ComCtrls, AsyncProcess, ExtCtrls, Menus, ActnList, SynHighlighterSBA,
   SynHighlighterVerilog, SynHighlighterJSON, SynEditMarkupHighAll, SynEdit,
   SynEditTypes, SynEditKeyCmds, SynPluginSyncroEdit, SynHighlighterIni,
-  SynEditHighlighter,SynCompletion, SynPluginMulticaret, SynHighlighterHTML, FileUtil,
-  LazFileUtils, dateutils, ListViewFilterEdit, ExtendedNotebook, strutils,
-  Clipbrd, IniPropStorage, StdActns, BGRASpriteAnimation, uebutton, uETilePanel,
-  versionsupportu, types, lclintf, LCLType, HistoryFiles, IniFiles,
-  WAPageControl, EditorU;
+  SynEditHighlighter, SynCompletion, SynPluginMulticaret, SynHighlighterHTML,
+  SynExportHTML, SynHighlighterPas, SynHighlighterCpp, FileUtil, LazFileUtils,
+  dateutils, ListViewFilterEdit, ExtendedNotebook, strutils, LazUTF8, Clipbrd,
+  IniPropStorage, StdActns, BGRASpriteAnimation, uebutton, uETilePanel,
+  versionsupportu, types, lclintf, LCLType, HistoryFiles, attabs,
+  IniFiles, EditorU;
 
 type
   tProcessStatus=(Idle,TimeOut,SyntaxChk,Obfusct,exePlugIn);
@@ -21,6 +22,19 @@ type
   { TMainForm }
 
   TMainForm = class(TForm)
+    ToolButton13: TToolButton;
+    ToolButton61: TToolButton;
+    ToolsReloadPlugIns: TAction;
+    EditCopyAsHtml: TAction;
+    ATTabs1: TATTabs;
+    MenuItem10: TMenuItem;
+    MenuItem4: TMenuItem;
+    SynCppSyn: TSynCppSyn;
+    SynExporterHTML: TSynExporterHTML;
+    SynFreePascalSyn: TSynFreePascalSyn;
+    ToolsExporttoHtml: TAction;
+    BitBtn1: TBitBtn;
+    PlugInsMenu: TMenuItem;
     ProjectItemDataSheet: TAction;
     Bevel1: TBevel;
     B_InsertSnipped: TBitBtn;
@@ -194,7 +208,7 @@ type
     Splitter4: TSplitter;
     Splitter5: TSplitter;
     Splitter6: TSplitter;
-    HidenPage: TTabSheet;
+    HiddenPage: TTabSheet;
     EndProcTimer: TTimer;
     DeferredTimer: TTimer;
     ToolBar4: TToolBar;
@@ -264,7 +278,6 @@ type
     FileSave: TAction;
     ToolsMenu: TMenuItem;
     MenuItem15: TMenuItem;
-    MenuItem16: TMenuItem;
     MenuItem17: TMenuItem;
     FileNew: TAction;
     FileOpen: TAction;
@@ -304,7 +317,7 @@ type
     StatusBar1: TStatusBar;
     SyncroEdit: TSynPluginSyncroEdit;
     SynEdit_X: TSynEdit;
-    SynEdit1: TSynEdit;
+    SynEdit_Test: TSynEdit;
     SynCompletion: TSynCompletion;
     SynIniSyn: TSynIniSyn;
     SynHTMLSyn: TSynHTMLSyn;
@@ -322,7 +335,6 @@ type
     ToolButton10: TToolButton;
     ToolButton11: TToolButton;
     ToolButton12: TToolButton;
-    ToolButton13: TToolButton;
     ToolButton14: TToolButton;
     ToolButton17: TToolButton;
     ToolButton18: TToolButton;
@@ -357,7 +369,6 @@ type
     ToolButton7: TToolButton;
     ToolButton9: TToolButton;
     btn_config: TuEButton;
-    procedure btn_plgClick(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure B_SBAAdressClick(Sender: TObject);
     procedure btn_sba_libraryClick(Sender: TObject);
@@ -368,6 +379,7 @@ type
     procedure EditBlkIndentExecute(Sender: TObject);
     procedure EditBlkUncommentExecute(Sender: TObject);
     procedure EditBlkUnindentExecute(Sender: TObject);
+    procedure EditCopyAsHtmlExecute(Sender: TObject);
     procedure EditCopyExecute(Sender: TObject);
     procedure EditCutExecute(Sender: TObject);
     procedure EditInsertAuthorExecute(Sender: TObject);
@@ -375,8 +387,6 @@ type
     procedure EditInsertTemplateExecute(Sender: TObject);
     procedure EditorHistoryClickHistoryItem(Sender: TObject; Item: TMenuItem;
       const Filename: string);
-    procedure EditorPagesMouseDown(Sender: TObject; Button: TMouseButton;
-      Shift: TShiftState; X, Y: Integer);
     procedure EditorsTabContextPopup(Sender: TObject; MousePos: TPoint;
       var Handled: Boolean);
     procedure EditPasteExecute(Sender: TObject);
@@ -433,6 +443,7 @@ type
     procedure SBA_NewPrgExecute(Sender: TObject);
     procedure LV_SnippetsClick(Sender: TObject);
     procedure TFindDialogFind(Sender: TObject);
+    procedure ToolsExporttoHtmlExecute(Sender: TObject);
     procedure ToolsFileObfExecute(Sender: TObject);
     procedure ToolsFileReformatExecute(Sender: TObject);
     procedure FileRevertExecute(Sender: TObject);
@@ -449,6 +460,7 @@ type
     procedure SBA_ReturnToEditorExecute(Sender: TObject);
     procedure SBA_SaveAsExecute(Sender: TObject);
     procedure SBA_SaveExecute(Sender: TObject);
+    procedure ToolsReloadPlugInsExecute(Sender: TObject);
     procedure TReplaceDialogReplace(Sender: TObject);
     procedure UpdGuiTimerTimer(Sender: TObject);
     procedure WordMouseMove(Sender: TObject; Shift: TShiftState; X,
@@ -476,7 +488,10 @@ type
     function CloseProject: boolean;
     procedure Colorize(ini:string);
     procedure CopyPrjHistory;
-    procedure CreateEditor(var ActiveTab: TTabSheet);
+    function CreateEditor(var ActiveTab: TTabSheet):TEditorF;
+    function SelectExportHighligther(EditorF: TEditorF): TSynCustomHighlighter;
+    procedure ExporttoHtmlFile(EditorF: TEditorF);
+    procedure CopyAsHtml(EditorF: TEditorF);
     procedure LoadPlugIns;
     function CreateTempFile(fn:string): boolean;
     procedure DetectSBAController;
@@ -487,17 +502,15 @@ type
     function GetEditorPage(i: integer): TEditorF;
     procedure GetFile(filename: string);
     procedure GotoEditor;
-    procedure hdltypeselect(const ts: string);
+    function selectHighlighter(var EditorF: TEditorF): TEdType;
     procedure HighLightReservedWords(List:TStrings);
-    procedure menu_plgClick(Sender: TObject);
     procedure NewEditorPage;
-    procedure Ofuscate(f: string; hdl: TEdType);
+    procedure Obfuscate(EditorF:TEditorF);
     function Open(f: String): boolean;
     procedure OpenInEditor(const f: string);
     procedure OpenProject(const f:string);
     procedure OpenTreeItem(TN: TTreeNode);
-    procedure PlugInCmd(f: string);
-    procedure Reformat(osl,nsl: Tstrings);
+    procedure PlugInCmd(Sender: TObject);
     procedure RegExpKey;
     procedure ReOpenEditorFiles;
     function EditorSaveAs(EditorF: TEditorF): boolean;
@@ -507,6 +520,7 @@ type
     procedure SetupEdTmplMenu;
     procedure SetupPrgTmplMenu;
     procedure SetupSynMarkup(Editor:TSynEdit);
+    procedure ShowHintEvent(Sender: TObject; HintInfo: PHintInfo);
     procedure SyntaxCheck(f,path: string; hdl: TEdType);
     procedure ExtractSBALabels;
     procedure LoadRsvWordsFile;
@@ -529,7 +543,8 @@ implementation
 {$R *.lfm}
 
 uses DebugFormU, SBAProgContrlrU, SBAProjectU, ConfigFormU, AboutFormU, sbasnippetu, PrjWizU,
-     SBAIPCoresU, DwFileU, FloatFormU, LibraryFormU, ExportPrjFormU, AutoUpdateU;
+     SBAIPCoresU, DwFileU, FloatFormU, LibraryFormU, ExportPrjFormU, AutoUpdateU,
+     PlugInU, FileMonitorU;
 
 var
   SynMarkup:TSynEditMarkupHighlightAllCaret;
@@ -538,12 +553,9 @@ var
   AutoUpdate:TAutoUpdate;
   fOldIndex:integer = -1;
   wdir:string;
-  filetype:TEdType;
   commentstr:string='--';
   fileext:string='.vhd';
   mapfile:string='vhdl_map.dat';
-  ActiveEditor:TSynEdit;
-  EditorCnt:integer=1;
   PrgReturnTab:TTabSheet=nil;
   ProcessStatus:TProcessStatus=Idle;
 
@@ -614,101 +626,90 @@ end;
 
 procedure TMainForm.LoadPlugIns;
 var
-  PlugBtn:TuEButton;
-  PlgDir:String;
-  PlgIni:TIniFile;
-  i:Integer;
+  PlugIn:TPlugIn;
+  i:integer;
+  c:TControl;
+  M:TMenuItem;
 
-  procedure createbtn(n:integer);
-  var s:string;
+  procedure createbtn(PlugIn:TPlugIn);
+  var PlugBtn:TuEButton;
   begin
-    s:=inttostr(n);
+    if PlugIn.ButtonGlyph.IsEmpty then exit;
     PlugBtn:=TuEButton.Create(MainForm);
     PlugBtn.Parent:=MainPanel;
-    PlugBtn.Name:='btn_plg_'+s;
+    PlugBtn.Tag:=1000;
     PlugBtn.Constraints.MinHeight:=btn_new_project.Constraints.MinHeight;
     PlugBtn.Constraints.MinWidth:=btn_new_project.Constraints.MinWidth;
     PlugBtn.TextShadowColor:=btn_new_project.TextShadowColor;
     PlugBtn.Layout:=blGlyphTop;
     PLugBtn.ParentColor:=false;
     PLugBtn.Color:=btn_new_project.Color;
-    PlugBtn.Caption:=PlgIni.ReadString('MAIN','Name','PlugIn #'+s);
-    if FileExists(PlgDir+PlgIni.ReadString('Button','Glyph','')) then PlugBtn.LoadGlyphFromFile(PlgDir+PlgIni.ReadString('Button','Glyph',''));
-    PlugBtn.Tag:=n;
-    PlugBtn.OnClick:=@btn_plgClick;
-  end;
-
-  procedure createmenu(n:integer);
-  var
-    s,i,h:string;
-    M:TMenuItem;
-    picture:TPicture;
-  begin
-    s:=PlgIni.ReadString('Menu','Caption','');
-    i:=PlgDir+PlgIni.ReadString('Menu','Icon','');
-    h:=PlgIni.ReadString('Menu','Hint','');
-    if not s.IsEmpty then
-    begin
-      M:=TMenuItem.Create(ToolsMenu);
-      M.Caption:=s;
-      M.Hint:=h;
-      M.Tag:=n;
-      ToolsMenu.Add(M);
-      M.OnClick:=@menu_plgClick;
-      Picture := TPicture.Create;
-      try
-        try
-          Picture.LoadFromFile(i);
-        except
-          ON E:Exception do Info('TMainForm.LoadPlugIns Error',E.Message);
-        end;
-        M.Bitmap.Assign(Picture.Graphic);
-      finally
-        Picture.Free;
-      end;
-    end;
+    PlugBtn.Caption:=PlugIn.ButtonCaption;
+    PlugBtn.LoadImageFromFile(ThemeDir+'btn_bg.png');
+    PlugBtn.LoadGlyphFromFile(PlugIn.Path+PlugIn.ButtonGlyph);
+    PlugBtn.OnClick:=@PlugIn.OnClick;
   end;
 
 begin
-  if PlugInsList.Count=0 then exit;
-  for i:=0 to PlugInsList.Count-1 do
+  PlugInsMenu.Clear;
+  for i:=MainPanel.ControlCount-1 downto 0 do
   begin
-    try
-      PlgIni:=TIniFile.Create(PlugInsList.ValueFromIndex[i]);
-      PlgDir:=ExtractFilePath(PlugInsList.ValueFromIndex[i]);
-      if PlgIni.SectionExists('Button') then createbtn(i);
-      if PlgIni.SectionExists('Menu') then createmenu(i);
-    finally
-      If assigned(PlgIni) then FreeAndNil(PlgIni);
+    c:=MainPanel.Controls[i];
+    if c.Tag=1000 then
+    begin
+      MainPanel.RemoveControl(c);
+      c.Free;
     end;
   end;
+  GetPlugInList;
+  PlugInsMenu.Visible:=(PlugInsList.Count<>0);
+  if PlugInsList.Count=0 then exit;
+  for PlugIn in PlugInsList do if PlugIn.Enabled then
+  begin
+    PlugIn.PlugInCmd:=@PlugInCmd;
+    createbtn(PlugIn);
+    PlugIn.CreateMenuItem(PlugInsMenu);
+  end;
+  PlugInsMenu.AddSeparator;
+  M:=TMenuItem.Create(PlugInsMenu);
+  M.Action:=ToolsReloadPlugins;
+  PlugInsMenu.Add(M);
 end;
 
-procedure TMainForm.CreateEditor(var ActiveTab: TTabSheet);
+function TMainForm.CreateEditor(var ActiveTab: TTabSheet): TEditorF;
 var
-  OldName: String;
+  OldName,f: String;
   E,T: TSynEdit;
   memStrm: TMemoryStream;
 begin
   try
-   memStrm:=TMemoryStream.Create;
-   memStrm.WriteComponent(SynEdit_X);
-   T:=SynEdit_X;
-   OldName:=T.Name;
-   T.Name:='SynEdit_tmpl';
-   E:= TSynEdit.Create(self);
-   memStrm.Position:=0;
-   memStrm.ReadComponent(E);
+    memStrm:=TMemoryStream.Create;
+    memStrm.WriteComponent(SynEdit_X);
+    T:=SynEdit_X;
+    OldName:=T.Name;
+    T.Name:='SynEdit_tmpl';
+    E:= TSynEdit.Create(self);
+    memStrm.Position:=0;
+    memStrm.ReadComponent(E);
   finally
     if assigned(memStrm) then freeAndNil(memStrm);
   end;
-  E.Name:='SynEdit_'+inttostr(ActiveTab.Tag);
+  E.Name:='SynEdit_'+inttostr(EditorCnt);
   T.Name:=OldName;
   E.ClearAll;
   E.Parent:=ActiveTab;
   SetupSynMarkup(E);
   E.Modified:=false;
   E.OnStatusChange:=@SynEditStatusChange;
+  Result.Editor:=E;
+  Result.Page:=ActiveTab;
+  f:='NewFile'+inttostr(EditorCnt)+'.vhd';
+  Result.FileName:=AppendPathDelim(GetCurrentDir)+f;
+  result.EdType:=selectHighlighter(result);
+  ActiveTab.Caption:=f;
+  ActiveTab.Hint:=Result.FileName;
+  ActiveTab.Tag:=EditorCnt;
+  Inc(EditorCnt);
 end;
 
 function TMainForm.CreateTempFile(fn: string): boolean;
@@ -717,7 +718,7 @@ var
 begin
   result:=true;
   f:=TStringList.Create;
-  f.Assign(ActiveEditor.Lines);
+  f.Assign(ActEditorF.Editor.Lines);
   try
     f.SaveToFile(fn);
   finally
@@ -733,26 +734,24 @@ end;
 
 procedure TMainForm.EditorPagesChange(Sender: TObject);
 var
-  NewActive:TEditorF;
+  NewActiveF:TEditorF;
 begin
-  NewActive:=GetActiveEditorPage;
-  StatusBar1.Panels[1].Text:=NewActive.FileName;
-  If NewActive.Editor=ActiveEditor then
+  NewActiveF:=GetActiveEditorPage;
+  StatusBar1.Panels[1].Text:=NewActiveF.FileName;
+  If NewActiveF.Editor=ActEditorF.Editor then
     exit
   else
-    ActiveEditor:=NewActive.Editor;
-
-  If assigned(ActiveEditor) then
+    ActEditorF:=NewActiveF;
+  Info('TMainForm.EditorPagesChange FileName',ActEditorF.FileName);
+  If assigned(ActEditorF.Editor) then
   try
-    Info('EditorPagesChange',NewActive.FileName);
     SyncroEdit.Enabled:=false;
-    SyncroEdit.Editor:=ActiveEditor;
+    SyncroEdit.Editor:=ActEditorF.Editor;
     SyncroEdit.Enabled:=true;
-    SynCompletion.Editor:=ActiveEditor;
-    SynMultiCaret.Editor:=ActiveEditor;
-    wdir:=extractfilepath(NewActive.FileName);
+    SynCompletion.Editor:=ActEditorF.Editor;
+    SynMultiCaret.Editor:=ActEditorF.Editor;
+    wdir:=extractfilepath(NewActiveF.FileName);
     if wdir='' then wdir:=IFTHEN(SBAPrj.name<>'',SBAPrj.location,ProjectsDir);
-    hdltypeselect(extractfileext(NewActive.FileName));
     if ToolsFileObf.Checked then ToolsFileObfExecute(Sender);
     UpdGuiTimer.Enabled:=true;
   except
@@ -767,14 +766,14 @@ var
   sl,om:TStringList;
   f:boolean;
 begin
-  s:=EditorPages.ActivePage.Hint;
-  if ActiveEditor.Modified then
+  s:=ActEditorF.FileName;
+  if ActEditorF.Editor.Modified then
   case MessageDlg('File must be saved', 'Save File? '+s, mtConfirmation, [mbYes, mbNo],0) of
-    mrYes: if not SaveFile(s,ActiveEditor.Lines) then exit;
+    mrYes: if not SaveFile(s,ActEditorF.Editor.Lines) then exit;
   else exit;
   end;
-  ActiveEditor.Modified:=false;
-  ChangeEditorButtons(ActiveEditor);
+  ActEditorF.Editor.Modified:=false;
+  ChangeEditorButtons(ActEditorF.Editor);
   ToolsFileObf.Enabled:=false;
   if not fileexists(wdir+mapfile) then copyfile(AppDir+mapfile,wdir+mapfile);
   sl:=TStringList.Create;
@@ -798,7 +797,7 @@ begin
   sl.SaveToFile(wdir+mapfile);
   freeandnil(sl);
   freeandnil(om);
-  Ofuscate(EditorPages.ActivePage.Hint,filetype);
+  Obfuscate(ActEditorF);
   ToolsFileObf.Enabled:=true;
 end;
 
@@ -806,7 +805,7 @@ procedure TMainForm.SBA_EditProgramExecute(Sender: TObject);
 begin
   SynEdit_X.BeginUpdate(false);
   SynEdit_X.ClearUndo;
-  if SBAContrlrProg.CpySrc2Prog(ActiveEditor.Lines,SynEdit_X.Lines) then
+  if SBAContrlrProg.CpySrc2Prog(ActEditorF.Editor.Lines,SynEdit_X.Lines) then
   begin
     PrgReturnTab:=EditorsTab;
     SBA_ReturnToEditor.Enabled:=true;
@@ -849,10 +848,10 @@ Var
   C:TPoint;
   L:integer;
 begin
-  If assigned(ActiveEditor) and ActiveEditor.Focused then
-  With ActiveEditor do
+  If assigned(ActEditorF.Editor) and ActEditorF.Editor.Focused then
+  With ActEditorF.Editor do
   begin
-    ActiveEditor.BeginUpdate(true);
+    ActEditorF.Editor.BeginUpdate(true);
     C:=CaretXY;
     if SelAvail then
     begin
@@ -869,14 +868,14 @@ begin
       InsertTextAtCaret(commentstr);
     end;
     CaretX:=C.X+length(commentstr);
-    ActiveEditor.EndUpdate;
+    ActEditorF.Editor.EndUpdate;
   end;
 end;
 
 procedure TMainForm.EditBlkIndentExecute(Sender: TObject);
 begin
-  If assigned(ActiveEditor) and ActiveEditor.Focused then
-    ActiveEditor.ExecuteCommand(ecBlockIndent,'',nil);
+  If assigned(ActEditorF.Editor) and ActEditorF.Editor.Focused then
+    ActEditorF.Editor.ExecuteCommand(ecBlockIndent,'',nil);
 end;
 
 procedure TMainForm.EditBlkUncommentExecute(Sender: TObject);
@@ -884,42 +883,48 @@ Var
   C:TPoint;
   L:Integer;
 begin
-  If assigned(ActiveEditor) and ActiveEditor.Focused then
-  With ActiveEditor do
+  If assigned(ActEditorF.Editor) and ActEditorF.Editor.Focused then
+  With ActEditorF.Editor do
   begin
-    ActiveEditor.BeginUpdate(true);
+    ActEditorF.Editor.BeginUpdate(true);
     C:=CaretXY;
     if SelAvail then
     begin
       for L:=BlockBegin.y to BlockEnd.y do
       begin
        CaretY:=L;
-       if (Pos(commentstr,ActiveEditor.LineText)=1) then
+       if (Pos(commentstr,ActEditorF.Editor.LineText)=1) then
        begin
          CaretX:=length(commentstr)+1;
          ExecuteCommand(ecDeleteBOL,'',nil);
        end;
       end;
       CaretY:=C.Y;
-    end else if (Pos(commentstr,ActiveEditor.LineText)=1) then
+    end else if (Pos(commentstr,ActEditorF.Editor.LineText)=1) then
     begin
       CaretX:=length(commentstr)+1;
       ExecuteCommand(ecDeleteBOL,'',nil);
     end;
     CaretX:=C.X-length(commentstr);
-    ActiveEditor.EndUpdate;
+    ActEditorF.Editor.EndUpdate;
   end;
 end;
 
 //procedure TMainForm.EditBlkIndentUpdate(Sender: TObject);
 //begin
-//  TAction(Sender).Enabled :=ActiveEditor.SelAvail and not ActiveEditor.ReadOnly;
+//  TAction(Sender).Enabled :=ActEditorF.Editor.SelAvail and not ActEditorF.Editor.ReadOnly;
 //end;
 
 procedure TMainForm.EditBlkUnindentExecute(Sender: TObject);
 begin
-  If assigned(ActiveEditor) and ActiveEditor.Focused then
-    ActiveEditor.ExecuteCommand(ecBlockUnindent,'',nil);
+  If assigned(ActEditorF.Editor) and ActEditorF.Editor.Focused then
+    ActEditorF.Editor.ExecuteCommand(ecBlockUnindent,'',nil);
+end;
+
+procedure TMainForm.EditCopyAsHtmlExecute(Sender: TObject);
+begin
+  If assigned(ActEditorF.Editor) then CopyAsHtml(ActEditorF)
+  else Info('TMainForm.ToolsExporttoHtmlExecute','Do not exists a default editor');
 end;
 
 procedure TMainForm.B_InsertSnippedClick(Sender: TObject);
@@ -929,7 +934,7 @@ var
   function InsertSnp:boolean;
   var EditorF:TEditorF;
   begin
-    EditorF.Editor:=ActiveEditor;
+    EditorF.Editor:=ActEditorF.Editor;
     if not EditorF.InsertBlock(cSBAStartUserProg,cSBAEndUserProg,SBASnippet.code) then exit(false);
     if not EditorF.InsertBlock(cSBAStartProgUReg,cSBAEndProgUReg,SBASnippet.registers) then exit(false);
     if not EditorF.InsertBlock(cSBAStartUSignals,cSBAEndUSignals,SBASnippet.USignals) then exit(false);
@@ -939,19 +944,19 @@ var
   end;
 
 begin
-  if ActiveEditor=nil then exit;
+  if ActEditorF.Editor=nil then exit;
   success:=true;
   try
-    ActiveEditor.BeginUpdate(true);
-    ActiveEditor.BeginUndoBlock;
-    ActiveEditor.CaretX:=0;
+    ActEditorF.Editor.BeginUpdate(true);
+    ActEditorF.Editor.BeginUndoBlock;
+    ActEditorF.Editor.CaretX:=0;
     success:=InsertSnp;
-    ActiveEditor.EndUndoBlock;
+    ActEditorF.Editor.EndUndoBlock;
   finally
-    If success then ExtractSBALabels else ActiveEditor.Undo;
-    ActiveEditor.EndUpdate;
+    If success then ExtractSBALabels else ActEditorF.Editor.Undo;
+    ActEditorF.Editor.EndUpdate;
   end;
-  ActiveEditor.SetFocus;
+  ActEditorF.Editor.SetFocus;
 end;
 
 procedure TMainForm.btn_sba_libraryClick(Sender: TObject);
@@ -960,44 +965,38 @@ begin
   SBASnippet.UpdateSnippetsFilter(SnippetsFilter);
 end;
 
-procedure TMainForm.PlugInCmd(f:string);
+
+procedure TMainForm.PlugInCmd(Sender: TObject);
 var
-  PlgIni:TIniFile;
+  PlugIn:TPlugIn;
 begin
-  try
-    PlgIni:=TIniFile.Create(f);
-    while ProcessStatus<>Idle do begin sleep(300); application.ProcessMessages; end;
-    ProcessStatus:=exePlugIn;
-    ToolProcess.Parameters.Clear;
-    ToolProcess.Executable:=ExtractFilePath(f)+PlgIni.ReadString('MAIN','Cmd','');
+  PlugIn:=TPlugIn(Sender);
+  if (not assigned(PlugIn)) or (PlugIn.ClassName<>'TPlugIn') then exit;
+  with PlugIn do
+  begin
+    if not ToolProcessWaitforIdle then
+    begin
+      ShowMessage('There was an error when executing external plugin');
+      exit;
+    end;
+    ToolProcess.CurrentDirectory:=Path;
+    ToolProcess.Executable:=Path+Cmd;
+    ToolProcess.Parameters.Delimiter:=' ';
+    ToolProcess.Parameters.DelimitedText:=ParseParameters;
     Info('TMainForm.PlugInCmd',ToolProcess.Executable);
-    ToolProcess.Parameters.Add(PlgIni.ReadString('MAIN','Param',''));
-    If FileExists(ToolProcess.Executable) then ToolProcess.Execute;
-  finally
-    If assigned(PlgIni) then FreeAndNil(PlgIni);
+    Info('TMainForm.PlugInCmd Parameters',ToolProcess.Parameters);
+    try
+      ProcessStatus:=exePlugIn;
+      ToolProcess.Execute
+    except
+      ON E:exception do
+      begin
+        ProcessStatus:=Idle;
+        Info('TMainForm.PlugInCmd Error:',E.Message);
+        ShowMessage('There was an error when executing: '+Path+Cmd);
+      end;
+    end;
   end;
-end;
-
-procedure TMainForm.btn_plgClick(Sender: TObject);
-var
-  b:TuEButton;
-  f:string;
-begin
-  if Sender.ClassName<>'TuEButton' then exit;
-  b:=TuEButton(Sender);
-  f:=PlugInsList.ValueFromIndex[b.Tag];
-  PlugInCmd(f);
-end;
-
-procedure TMainForm.menu_plgClick(Sender: TObject);
-var
-  b:TMenuItem;
-  f:string;
-begin
-  if Sender.ClassName<>'TMenuItem' then exit;
-  b:=TMenuItem(Sender);
-  f:=PlugInsList.ValueFromIndex[b.Tag];
-  PlugInCmd(f);
 end;
 
 procedure TMainForm.Button1Click(Sender: TObject);
@@ -1039,26 +1038,26 @@ end;
 
 procedure TMainForm.EditCopyExecute(Sender: TObject);
 begin
-  If assigned(ActiveEditor) and ActiveEditor.Focused then
-    ActiveEditor.CopyToClipboard;
+  If assigned(ActEditorF.Editor) and ActEditorF.Editor.Focused then
+    ActEditorF.Editor.CopyToClipboard;
 end;
 
 procedure TMainForm.EditCutExecute(Sender: TObject);
 begin
-  If assigned(ActiveEditor) and ActiveEditor.Focused then
-    ActiveEditor.CutToClipboard;
+  If assigned(ActEditorF.Editor) and ActEditorF.Editor.Focused then
+    ActEditorF.Editor.CutToClipboard;
 end;
 
 procedure TMainForm.EditInsertAuthorExecute(Sender: TObject);
 begin
-  If assigned(ActiveEditor) and ActiveEditor.Focused then
-    ActiveEditor.InsertTextAtCaret(DefAuthor);
+  If assigned(ActEditorF.Editor) and ActEditorF.Editor.Focused then
+    ActEditorF.Editor.InsertTextAtCaret(DefAuthor);
 end;
 
 procedure TMainForm.EditInsertDateExecute(Sender: TObject);
 begin
-  If assigned(ActiveEditor) and ActiveEditor.Focused then
-    ActiveEditor.InsertTextAtCaret(FormatDateTime('yyyy/mm/dd',date));
+  If assigned(ActEditorF.Editor) and ActEditorF.Editor.Focused then
+    ActEditorF.Editor.InsertTextAtCaret(FormatDateTime('yyyy/mm/dd',date));
 end;
 
 procedure TMainForm.EditInsertTemplateExecute(Sender: TObject);
@@ -1068,16 +1067,16 @@ var
   j,n:integer;
 begin
   Info('TMainForm.EditInsertTemplateExecute','Menu: '+TMenuItem(Sender).Caption);
-  if (Sender.ClassName='TMenuItem') and assigned(ActiveEditor) then
+  if (Sender.ClassName='TMenuItem') and assigned(ActEditorF.Editor) then
   begin
-    ActiveEditor.CaretX:=0;
+    ActEditorF.Editor.CaretX:=0;
     try
       SL:=TStringList.Create;
       SL.Clear;
       Ini:=TInifile.Create(ConfigDir+'templates.ini',[ifoStripQuotes]);
       j:=Ini.ReadInteger(TMenuItem(Sender).Caption,'Lines',0);
       for n:=0 to j-1 do SL.Add(Ini.ReadString(TMenuItem(Sender).Caption,'L'+inttostr(n),''));
-      if SL.Count>0 then ActiveEditor.InsertTextAtCaret(SL.Text);
+      if SL.Count>0 then ActEditorF.Editor.InsertTextAtCaret(SL.Text);
     finally
       if assigned(Ini) then freeAndNil(Ini);
       if assigned(SL) then freeAndNil(SL);
@@ -1089,12 +1088,6 @@ procedure TMainForm.EditorHistoryClickHistoryItem(Sender: TObject;
   Item: TMenuItem; const Filename: string);
 begin
   OpenInEditor(Filename);
-end;
-
-procedure TMainForm.EditorPagesMouseDown(Sender: TObject; Button: TMouseButton;
-  Shift: TShiftState; X, Y: Integer);
-begin
-  if assigned(ActiveEditor) then ActiveEditor.SetFocus
 end;
 
 procedure TMainForm.EditorsTabContextPopup(Sender: TObject; MousePos: TPoint;
@@ -1114,26 +1107,26 @@ end;
 
 procedure TMainForm.EditPasteExecute(Sender: TObject);
 begin
-  If assigned(ActiveEditor) and ActiveEditor.Focused then
-    ActiveEditor.PasteFromClipboard;
+  If assigned(ActEditorF.Editor) and ActEditorF.Editor.Focused then
+    ActEditorF.Editor.PasteFromClipboard;
 end;
 
 procedure TMainForm.EditRedoExecute(Sender: TObject);
 begin
-  If assigned(ActiveEditor) and ActiveEditor.Focused then
-    ActiveEditor.Redo;
+  If assigned(ActEditorF.Editor) and ActEditorF.Editor.Focused then
+    ActEditorF.Editor.Redo;
 end;
 
 procedure TMainForm.EditSelectAllExecute(Sender: TObject);
 begin
-  If assigned(ActiveEditor) and ActiveEditor.Focused then
-    ActiveEditor.SelectAll;
+  If assigned(ActEditorF.Editor) and ActEditorF.Editor.Focused then
+    ActEditorF.Editor.SelectAll;
 end;
 
 procedure TMainForm.EditUndoExecute(Sender: TObject);
 begin
-  If assigned(ActiveEditor) and ActiveEditor.Focused then
-    ActiveEditor.Undo;
+  If assigned(ActEditorF.Editor) and ActEditorF.Editor.Focused then
+    ActEditorF.Editor.Undo;
 end;
 
 procedure TMainForm.FileOpenLocExecute(Sender: TObject);
@@ -1294,6 +1287,7 @@ begin
   if ConfigForm.ShowModal=mrOk then
   begin
     SetConfigValues;
+    LoadPlugIns;
     FormatEditors;
   end;
 end;
@@ -1315,9 +1309,11 @@ end;
 
 procedure TMainForm.LogoImageDblClick(Sender: TObject);
 begin
-  MainPages.ActivePage:=HidenPage;
+  {$IFDEF DEBUG}
+  MainPages.ActivePage:=HiddenPage;
   MainPagesChange(Sender);
-  ActiveEditor:=SynEdit1;
+  ActEditorF.Editor:=SynEdit_Test;
+  {$ENDIF}
 end;
 
 procedure TMainForm.L_SBALabelsClick(Sender: TObject);
@@ -1329,8 +1325,8 @@ begin
   if Item=nil then exit;
   s:=Item.Caption;
   Info('TMainForm.ListSelectItem',s);
-  if filetype in [vhdl,ini,prg,other] then ActiveEditor.SetHighlightSearch(S,[ssoSelectedOnly,ssoWholeWord])
-    else ActiveEditor.SetHighlightSearch(S,[ssoMatchCase,ssoSelectedOnly,ssoWholeWord]);
+  if ActEditorF.EdType in [vhdl,ini,prg,other] then ActEditorF.Editor.SetHighlightSearch(S,[ssoSelectedOnly,ssoWholeWord])
+    else ActEditorF.Editor.SetHighlightSearch(S,[ssoMatchCase,ssoSelectedOnly,ssoWholeWord]);
 end;
 
 procedure TMainForm.L_SBALabelsDblClick(Sender: TObject);
@@ -1339,7 +1335,7 @@ var
 begin
   Item:=TListView(Sender).Selected;
   If Item=nil then exit;
-  ActiveEditor.SearchReplace(cSBALblSignatr+Item.Caption, '', [ssoEntireScope,ssoWholeWord])
+  ActEditorF.Editor.SearchReplace(cSBALblSignatr+Item.Caption, '', [ssoEntireScope,ssoWholeWord])
 end;
 
 procedure TMainForm.MainPanelResize(Sender: TObject);
@@ -1521,8 +1517,8 @@ begin
     if InputQuery ('Add IP Core instance', 'Please type the name of the new instance:',iname) then
     try
       SBAIpCore.FormatData(TN.Text,iname,IP,IPS,STL,AML,DCL,MXL,0);
-      ActiveEditor.CaretX:=0;
-      ActiveEditor.InsertTextAtCaret(IP.Text);
+      ActEditorF.Editor.CaretX:=0;
+      ActEditorF.Editor.InsertTextAtCaret(IP.Text);
     except
       ON E:Exception do ShowMessage(E.Message);
     end;
@@ -1548,29 +1544,13 @@ begin
 end;
 
 function TMainForm.CloseProject:boolean;
-var CanClose:boolean;
 begin
   Info('TMainForm','Start CloseProject');
   result:=false;
-  CanClose:=true;
-  while EditorPages.PageCount>0 do
+  while (EditorPages.PageCount>0) do
+    If not CloseEditor(EditorPages.ActivePageIndex) then exit(false);
+  If SBAPrj.Close then
   begin
-    CanClose:=CloseEditor(EditorPages.ActivePageIndex);
-    If not CanClose then break;
-  end;
-  If SBAPrj.Modified then
-  begin
-    CanClose:=false;
-    case MessageDlg('The Project was modified', 'Save Project? ', mtConfirmation, [mbYes, mbNo, mbCancel],0) of
-      mrCancel:exit;
-      mrYes:CanClose:=SBAPrj.Save;
-      mrNo:CanClose:=True;
-    end;
-  end;
-  if CanClose then
-  begin
-    SBAPrj.name:='';
-    SBAPrj.Modified:=false;
     MainPages.ActivePage:=SystemTab;
     MainPagesChange(nil);
     result:=true;
@@ -1636,15 +1616,17 @@ begin
   SBA_ReturnToEditor.Enabled:=false;
   MainPages.ActivePage:=ProgEditTab;
   MainPagesChange(Sender);  // es automático sólo si el usuario hace clik en las pestañas
-  if EditorEmpty(ActiveEditor) then
+  if EditorEmpty(ActEditorF.Editor) then
   begin
     SBAContrlrProg.Filename:=cSBADefaultPrgName;
     StatusBar1.Panels[1].Text:=cSBADefaultPrgName;
+    ActEditorF.FileName:=cSBADefaultPrgName;
+    selectHighlighter(ActEditorF);
     try
      tmp:=tstringlist.Create;
      try
        tmp.LoadFromFile(ConfigDir+IFTHEN(CtrlAdvMode,cSBAAdvPrgTemplate,cSBADefPrgTemplate));
-       ActiveEditor.Lines.Assign(tmp);
+       ActEditorF.Editor.Lines.Assign(tmp);
      except
        On E:Exception do ShowMessage(E.Message);
      end;
@@ -1653,7 +1635,7 @@ begin
     end;
   end;
   { TODO : Genera Error cuando se carga un prg o un snp mediante el comando Open de windows }
-//  if assigned(ActiveEditor) then ActiveEditor.SetFocus;
+//  if assigned(ActEditorF.Editor) then ActEditorF.Editor.SetFocus;
   ExtractSBALabels;
 end;
 
@@ -1733,32 +1715,37 @@ begin
   Info('TMainForm.MainPagesChange',MainPages.ActivePage.Caption);
   If MainPages.ActivePage=EditorsTab then
   begin
-    if P_Project.visible then
-    begin
-      MainForm.Menu := EditorMenu;
-      ProjectMenuEd.Visible:=true;
-    end else
-    begin
-      MainForm.Menu := EditorMenu;
-      ProjectMenuEd.Visible:=false;
-    end;
+    MainForm.Menu := EditorMenu;
+    ProjectMenuEd.Visible:=P_Project.visible;
     EditorPagesChange(Self);
   end else if MainPages.ActivePage=ProgEditTab then
   begin
     MainForm.Menu := ProgMenu;
-    ActiveEditor:=SynEdit_X;
+    ActEditorF.Editor:=SynEdit_X;
+    ActEditorF.Page:=nil;
     SyncroEdit.Enabled:=false;
-    SyncroEdit.Editor:=ActiveEditor;
+    SyncroEdit.Editor:=ActEditorF.Editor;
     SyncroEdit.Enabled:=true;
-    SynCompletion.Editor:=ActiveEditor;
-    SynMultiCaret.Editor:=ActiveEditor;
-    hdltypeselect('.prg');
+    SynCompletion.Editor:=ActEditorF.Editor;
+    SynMultiCaret.Editor:=ActEditorF.Editor;
   end else if MainPages.ActivePage=SystemTab then
   begin
     MainForm.Menu := MainMenu;
     StatusBar1.Panels[0].Text:='';
     StatusBar1.Panels[1].Text:='';
     Log.Clear;
+  end else if MainPages.ActivePage=HiddenPage then
+  begin
+    MainForm.Menu := EditorMenu;
+    ActEditorF.Editor:=SynEdit_Test;
+    ActEditorF.Page:=nil;
+    ActEditorF.FileName:='test.vhd';
+    selectHighlighter(ActEditorF);
+    SyncroEdit.Enabled:=false;
+    SyncroEdit.Editor:=ActEditorF.Editor;
+    SyncroEdit.Enabled:=true;
+    SynCompletion.Editor:=ActEditorF.Editor;
+    SynMultiCaret.Editor:=ActEditorF.Editor;
   end else MainForm.Menu := nil;
 end;
 
@@ -1804,6 +1791,7 @@ begin
     EditorF.Editor:=TSynEdit(MainForm.FindComponent('SynEdit_'+inttostr(EditorPages.Pages[i].Tag)));
     EditorF.Page:=EditorPages.Pages[i];
     EditorF.FileName:=EditorPages.Pages[i].Hint;
+    EditorF.Edtypeselect;
   except
     ON E:Exception do Info('TMainForm.GetEditorPage Error',E.Message);
   end;
@@ -1880,10 +1868,10 @@ var
 begin
   if Sender.ClassName='TMenuItem' then
   begin
-    ActiveEditor.CaretX:=0;
+    ActEditorF.Editor.CaretX:=0;
     S:=TMenuItem(Sender).Caption;
     If Pos('/SBA',S)<>0 then S:=S+' '+StringOfChar('-',79-length(S))+sLineBreak;
-    ActiveEditor.InsertTextAtCaret(S);
+    ActEditorF.Editor.InsertTextAtCaret(S);
   end;
 end;
 
@@ -1891,18 +1879,20 @@ procedure TMainForm.SBA_NewPrgExecute(Sender: TObject);
 var
   tmp:TstringList;
 begin
-  if ActiveEditor.Modified then
+  if ActEditorF.Editor.Modified then
   case MessageDlg('File was modified', 'Save File? ', mtConfirmation, [mbYes, mbNo, mbCancel],0) of
     mrCancel: exit;
     mrYes: SBA_SaveExecute(nil);
   end;
-  ActiveEditor.Modified:=false;
   SBAContrlrProg.Filename:=cSBADefaultPrgName;
-  hdltypeselect('.prg');
   StatusBar1.Panels[1].Text:=cSBADefaultPrgName;
+  ActEditorF.Editor.Modified:=false;
+  ActEditorF.FileName:=SBAContrlrProg.Filename;
+  ActEditorF.Page:=nil;
+  selectHighlighter(ActEditorF);
   tmp:=tstringlist.Create;
   tmp.LoadFromFile(ConfigDir+IFTHEN(CtrlAdvMode,cSBAAdvPrgTemplate,cSBADefPrgTemplate));
-  ActiveEditor.Lines.Assign(tmp);
+  ActEditorF.Editor.Lines.Assign(tmp);
   if assigned(tmp) then freeandnil(tmp);
   ExtractSBALabels;
 end;
@@ -1937,9 +1927,15 @@ begin
   if frMatchCase in Dialog.Options then opciones += [ssoMatchCase];
   if frWholeWord in Dialog.Options then opciones += [ssoWholeWord];
   if frEntireScope in Dialog.Options then opciones += [ssoEntireScope];
-  encon := ActiveEditor.SearchReplace(buscado,'',opciones);
+  encon := ActEditorF.Editor.SearchReplace(buscado,'',opciones);
   if encon = 0 then
   ShowMessage('Not found: ' + buscado);
+end;
+
+procedure TMainForm.ToolsExporttoHtmlExecute(Sender: TObject);
+begin
+  If assigned(ActEditorF.Editor) then ExporttoHtmlFile(ActEditorF)
+  else Info('TMainForm.ToolsExporttoHtmlExecute','Do not exists a default editor');
 end;
 
 procedure TMainForm.ToolsFileObfExecute(Sender: TObject);
@@ -1953,7 +1949,7 @@ begin
   end else
   begin
     P_Obf.Visible:=false;
-    ActiveEditor.SetHighlightSearch('',[ssoSelectedOnly,ssoWholeWord]);
+    ActEditorF.Editor.SetHighlightSearch('',[ssoSelectedOnly,ssoWholeWord]);
     HighLightReservedWords(nil);
   end;
 end;
@@ -1962,13 +1958,13 @@ procedure TMainForm.ToolsFileReformatExecute(Sender: TObject);
 var OSL,NSL:TStrings;
 begin
   ToolsFileReformat.Enabled:=false;
-  OSL:=ActiveEditor.Lines;
+  OSL:=ActEditorF.Editor.Lines;
   NewEditorPage;
-  NSL:=ActiveEditor.Lines;
-  ActiveEditor.BeginUpdate(false);
-  Reformat(OSL,NSL);
-  ActiveEditor.EndUpdate;
-  ActiveEditor.Modified:=true;
+  NSL:=ActEditorF.Editor.Lines;
+  ActEditorF.Editor.BeginUpdate(false);
+  ActEditorF.Reformat(OSL,NSL,ActEditorF.EdType,commentstr);
+  ActEditorF.Editor.EndUpdate;
+  ActEditorF.Editor.Modified:=true;
   ToolsFileReformat.Enabled:=true;
 end;
 
@@ -1980,8 +1976,9 @@ end;
 procedure TMainForm.ToolsFileSyntaxCheckExecute(Sender: TObject);
 var s:string;
 begin
+{ TODO : Colocar un botón sobre el arbol del proyecto para comprobar la sintaxis de todos los archivos que forman parte del proyecto. }
   {$IFDEF WINDOWS}
-  case filetype of
+  case ActEditorF.EdType of
     vhdl : begin
       if not fileexists(AppDir+'ghdl\bin\ghdl.exe') then
       begin
@@ -2004,7 +2001,7 @@ begin
   {$ENDIF}
   { TODO : Completar la verificación en el caso de LINUX }
   {$IFDEF LINUX}
-  case filetype of
+  case ActEditorF.EdType of
     vhdl : begin
       {
        if not fileexists(AppDir+'ghdl\bin\ghdl') then
@@ -2027,20 +2024,90 @@ begin
     end;
   end;
   {$ENDIF}
-  s:=EditorPages.ActivePage.Hint;
-  if ActiveEditor.Modified then
+  s:=ActEditorF.FileName;
+  if ActEditorF.Editor.Modified then
   case MessageDlg('File must be saved', 'Save File? '+s, mtConfirmation, [mbYes, mbNo],0) of
-    mrYes: if not SaveFile(s,ActiveEditor.Lines) then exit else ActiveEditor.Modified:=false;
+    mrYes: if not SaveFile(s,ActEditorF.Editor.Lines) then exit else ActEditorF.Editor.Modified:=false;
   else exit;
   end;
   ToolsFileSyntaxCheck.Enabled:=false;
   { TODO : Esta parte debe mejorarse para poder verificar sintaxis adecuadamente
 de archivos individales, cores y requerimientos; y proyectos. }
   if SBAPrj.name<>'' then
-    SyntaxCheck(s,SBAPrj.GetAllFileNames(extractfilepath(s)),filetype)
+    SyntaxCheck(s,SBAPrj.GetAllFileNames(extractfilepath(s)),ActEditorF.EdType)
   else if isIPCore(s) then
-    SyntaxCheck(s,SBAIpCore.GetFiles(s),filetype)
-  else SyntaxCheck(s,'',filetype);
+    SyntaxCheck(s,SBAIpCore.GetFiles(s),ActEditorF.EdType)
+  else SyntaxCheck(s,'',ActEditorF.EdType);
+end;
+
+function TMainForm.SelectExportHighligther(EditorF:TEditorF):TSynCustomHighlighter;
+begin
+  case EditorF.EdType of
+    vhdl,prg:
+      result:=TSynSBASyn.Create(MainForm);
+    verilog,systemverilog:
+      result:=TSynVerilogSyn.Create(MainForm);
+    ini:
+      result:=TSynIniSyn.Create(MainForm);
+    json:
+      result:=TSynJSONSyn.Create(MainForm);
+//  html:
+//    result.:=TSynHTMLSyn.Create(MainForm);
+    pas:
+      result:=TSynFreePascalSyn.Create(MainForm);
+    cpp:
+      result:=TSynCppSyn.Create(MainForm);
+  else
+    result:=nil;
+  end;
+  if result=nil then
+  begin
+    Info('TMainForm.ExporttoHtml','Highligther not found');
+    Exit(nil);
+  end else
+    Info('TMainForm.ExporttoHtml ',result.ClassName);
+end;
+
+procedure TMainForm.ExporttoHtmlFile(EditorF: TEditorF);
+var f:string;
+begin
+  Info('TMainForm.ExporttoHtmlFile',EditorF.FileName);
+  if EditorF.EdType=markdown then
+  begin
+    f:=LibraryForm.Md2Html(EditorF.Editor.Text,EditorF.FileName);
+    if f='' then exit;
+    OpenURL('file://'+f+'?time='+TimetoStr(now));
+    Sleep(300);
+    DeleteFile(f);
+    exit;
+  end;
+  SynExporterHTML.Highlighter:=SelectExportHighligther(EditorF);
+  if assigned(SynExporterHTML.Highlighter) then
+  begin
+    SynExporterHTML.Options:=SynExporterHTML.Options-[heoWinClipHeader];
+    SynExporterHTML.ExportAll(EditorF.Editor.Lines);
+    SaveDialog.Filter:=SynExporterHTML.DefaultFilter;
+    Info('TMainForm.ExporttoHtml','Select File');
+    if SaveDialog.Execute then
+    begin
+      SynExporterHTML.SaveToFile(SaveDialog.FileName);
+      OpenUrl('file://'+SaveDialog.FileName+'?time='+TimetoStr(now));
+    end;
+    SynExporterHTML.Highlighter.Free;
+  end;
+end;
+
+procedure TMainForm.CopyAsHtml(EditorF: TEditorF);
+begin
+  if not EditorF.Editor.SelAvail then exit;
+  SynExporterHTML.Highlighter:=SelectExportHighligther(EditorF);
+  if assigned(SynExporterHTML.Highlighter) then with EditorF.Editor do
+  begin
+    SynExporterHTML.Options:=SynExporterHTML.Options+[heoWinClipHeader];
+    SynExporterHTML.ExportRange(Lines,BlockBegin,BlockEnd);
+    SynExporterHTML.CopyToClipboard;
+    if assigned(SynExporterHTML.Highlighter) then SynExporterHTML.Highlighter.Free;
+  end;
 end;
 
 procedure TMainForm.FormCloseQuery(Sender: TObject; var CanClose: boolean);
@@ -2119,7 +2186,7 @@ begin
   AutoUpdate:=TAutoUpdate.Create;
   Check;
   LoadAnnouncement;
-  ActiveEditor:=nil;
+  ActEditorF.Editor:=nil;
   MainPages.ShowTabs:=false;
   MainPages.ActivePage:=SystemTab;
   SBAPrj:=TSBAPrj.Create;
@@ -2129,7 +2196,6 @@ begin
   IpCoreList:=TStringList.Create;
   SnippetsList:=TStringList.Create;
   ProgramsList:=TStringList.Create;
-  PlugInsList:=TStringList.Create;
   UpdateLists;
   SynSBASyn:= TSynSBASyn.Create(Self);
   SynVerilogSyn:= TSynVerilogSyn.Create(Self);
@@ -2148,9 +2214,10 @@ begin
   EditorHistory.UpdateParentMenu;
   CopyPrjHistory;
   LoadPlugIns;
-  LoadTheme(ConfigDir+'theme'+PathDelim);
+  LoadTheme(ThemeDir);
   ReOpenEditorFiles;
   CheckStartParams;
+  EditorPages.OnShowHint:=@ShowHintEvent;;
   DeferredTimer.Enabled:=true;
   info('TMainForm.FormCreate','All tasks finished');
 end;
@@ -2368,10 +2435,7 @@ var
   ActiveTab:TTabSheet;
 begin
   ActiveTab:=EditorPages.AddTabSheet;
-  ActiveTab.Caption:='NewFile'+inttostr(EditorCnt)+'.vhd';
-  ActiveTab.Hint:=AppendPathDelim(GetCurrentDir)+ActiveTab.Caption;
-  ActiveTab.Tag:=EditorCnt;
-  Inc(EditorCnt);
+  ActiveTab.ShowHint:=false;
   CreateEditor(ActiveTab);
   EditorPages.ActivePage:=ActiveTab;
   EditorPagesChange(nil);
@@ -2428,8 +2492,8 @@ begin
   if pos('line ',s)=1 then s[5]:=':';  // for catch hdlobf result errors
   p.y:=strtointdef(ExtractDelimited(2,s,[':']),0);
   p.x:=strtointdef(ExtractDelimited(3,s,[':']),0);
-  if (p.y<>0) then ActiveEditor.CaretXY:=p;
-  ActiveEditor.SetFocus;
+  if (p.y<>0) then ActEditorF.Editor.CaretXY:=p;
+  ActEditorF.Editor.SetFocus;
 end;
 
 procedure TMainForm.LogMouseMove(Sender: TObject; Shift: TShiftState; X,
@@ -2456,7 +2520,7 @@ end;
 
 procedure TMainForm.SBA_OpenExecute(Sender: TObject);
 begin
-  if ActiveEditor.Modified then
+  if ActEditorF.Editor.Modified then
   case MessageDlg('File was modified', 'Save File? ', mtConfirmation, [mbYes, mbNo, mbCancel],0) of
     mrCancel: exit;
     mrYes: SBA_SaveExecute(nil);
@@ -2598,13 +2662,18 @@ begin
   else SBA_SaveAsExecute(Sender);
 end;
 
+procedure TMainForm.ToolsReloadPlugInsExecute(Sender: TObject);
+begin
+  LoadPlugIns;
+end;
+
 procedure TMainForm.TReplaceDialogReplace(Sender: TObject);
 var
   encon, r : integer;
   buscado : string;
   opciones: TSynSearchOptions;
 begin
-  if ActiveEditor.ReadOnly then
+  if ActEditorF.Editor.ReadOnly then
   begin
    ShowMessage('The file in the editor is read only');
    exit;
@@ -2619,14 +2688,14 @@ begin
   if frReplaceAll in SearchReplace.Dialog.Options then
   begin
     //se ha pedido reemplazar todo
-    encon := ActiveEditor.SearchReplace(buscado,SearchReplace.Dialog.ReplaceText,
+    encon := ActEditorF.Editor.SearchReplace(buscado,SearchReplace.Dialog.ReplaceText,
     opciones+[ssoReplaceAll]); //reemplaza
     ShowMessage('Se reemplazaron ' + IntToStr(encon) + ' ocurrencias.');
     exit;
   end;
   //reemplazo con confirmación
   SearchReplace.Dialog.CloseDialog;
-  encon := ActiveEditor.SearchReplace(buscado,'',opciones); //búsqueda
+  encon := ActEditorF.Editor.SearchReplace(buscado,'',opciones); //búsqueda
   while encon <> 0 do
   begin
     //pregunta
@@ -2634,11 +2703,11 @@ begin
     if r = IDCANCEL then exit;
     if r = IDYES then
     begin
-     ActiveEditor.TextBetweenPoints[ActiveEditor.BlockBegin,ActiveEditor.BlockEnd] :=
+     ActEditorF.Editor.TextBetweenPoints[ActEditorF.Editor.BlockBegin,ActEditorF.Editor.BlockEnd] :=
      SearchReplace.Dialog.ReplaceText;
     end;
     //busca siguiente
-    encon := ActiveEditor.SearchReplace(buscado,'',opciones); //búsca siguiente
+    encon := ActEditorF.Editor.SearchReplace(buscado,'',opciones); //búsca siguiente
   end;
   ShowMessage('No se encuentra: ' + buscado);
 end;
@@ -2646,10 +2715,12 @@ end;
 procedure TMainForm.UpdGuiTimerTimer(Sender: TObject);
 begin
   UpdGuiTimer.Enabled:=false;
+  Info('TMainForm.UpdGuiTimerTimer','Tick');
   if SBAPrj.Name<>'' then L_PrjInfo.Caption:=IFTHEN(SBAPrj.Modified,'Project Modified','Project Info');
-  if assigned(ActiveEditor) then
+  if assigned(ActEditorF.Editor) then
   begin
-    ChangeEditorButtons(ActiveEditor);
+    Info('TMainForm.UpdGuiTimerTimer',ActEditorF.FileName);
+    ChangeEditorButtons(ActEditorF.Editor);
     DetectSBAController;
   end;
 end;
@@ -2680,8 +2751,8 @@ procedure TMainForm.WordSelectionChange(Sender: TObject);
 Var S:String;
 begin
   s:=TListBox(Sender).GetSelectedText;
-  if filetype in [vhdl,ini,prg,other] then ActiveEditor.SetHighlightSearch(S,[ssoSelectedOnly,ssoWholeWord])
-    else ActiveEditor.SetHighlightSearch(S,[ssoMatchCase,ssoSelectedOnly,ssoWholeWord]);
+  if ActEditorF.EdType in [vhdl,ini,prg,other] then ActEditorF.Editor.SetHighlightSearch(S,[ssoSelectedOnly,ssoWholeWord])
+    else ActEditorF.Editor.SetHighlightSearch(S,[ssoMatchCase,ssoSelectedOnly,ssoWholeWord]);
 end;
 
 procedure TMainForm.FileNewExecute(Sender: TObject);
@@ -2705,7 +2776,7 @@ end;
 
 procedure TMainForm.DetectSBAController;
 begin
-  SBA_EditProgram.Enabled:=SBAContrlrProg.DetectSBAContrlr(ActiveEditor.Lines);
+  SBA_EditProgram.Enabled:=SBAContrlrProg.DetectSBAContrlr(ActEditorF.Editor.Lines);
 end;
 
 function TMainForm.EditorEmpty(Editor:TSynEdit):boolean;
@@ -2716,10 +2787,11 @@ end;
 procedure TMainForm.ToolProcessReadData(Sender: TObject);
 var
   t:TStringList;
+  s:string;
 begin
    t:=TStringList.Create;
    t.LoadFromStream(ToolProcess.Output);
-   Log.Items.AddStrings(t);
+   for s in t do Log.Items.Add(ConsoleToUtf8(s));
    info('TMainForm.ToolProcessReadData',t);
    t.free;
 end;
@@ -2786,7 +2858,7 @@ begin
     SynSBASyn.HLWordsList.Clear;
     SynVerilogSyn.HLWordsList.Clear;
   end;
-  ActiveEditor.Invalidate;
+  ActEditorF.Editor.Invalidate;
 end;
 
 procedure TMainForm.RW_RemoveExecute(Sender: TObject);
@@ -2824,22 +2896,24 @@ begin
   end;
 end;
 
-procedure TMainForm.Ofuscate(f:string; hdl:TEdType);
+procedure TMainForm.Obfuscate(EditorF: TEditorF);
 var
-  s,wpath,wfile:string;
-
+  f,s,wpath,wfile:string;
 begin
-  case hdl of
+  f:=EditorF.FileName;
+  case EditorF.EdType of
     vhdl:s:='vhd';
     verilog:s:='ver';
     systemverilog:s:='sv';
   else
-    s:=extractfileext(f);
+    begin
+      ShowMessage('Obfuscate is not implemented for this file type');
+      exit;
+    end;
   end;
   wpath:=extractfilepath(f);
   wfile:=extractfilename(f);
   while ProcessStatus<>Idle do begin sleep(300); application.ProcessMessages; end;
-  ProcessStatus:=Obfusct;
   ToolProcess.Parameters.Clear;
   ToolProcess.CurrentDirectory:=wpath;
 
@@ -2859,6 +2933,7 @@ begin
   ShowMessage('Ofuscation is not yet implemented in Darwin');
   {$ENDIF}
   Log.Clear;
+  ProcessStatus:=Obfusct;
   ToolProcess.Execute;
   while ToolProcess.Running do begin sleep(300); application.ProcessMessages; end;
   if not fileexists(wpath+'obfuscated_file.'+s) then
@@ -2868,6 +2943,7 @@ begin
   end else
   begin
     NewEditorPage;
+{ TODO : Se podría cambiar a OpenInEditor para que se actualize ActEditorF }
     if Open(wpath+'obfuscated_file.'+s) then
     begin
       EditorPages.ActivePage.Hint:=wpath+'obfuscated_file.'+s;
@@ -2882,14 +2958,15 @@ begin
   result:=false;
   if FileExists(f) then
   begin
-    ActiveEditor.Lines.LoadFromFile(f);
-    ActiveEditor.ReadOnly:=(FileGetAttr(f) and faReadOnly)<>0;
+    ActEditorF.Editor.Lines.LoadFromFile(f);
+    ActEditorF.FileName:=f;
+    ActEditorF.Editor.ReadOnly:=(FileGetAttr(f) and faReadOnly)<>0;
+    ActEditorF.Editor.Modified:=false;
+    selectHighlighter(ActEditorF);
     wdir:=extractfilepath(f);
     if wdir='' then wdir:=IFTHEN(SBAPrj.name<>'',SBAPrj.location,ProjectsDir);
-    hdltypeselect(extractfileext(f));
     StatusBar1.Panels[1].Text:=f;
     EditorHistory.UpdateList(f);
-    ActiveEditor.Modified:=false;
     result:=true;
   end else showmessage('The file: '+f+' was not found.');
 end;
@@ -2898,8 +2975,9 @@ procedure TMainForm.OpenInEditor(const f: string);
 var i:integer;
 begin
   if f='' then exit;
+  Info('TMainForm.OpenInEditor',f);
   if (EditorPages.PageCount=0) then NewEditorPage else
-    for i:=0 to EditorPages.PageCount-1 do
+    for i:=0 to EditorPages.PageCount-1 do  //Search for already open file
       if EditorPages.Pages[i].Hint=f then
       begin
         EditorPages.ActivePageIndex:=i;
@@ -2909,72 +2987,15 @@ begin
 
   if EditorPages.ActivePage.Hint<>f then
   begin
-    if not EditorEmpty(ActiveEditor) then NewEditorPage;
+    if not EditorEmpty(ActEditorF.Editor) then NewEditorPage;
     if Open(f) then
     begin
       EditorPages.ActivePage.Hint:=f;
       EditorPages.ActivePage.Caption:=ExtractFilename(f);
     end;
   end;
-
+  ActEditorF.Page:=EditorPages.ActivePage;
   UpdGuiTimer.Enabled:=true;
-end;
-
-procedure TMainForm.Reformat(osl, nsl: Tstrings);
-var
-  s: string;
-  c: char;
-  j: Integer;
-  i: Integer;
-  ostr: TStringList;
-  f,sp:boolean;
-
-  function RandomCase(c:char):char;
-  begin
-    if Random(2)=1 then result:=upcase(c) else result:=lowercase(c);
-  end;
-
-begin
-  ostr:=TStringList.Create;
-  ostr.Assign(osl);
-
-  //Delete comments
-  for i:=ostr.Count-1 downto 0 do
-  begin
-    s:=ostr[i];
-    j:=pos(commentstr,s);
-    if j>0 then ostr[i]:=LeftStr(s,j-1);
-  end;
-
-  nsl.clear;
-  s:=''; j:=1; f:=false; sp:=false;
-
-  //Delete Tabs, Double spaces and CR LF, reformat to random case and 80 cols
-  for i:=1 to length(ostr.Text) do
-  begin
-    c:=ostr.Text[i];
-    case c of
-      '"' : f:=not f;
-      #09,#10,#13 : c:=' ';
-      'a'..'z', 'A'..'Z': if (filetype=vhdl) then c:=RandomCase(c);
-    end;
-    if (c=' ') then if sp then Continue else sp:=true else sp:=false;
-    s:=s+c;
-    if (j>80) and (c in [' ', ';', '+', '-', '(', ')']) and not f then
-    begin
-      nsl.Add(s);
-      s:='';
-      j:=1;
-    end else inc(j);
-  end;
-  if s<>'' then nsl.Add(s);
-
-  // Add last comments
-  nsl.Add(commentstr+'------------------------------------------------------------------------------');
-  nsl.Add(commentstr+' This file was obfuscated and reformated using SBA Creator                  --');
-  nsl.Add(commentstr+' (c) Miguel Risco-Castillo                                                  --');
-  nsl.Add(commentstr+'------------------------------------------------------------------------------');
-  ostr.Free;
 end;
 
 procedure TMainForm.ChangeEditorButtons(editor:TSynEdit);
@@ -2991,6 +3012,7 @@ begin
     ToolsFileObf.Enabled:=f2;
     ToolsFileReformat.Enabled:=f2 and f3;
     ToolsFileSyntaxCheck.Enabled:=f2;
+    ToolsExporttoHtml.Enabled:=f2;
     SearchReplace.Enabled:=f2 and f3;
 
     if (EditorPages.ActivePage.Caption='') then exit;
@@ -2998,7 +3020,7 @@ begin
     begin
       if f1 then EditorPages.ActivePage.Caption:='*'+ExtractFileName(EditorPages.ActivePage.Hint);
     end else if not f1 then EditorPages.ActivePage.Caption:=ExtractFileName(EditorPages.ActivePage.Hint);
-    if EditorPages.ActivePage.Showing then ActiveEditor.SetFocus;
+    if EditorPages.ActivePage.Showing then ActEditorF.Editor.SetFocus;
   end;
 end;
 
@@ -3037,7 +3059,6 @@ begin
     ToolsFileSyntaxCheck.Enabled:=true;
     exit;
   end;
-  ProcessStatus:=SyntaxChk;
   ToolProcess.Parameters.Clear;
   ToolProcess.CurrentDirectory:=wpath;
   {$IFDEF WINDOWS}
@@ -3088,6 +3109,7 @@ begin
       ToolProcess.Parameters.Add(AppDir+checkbat+' '+fname);
   {$ENDIF}
   info('TMainForm.SyntaxCheck',ToolProcess.Parameters);
+  ProcessStatus:=SyntaxChk;
   ToolProcess.Execute;
   { TODO : Pensar en eliminar el .bat y usar una lista para crear los parámetros debido a las posibles rutas con espacios. }
 end;
@@ -3129,15 +3151,15 @@ var
   sl:TStringList;
   l:TListItem;
 begin
-  ActiveEditor.BeginUpdate(false);
-  if SBAContrlrProg.ExtractSBALbls(ActiveEditor.Lines, L_SBALabels.Items) then
+  ActEditorF.Editor.BeginUpdate(false);
+  if SBAContrlrProg.ExtractSBALbls(ActEditorF.Editor.Lines, L_SBALabels.Items) then
   begin
     sl:=TStringList.Create;
     For l in L_SBALabels.Items do sl.Add(l.Caption);
     HighLightReservedWords(sl);
     sl.Free;
   end;
-  ActiveEditor.EndUpdate;
+  ActEditorF.Editor.EndUpdate;
 end;
 
 procedure TMainForm.LoadRsvWordsFile;
@@ -3167,7 +3189,7 @@ begin
   t:=PrjTree.Items.AddChild(nil, 'Aux');
   PrjTree.Items.AddChild(t, 'SBApkg').StateIndex:=3;
   PrjTree.Items.AddChild(t, 'Syscon').StateIndex:=3;
-  PrjTree.Items.AddChild(t, 'DataIntf').StateIndex:=3;
+  if SBAPrj.SBAver=0 then PrjTree.Items.AddChild(t, 'DataIntf').StateIndex:=3;
 
   t:=PrjTree.Items.AddChild(nil, 'Lib');
   AddIPCoresToTree(t,SBAPrj.libcores);
@@ -3233,10 +3255,10 @@ begin
     MainPages.ActivePage:=ProgEditTab;
     MainPagesChange(nil);
     SyncroEdit.Enabled:=false;
-    SyncroEdit.Editor:=ActiveEditor;
+    SyncroEdit.Editor:=ActEditorF.Editor;
     SyncroEdit.Enabled:=true;
-    SynCompletion.Editor:=ActiveEditor;
-    SynMultiCaret.Editor:=ActiveEditor;
+    SynCompletion.Editor:=ActEditorF.Editor;
+    SynMultiCaret.Editor:=ActEditorF.Editor;
     case MessageDlg('Prg was modified', 'Save File? '+SBAContrlrProg.FileName,
        mtConfirmation, [mbYes, mbNo, mbCancel], 0) of
        mrYes: Result:=SaveFile(SBAContrlrProg.FileName,SynEdit_X.Lines);
@@ -3310,58 +3332,65 @@ begin
 end;
 
 
-procedure TMainForm.hdltypeselect(const ts: string);
+function TMainForm.selectHighlighter(var EditorF:TEditorF):TEdType;
 begin
-  fileext:=lowercase(ts);
-  case fileext of
-    '.vhd','.vhdl': filetype:=vhdl;
-    '.prg','.snp' : filetype:=prg;
-    '.v','.vl','.ver' : filetype:=verilog;
-    '.sv' : filetype:=systemverilog;
-    '.ini' : filetype:=ini;
-    '.sba' : filetype:=json;
-    '.markdown','.mdown','.mkdn',
-    '.md','.mkd','.mdwn',
-    '.mdtxt','.mdtext','.text',
-    '.rmd' : filetype:=markdown;
-  else filetype:=other;
-  end;
+  result:=EditorF.Edtypeselect;
 
-  case filetype of
+  If EditorF.Editor=nil then exit;
+
+  case result of
     vhdl,prg : begin
       commentstr:='--';
-      ActiveEditor.Highlighter:=SynSBASyn;
-      ActiveEditor.Options:=ActiveEditor.Options-[eoShowSpecialChars]+[eoTrimTrailingSpaces];
+      EditorF.Editor.Highlighter:=SynSBASyn;
+      EditorF.Editor.Options:=EditorF.Editor.Options-[eoShowSpecialChars]+[eoTrimTrailingSpaces];
       mapfile:='vhdl_map.dat'
     end;
     verilog,systemverilog : begin
       commentstr:='//';
-      ActiveEditor.Highlighter:=SynVerilogSyn;
-      ActiveEditor.Options:=ActiveEditor.Options-[eoShowSpecialChars]+[eoTrimTrailingSpaces];
+      EditorF.Editor.Highlighter:=SynVerilogSyn;
+      EditorF.Editor.Options:=EditorF.Editor.Options-[eoShowSpecialChars]+[eoTrimTrailingSpaces];
       mapfile:='verilog_map.dat'
     end;
     ini: begin
       commentstr:=';';
-      ActiveEditor.Highlighter:=SynIniSyn;
-      ActiveEditor.Options:=ActiveEditor.Options-[eoShowSpecialChars]+[eoTrimTrailingSpaces];
+      EditorF.Editor.Highlighter:=SynIniSyn;
+      EditorF.Editor.Options:=EditorF.Editor.Options-[eoShowSpecialChars]+[eoTrimTrailingSpaces];
       mapfile:='vhdl_map.dat'
     end;
     json: begin
       commentstr:='"__comment":';
-      ActiveEditor.Highlighter:=SynJSONSyn;
-      ActiveEditor.Options:=ActiveEditor.Options-[eoShowSpecialChars]+[eoTrimTrailingSpaces];
+      EditorF.Editor.Highlighter:=SynJSONSyn;
+      EditorF.Editor.Options:=EditorF.Editor.Options-[eoShowSpecialChars]+[eoTrimTrailingSpaces];
       mapfile:='vhdl_map.dat'
+    end;
+    pas : begin
+      commentstr:='//';
+      EditorF.Editor.Highlighter:=SynFreePascalSyn;
+      EditorF.Editor.Options:=EditorF.Editor.Options-[eoShowSpecialChars]+[eoTrimTrailingSpaces];
+      mapfile:=''
+    end;
+    cpp : begin
+      commentstr:='//';
+      EditorF.Editor.Highlighter:=SynCppSyn;
+      EditorF.Editor.Options:=EditorF.Editor.Options-[eoShowSpecialChars]+[eoTrimTrailingSpaces];
+      mapfile:=''
+    end;
+    html : begin
+      commentstr:='<!--';
+      EditorF.Editor.Highlighter:=SynHTMLSyn;
+      EditorF.Editor.Options:=EditorF.Editor.Options-[eoShowSpecialChars]+[eoTrimTrailingSpaces];
+      mapfile:=''
     end;
     markdown: begin
       commentstr:='';
-      ActiveEditor.Highlighter:=SynHTMLSyn;
-      ActiveEditor.Options:=ActiveEditor.Options+[eoShowSpecialChars]-[eoTrimTrailingSpaces];
+      EditorF.Editor.Highlighter:=SynHTMLSyn;
+      EditorF.Editor.Options:=EditorF.Editor.Options+[eoShowSpecialChars]-[eoTrimTrailingSpaces];
       mapfile:='vhdl_map.dat'
     end;
     other : begin
       commentstr:='--';
-      ActiveEditor.Highlighter:=nil;
-      ActiveEditor.Options:=ActiveEditor.Options-[eoShowSpecialChars]+[eoTrimTrailingSpaces];
+      EditorF.Editor.Highlighter:=nil;
+      EditorF.Editor.Options:=EditorF.Editor.Options-[eoShowSpecialChars]+[eoTrimTrailingSpaces];
       mapfile:='vhdl_map.dat'
     end;
   end;
@@ -3531,6 +3560,19 @@ begin
     end;
   finally
     If assigned(IniFile) then FreeAndNil(IniFile);
+  end;
+end;
+
+procedure TMainForm.ShowHintEvent(Sender: TObject; HintInfo: PHintInfo);
+var
+  Tab: integer;
+begin
+  With EditorPages do
+  begin
+    if (PageCount = 0) or (HintInfo = nil) then Exit;
+    Tab := IndexOfPageAt(ScreenToClient(Mouse.CursorPos));
+    if Tab < 0 then Exit;
+    HintInfo^.HintStr := EditorPages.Page[Tab].Hint;
   end;
 end;
 

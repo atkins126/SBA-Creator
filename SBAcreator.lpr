@@ -18,7 +18,7 @@ uses
   {$IFDEF CODETYPHON}
   bs_controls, lz_rtticontrols, pl_bgrauecontrols, unit1
   {$ELSE}
-  lazcontrols, uecontrols, SBAIPCoresU
+  lazcontrols, uecontrols, SBAIPCoresU, PlugInU
   {$ENDIF}
   {$IFDEF debug}
   , SysUtils

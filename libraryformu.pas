@@ -82,10 +82,6 @@ type
     LV_IPCores: TListView;
     LV_Programs: TListView;
     SB: TStatusBar;
-    SynCppSyn1: TSynCppSyn;
-    SynExporterHTML1: TSynExporterHTML;
-    SynFreePascalSyn1: TSynFreePascalSyn;
-    SynHTMLSyn1: TSynHTMLSyn;
     UpdateRep: TTabSheet;
     procedure B_OpenDSClick(Sender: TObject);
     procedure B_AddtoSnippetsClick(Sender: TObject);
@@ -131,7 +127,6 @@ type
     function GetVersion(f: string): string;
     function LookupFilterItem(S: string; LV: TListViewDataList): integer;
     procedure GetFile(url, f: string; status: TLibDwStatus);
-    function Md2Html(fi: string): string;
     procedure UpdateIpCoresList;
     procedure UpdateProgramsList;
     procedure UpdateSnippetsList;
@@ -142,6 +137,8 @@ type
     SBAProgram:TSBAProgram;
     procedure UpdateLists;
     procedure OpenDataSheet(f: string);
+    function Md2Html(fi: string): string;
+    function Md2Html(s, fi: string): string;
   end;
 
   { TCodeEmiter }
@@ -160,7 +157,7 @@ implementation
 
 {$R *.lfm}
 
-uses ConfigFormU, UtilsU, DWFileU, DebugFormU;
+uses MainFormU, ConfigFormU, UtilsU, DWFileU, DebugFormU;
 
 var
   LibDwStatus:TLibDwStatus=Idle;
@@ -225,10 +222,11 @@ var
   var
     sstream: TStringStream;
   begin
-    LibraryForm.SynExporterHTML1.ExportAll(lines);
+    MainForm.SynExporterHTML.Options:=MainForm.SynExporterHTML.Options-[heoWinClipHeader];
+    MainForm.SynExporterHTML.ExportAll(lines);
     try
       sstream:=TStringStream.Create('');
-      LibraryForm.SynExporterHTML1.SaveToStream(sstream);
+      MainForm.SynExporterHTML.SaveToStream(sstream);
       out_.Append(sstream.DataString);
     finally
       if assigned(sstream) then freeandnil(sstream);
@@ -239,22 +237,22 @@ begin
   case meta of
     'vhdl':
       begin
-        LibraryForm.SynExporterHTML1.Highlighter:=TSynSBASyn.Create(LibraryForm);
+        MainForm.SynExporterHTML.Highlighter:=TSynSBASyn.Create(LibraryForm);
         exportlines;
       end;
     'html':
       begin
-        LibraryForm.SynExporterHTML1.Highlighter:=LibraryForm.SynHTMLSyn1;
+        MainForm.SynExporterHTML.Highlighter:=TSynHTMLSyn.Create(LibraryForm);
         exportlines;
       end;
     'fpc','pas','pascal':
       begin
-        LibraryForm.SynExporterHTML1.Highlighter:=LibraryForm.SynFreePascalSyn1;
+        MainForm.SynExporterHTML.Highlighter:=TSynFreePascalSyn.Create(LibraryForm);
         exportlines;
       end;
     'cpp','c++','c':
       begin
-        LibraryForm.SynExporterHTML1.Highlighter:=LibraryForm.SynCppSyn1;
+        MainForm.SynExporterHTML.Highlighter:=TSynCppSyn.Create(LibraryForm);
         exportlines;
       end
     else
@@ -828,12 +826,42 @@ begin
   end;
 end;
 
+function TLibraryForm.Md2Html(s, fi: string): string;
+var
+  md:TMarkdownProcessor=nil;
+  fo,fn:string;
+  html:TStringList;
+begin
+  result:='';
+  fn:=extractFileNameOnly(fi)+'.tmd.html';
+  fo:=extractFilePath(fi);
+  fo:=IfThen(DirectoryIsWritable(fo),fo+fn,TempFolder+fn);
+  try
+    html := TStringList.Create;
+    md := TMarkdownProcessor.createDialect(mdCommonMark);
+    md.UnSafe := false;
+    md.config.codeBlockEmitter:=TCodeEmiter.Create;
+    try
+      html.Text := md.process(s);
+      if html.Text<>'' then
+      begin
+        html.Text:=CSSDecoration+html.Text;
+        html.SaveToFile(fo);
+        result:=fo;
+      end;
+    except
+      ShowMessage('Can not create or process the temp html file: '+fo);
+    end;
+  finally
+    if assigned(md) then md.Free;
+    if assigned(html) then html.Free;
+  end;
+end;
+
 procedure TLibraryForm.OpenDataSheet(f:string);
 var
   ftype:string;
 begin
-
-
   ftype:=ExtractFileExt(f);
   case lowerCase(ftype) of
     '.markdown','.mdown','.mkdn',

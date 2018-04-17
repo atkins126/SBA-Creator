@@ -1,23 +1,23 @@
 object ConfigForm: TConfigForm
-  Left = 1114
+  Left = 1243
   Height = 290
-  Top = 499
-  Width = 539
+  Top = 615
+  Width = 520
   Caption = 'ConfigForm'
   ClientHeight = 290
-  ClientWidth = 539
+  ClientWidth = 520
   Constraints.MinHeight = 290
   Constraints.MinWidth = 520
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnShow = FormShow
   Position = poMainFormCenter
-  LCLVersion = '1.8.2.0'
+  LCLVersion = '1.8.3.0'
   object ButtonPanel1: TButtonPanel
     Left = 6
     Height = 34
     Top = 250
-    Width = 527
+    Width = 508
     OKButton.Name = 'OKButton'
     OKButton.DefaultCaption = True
     HelpButton.Name = 'HelpButton'
@@ -55,11 +55,12 @@ object ConfigForm: TConfigForm
       OnChange = TreeView1Change
       Options = [tvoAutoExpand, tvoAutoItemHeight, tvoKeepCollapsedNodes, tvoReadOnly, tvoRowSelect, tvoShowButtons, tvoShowLines, tvoShowRoot, tvoToolTips, tvoThemedDraw]
       Items.Data = {
-        F9FFFFFF020004000000000000000000000000000000FFFFFFFF000000000000
+        F9FFFFFF020005000000000000000000000000000000FFFFFFFF000000000000
         000000050000005061746873010000000100000001000000FFFFFFFF00000000
         00000000000A000000506172616D6574657273020000000200000002000000FF
         FFFFFF00000000000000000006000000456469746F7203000000030000000300
-        0000FFFFFFFF000000000000000000050000005468656D65
+        0000FFFFFFFF000000000000000000050000005468656D650400000004000000
+        04000000FFFFFFFF00000000000000000007000000506C7567496E73
       }
     end
   end
@@ -67,8 +68,8 @@ object ConfigForm: TConfigForm
     Left = 135
     Height = 244
     Top = 0
-    Width = 404
-    PageIndex = 1
+    Width = 385
+    PageIndex = 4
     Align = alClient
     TabOrder = 2
     object Paths: TPage
@@ -94,7 +95,7 @@ object ConfigForm: TConfigForm
         Left = 8
         Height = 23
         Top = 56
-        Width = 387
+        Width = 368
         ShowHidden = False
         ButtonWidth = 23
         NumGlyphs = 1
@@ -107,7 +108,7 @@ object ConfigForm: TConfigForm
         Left = 8
         Height = 23
         Top = 104
-        Width = 387
+        Width = 368
         ShowHidden = False
         ButtonWidth = 23
         NumGlyphs = 1
@@ -120,7 +121,7 @@ object ConfigForm: TConfigForm
         Left = 8
         Height = 23
         Top = 199
-        Width = 387
+        Width = 368
         ShowHidden = False
         ButtonWidth = 23
         NumGlyphs = 1
@@ -142,7 +143,7 @@ object ConfigForm: TConfigForm
         Left = 8
         Height = 23
         Top = 151
-        Width = 387
+        Width = 368
         ShowHidden = False
         ButtonWidth = 23
         NumGlyphs = 1
@@ -175,7 +176,7 @@ object ConfigForm: TConfigForm
         Left = 8
         Height = 23
         Top = 31
-        Width = 375
+        Width = 356
         Anchors = [akTop, akLeft, akRight]
         EditLabel.AnchorSideLeft.Control = Ed_DefAuthor
         EditLabel.AnchorSideRight.Control = Ed_DefAuthor
@@ -184,7 +185,7 @@ object ConfigForm: TConfigForm
         EditLabel.Left = 8
         EditLabel.Height = 15
         EditLabel.Top = 13
-        EditLabel.Width = 375
+        EditLabel.Width = 356
         EditLabel.Caption = 'Default Author name:'
         EditLabel.ParentColor = False
         TabOrder = 0
@@ -231,7 +232,7 @@ object ConfigForm: TConfigForm
         Left = 280
         Height = 72
         Top = 80
-        Width = 103
+        Width = 96
         AutoFill = True
         Caption = 'SBA Version'
         ChildSizing.LeftRightSpacing = 6
@@ -242,7 +243,7 @@ object ConfigForm: TConfigForm
         ChildSizing.Layout = cclLeftToRightThenTopToBottom
         ChildSizing.ControlsPerLine = 1
         ClientHeight = 52
-        ClientWidth = 99
+        ClientWidth = 92
         ItemIndex = 1
         Items.Strings = (
           '1.1'
@@ -375,6 +376,184 @@ object ConfigForm: TConfigForm
         )
         OnSelectionChanged = ed_SelThemeSelectionChanged
         TabOrder = 1
+      end
+    end
+    object PlugIns: TPage
+      object Panel1: TPanel
+        Left = 194
+        Height = 244
+        Top = 0
+        Width = 189
+        Align = alClient
+        BorderSpacing.Right = 2
+        BevelOuter = bvNone
+        Caption = 'Panel1'
+        ClientHeight = 244
+        ClientWidth = 189
+        TabOrder = 0
+        object PlugInsFilter: TListViewFilterEdit
+          Left = 3
+          Height = 23
+          Top = 3
+          Width = 183
+          ButtonWidth = 23
+          NumGlyphs = 1
+          Align = alTop
+          BorderSpacing.Around = 3
+          AutoSize = False
+          MaxLength = 0
+          TabOrder = 0
+          TextHint = 'PlugIn Name'
+          FilteredListview = LV_PlugIns
+        end
+        object LV_PlugIns: TListView
+          Left = 3
+          Height = 192
+          Top = 29
+          Width = 183
+          Align = alClient
+          AutoWidthLastColumn = True
+          BorderSpacing.Around = 3
+          Columns = <          
+            item
+              Caption = 'IP Core'
+              Width = 179
+            end>
+          ReadOnly = True
+          RowSelect = True
+          ShowColumnHeaders = False
+          SortType = stText
+          TabOrder = 1
+          ViewStyle = vsReport
+          OnClick = LV_PlugInsClick
+        end
+        object Panel4: TPanel
+          Left = 0
+          Height = 20
+          Top = 224
+          Width = 189
+          Align = alBottom
+          BevelOuter = bvNone
+          ClientHeight = 20
+          ClientWidth = 189
+          TabOrder = 2
+          object Ed_PlEnabled: TCheckBox
+            Left = 8
+            Height = 19
+            Top = 0
+            Width = 62
+            Caption = 'Enabled'
+            OnClick = Ed_PlEnabledClick
+            TabOrder = 0
+          end
+          object L_PlugInVersion: TLabel
+            Left = 88
+            Height = 15
+            Top = 2
+            Width = 41
+            Caption = 'Version:'
+            ParentColor = False
+          end
+        end
+      end
+      object Panel3: TPanel
+        Left = 0
+        Height = 244
+        Top = 0
+        Width = 194
+        Align = alLeft
+        BevelOuter = bvNone
+        ClientHeight = 244
+        ClientWidth = 194
+        TabOrder = 1
+        object Ed_LoadPlugIn: TFileNameEdit
+          Left = 0
+          Height = 23
+          Top = 29
+          Width = 192
+          OnAcceptFileName = Ed_LoadPlugInAcceptFileName
+          DialogTitle = 'Open PlugIn File'
+          DialogOptions = [ofPathMustExist, ofFileMustExist, ofEnableSizing, ofViewDetail]
+          Filter = 'PlugIn zip files|*.zip'
+          FilterIndex = 0
+          DefaultExt = '.zip'
+          HideDirectories = False
+          ButtonWidth = 23
+          NumGlyphs = 1
+          MaxLength = 0
+          TabOrder = 0
+        end
+        object Label7: TLabel
+          Left = 0
+          Height = 15
+          Top = 11
+          Width = 108
+          Caption = 'Select PlugIn to add:'
+          ParentColor = False
+        end
+        object B_LoadPlugIn: TBitBtn
+          Left = 40
+          Height = 30
+          Top = 168
+          Width = 112
+          Caption = 'Add PlugIn'
+          Enabled = False
+          Glyph.Data = {
+            36040000424D3604000000000000360000002800000010000000100000000100
+            2000000000000004000064000000640000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000AF6D319FAD6A2FFFAA672DBD000000000000000000000000000000000000
+            00000000000000000000000000000000000000000000DAA342FFC28439FFB06E
+            31FFAF6C31FFFFF285FFA8642CFFA3602AFFA35F29EF00000000000000000000
+            000000000000DBA54356DBA543140000000000000000DBA543FFB16E32FFFEEA
+            71FFFFEF7AFFFFF38BFFFFF599FFFFF59AFFA15C28FF00000000000000000000
+            0000DCA7455AE6B757FFDCA745D3DCA7456EDCA745D5C88D43FFB16E32FFFEEB
+            72FFE5AB53FFAB682EFFE9B056FFFFF080FFA15C28FFA25E29F7000000000000
+            0000DDA94714DDA947D3F8D175FFEBBE5FFFF9D176FFB16E32FFFEE86DFFFEEB
+            72FFAA672DFFFFFFFFFFAB682EFFFFEE78FFFEEA70FFA05C27FF000000000000
+            000000000000DEAB496CECC062FFFFDD83FFFFDD83FFCE974EFFB16E32FFFEEB
+            72FFE5AB53FFAB682EFFEAB156FFFFF594FFA15C28FFA25E29F7000000000000
+            000000000000DFAE4CE1FAD97DFFFFE187FFECC364FFDFAE4CC1B16E32FFFEEA
+            70FFFFEE78FFFFF389FFFFF599FFFFF69FFFA15C28FF0000000000000000E0B0
+            4EFFE0B04EFFEDC667FFFFE58BFFF6D579FFE0B04EB500000000B16E3297B06E
+            31FFAF6C31FFFFF182FFA8652DFFA4602AFFA6632BFF0000000000000000E1B2
+            51FFE1B251FFEDC96BFFFFE98FFFF6D97DFFE1B251B50000000000000000E1B2
+            51B5CA964EFFAE6B30FFBB803DFFE1B251FFE1B251FF00000000000000000000
+            000000000000E2B453E1FCE68BFFFFED93FFEECB6DFFE2B453C3E2B453C3EECB
+            6DFFFFED93FFFCE68BFFE2B453E1000000000000000000000000000000000000
+            000000000000E3B75578F0D274FFFFF197FFFFF197FFF8E387FFF8E387FFFFF1
+            97FFFFF197FFF0D274FFE3B75578000000000000000000000000000000000000
+            0000E4B95714E4B957D5FAEA8FFFEFD274FFFAEA8FFFFFF59BFFFFF59BFFFAEA
+            8FFFEFD274FFFAEA8FFFE4B957D5E4B957140000000000000000000000000000
+            0000E5BB5956EED071FFE5BB59D3E5BB596CE5BB59D3F0D475FFF0D475FFE5BB
+            59D3E5BB596CE5BB59D3EED071FFE5BB59560000000000000000000000000000
+            000000000000E6BC5B56E6BC5B140000000000000000E6BC5BFFE6BC5BFF0000
+            000000000000E6BC5B14E6BC5B56000000000000000000000000000000000000
+            00000000000000000000000000000000000000000000E6BE5CFFE6BE5CFF0000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000
+          }
+          OnClick = B_LoadPlugInClick
+          TabOrder = 1
+        end
+        object Label8: TLabel
+          Left = 0
+          Height = 15
+          Top = 64
+          Width = 72
+          Caption = 'PlugIn Name:'
+          ParentColor = False
+        end
+        object L_PlugInName: TLabel
+          Left = 0
+          Height = 56
+          Top = 88
+          Width = 192
+          AutoSize = False
+          ParentColor = False
+          WordWrap = True
+        end
       end
     end
   end

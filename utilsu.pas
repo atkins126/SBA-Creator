@@ -5,7 +5,7 @@ unit UtilsU;
 interface
 
 uses
-  Classes, SysUtils, Dialogs, FileUtil, LazFileUtils, StrUtils, DateUtils,
+  Forms, Classes, SysUtils, Dialogs, FileUtil, LazFileUtils, StrUtils, DateUtils,
   lclintf, Zipper, DebugFormU;
 
 
@@ -21,6 +21,8 @@ function GetPosList(s: string; list: Tstrings; start:integer=0): integer;
 function DirReplace(s,d:string): boolean;
 function DeleteDirectoryEx(DirectoryName: string): boolean;
 function DirDelete(d:string):boolean;
+function MoveDir(const fromDir, toDir: string): Boolean;
+Function GetDeepestDir(const aFilename:string):string;
 function VCmpr(v1,v2:string):integer;
 procedure PauseXms(const Milliseconds: longword);
 
@@ -196,7 +198,11 @@ begin
     exit;
   end;
   Result:=DeleteDirectoryEx(d);
-  for i:=0 to 10 do if DirectoryExists(d) then sleep(300) else break;
+  for i:=0 to 10 do if DirectoryExists(d) then
+  begin
+    sleep(300);
+    Application.ProcessMessages;
+  end else break;
 end;
 
 function DeleteDirectoryEx(DirectoryName: string): boolean;
@@ -242,6 +248,10 @@ begin
   Result:=true;
 end;
 
+Function GetDeepestDir(const aFilename:string):string;
+begin
+  Result := extractFileName(ExtractFileDir(afilename));
+end;
 
 function VCmpr(v1, v2: string): integer;
 var i:integer;
@@ -260,6 +270,18 @@ begin
       i:=nl(v1,3)-nl(v2,3);
       result:=i
     end;
+  end;
+end;
+
+function MoveDir(const fromDir, toDir: string): Boolean;
+begin
+  try
+    if DirectoryExistsUTF8(toDir) then exit(false);
+    result:=CopyDirTree(fromDir,toDir,[cffCreateDestDirectory,cffPreserveTime]);
+    if result then DirDelete(fromDir) else
+      ShowMessage('The PlugIn could not be moved.');
+  except
+    on E:Exception do ShowMessage(E.Message);
   end;
 end;
 

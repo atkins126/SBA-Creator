@@ -5,14 +5,16 @@ unit ConfigFormU;
 interface
 
 uses
-  Classes, SysUtils, FileUtil, LazFileUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls,
-  StdCtrls, Buttons, EditBtn, ButtonPanel, ComCtrls;
+  Classes, SysUtils, FileUtil, LazFileUtils, StrUtils, ListViewFilterEdit, Forms,
+  Controls, Graphics, Dialogs, ExtCtrls, StdCtrls, Buttons, EditBtn,
+  ButtonPanel, ComCtrls, ATListbox;
 
 type
 
   { TConfigForm }
 
   TConfigForm = class(TForm)
+    B_LoadPlugIn: TBitBtn;
     B_LoadTheme: TBitBtn;
     ButtonPanel1: TButtonPanel;
     B_FontSelect: TSpeedButton;
@@ -20,6 +22,7 @@ type
     CB_AutoOpenPrjF: TCheckBox;
     CB_CtrlAdvMode: TCheckBox;
     CB_LibAsReadOnly: TCheckBox;
+    Ed_PlEnabled: TCheckBox;
     Ed_DefAuthor: TLabeledEdit;
     Ed_EditorFontName: TComboBox;
     Ed_EditorFontSize: TComboBox;
@@ -27,7 +30,14 @@ type
     Ed_ProgramsDir: TDirectoryEdit;
     Ed_ProjectsDir: TDirectoryEdit;
     Ed_SnippetsDir: TDirectoryEdit;
+    Ed_LoadPlugIn: TFileNameEdit;
     FontDialog1: TFontDialog;
+    Label7: TLabel;
+    Label8: TLabel;
+    L_PlugInVersion: TLabel;
+    L_PlugInName: TLabel;
+    LV_PlugIns: TListView;
+    Panel1: TPanel;
     Label1: TLabel;
     Label2: TLabel;
     Label3: TLabel;
@@ -37,6 +47,10 @@ type
     L_ConfigDir: TLabel;
     Notebook1: TNotebook;
     ed_SelTheme: TRadioGroup;
+    Panel3: TPanel;
+    Panel4: TPanel;
+    PlugIns: TPage;
+    PlugInsFilter: TListViewFilterEdit;
     Theme: TPage;
     Paths: TPage;
     Parameters: TPage;
@@ -46,13 +60,18 @@ type
     Splitter1: TSplitter;
     TreeView1: TTreeView;
     procedure B_FontSelectClick(Sender: TObject);
+    procedure B_LoadPlugInClick(Sender: TObject);
     procedure B_LoadThemeClick(Sender: TObject);
+    procedure Ed_LoadPlugInAcceptFileName(Sender: TObject; var Value: String);
+    procedure Ed_PlEnabledClick(Sender: TObject);
     procedure ed_SelThemeSelectionChanged(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    procedure LV_PlugInsClick(Sender: TObject);
     procedure TreeView1Change(Sender: TObject; Node: TTreeNode);
   private
+    procedure ListPlugIns;
     { private declarations }
   public
     { public declarations }
@@ -77,7 +96,8 @@ const  //based in sub dirs in zip file from Github
 
 var
   ConfigForm: TConfigForm;
-  AppDir,ConfigDir,LibraryDir,SnippetsDir,ProgramsDir,ProjectsDir,SBAbaseDir:string;
+  ConfigFile,AppDir,ConfigDir,LibraryDir,SnippetsDir,ProgramsDir,
+  ProjectsDir,SBAbaseDir,ThemeDir,TempFolder:string;
   LocSBAPrjParams:string;  //Local associated Prj parameters ini file
   DefAuthor,EditorFontName:string;
   EditorFontSize:integer;
@@ -85,7 +105,7 @@ var
   AutoOpenPrjF:Boolean;
   AutoOpenEdFiles:Boolean;
   CtrlAdvMode:Boolean;
-  IpCoreList,SnippetsList,ProgramsList,PlugInsList:Tstringlist;
+  IpCoreList,SnippetsList,ProgramsList:Tstringlist;
   SBAversion:integer;
   SelTheme:integer;
 
@@ -98,9 +118,12 @@ procedure UpdateLists;
 
 implementation
 
-uses MainFormU, SBAProgContrlrU, UtilsU, DebugFormU;
+uses MainFormU, SBAProgContrlrU, UtilsU, DebugFormU, EditorU, PlugInU;
 
 {$R *.lfm}
+
+var
+  TempPlugIn:TPlugIn;   //Keep this private
 
 function SBAVersionToStr(v: integer): string;
 begin
@@ -125,7 +148,6 @@ begin
   GetAllFileNames(LibraryDir,'*.ini',IpCoreList);
   GetAllFileNames(SnippetsDir,'*.snp',SnippetsList);
   GetAllFileNames(ProgramsDir,'*.prg',ProgramsList);
-  GetAllFileNamesAndPaths(ConfigDir+'plugins','*.ini',PlugInsList);
 end;
 
 function SetUpConfig: boolean;
@@ -220,7 +242,8 @@ begin
   end;
   With MainForm.IniStor do
   begin
-    IniFileName:=GetAppConfigFile(false);
+    ConfigFile:=GetAppConfigFile(false);
+    IniFileName:=ConfigFile;
     Info('GetConfigValues','Config File: '+IniFileName);
     ConfigDir:=ReadString('ConfigDir',GetAppConfigDirUTF8(false));
     SBAbaseDir:=ReadString('SBAbaseDir',ConfigDir+DefSBAbaseDir+PathDelim);
@@ -228,6 +251,7 @@ begin
     SnippetsDir:=ReadString('SnippetsDir',ConfigDir+DefSnippetsDir+PathDelim);
     ProgramsDir:=ReadString('ProgramsDir',ConfigDir+DefProgramsDir+PathDelim);
     ProjectsDir:=ReadString('ProjectsDir',GetUserDir+DefProjectsDir+PathDelim);
+    ThemeDir:=ReadString('ThemeDir',ConfigDir+'theme'+PathDelim);
     LocSBAPrjParams:=ConfigDir+cLocSBAprjparams;
     DefAuthor:=ReadString('DefAuthor','Author');
     EditorFontName:=ReadString('EditorFontName','Courier New');
@@ -342,6 +366,41 @@ begin
   Ed_EditorFontName.Text:=EditorFontName;
   Ed_SBAversion.ItemIndex:=SBAversion;
   Ed_SelTheme.ItemIndex:=SelTheme;
+  ListPlugIns;
+end;
+
+procedure TConfigForm.LV_PlugInsClick(Sender: TObject);
+var
+  Item:TListItem;
+  PlugIn:TPlugIn;
+begin
+  Item:=TListView(Sender).Selected;
+  if Item=nil then exit;
+  PlugIn:=TPlugIn(Item.Data);
+  Info('TConfigForm.LV_PlugInsClick',PlugIn.Name);
+  Ed_PlEnabled.Checked:=PlugIn.Enabled;
+  L_PlugInVersion.Caption:='Version: '+PlugIn.Version;
+end;
+
+procedure TConfigForm.ListPlugIns;
+var
+  PlugIn:TPlugIn;
+  Data:TListViewDataItem;
+begin
+  L_PlugInVersion.Caption:='';
+  L_PlugInName.Caption:='';
+  Ed_LoadPlugIn.Text:='';
+  B_LoadPlugIn.Enabled:=false;
+  PlugInsFilter.Items.Clear;
+  if assigned(PlugInsList) and (PlugInsList.Count>0) then
+  for PlugIn in PlugInsList do
+  begin
+    Data.Data := PlugIn;
+    SetLength(Data.StringArray,1);
+    Data.StringArray[0]:=PlugIn.Name;
+    PlugInsFilter.Items.Add(Data);
+  end;
+  PlugInsFilter.InvalidateFilter;
 end;
 
 procedure TConfigForm.TreeView1Change(Sender: TObject; Node: TTreeNode);
@@ -373,15 +432,70 @@ begin
   end;
 end;
 
+procedure TConfigForm.B_LoadPlugInClick(Sender: TObject);
+var
+  d:string;
+begin
+  if TempPlugIn=nil then exit;
+  d:=ConfigDir+'plugins'+PathDelim+GetDeepestDir(TempPlugIn.IniFile)+PathDelim;
+  if not DirectoryExists(d) then
+  begin
+    Info('TConfigForm.B_LoadPlugInClick','Rename from:'+TempPlugIn.Path+' to '+d);
+    if MoveDir(TempPlugIn.Path,d) then
+    begin
+      GetPlugInList;
+      ListPlugIns;
+    end else ShowMessage('Error: The Plugin folder cannot be created.');
+  end else ShowMessage('The Plugin folder already exists: '+d);
+end;
+
 procedure TConfigForm.B_LoadThemeClick(Sender: TObject);
 begin
-  MainForm.LoadTheme(ConfigDir+'theme'+PathDelim);
+  MainForm.LoadTheme(ThemeDir);
+end;
+
+procedure TConfigForm.Ed_LoadPlugInAcceptFileName(Sender: TObject;
+  var Value: String);
+begin
+  Info('TConfigForm.Ed_LoadPlugInAcceptFileName',Value);
+  if assigned(TempPlugIn) then FreeAndNil(TempPlugIn);
+  TempPlugIn:=TestforPlugIn(Value,TempFolder+ExtractFileNameOnly(Value)+PathDelim);
+  if (TempPlugIn<>nil) then
+  begin
+    L_PlugInName.Caption:=TempPlugIn.Name;
+    B_LoadPlugIn.Enabled:=true;
+  end else
+  begin
+    L_PlugInName.Caption:='Invalid PlugIn file';
+    B_LoadPlugIn.Enabled:=false;
+  end;
+  Value:=ExtractFileName(Value);
+end;
+
+procedure TConfigForm.Ed_PlEnabledClick(Sender: TObject);
+var
+  Item:TListItem;
+  PI:TPlugIn;
+begin
+  Item:=LV_PlugIns.Selected;
+  if Item=nil then exit;
+  PI:=TPlugIn(Item.Data);
+  Info('TConfigForm.Ed_PlEnabledClick',PI.Enabled);
+  PI.Enabled:=Ed_PlEnabled.Checked;
 end;
 
 procedure TConfigForm.ed_SelThemeSelectionChanged(Sender: TObject);
 begin
   SelTheme:=Ed_SelTheme.ItemIndex;
 end;
+
+initialization
+  TempFolder:=GetTempDir(false)+'sbacreator'+PathDelim;
+  ForceDirectories(TempFolder);
+
+finalization
+  DirDelete(TempFolder);
+  if assigned(TempPlugIn) then TempPlugIn.free;
 
 end.
 

@@ -59,6 +59,7 @@ type
     Flocuser: string;
     FModified: boolean;
     Fname: string;
+    FPrjFile: string;
     Ftitle: string;
     Fversion: string;
     FSBAver: integer;
@@ -79,6 +80,7 @@ type
     procedure SetSBAversion(AValue: string);
   public
     function Open(f:string):boolean;
+    function Close:boolean;
     function Fill(Data: string): boolean;
     function Collect:string;
     function PrepareNewFolder: boolean;
@@ -99,6 +101,7 @@ type
     function GetAllFileNames(dir: string; vhdonly: boolean=true): string;
     function GetSBAverStr:string;
   published
+    property PrjFile:string read FPrjFile;
     property location:string read Flocation write Setlocation;
     property loclib:string read Floclib;
     property locuser:string read Flocuser;
@@ -125,9 +128,7 @@ uses SBAIPCoresU, DebugFormU, ConfigFormU, CoresPrjEdFormU, UtilsU;
 var AM:integer; //Address Map pointer
 
 
-
 { TSBAPrj }
-
 
 constructor TSBAPrj.Create;
 begin
@@ -137,6 +138,8 @@ begin
   Floclib:='';
   Flocuser:='';
   Fversion:='0.1.1';
+  FPrjFile:='';
+  FAuthor:='';
   FSBAver:=SBAversion;
   Fmodified:=false;
   Fexpmonolithic:=false;
@@ -334,7 +337,7 @@ begin
   l:=tstringlist.create;
   l.add(Floclib+cSBApkg);
   l.add(Floclib+cSyscon);
-  l.add(Floclib+cDataIntf);
+  if SBAversion=0 then l.add(Floclib+cDataIntf);
   if libcores.Count>0 then
   begin
     m:=tstringlist.create;
@@ -407,12 +410,12 @@ begin
     CreateDir(FLocLib);
     CopyFile(SBAbaseDir+cSBApkg,FLocLib+cSBApkg);
     CopyFile(SBAbaseDir+cSyscon,FLocLib+cSyscon);
-    CopyFile(SBAbaseDir+cDataIntf,FLocLib+cDataIntf);
+    if SBAversion=0 then CopyFile(SBAbaseDir+cDataIntf,FLocLib+cDataIntf);
     if LibAsReadOnly then
     begin
       FileSetAttr(FLocLib+cSBApkg,faReadOnly);
       FileSetAttr(FLocLib+cSyscon,faReadOnly);
-      FileSetAttr(FLocLib+cDataIntf,faReadOnly);
+      if SBAversion=0 then FileSetAttr(FLocLib+cDataIntf,faReadOnly);
     end;
     CreateDir(Flocation+cPrjUser);
     CopyIPCoreFiles(libcores);
@@ -685,6 +688,7 @@ begin
     SL.LoadFromFile(f);
     if not Fill(SL.Text) then exit;
     SetLocation(ExtractFilePath(f));
+    FPrjFile:=f;
     FModified:=false;
     result:=true;
   finally
@@ -692,6 +696,26 @@ begin
   end;
 end;
 
+function TSBAPrj.Close: boolean;
+begin
+  result:=not Modified;
+  If Modified then
+  begin
+    result:=false;
+    case MessageDlg('The Project was modified', 'Save Project? ', mtConfirmation, [mbYes, mbNo, mbCancel],0) of
+      mrYes:result:=Save;
+      mrNo:result:=True;
+    end;
+  end;
+  if result then
+  begin
+    FName:='';
+    FPrjFile:='';
+    FLocation:='';
+    FAuthor:='';
+    FModified:=false;
+  end;
+end;
 
 function TSBAPrj.CleanUpLibCores(CL:TStrings): boolean;
 var
@@ -768,34 +792,42 @@ begin
   begin
     S:=TStringList.Create;
     R:=TStringList.Create;
-    R.LoadFromFile(Flocation+Fname+'_'+cSBATop);
-    S.AddStrings(R);
-    R.LoadFromFile(Flocation+Fname+'_'+cSBAcfg);
-    S.AddStrings(R);
-    case SBAversion of
-      0 : R.LoadFromFile(Flocation+Fname+'_'+cSBAdcdr);
-      1 : R.LoadFromFile(Flocation+Fname+'_'+cSBAmux);
-    end;
-    S.AddStrings(R);
-    R.LoadFromFile(Flocation+Fname+'_'+cSBActrlr);
-    S.AddStrings(R);
-    if Fexplibfiles then
-    begin
-      R.LoadFromFile(Floclib+cSBApkg);
+    try
+      R.LoadFromFile(Flocation+Fname+'_'+cSBAcfg);
       S.AddStrings(R);
-      R.LoadFromFile(Floclib+cSyscon);
-      S.AddStrings(R);
-      R.LoadFromFile(Floclib+cDataIntf);
-      S.AddStrings(R);
-      if libcores.Count>0 then for T in libcores do
-      begin
-        R.LoadFromFile(Floclib+T+'.vhd');
-        S.AddStrings(R);
+      case SBAversion of
+        0 : R.LoadFromFile(Flocation+Fname+'_'+cSBAdcdr);
+        1 : R.LoadFromFile(Flocation+Fname+'_'+cSBAmux);
       end;
+      S.AddStrings(R);
+      R.LoadFromFile(Flocation+Fname+'_'+cSBActrlr);
+      S.AddStrings(R);
+      if Fexplibfiles then
+      begin
+        R.LoadFromFile(Floclib+cSBApkg);
+        S.AddStrings(R);
+        R.LoadFromFile(Floclib+cSyscon);
+        S.AddStrings(R);
+        if SBAversion=0 then
+        begin
+          R.LoadFromFile(Floclib+cDataIntf);
+          S.AddStrings(R);
+        end;
+        if libcores.Count>0 then for T in libcores do
+        begin
+          R.LoadFromFile(Floclib+T+'.vhd');
+          S.AddStrings(R);
+        end;
+      end;
+      //Top se exporta al final del archivo para permitir que las herramientas de
+      //síntesis pre-carguen las dependencias.
+      R.LoadFromFile(Flocation+Fname+'_'+cSBATop);
+      S.AddStrings(R);
+      S.SaveToFile(ExportPath+Fname+'.vhd');
+    finally
+      R.Free;
+      S.Free;
     end;
-    R.Free;
-    S.SaveToFile(ExportPath+Fname+'.vhd');
-    S.Free;
     ShowMessage('Monolithic Project file was create: '+ExportPath+Fname+'.vhd');
   end else
   begin
