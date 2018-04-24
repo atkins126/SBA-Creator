@@ -1,7 +1,7 @@
 object MainForm: TMainForm
   Left = 1146
   Height = 698
-  Top = 58
+  Top = 40
   Width = 765
   HorzScrollBar.Page = 765
   HorzScrollBar.Range = 765
@@ -2743,12 +2743,13 @@ object MainForm: TMainForm
           Shape = bsTopLine
         end
       end
-      object Splitter4: TSplitter
+      object Spl_Project: TSplitter
         Left = 147
         Height = 627
         Top = 0
         Width = 5
         ParentColor = False
+        Visible = False
       end
     end
     object ProgEditTab: TTabSheet
@@ -2791,14 +2792,14 @@ object MainForm: TMainForm
         end
         object ToolButton28: TToolButton
           Left = 45
-          Height = 5
+          Height = 22
           Top = 0
           Caption = 'ToolButton28'
           Style = tbsDivider
         end
         object ToolButton29: TToolButton
           Left = 116
-          Height = 5
+          Height = 22
           Top = 0
           Caption = 'ToolButton29'
           Style = tbsDivider
@@ -2815,7 +2816,7 @@ object MainForm: TMainForm
         end
         object ToolButton32: TToolButton
           Left = 165
-          Height = 5
+          Height = 22
           Top = 0
           Caption = 'ToolButton32'
           Style = tbsDivider
@@ -2837,7 +2838,7 @@ object MainForm: TMainForm
         end
         object ToolButton37: TToolButton
           Left = 329
-          Height = 5
+          Height = 22
           Top = 0
           Caption = 'ToolButton37'
           Style = tbsDivider
@@ -2867,7 +2868,7 @@ object MainForm: TMainForm
         end
         object ToolButton47: TToolButton
           Left = 378
-          Height = 5
+          Height = 22
           Top = 0
           Caption = 'ToolButton47'
           Style = tbsDivider
@@ -2894,7 +2895,7 @@ object MainForm: TMainForm
         end
         object ToolButton53: TToolButton
           Left = 236
-          Height = 5
+          Height = 22
           Top = 0
           Caption = 'ToolButton53'
           Style = tbsDivider
@@ -3749,7 +3750,7 @@ object MainForm: TMainForm
         LineHighlightColor.FrameColor = clSilver
         LineHighlightColor.FrameStyle = slsDotted
         TabWidth = 4
-        OnStatusChange = SynEditStatusChange
+        OnStatusChange = EditorStatusChange
         inline SynLeftGutterPartList1: TSynGutterPartList
           object SynGutterMarks1: TSynGutterMarks
             AutoSize = False
@@ -3798,12 +3799,12 @@ object MainForm: TMainForm
     end
     object HiddenPage: TTabSheet
       Caption = 'HiddenPage'
-      ClientHeight = 628
+      ClientHeight = 627
       ClientWidth = 757
       ParentFont = False
       inline SynEdit_Test: TSynEdit
         Left = 0
-        Height = 551
+        Height = 550
         Top = 77
         Width = 757
         Align = alClient
@@ -6340,6 +6341,13 @@ object MainForm: TMainForm
       ImageIndex = 40
       OnExecute = ToolsReloadPlugInsExecute
     end
+    object HelpOpenHelp: TAction
+      Category = 'Help'
+      Caption = 'Open &Help'
+      Hint = 'Open Help file'
+      ImageIndex = 14
+      OnExecute = HelpOpenHelpExecute
+    end
   end
   object OpenDialog: TOpenDialog
     Title = 'Open File'
@@ -6487,6 +6495,7 @@ object MainForm: TMainForm
     top = 452
     object ProjectMenuEd: TMenuItem
       Caption = 'Project'
+      Visible = False
       object MenuItem956: TMenuItem
         Action = ProjectNew
       end
@@ -6630,6 +6639,9 @@ object MainForm: TMainForm
       Caption = '&Help'
       object MenuItem75: TMenuItem
         Action = HelpAbout
+      end
+      object MenuItem91: TMenuItem
+        Action = HelpOpenHelp
       end
       object MenuItem86: TMenuItem
         Action = HelpSettings
@@ -6853,8 +6865,14 @@ object MainForm: TMainForm
       object MenuItem13: TMenuItem
         Action = SBA_NewPrg
       end
+      object MenuItem93: TMenuItem
+        Caption = '-'
+      end
       object MenuItem35: TMenuItem
         Action = SBA_Open
+      end
+      object MenuItem94: TMenuItem
+        Action = FileRevert
       end
       object MenuItem37: TMenuItem
         Action = SBA_Save
@@ -6931,6 +6949,9 @@ object MainForm: TMainForm
       object MenuItem80: TMenuItem
         Action = HelpAbout
       end
+      object MenuItem92: TMenuItem
+        Action = HelpOpenHelp
+      end
       object MenuItem87: TMenuItem
         Action = HelpSettings
       end
@@ -6981,6 +7002,9 @@ object MainForm: TMainForm
       Hint = 'About of SBA system creator'
       object MenuItem71: TMenuItem
         Action = HelpAbout
+      end
+      object MenuItem16: TMenuItem
+        Action = HelpOpenHelp
       end
       object MenuItem85: TMenuItem
         Action = HelpSettings
@@ -7299,7 +7323,7 @@ object MainForm: TMainForm
   end
   object UpdGuiTimer: TTimer
     Enabled = False
-    Interval = 300
+    Interval = 100
     OnTimer = UpdGuiTimerTimer
     left = 292
     top = 512

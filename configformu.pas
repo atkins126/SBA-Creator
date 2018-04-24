@@ -5,8 +5,8 @@ unit ConfigFormU;
 interface
 
 uses
-  Classes, SysUtils, FileUtil, LazFileUtils, StrUtils, ListViewFilterEdit, Forms,
-  Controls, Graphics, Dialogs, ExtCtrls, StdCtrls, Buttons, EditBtn,
+  Classes, SysUtils, FileUtil, LazFileUtils, ListViewFilterEdit, Forms,
+  Controls, Graphics, Dialogs, ExtCtrls, StdCtrls, Buttons, EditBtn,IniPropStorage,
   ButtonPanel, ComCtrls, ATListbox;
 
 type
@@ -21,6 +21,8 @@ type
     CB_AutoOpenEdfiles: TCheckBox;
     CB_AutoOpenPrjF: TCheckBox;
     CB_CtrlAdvMode: TCheckBox;
+    CB_FilesMonitor: TCheckBox;
+    CB_BakTimeStamp: TCheckBox;
     CB_LibAsReadOnly: TCheckBox;
     Ed_PlEnabled: TCheckBox;
     Ed_DefAuthor: TLabeledEdit;
@@ -105,12 +107,14 @@ var
   AutoOpenPrjF:Boolean;
   AutoOpenEdFiles:Boolean;
   CtrlAdvMode:Boolean;
+  EnableFilesMon:Boolean;
+  BakTimeStamp:Boolean;
   IpCoreList,SnippetsList,ProgramsList:Tstringlist;
   SBAversion:integer;
   SelTheme:integer;
 
 function GetConfigValues:boolean;
-function SetConfigValues:boolean;
+function SetConfigValues(IniProp:TIniPropStorage):boolean;
 function SetUpConfig:boolean;
 function SBAVersionToStr(v:integer):string;
 function StrToSBAVersion(s:string):integer;
@@ -118,7 +122,7 @@ procedure UpdateLists;
 
 implementation
 
-uses MainFormU, SBAProgContrlrU, UtilsU, DebugFormU, EditorU, PlugInU;
+uses MainFormU, SBAProgramU, UtilsU, DebugFormU, EditorU, PlugInU;
 
 {$R *.lfm}
 
@@ -261,16 +265,18 @@ begin
     AutoOpenPrjF:=ReadBoolean('AutoOpenPrjF',true);
     AutoOpenEdFiles:=ReadBoolean('AutoOpenEdFiles',true);
     CtrlAdvMode:=ReadBoolean('CtrlAdvMode',false);
+    EnableFilesMon:=ReadBoolean('EnableFilesMon',true);
+    BakTimeStamp:=ReadBoolean('BakTimeStamp',false);
     SBAversion:=ReadInteger('SBAversion',1);
     SelTheme:=ReadInteger('SelTheme',0);
   end;
   result:=true;
 end;
 
-function SetConfigValues:boolean;
+function SetConfigValues(IniProp:TIniPropStorage):boolean;
 begin
   result:=false;
-  with ConfigForm, MainForm.IniStor do
+  with ConfigForm, IniProp do
   begin
     WriteString('ConfigDir',ConfigDir);
     { TODO : Forzar la creación de directorios}
@@ -332,6 +338,12 @@ begin
     CtrlAdvMode:=CB_CtrlAdvMode.Checked;
     WriteBoolean('CtrlAdvMode',CtrlAdvMode);
     //
+    EnableFilesMon:=CB_FilesMonitor.Checked;
+    WriteBoolean('EnableFilesMon',EnableFilesMon);
+    //
+    BakTimeStamp:=CB_BakTimeStamp.Checked;
+    WriteBoolean('BakTimeStamp',BakTimeStamp);
+    //
     EditorFontName:=Ed_EditorFontName.Text;
     WriteString('EditorFontName',EditorFontName);
     //
@@ -363,6 +375,8 @@ begin
   CB_AutoOpenPrjF.Checked:=AutoOpenPrjF;
   CB_AutoOpenEdfiles.Checked:=AutoOpenEdfiles;
   CB_CtrlAdvMode.Checked:=CtrlAdvMode;
+  CB_FilesMonitor.Checked:=EnableFilesMon;
+  CB_BakTimeStamp.Checked:=BakTimeStamp;
   Ed_EditorFontName.Text:=EditorFontName;
   Ed_SBAversion.ItemIndex:=SBAversion;
   Ed_SelTheme.ItemIndex:=SelTheme;

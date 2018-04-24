@@ -1,0 +1,90 @@
+<style type="text/css">
+code{
+  color: #A00;
+}
+pre{
+  background: #f4f4f4;
+  border: 1px solid #ddd;
+  border-left: 3px solid #f36d33;
+  color: #555;
+  overflow: auto;
+  padding: 1em 1.5em;
+  display: block;
+}
+pre code{
+  color: inherit;
+}
+Blockquote{
+  border-left: 3px solid #d0d0d0;
+  padding-left: 0.5em;
+  margin-left:1em;
+}
+Blockquote p{
+  margin: 0;
+}
+table{
+  border:1px solid;
+  border-collapse:collapse;
+}
+th{  padding:5px;
+  background: #e0e0e0;
+  border:1px solid;
+}
+td{
+  padding:5px;
+  border:1px solid;
+}
+</style>
+<h1>Markdown support test</h1>
+<p><img src="markdownlogo.png" alt="Markdown logo"/></p>
+<p>This page is a small demonstration of Markdown support.<br />
+Click <a href="markdown.md">Here</a> to see the Markdown source of this file.<br /></p>
+<p>From <a href="http://spec.commonmark.org/0.28/">CommonMark</a>:</p>
+<blockquote><p>Markdown is a plain text format for writing structured documents,
+based on conventions for indicating formatting in email and Usenet posts.
+It was developed by John Gruber (with help from Aaron Swartz)
+and released in 2004 in the form of a syntax description and a
+Perl script (Markdown.pl) for converting Markdown to HTML.
+In the next decade, dozens of implementations were developed in many languages.</p>
+</blockquote>
+<p><em>Italic</em> or <em>Italic</em><br />
+<strong>Bold</strong> or <strong>Bold</strong><br /></p>
+<p><code>&lt;Code SPAN&gt;</code><br />
+<del>Strike</del><br />
+<ins>Ins</ins><br />
+Subscript<sub>text</sub><br />
+Superscript<sup>text</sup><br />
+<mark>Mark</mark><br /></p>
+<h2>Tables</h2>
+<table>
+  <tr>
+    <th align="left">First Header</th>
+    <th align="center">Second Header</th>
+    <th align="right">Third Header</th>
+  </tr>
+  <tr>
+    <td align="left">Left</td>
+    <td align="center">Center</td>
+    <td align="right">Right</td>
+  </tr>
+  <tr>
+    <td align="left">Second row</td>
+    <td align="center"><strong>strong</strong></td>
+    <td align="right"><em>italic</em></td>
+  </tr>
+</table>
+<h2>Formulas</h2>
+<p>It is possible to use the <a href="https://developers.google.com/chart/infographics/docs/formulas">Google Chart API</a> using <code>TeX</code> language,
+but the translated formula can only to be seen using a browser,
+for insert a formula using <code>TeX</code> enclose the code between <code>$</code>
+without <code>spaces</code>:</p>
+<table>
+  <tr>
+    <th>Quadratic formula</th>
+    <th>Zeta formula</th>
+  </tr>
+  <tr>
+    <td><img src="https://chart.googleapis.com/chart?cht=tx&chl=x=\frac{-b\pm\sqrt{b^2-4ac}}{2a}" alt="x=\frac{-b\pm\sqrt{b^2-4ac}}{2a} "/></td>
+    <td><img src="https://chart.googleapis.com/chart?cht=tx&chl=\zeta(s)=\sum_{n=1}^\infty\frac{1}{n^s}" alt="\zeta(s)=\sum_{n=1}^\infty\frac{1}{n^s} "/></td>
+  </tr>
+</table>

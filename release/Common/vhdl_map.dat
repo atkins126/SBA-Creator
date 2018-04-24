@@ -190,22 +190,16 @@ xsra=xsra
 xsrl=xsrl
 
 //SBA reserved
-sba_config=sba_config
-sba_package=sba_package
+sbapackage=sbapackage
 debug=debug
 adr_width=adr_width
 dat_width=dat_width
 stb_width=stb_width
-max_steps=max_steps
-sysfrec=sysfrec
+sysfreq=sysfreq
 addr_type=addr_type
-adri_type=adri_type
 data_type=data_type
-dati_type=dati_type
-stb_type=stb_type
-step_type=step_type
-
-
+adat_type=adat_type
 
 //LR_Start
 //LR_End
+

@@ -25,9 +25,6 @@ const
   cSBAStartUStatements='-- /SBA: User Statements';
   cSBAEndUStatements='-- /SBA: End';
   cSBASTPTypedef='subtype STP_type';
-  cSBADefaultPrgName='NewProgram.prg';
-  cSBADefPrgTemplate='PrgTemplate.prg';
-  cSBAAdvPrgTemplate='AdvPrgTemplate.prg';
 
 type
 
@@ -57,7 +54,7 @@ type
 
 implementation
 
-uses ConfigFormU, UtilsU, DebugformU;
+uses SBAProgramU, ConfigFormU, UtilsU, DebugformU;
 
 { TSBAContrlrProg }
 

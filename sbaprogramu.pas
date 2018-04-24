@@ -9,7 +9,9 @@ uses
   LazFileUtils;
 
 const
-  cSBADefaultProgramName='NewProgram.prg';
+  cSBADefaultPrgName='NewProgram.prg';
+  cSBADefPrgTemplate='PrgTemplate.prg';
+  cSBAAdvPrgTemplate='AdvPrgTemplate.prg';
 
 type
 
@@ -63,7 +65,7 @@ end;
 constructor TSBAProgram.Create;
 begin
   inherited Create;
-  FFileName:=cSBADefaultProgramName;
+  FFileName:=cSBADefaultPrgName;
   FData:=TStringList.Create;
   FCode:=TStringList.Create;
   FDescription:=TStringList.Create;

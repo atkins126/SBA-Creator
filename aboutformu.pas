@@ -93,7 +93,10 @@ const
                    'http://www.lazarus-ide.org/'+LineEnding+
                    LineEnding+
                    'Silk Icons'+LineEnding+
-                   'http://www.famfamfam.com/lab/icons/silk/';
+                   'http://www.famfamfam.com/lab/icons/silk/'+LineEnding+
+                   LineEnding+
+                   'IPCodeDraw PlugIn'+LineEnding+
+                   'https://github.com/jvegam/IpCoreDraw';
 { TAboutForm }
 
 procedure TAboutForm.FormDestroy(Sender: TObject);
