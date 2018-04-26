@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <ProjectSession>
+    <PathDelim Value="\"/>
+    <Version Value="10"/>
+    <BuildModes Active="Release Linux ARMV7A"/>
+    <Units Count="28">
+      <Unit0>
+        <Filename Value="SBAcreator.lpr"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="25"/>
+        <CursorPos Y="50"/>
+        <UsageCount Value="23"/>
+      </Unit0>
+      <Unit1>
+        <Filename Value="mainformu.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="MainForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="MainFormU"/>
+        <IsVisibleTab Value="True"/>
+        <CursorPos X="11" Y="3000"/>
+        <UsageCount Value="23"/>
+        <Bookmarks Count="1">
+          <Item0 X="44" Y="2973" ID="1"/>
+        </Bookmarks>
+        <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
+      </Unit1>
+      <Unit2>
+        <Filename Value="synhighlighterverilog.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UsageCount Value="23"/>
+      </Unit2>
+      <Unit3>
+        <Filename Value="synhighlightersba.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="SynHighlighterSBA"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="593"/>
+        <CursorPos X="6" Y="609"/>
+        <UsageCount Value="23"/>
+      </Unit3>
+      <Unit4>
+        <Filename Value="versionsupportu.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UsageCount Value="23"/>
+      </Unit4>
+      <Unit5>
+        <Filename Value="sbaprogcontrlru.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="SBAProgContrlrU"/>
+        <UsageCount Value="23"/>
+      </Unit5>
+      <Unit6>
+        <Filename Value="aboutformu.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="AboutForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="AboutFormU"/>
+        <UsageCount Value="23"/>
+      </Unit6>
+      <Unit7>
+        <Filename Value="sbasnippetu.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="SBASnippetU"/>
+        <UsageCount Value="23"/>
+      </Unit7>
+      <Unit8>
+        <Filename Value="sbaprojectu.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="SBAProjectU"/>
+        <UsageCount Value="23"/>
+      </Unit8>
+      <Unit9>
+        <Filename Value="configformu.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="ConfigForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="ConfigFormU"/>
+        <UsageCount Value="23"/>
+      </Unit9>
+      <Unit10>
+        <Filename Value="prjwizu.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="prjWizForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="PrjWizU"/>
+        <UsageCount Value="23"/>
+      </Unit10>
+      <Unit11>
+        <Filename Value="dwfileu.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="DwFileU"/>
+        <UsageCount Value="23"/>
+      </Unit11>
+      <Unit12>
+        <Filename Value="debugformu.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="DebugForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="DebugFormU"/>
+        <EditorIndex Value="2"/>
+        <TopLine Value="45"/>
+        <CursorPos X="3" Y="47"/>
+        <UsageCount Value="23"/>
+        <Loaded Value="True"/>
+      </Unit12>
+      <Unit13>
+        <Filename Value="floatformu.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="FloatForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="FloatFormU"/>
+        <UsageCount Value="23"/>
+      </Unit13>
+      <Unit14>
+        <Filename Value="coresprjedformu.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="CoresPrjEdForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="CoresPrjEdFormU"/>
+        <UsageCount Value="23"/>
+      </Unit14>
+      <Unit15>
+        <Filename Value="libraryformu.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="LibraryForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="LibraryFormU"/>
+        <UsageCount Value="23"/>
+      </Unit15>
+      <Unit16>
+        <Filename Value="utilsu.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="UtilsU"/>
+        <UsageCount Value="23"/>
+      </Unit16>
+      <Unit17>
+        <Filename Value="sbaprogramu.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="SBAProgramU"/>
+        <UsageCount Value="23"/>
+      </Unit17>
+      <Unit18>
+        <Filename Value="exportprjformu.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="ExportPrjForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="ExportPrjFormU"/>
+        <UsageCount Value="23"/>
+      </Unit18>
+      <Unit19>
+        <Filename Value="autoupdateu.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="AutoUpdateU"/>
+        <UsageCount Value="23"/>
+      </Unit19>
+      <Unit20>
+        <Filename Value="synhighlighterjson.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="SynHighlighterJSON"/>
+        <UsageCount Value="23"/>
+      </Unit20>
+      <Unit21>
+        <Filename Value="sbaipcoresu.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="SBAIPCoresU"/>
+        <UsageCount Value="23"/>
+      </Unit21>
+      <Unit22>
+        <Filename Value="editoru.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="EditorU"/>
+        <UsageCount Value="23"/>
+      </Unit22>
+      <Unit23>
+        <Filename Value="wgetfileu.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="WGetFileU"/>
+        <UsageCount Value="23"/>
+      </Unit23>
+      <Unit24>
+        <Filename Value="pluginu.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="PlugInU"/>
+        <UsageCount Value="23"/>
+      </Unit24>
+      <Unit25>
+        <Filename Value="filesmonitoru.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="FilesMonitorU"/>
+        <EditorIndex Value="1"/>
+        <CursorPos X="16" Y="213"/>
+        <UsageCount Value="23"/>
+        <Loaded Value="True"/>
+      </Unit25>
+      <Unit26>
+        <Filename Value="D:\fpcup\Lazarus\components\synedit\synedithighlighter.pp"/>
+        <UnitName Value="SynEditHighlighter"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="153"/>
+        <CursorPos X="25" Y="169"/>
+        <UsageCount Value="10"/>
+      </Unit26>
+      <Unit27>
+        <Filename Value="D:\fpcup\Lazarus\components\synedit\syneditstrconst.pp"/>
+        <UnitName Value="SynEditStrConst"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="139"/>
+        <CursorPos X="17" Y="96"/>
+        <UsageCount Value="10"/>
+      </Unit27>
+    </Units>
+    <JumpHistory Count="11" HistoryIndex="10">
+      <Position1>
+        <Filename Value="mainformu.pas"/>
+        <Caret Line="2993" Column="3" TopLine="2990"/>
+      </Position1>
+      <Position2>
+        <Filename Value="mainformu.pas"/>
+        <Caret Line="2731" Column="14" TopLine="2723"/>
+      </Position2>
+      <Position3>
+        <Filename Value="mainformu.pas"/>
+        <Caret Line="492" Column="15" TopLine="480"/>
+      </Position3>
+      <Position4>
+        <Filename Value="filesmonitoru.pas"/>
+        <Caret Line="214" Column="65" TopLine="184"/>
+      </Position4>
+      <Position5>
+        <Filename Value="filesmonitoru.pas"/>
+        <Caret Line="212" Column="17" TopLine="198"/>
+      </Position5>
+      <Position6>
+        <Filename Value="debugformu.pas"/>
+        <Caret Line="38" Column="10" TopLine="25"/>
+      </Position6>
+      <Position7>
+        <Filename Value="debugformu.pas"/>
+        <Caret Line="66" Column="3" TopLine="64"/>
+      </Position7>
+      <Position8>
+        <Filename Value="debugformu.pas"/>
+        <Caret Line="45" Column="10" TopLine="32"/>
+      </Position8>
+      <Position9>
+        <Filename Value="debugformu.pas"/>
+        <Caret Line="36" Column="12" TopLine="23"/>
+      </Position9>
+      <Position10>
+        <Filename Value="filesmonitoru.pas"/>
+        <Caret Line="213" Column="25" TopLine="198"/>
+      </Position10>
+      <Position11>
+        <Filename Value="mainformu.pas"/>
+        <Caret Line="3000" Column="11"/>
+      </Position11>
+    </JumpHistory>
+  </ProjectSession>
+</CONFIG>

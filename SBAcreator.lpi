@@ -21,8 +21,8 @@
       <UseVersionInfo Value="True"/>
       <AutoIncrementBuild Value="True"/>
       <MinorVersionNr Value="4"/>
-      <RevisionNr Value="6"/>
-      <BuildNr Value="23"/>
+      <RevisionNr Value="7"/>
+      <BuildNr Value="26"/>
       <Attributes pvaPreRelease="True"/>
       <StringTable CompanyName="uE Peru" FileDescription="SBA System Creator" LegalCopyright="(c) Miguel A. Risco-Castillo" ProductVersion="Public Beta"/>
     </VersionInfo>
@@ -77,7 +77,7 @@
           <Version Value="11"/>
           <PathDelim Value="\"/>
           <Target>
-            <Filename Value="$Env(PRJOUT)\SBAcreator\SBAcreator"/>
+            <Filename Value="$Env(PRJOUT)\SBAcreator\Release\Windows_x64\SBAcreator"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
@@ -341,42 +341,7 @@
           </Linking>
         </CompilerOptions>
       </Item9>
-      <Item10 Name="Release Linux ARMV7A">
-        <CompilerOptions>
-          <Version Value="11"/>
-          <PathDelim Value="\"/>
-          <Target>
-            <Filename Value="$Env(PRJOUT)\SBAcreator\Release\Linux_ARM\SBAcreator"/>
-          </Target>
-          <SearchPaths>
-            <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="..\..\Libs\InternetTools\data;..\..\Libs\InternetTools\internet;..\..\Libs\InternetTools\system"/>
-            <UnitOutputDirectory Value="$Env(TEMP)\lazarus\lib\$(TargetCPU)-$(TargetOS)"/>
-          </SearchPaths>
-          <CodeGeneration>
-            <SmartLinkUnit Value="True"/>
-            <TargetProcessor Value="ARMV7A"/>
-            <TargetCPU Value="arm"/>
-            <TargetOS Value="linux"/>
-            <Optimizations>
-              <OptimizationLevel Value="3"/>
-            </Optimizations>
-          </CodeGeneration>
-          <Linking>
-            <Debugging>
-              <GenerateDebugInfo Value="False"/>
-              <StripSymbols Value="True"/>
-            </Debugging>
-            <LinkSmart Value="True"/>
-            <Options>
-              <Win32>
-                <GraphicApplication Value="True"/>
-              </Win32>
-            </Options>
-          </Linking>
-        </CompilerOptions>
-      </Item10>
-      <Item11 Name="Debug Linux ARMV7A">
+      <Item10 Name="Debug Linux ARMV7A">
         <CompilerOptions>
           <Version Value="11"/>
           <PathDelim Value="\"/>
@@ -419,6 +384,41 @@
           <Other>
             <CustomOptions Value="-dDEBUG"/>
           </Other>
+        </CompilerOptions>
+      </Item10>
+      <Item11 Name="Release Linux ARMV7A">
+        <CompilerOptions>
+          <Version Value="11"/>
+          <PathDelim Value="\"/>
+          <Target>
+            <Filename Value="$Env(PRJOUT)\SBAcreator\Release\Linux_ARM\SBAcreator"/>
+          </Target>
+          <SearchPaths>
+            <IncludeFiles Value="$(ProjOutDir)"/>
+            <OtherUnitFiles Value="..\..\Libs\InternetTools\data;..\..\Libs\InternetTools\internet;..\..\Libs\InternetTools\system"/>
+            <UnitOutputDirectory Value="$Env(TEMP)\lazarus\lib\$(TargetCPU)-$(TargetOS)"/>
+          </SearchPaths>
+          <CodeGeneration>
+            <SmartLinkUnit Value="True"/>
+            <TargetProcessor Value="ARMV7A"/>
+            <TargetCPU Value="arm"/>
+            <TargetOS Value="linux"/>
+            <Optimizations>
+              <OptimizationLevel Value="3"/>
+            </Optimizations>
+          </CodeGeneration>
+          <Linking>
+            <Debugging>
+              <GenerateDebugInfo Value="False"/>
+              <StripSymbols Value="True"/>
+            </Debugging>
+            <LinkSmart Value="True"/>
+            <Options>
+              <Win32>
+                <GraphicApplication Value="True"/>
+              </Win32>
+            </Options>
+          </Linking>
         </CompilerOptions>
       </Item11>
     </BuildModes>

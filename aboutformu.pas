@@ -235,7 +235,7 @@ begin
       else
       begin
         //check for url
-        if Pos('http://', s) = 1 then
+        if (Pos('http://', s) = 1) or (Pos('https://', s) = 1) then
         begin
           if i = FActiveLine then
           begin

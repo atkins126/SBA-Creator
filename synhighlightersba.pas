@@ -1,5 +1,5 @@
 {-------------------------------------------------------------------------------
-SynHighlighterSBA v1.1
+SynHighlighterSBA v1.2
 
 This unit provides a SBA VHDL highlighter for SynEdit.
 
@@ -17,7 +17,11 @@ Some concepts in this unit are based in the Original Code of Zhou Kan and
 "La Biblia del SynEdit" of Tito Hinostroza.
 All Rights Reserved.
 
-v1.1 Add special list of highlighted words
+v1.2 2018/04/25
+Add SBAsector Attribute for highlight sections of SBA code
+
+v1.1
+Add special list of highlighted words
 -------------------------------------------------------------------------------}
 
 unit SynHighlighterSBA;
@@ -28,7 +32,7 @@ uses
   SysUtils, Classes, Graphics, SynEditHighlighterFoldBase, SynEditHighlighter, SynEditTypes, SynEditStrConst;
 
 type
-  TtkTokenKind = (tkSBA, tkIeee, tkComment, tkIdentifier, tkKey, tkNull,
+  TtkTokenKind = (tkSBA, tkSBAsector, tkIeee, tkComment, tkIdentifier, tkKey, tkNull,
     tkNumber, tkSpace, tkString, tkSymbol, tkAttribute, tkUnknown);
 
   TRangeState = (rsUnknown);
@@ -63,6 +67,7 @@ type
     fAttribAttri: TSynHighLighterAttributes;
     FIeeeAttri: TSynHighLighterAttributes;
     fSBAAttri: TSynHighLighterAttributes;
+    fSBAsectorAttri: TSynHighLighterAttributes;
     fDivider:TSynDividerDrawConfigSetting;
     function KeyComp(const aKey: string): boolean;
     procedure SetHLWordsList(AValue: TStringList);
@@ -132,6 +137,7 @@ type
     property AttribAttri: TSynHighLighterAttributes read fAttribAttri write fAttribAttri;
     property IeeeAttri: TSynHighLighterAttributes read fIeeeAttri write fIeeeAttri;
     property SBAAttri: TSynHighLighterAttributes read fSBAAttri write fSBAAttri;
+    property SBAsectorAttrib:TSynHighlighterAttributes read fSBAsectorAttri write fSBAsectorAttri;
     property HLWordsList: TStringList read FHLWordsList write SetHLWordsList;
   end;
 
@@ -607,6 +613,11 @@ begin
   fSBAAttri.Foreground := $00C08000;
   AddAttribute(fSBAAttri);
 
+  fSBAsectorAttri := TSynHighLighterAttributes.Create(SYNS_AttrLabel);
+  fSBAsectorAttri.Foreground := $00C08000;
+  fSBAsectorAttri.Style:=[fsBold];
+  AddAttribute(fSBAsectorAttri);
+
   SetAttributesOnChange(@DefHighlightChange);
   MakeMethodTables;
   fRange := rsUnknown;
@@ -698,7 +709,7 @@ begin
         ((FLine[Run+3] = 'S') and (FLine[Run+4] = 'B') and (FLine[Run+5] = 'A') and (FLine[Run+6] = ':')))
     then
     begin
-       fTokenID := tkSBA;
+       fTokenID := tkSBASector;
     end else fTokenID := tkComment;
     while not (FLine[Run] in [#0, #10, #13]) do inc(Run);
   end;
@@ -990,6 +1001,7 @@ begin
     tkAttribute: Result  := fAttribAttri;
     tkIeee: Result       := fIeeeAttri;
     tkSBA:  Result       := fSBAAttri;
+    tkSBAsector:  Result := fSBAsectorAttri;
     tkUnknown: Result    := fIdentifierAttri;
     else 
       Result := nil;

@@ -93,6 +93,7 @@ const  //based in sub dirs in zip file from Github
   cSBAsnippetsZipFile='sbasnippets.zip';
   cSBARepoZipFile='/archive/master.zip';
   cSBAthemeZipFile='theme.zip';
+  cSBADocZipFile='doc.zip';
   cLocSBAprjparams='lprjparams.ini'; // Save the local parameters for each project file
   cSBApluginsZipFile='plugins.zip';
 
@@ -219,6 +220,14 @@ begin
     If Unzip(AppDir+cSBApluginsZipFile,ConfigDir+'plugins') then DeleteFile(AppDir+cSBApluginsZipFile)
     else begin
       ShowMessage('Failed to create plugins folder: '+ConfigDir+'plugins');
+//      Exit;  // Non Critical
+    end;
+
+  Info('SetUpConfig','DocDir= '+ConfigDir+'doc');
+  If FileExists(AppDir+cSBADocZipFile) then
+    If Unzip(AppDir+cSBADocZipFile,ConfigDir+'doc') then DeleteFile(AppDir+cSBADocZipFile)
+    else begin
+      ShowMessage('Failed to create doc help folder: '+ConfigDir+'doc');
 //      Exit;  // Non Critical
     end;
 

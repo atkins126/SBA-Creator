@@ -1260,7 +1260,7 @@ end;
 
 procedure TMainForm.HelpOpenHelpExecute(Sender: TObject);
 begin
-  OpenURL('file://'+AppDir+'Doc'+PathDelim+'help.html');
+  OpenURL('file://'+ConfigDir+'doc'+PathDelim+'help.html');
 end;
 
 procedure TMainForm.HelpSettingsExecute(Sender: TObject);
@@ -1704,6 +1704,9 @@ begin
     MainForm.Menu := ProgMenu;
     ActEditorF.Editor:=SynEdit_X;
     ActEditorF.Page:=nil;
+    ActEditorF.FileName:=SBAContrlrProg.FileName;
+    ActEditorF.Edtypeselect;
+    selectHighlighter(ActEditorF);
     SyncroEdit.Enabled:=false;
     SyncroEdit.Editor:=ActEditorF.Editor;
     SyncroEdit.Enabled:=true;
@@ -2204,6 +2207,7 @@ begin
   ActEditorF.Editor:=nil;
   MainPages.ShowTabs:=false;
   MainPages.ActivePage:=SystemTab;
+  FilesMon:=TFilesMon.Create(EnableFilesMon,@FileChanged);
   SBAPrj:=TSBAPrj.Create;
   SBAContrlrProg:=TSBAContrlrProg.Create;
   SBASnippet:=TSBASnippet.Create;
@@ -2235,7 +2239,6 @@ begin
   CheckStartParams;
   EditorPages.OnShowHint:=@ShowHintEvent;;
   DeferredTimer.Enabled:=true;
-  FilesMon:=TFilesMon.Create(EnableFilesMon,@FileChanged);
   info('TMainForm.FormCreate','All tasks finished');
 end;
 
@@ -2987,23 +2990,22 @@ end;
 procedure TMainForm.ChangeEditorButtons(EditorF: TEditorF);
 var f1,f2,f3:boolean;
 begin
+  if MainPages.ActivePage<>EditorsTab then exit;
+  Info('TMainForm.ChangeEditorButtons',EditorF.FileName);
   f1:=EditorF.editor.Modified;
   f2:=not EditorF.EditorEmpty;
   f3:=not EditorF.editor.ReadOnly;
-  if MainPages.ActivePage=EditorsTab then
-  begin
-    FileRevert.Enabled:=f1;
-    FileSave.Enabled:=f1 and f2;
-    FileSaveAs.Enabled:=f2;
-    ToolsFileObf.Enabled:=f2;
-    ToolsFileReformat.Enabled:=f2 and f3;
-    ToolsFileSyntaxCheck.Enabled:=f2;
-    ToolsExporttoHtml.Enabled:=f2;
-    SearchReplace.Enabled:=f2 and f3;
-    if assigned(EditorF.Page) then
-      EditorF.Page.Caption:=IfThen(f1,'*'+ExtractFileName(EditorF.FileName),ExtractFileName(EditorF.FileName));
-    if EditorPages.ActivePage.Showing then EditorF.Editor.SetFocus;
-  end;
+  FileRevert.Enabled:=f1;
+  FileSave.Enabled:=f1 and f2;
+  FileSaveAs.Enabled:=f2;
+  ToolsFileObf.Enabled:=f2;
+  ToolsFileReformat.Enabled:=f2 and f3;
+  ToolsFileSyntaxCheck.Enabled:=f2;
+  ToolsExporttoHtml.Enabled:=f2;
+  SearchReplace.Enabled:=f2 and f3;
+  if assigned(EditorF.Page) then
+    EditorF.Page.Caption:=IfThen(f1,'*'+ExtractFileName(EditorF.FileName),ExtractFileName(EditorF.FileName));
+  if EditorPages.ActivePage.Showing then EditorF.Editor.SetFocus;
 end;
 
 procedure TMainForm.SyntaxCheck(f, path: string; hdl: TEdType);

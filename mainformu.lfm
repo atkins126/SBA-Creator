@@ -2302,14 +2302,14 @@ object MainForm: TMainForm
           end
           object ToolButton11: TToolButton
             Left = 466
-            Height = 22
+            Height = 5
             Top = 0
             Caption = 'ToolButton11'
             Style = tbsDivider
           end
           object ToolButton17: TToolButton
             Left = 111
-            Height = 22
+            Height = 5
             Top = 0
             Caption = 'ToolButton17'
             Style = tbsDivider
@@ -2321,7 +2321,7 @@ object MainForm: TMainForm
           end
           object ToolButton25: TToolButton
             Left = 373
-            Height = 22
+            Height = 5
             Top = 0
             Caption = 'ToolButton25'
             Style = tbsDivider
@@ -2358,7 +2358,7 @@ object MainForm: TMainForm
           end
           object ToolButton19: TToolButton
             Left = 160
-            Height = 22
+            Height = 5
             Top = 0
             Caption = 'ToolButton19'
             Style = tbsDivider
@@ -2398,14 +2398,14 @@ object MainForm: TMainForm
           end
           object ToolButton58: TToolButton
             Left = 324
-            Height = 22
+            Height = 5
             Top = 0
             Caption = 'ToolButton58'
             Style = tbsDivider
           end
           object ToolButton59: TToolButton
             Left = 231
-            Height = 22
+            Height = 5
             Top = 0
             Caption = 'ToolButton59'
             Style = tbsDivider
@@ -2686,7 +2686,7 @@ object MainForm: TMainForm
           end
           object ToolButton48: TToolButton
             Left = 89
-            Height = 23
+            Height = 5
             Top = 0
             Caption = 'ToolButton48'
             Style = tbsDivider
@@ -2792,14 +2792,14 @@ object MainForm: TMainForm
         end
         object ToolButton28: TToolButton
           Left = 45
-          Height = 22
+          Height = 5
           Top = 0
           Caption = 'ToolButton28'
           Style = tbsDivider
         end
         object ToolButton29: TToolButton
           Left = 116
-          Height = 22
+          Height = 5
           Top = 0
           Caption = 'ToolButton29'
           Style = tbsDivider
@@ -2816,7 +2816,7 @@ object MainForm: TMainForm
         end
         object ToolButton32: TToolButton
           Left = 165
-          Height = 22
+          Height = 5
           Top = 0
           Caption = 'ToolButton32'
           Style = tbsDivider
@@ -2838,7 +2838,7 @@ object MainForm: TMainForm
         end
         object ToolButton37: TToolButton
           Left = 329
-          Height = 22
+          Height = 5
           Top = 0
           Caption = 'ToolButton37'
           Style = tbsDivider
@@ -2868,7 +2868,7 @@ object MainForm: TMainForm
         end
         object ToolButton47: TToolButton
           Left = 378
-          Height = 22
+          Height = 5
           Top = 0
           Caption = 'ToolButton47'
           Style = tbsDivider
@@ -2895,7 +2895,7 @@ object MainForm: TMainForm
         end
         object ToolButton53: TToolButton
           Left = 236
-          Height = 22
+          Height = 5
           Top = 0
           Caption = 'ToolButton53'
           Style = tbsDivider
