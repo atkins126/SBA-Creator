@@ -13,7 +13,7 @@ interface
 
 uses
   Forms, Dialogs, SysUtils, Classes, ExtCtrls, LazFileUtils,
-  DebugFormU;
+  DebugU;
 
 type
 

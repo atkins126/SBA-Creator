@@ -8,7 +8,7 @@ uses
   Controls, Graphics, Dialogs, Classes, SysUtils, ComCtrls,
   StdCtrls, LazFileUtils, SynEdit, SynEditMouseCmds,
   SynEditMarkupHighAll, SynEditTypes, SynEditKeyCmds,
-  UtilsU, DebugFormU;
+  UtilsU, DebugU;
 
 type
 
@@ -32,6 +32,7 @@ public
   procedure CreateEditor(AOwner: TComponent; ATab: TTabSheet; Template:TSynEdit=nil);
   property FileName:string read FFileName write SetFileName;
   function EditorEmpty : boolean;
+  procedure Close;
 end;
 
 var
@@ -172,6 +173,7 @@ begin
   begin
     Editor:= TSynEdit.Create(AOwner);
     Editor.Name:='SynEdit_'+inttostr(EditorCnt);
+    Editor.Tag:=EditorCnt;
     FormatEditor;
     Editor.Keystrokes.Items[Editor.Keystrokes.FindCommand(ecSetMarker1)].Command:=
       ecToggleMarker1;
@@ -182,9 +184,11 @@ begin
   Page:=ATab;
   f:='NewFile'+inttostr(EditorCnt)+'.vhd';
   SetFileName(AppendPathDelim(GetCurrentDir)+f);
+  Page.Caption:=f;
   Page.Tag:=EditorCnt;
   Editor.Modified:=false;
   Inc(EditorCnt);
+  Info('TEditorF.CreateEditor',f);
   //Editor.BookMarkOptions.BookmarkImages:=MarkImages;
   //Editor.PopupMenu:=EditorPopUp;
   //Editor.OnStatusChange:=@SynEditStatusChange;
@@ -193,6 +197,18 @@ end;
 function TEditorF.EditorEmpty: boolean;
 begin
   Result:=(Editor.Lines.Count=0) or ((Editor.Lines.Count=1) and (Editor.Lines[1]=''));
+end;
+
+procedure TEditorF.Close;
+begin
+  Info('TEditorF.Close',Filename);
+  FFileName:='';
+  if assigned(Editor) then
+  begin
+    Editor.OnStatusChange:=nil;
+    FreeAndNil(Editor);
+  end;
+  if assigned(Page) then FreeAndNil(Page);
 end;
 
 procedure TEditorF.Reformat(osl, nsl: Tstrings; filetype: TEdType;

@@ -42,7 +42,7 @@ implementation
 
 {$R *.lfm}
 
-uses ConfigFormU, FloatFormU, DebugFormU;
+uses ConfigFormU, FloatFormU, DebugU;
 
 { TCoresPrjEdForm }
 

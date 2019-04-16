@@ -123,7 +123,7 @@ var
 
 implementation
 
-uses SBAIPCoresU, DebugFormU, ConfigFormU, CoresPrjEdFormU, UtilsU;
+uses SBAIPCoresU, DebugU, ConfigFormU, CoresPrjEdFormU, UtilsU;
 
 var AM:integer; //Address Map pointer
 
@@ -778,7 +778,8 @@ end;
 
 function TSBAPrj.PrjExport(ExportPath:string): boolean;
 var
-  R,S:TStringList;
+  R,S,M:TStringList;
+  Level:integer;
   T:String;
 begin
   { TODO : Verificar que se exportan los requerimientos de los IPCores y los archivos de usuario }
@@ -788,10 +789,12 @@ begin
     ShowMessage('The Project export path: '+ExportPath+'do not exists');
     exit;
   end;
+
   if Fexpmonolithic then
   begin
     S:=TStringList.Create;
     R:=TStringList.Create;
+    M:=TStringList.Create;
     try
       R.LoadFromFile(Flocation+Fname+'_'+cSBAcfg);
       S.AddStrings(R);
@@ -813,10 +816,23 @@ begin
           R.LoadFromFile(Floclib+cDataIntf);
           S.AddStrings(R);
         end;
-        if libcores.Count>0 then for T in libcores do
+        level:=0;
+        FillRequeriments(libcores,m,level);
+        if m.Count>0 then for T in m do
         begin
           R.LoadFromFile(Floclib+T+'.vhd');
           S.AddStrings(R);
+        end;
+      end;
+      if Fexpuserfiles and GetAllFileNamesOnly(Flocuser,'*.vhd',M) then for T in m do
+      try
+        R.LoadFromFile(Flocuser+T+'.vhd');
+        S.AddStrings(R);
+      except
+        ON E:Exception do
+        begin
+          Info('TSBAPrj.PrjExport Error',E.Message);
+          ShowMessage('Can not copy the user file: '+T+'.vhd');
         end;
       end;
       //Top se exporta al final del archivo para permitir que las herramientas de
@@ -825,6 +841,7 @@ begin
       S.AddStrings(R);
       S.SaveToFile(ExportPath+Fname+'.vhd');
     finally
+      M.Free;
       R.Free;
       S.Free;
     end;

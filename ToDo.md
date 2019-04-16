@@ -1,7 +1,7 @@
 ~~listo: Borrar log al abrir nuevo proyecto o entrar en editor o puede ser borrado
  al salir a la pestaÃ±a de sistema.~~
 
-Para monitorear cambios en los archivos:
+~~listo:Para monitorear cambios en los archivos:
 http://forum.codecall.net/topic/76318-monitor-a-folder-for-changes/
 
 ~~Listo: Arreglar las excepciones al validar el código del PRG (el programa se cierra si se presiona Cancel)~~
@@ -29,3 +29,6 @@ de  MAX_SYNC_ED_WORDS = 50// 250;  a  MAX_SYNC_ED_WORDS = 100;// 250;
 ~~Listo: Colocar un save all en el editor hdl.~~
 
 ~~Listo: FoldValidProc en synhighlightersba.pas para funciones y procedimientos no funciona si la función o procedimiento tiene varios parámetros debido al ";" de separación entre parámetros. Se debe elegir otro criterio.~~
+
+
+Cuando se pasa al modo edición del programa del Controlador, si hay instrucciones en una columna antes de la aparición del símbolo => se borran todos los caracteres que se encuentren antes de dicha columna. El funcionamiendo debería ser: si hay texto antes de la columna del => que no sea un When, entonces borrar los espacios vacíos precedentes hasta el primer caracter.

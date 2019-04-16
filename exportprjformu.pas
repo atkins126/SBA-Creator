@@ -34,7 +34,7 @@ implementation
 
 {$R *.lfm}
 
-Uses DebugFormU;
+Uses DebugU;
 
 { TExportPrjForm }
 

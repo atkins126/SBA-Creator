@@ -11,15 +11,10 @@ uses
   Interfaces, // this includes the LCL widgetset
   Forms, FrameViewer09, HistoryLazarus, MainFormU, synhighlighterverilog,
   synhighlightersba, versionsupportu, SBAProgContrlrU, AboutFormU, sbasnippetu,
-  configformu, PrjWizU, dwfileU, DebugFormU, AutoUpdateU, SBAProjectU,
+  configformu, PrjWizU, dwfileU, DebugU, AutoUpdateU, SBAProjectU,
   floatformu, CoresPrjEdFormU, LibraryFormU, UtilsU, sbaprogramu,
   exportprjformu, UScaleDPI,
-
-  {$IFDEF CODETYPHON}
-  bs_controls, lz_rtticontrols, pl_bgrauecontrols, unit1
-  {$ELSE}
   lazcontrols, uecontrols, SBAIPCoresU, PlugInU
-  {$ENDIF}
   {$IFDEF debug}
   , SysUtils
   {$ENDIF}

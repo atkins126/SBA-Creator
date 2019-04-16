@@ -78,7 +78,7 @@ type
 implementation
 
 uses
-  UtilsU, DebugFormU, ConfigFormU;
+  UtilsU, DebugU, ConfigFormU;
 
 var
   VersionStr:string;

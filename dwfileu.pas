@@ -18,6 +18,7 @@ function DownloadFile(UrlSource,FileDestiny:string):boolean;
 function CheckNetworkConnection:boolean;
 procedure CheckNetworkThread;
 function IsNetworkEnabled:boolean;
+function UrlSolveRedir(var UrlValue:string):boolean;
 
 Type
 
@@ -60,7 +61,7 @@ Type
 
 implementation
 
-uses DebugFormU;
+uses DebugU;
 
 var
   NetworkEnabled:boolean=false;
@@ -100,6 +101,19 @@ begin
   exit(NetworkEnabled);
 end;
 
+function UrlSolveRedir(var UrlValue: string): boolean;
+begin
+  result:=false;
+  try
+    httpRequest(TrimLeft(UrlValue));
+    Info('TDownloadThread.UrlSolveRedir original:',UrlValue);
+    UrlValue := defaultInternet.lastUrl;
+    Info('TDownloadThread.UrlSolveRedir redirect:',UrlValue);
+    result:=true;
+  finally
+  end;
+end;
+
 { TCheckNetworkConnectionThread }
 
 constructor TCheckNetworkConnectionThread.Create;
@@ -127,7 +141,8 @@ end;
 constructor TDownloadThread.Create(UrlSource, FileDestiny: string);
 begin
   FreeOnTerminate := True;
-  FUrlSource:=UrlSource;
+  FUrlSource :='';
+  SetUrlSource(UrlSource);
   FFileDestiny:=FileDestiny;
   FOnDownloaded:=nil;
   inherited Create(true);
@@ -167,7 +182,7 @@ end;
 procedure TDownloadThread.SetUrlSource(AValue: String);
 begin
   if FUrlSource=AValue then Exit;
-  FUrlSource:=AValue;
+  FUrlSource := AValue;
 end;
 
 procedure TDownloadThread.Execute;
@@ -177,7 +192,8 @@ begin
   if (not Terminated) and NetworkEnabled then
   try
     try
-      strSaveToFileUTF8(FFileDestiny, retrieve(FUrlSource));
+      info('TDownloadThread.Execute',FUrlSource);
+      strSaveToFileUTF8(FFileDestiny,retrieve(FUrlSource));
     except
       On E :Exception do Info('TDownloadThread error',E.Message);
     end;

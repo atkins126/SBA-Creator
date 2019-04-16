@@ -50,7 +50,7 @@ type
 
 implementation
 
-uses ConfigFormU,UtilsU, DebugFormU;
+uses ConfigFormU,UtilsU, DebugU;
 
 { TSBASnippet }
 

@@ -6,14 +6,14 @@ interface
 
 uses
   Forms, Classes, SysUtils, Dialogs, FileUtil, LazFileUtils, StrUtils, DateUtils,
-  lclintf, Zipper, DebugFormU;
+  lclintf, Zipper, DebugU;
 
 
 function SearchForFiles(const dir,mask: string; Onfind:TFileFoundEvent):boolean;
 function PopulateDirList(const directory : string; list : TStrings): boolean;
 function PopulateFileList(const directory,mask : string; list : TStrings): boolean;
-procedure GetAllFileNames(const dir,mask:string; list:TStrings);
-procedure GetAllFileNamesAndPaths(const dir,mask:string; list:TStrings);
+function GetAllFileNamesOnly(const dir,mask:string; list:TStrings):boolean;
+procedure GetAllFileNamesOnlyEqPaths(const dir,mask:string; list:TStrings);
 function UnZip(f,p:string):boolean;
 function GetZipMainFolder(f:string):string;
 function IsDirectoryEmpty(const directory : string) : boolean;
@@ -28,7 +28,7 @@ procedure PauseXms(const Milliseconds: longword);
 
 implementation
 
-procedure GetAllFileNames(const dir,mask:string; list:TStrings);
+function GetAllFileNamesOnly(const dir,mask:string; list:TStrings):boolean;
 var
   L:TStringList;
   s:String;
@@ -37,9 +37,10 @@ begin
   L:=FindAllFiles(dir,mask);
   For s in L do list.Add(ExtractFileNameOnly(S));
   L.Free;
+  result:=list.Count>0;
 end;
 
-procedure GetAllFileNamesAndPaths(const dir,mask:string; list:TStrings);
+procedure GetAllFileNamesOnlyEqPaths(const dir,mask:string; list:TStrings);
 var
   L:TStringList;
   s:String;

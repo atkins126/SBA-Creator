@@ -1,15 +1,15 @@
 object MainForm: TMainForm
   Left = 1146
   Height = 698
-  Top = 40
+  Top = 0
   Width = 765
   HorzScrollBar.Page = 765
   HorzScrollBar.Range = 765
   VertScrollBar.Page = 639
   VertScrollBar.Range = 639
   AllowDropFiles = True
-  ClientHeight = 678
-  ClientWidth = 765
+  ClientHeight = 0
+  ClientWidth = 0
   Constraints.MinHeight = 698
   Constraints.MinWidth = 765
   KeyPreview = True
@@ -20,7 +20,7 @@ object MainForm: TMainForm
   OnDropFiles = FormDropFiles
   OnResize = FormResize
   SessionProperties = 'CoreImage.Height;Height;Left;Log.Height;P_ProgAddress.Height;P_ProgLabels.Height;P_Project.Width;SnippetsList.Height;Top;Width;WindowState;P_AuxProg.Width'
-  LCLVersion = '1.8.3.0'
+  LCLVersion = '2.0.1.0'
   object MainPages: TPageControl
     Left = 0
     Height = 655
@@ -694,7 +694,6 @@ object MainForm: TMainForm
           TextShadowColor = clBlack
           Spacing = 10
           Action = ProjectNew
-          Animation = False
           BitmapOptions.MarginTop = 2
           BitmapOptions.MarginRight = 2
           BitmapOptions.MarginBottom = 2
@@ -715,7 +714,6 @@ object MainForm: TMainForm
           TextShadowColor = clBlack
           Spacing = 10
           Action = ProjectOpen
-          Animation = False
           BitmapOptions.MarginTop = 2
           BitmapOptions.MarginRight = 2
           BitmapOptions.MarginBottom = 2
@@ -736,7 +734,6 @@ object MainForm: TMainForm
           TextShadowColor = clBlack
           Spacing = 10
           Action = ProjectGotoEditor
-          Animation = False
           BitmapOptions.MarginTop = 2
           BitmapOptions.MarginRight = 2
           BitmapOptions.MarginBottom = 2
@@ -757,7 +754,6 @@ object MainForm: TMainForm
           TextShadowColor = clBlack
           Spacing = 10
           Action = ProjectGotoPrg
-          Animation = False
           BitmapOptions.MarginTop = 2
           BitmapOptions.MarginRight = 2
           BitmapOptions.MarginBottom = 2
@@ -777,7 +773,6 @@ object MainForm: TMainForm
           Layout = blGlyphTop
           TextShadowColor = clBlack
           Spacing = 10
-          Animation = False
           BitmapOptions.MarginTop = 2
           BitmapOptions.MarginRight = 2
           BitmapOptions.MarginBottom = 2
@@ -786,8 +781,8 @@ object MainForm: TMainForm
           Caption = 'SBA Library'
           Constraints.MinHeight = 140
           Constraints.MinWidth = 140
-          OnClick = btn_sba_libraryClick
           ParentColor = False
+          OnClick = btn_sba_libraryClick
         end
         object btn_sba_website: TuEButton
           Left = 220
@@ -799,7 +794,6 @@ object MainForm: TMainForm
           TextShadowColor = clBlack
           Spacing = 10
           Action = HelpGotoSBAWebsite
-          Animation = False
           BitmapOptions.MarginTop = 2
           BitmapOptions.MarginRight = 2
           BitmapOptions.MarginBottom = 2
@@ -820,7 +814,6 @@ object MainForm: TMainForm
           TextShadowColor = clBlack
           Spacing = 10
           Action = HelpGotoSBAForum
-          Animation = False
           BitmapOptions.MarginTop = 2
           BitmapOptions.MarginRight = 2
           BitmapOptions.MarginBottom = 2
@@ -841,7 +834,6 @@ object MainForm: TMainForm
           TextShadowColor = clBlack
           Spacing = 10
           Action = HelpSettings
-          Animation = False
           BitmapOptions.MarginTop = 2
           BitmapOptions.MarginRight = 2
           BitmapOptions.MarginBottom = 2
@@ -2302,14 +2294,14 @@ object MainForm: TMainForm
           end
           object ToolButton11: TToolButton
             Left = 466
-            Height = 5
+            Height = 22
             Top = 0
             Caption = 'ToolButton11'
             Style = tbsDivider
           end
           object ToolButton17: TToolButton
             Left = 111
-            Height = 5
+            Height = 22
             Top = 0
             Caption = 'ToolButton17'
             Style = tbsDivider
@@ -2321,7 +2313,7 @@ object MainForm: TMainForm
           end
           object ToolButton25: TToolButton
             Left = 373
-            Height = 5
+            Height = 22
             Top = 0
             Caption = 'ToolButton25'
             Style = tbsDivider
@@ -2358,7 +2350,7 @@ object MainForm: TMainForm
           end
           object ToolButton19: TToolButton
             Left = 160
-            Height = 5
+            Height = 22
             Top = 0
             Caption = 'ToolButton19'
             Style = tbsDivider
@@ -2398,14 +2390,14 @@ object MainForm: TMainForm
           end
           object ToolButton58: TToolButton
             Left = 324
-            Height = 5
+            Height = 22
             Top = 0
             Caption = 'ToolButton58'
             Style = tbsDivider
           end
           object ToolButton59: TToolButton
             Left = 231
-            Height = 5
+            Height = 22
             Top = 0
             Caption = 'ToolButton59'
             Style = tbsDivider
@@ -2686,7 +2678,7 @@ object MainForm: TMainForm
           end
           object ToolButton48: TToolButton
             Left = 89
-            Height = 5
+            Height = 23
             Top = 0
             Caption = 'ToolButton48'
             Style = tbsDivider
@@ -2719,6 +2711,7 @@ object MainForm: TMainForm
           OnMouseDown = PrjTreeMouseDown
           OnMouseLeave = PrjTreeMouseLeave
           OnMouseMove = PrjTreeMouseMove
+          OnSelectionChanged = PrjTreeSelectionChanged
           Options = [tvoAutoExpand, tvoAutoItemHeight, tvoHideSelection, tvoHotTrack, tvoKeepCollapsedNodes, tvoReadOnly, tvoRightClickSelect, tvoShowButtons, tvoShowLines, tvoShowRoot, tvoToolTips, tvoNoDoubleClickExpand]
           Items.Data = {
             F9FFFFFF020004000000FFFFFFFFFFFFFFFF02000000FFFFFFFF020000000000
@@ -3232,12 +3225,12 @@ object MainForm: TMainForm
             Top = 15
             Width = 120
             ButtonWidth = 23
-            NumGlyphs = 1
             Align = alTop
             BorderSpacing.Left = 3
             BorderSpacing.Right = 3
             AutoSize = False
             Color = clDefault
+            NumGlyphs = 1
             MaxLength = 0
             ParentColor = True
             TabOrder = 3
@@ -7323,12 +7316,13 @@ object MainForm: TMainForm
   end
   object UpdGuiTimer: TTimer
     Enabled = False
-    Interval = 100
+    Interval = 200
     OnTimer = UpdGuiTimerTimer
     left = 292
     top = 512
   end
   object EndProcTimer: TTimer
+    Enabled = False
     OnTimer = EndProcTimerTimer
     left = 220
     top = 512

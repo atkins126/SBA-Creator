@@ -72,7 +72,7 @@ implementation
 
 {$R *.lfm}
 
-uses ConfigFormU, DebugFormU, VersionSupportU;
+uses ConfigFormU, DebugU, VersionSupportU;
 
 const
   cContributors = '#Programming'+LineEnding+

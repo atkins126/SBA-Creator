@@ -1,7 +1,7 @@
 object LibraryForm: TLibraryForm
-  Left = 1233
+  Left = 1124
   Height = 570
-  Top = 285
+  Top = 298
   Width = 550
   Caption = 'Library Manager'
   ClientHeight = 570
@@ -12,7 +12,7 @@ object LibraryForm: TLibraryForm
   OnDestroy = FormDestroy
   Position = poMainFormCenter
   SessionProperties = 'Ed_SBAbase.Text;Ed_SBAlibrary.Text;Ed_SBAprograms.Text;Ed_SBARepoZipFile.Text;Ed_SBAsnippets.Text;Ed_SBARepoZipFile.Items;Ed_SBARepoZipFile.ItemIndex'
-  LCLVersion = '1.8.3.0'
+  LCLVersion = '2.0.1.0'
   object LibraryPages: TPageControl
     Left = 0
     Height = 570
@@ -638,10 +638,10 @@ object LibraryForm: TLibraryForm
           Top = 3
           Width = 154
           ButtonWidth = 23
-          NumGlyphs = 1
           Align = alTop
           BorderSpacing.Around = 3
           AutoSize = False
+          NumGlyphs = 1
           MaxLength = 0
           TabOrder = 0
           TextHint = 'IPCore Name'
@@ -717,18 +717,6 @@ object LibraryForm: TLibraryForm
           ReadOnly = True
           ScrollBars = ssAutoBoth
           TabOrder = 0
-        end
-        object IPCoreImage: TImage
-          Left = 3
-          Height = 246
-          Top = 26
-          Width = 376
-          AntialiasingMode = amOn
-          Align = alTop
-          BorderSpacing.Around = 3
-          Center = True
-          Proportional = True
-          Stretch = True
         end
         object L_TitleIPCore: TLabel
           Left = 0
@@ -942,6 +930,19 @@ object LibraryForm: TLibraryForm
             TabOrder = 1
           end
         end
+        object IPCoreImage: TImage
+          Left = 3
+          Height = 246
+          Top = 26
+          Width = 376
+          AntialiasingMode = amOn
+          Align = alTop
+          BorderSpacing.Around = 3
+          Center = True
+          Proportional = True
+          Stretch = True
+          StretchOutEnabled = False
+        end
       end
     end
     object Programs: TTabSheet
@@ -965,10 +966,10 @@ object LibraryForm: TLibraryForm
           Top = 3
           Width = 154
           ButtonWidth = 23
-          NumGlyphs = 1
           Align = alTop
           BorderSpacing.Around = 3
           AutoSize = False
+          NumGlyphs = 1
           MaxLength = 0
           TabOrder = 0
           FilteredListview = LV_Programs
@@ -1107,10 +1108,10 @@ object LibraryForm: TLibraryForm
           Top = 3
           Width = 154
           ButtonWidth = 23
-          NumGlyphs = 1
           Align = alTop
           BorderSpacing.Around = 3
           AutoSize = False
+          NumGlyphs = 1
           MaxLength = 0
           TabOrder = 0
           FilteredListview = LV_Snippets

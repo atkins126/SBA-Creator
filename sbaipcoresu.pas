@@ -32,7 +32,7 @@ var
 
 implementation
 
-uses DebugFormU, ConfigFormU;
+uses DebugU, ConfigFormU;
 
 function isIPCore(const f:string):boolean;
 var n:string;

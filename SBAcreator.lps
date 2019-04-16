@@ -2,16 +2,16 @@
 <CONFIG>
   <ProjectSession>
     <PathDelim Value="\"/>
-    <Version Value="10"/>
-    <BuildModes Active="Release Linux ARMV7A"/>
-    <Units Count="28">
+    <Version Value="11"/>
+    <BuildModes Active="Release x32"/>
+    <Units Count="43">
       <Unit0>
         <Filename Value="SBAcreator.lpr"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="25"/>
-        <CursorPos Y="50"/>
-        <UsageCount Value="23"/>
+        <TopLine Value="11"/>
+        <CursorPos X="32" Y="23"/>
+        <UsageCount Value="62"/>
       </Unit0>
       <Unit1>
         <Filename Value="mainformu.pas"/>
@@ -20,11 +20,11 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="MainFormU"/>
-        <IsVisibleTab Value="True"/>
-        <CursorPos X="11" Y="3000"/>
-        <UsageCount Value="23"/>
+        <EditorIndex Value="1"/>
+        <CursorPos X="71" Y="11"/>
+        <UsageCount Value="62"/>
         <Bookmarks Count="1">
-          <Item0 X="44" Y="2973" ID="1"/>
+          <Item0 X="6" Y="577" ID="1"/>
         </Bookmarks>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -32,7 +32,7 @@
       <Unit2>
         <Filename Value="synhighlighterverilog.pas"/>
         <IsPartOfProject Value="True"/>
-        <UsageCount Value="23"/>
+        <UsageCount Value="62"/>
       </Unit2>
       <Unit3>
         <Filename Value="synhighlightersba.pas"/>
@@ -41,18 +41,24 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="593"/>
         <CursorPos X="6" Y="609"/>
-        <UsageCount Value="23"/>
+        <UsageCount Value="62"/>
       </Unit3>
       <Unit4>
         <Filename Value="versionsupportu.pas"/>
         <IsPartOfProject Value="True"/>
-        <UsageCount Value="23"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="178"/>
+        <CursorPos X="3" Y="192"/>
+        <UsageCount Value="62"/>
       </Unit4>
       <Unit5>
         <Filename Value="sbaprogcontrlru.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="SBAProgContrlrU"/>
-        <UsageCount Value="23"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="39"/>
+        <CursorPos X="46" Y="57"/>
+        <UsageCount Value="62"/>
       </Unit5>
       <Unit6>
         <Filename Value="aboutformu.pas"/>
@@ -61,19 +67,28 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="AboutFormU"/>
-        <UsageCount Value="23"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="57"/>
+        <CursorPos X="25" Y="75"/>
+        <UsageCount Value="62"/>
       </Unit6>
       <Unit7>
         <Filename Value="sbasnippetu.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="SBASnippetU"/>
-        <UsageCount Value="23"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="35"/>
+        <CursorPos X="32" Y="53"/>
+        <UsageCount Value="62"/>
       </Unit7>
       <Unit8>
         <Filename Value="sbaprojectu.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="SBAProjectU"/>
-        <UsageCount Value="23"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="108"/>
+        <CursorPos X="25" Y="126"/>
+        <UsageCount Value="62"/>
       </Unit8>
       <Unit9>
         <Filename Value="configformu.pas"/>
@@ -82,7 +97,10 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="ConfigFormU"/>
-        <UsageCount Value="23"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="73"/>
+        <CursorPos X="3" Y="91"/>
+        <UsageCount Value="62"/>
       </Unit9>
       <Unit10>
         <Filename Value="prjwizu.pas"/>
@@ -91,182 +109,402 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="PrjWizU"/>
-        <UsageCount Value="23"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="117"/>
+        <CursorPos X="33" Y="135"/>
+        <UsageCount Value="62"/>
       </Unit10>
       <Unit11>
         <Filename Value="dwfileu.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="DwFileU"/>
-        <UsageCount Value="23"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="88"/>
+        <CursorPos X="8" Y="113"/>
+        <UsageCount Value="62"/>
       </Unit11>
       <Unit12>
-        <Filename Value="debugformu.pas"/>
-        <IsPartOfProject Value="True"/>
-        <ComponentName Value="DebugForm"/>
-        <HasResources Value="True"/>
-        <ResourceBaseClass Value="Form"/>
-        <UnitName Value="DebugFormU"/>
-        <EditorIndex Value="2"/>
-        <TopLine Value="45"/>
-        <CursorPos X="3" Y="47"/>
-        <UsageCount Value="23"/>
-        <Loaded Value="True"/>
-      </Unit12>
-      <Unit13>
         <Filename Value="floatformu.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="FloatForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="FloatFormU"/>
-        <UsageCount Value="23"/>
-      </Unit13>
-      <Unit14>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="25"/>
+        <CursorPos X="25" Y="43"/>
+        <UsageCount Value="62"/>
+      </Unit12>
+      <Unit13>
         <Filename Value="coresprjedformu.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="CoresPrjEdForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="CoresPrjEdFormU"/>
-        <UsageCount Value="23"/>
-      </Unit14>
-      <Unit15>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="27"/>
+        <CursorPos X="37" Y="45"/>
+        <UsageCount Value="62"/>
+      </Unit13>
+      <Unit14>
         <Filename Value="libraryformu.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="LibraryForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="LibraryFormU"/>
-        <UsageCount Value="23"/>
-      </Unit15>
-      <Unit16>
+        <IsVisibleTab Value="True"/>
+        <CursorPos X="89" Y="10"/>
+        <UsageCount Value="62"/>
+        <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
+      </Unit14>
+      <Unit15>
         <Filename Value="utilsu.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="UtilsU"/>
-        <UsageCount Value="23"/>
-      </Unit16>
-      <Unit17>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="13"/>
+        <CursorPos X="3" Y="265"/>
+        <UsageCount Value="62"/>
+      </Unit15>
+      <Unit16>
         <Filename Value="sbaprogramu.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="SBAProgramU"/>
-        <UsageCount Value="23"/>
-      </Unit17>
-      <Unit18>
+        <UsageCount Value="62"/>
+      </Unit16>
+      <Unit17>
         <Filename Value="exportprjformu.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="ExportPrjForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="ExportPrjFormU"/>
-        <UsageCount Value="23"/>
-      </Unit18>
-      <Unit19>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="12"/>
+        <CursorPos X="12" Y="37"/>
+        <UsageCount Value="62"/>
+      </Unit17>
+      <Unit18>
         <Filename Value="autoupdateu.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="AutoUpdateU"/>
-        <UsageCount Value="23"/>
-      </Unit19>
-      <Unit20>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="64"/>
+        <CursorPos X="11" Y="76"/>
+        <UsageCount Value="62"/>
+      </Unit18>
+      <Unit19>
         <Filename Value="synhighlighterjson.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="SynHighlighterJSON"/>
-        <UsageCount Value="23"/>
-      </Unit20>
-      <Unit21>
+        <UsageCount Value="62"/>
+      </Unit19>
+      <Unit20>
         <Filename Value="sbaipcoresu.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="SBAIPCoresU"/>
-        <UsageCount Value="23"/>
-      </Unit21>
-      <Unit22>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="17"/>
+        <CursorPos X="12" Y="35"/>
+        <UsageCount Value="62"/>
+      </Unit20>
+      <Unit21>
         <Filename Value="editoru.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="EditorU"/>
-        <UsageCount Value="23"/>
-      </Unit22>
-      <Unit23>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="239"/>
+        <CursorPos X="11" Y="248"/>
+        <UsageCount Value="62"/>
+      </Unit21>
+      <Unit22>
         <Filename Value="wgetfileu.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="WGetFileU"/>
-        <UsageCount Value="23"/>
-      </Unit23>
-      <Unit24>
+        <UsageCount Value="62"/>
+      </Unit22>
+      <Unit23>
         <Filename Value="pluginu.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="PlugInU"/>
-        <UsageCount Value="23"/>
-      </Unit24>
-      <Unit25>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="39"/>
+        <CursorPos X="20" Y="57"/>
+        <UsageCount Value="62"/>
+      </Unit23>
+      <Unit24>
         <Filename Value="filesmonitoru.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="FilesMonitorU"/>
-        <EditorIndex Value="1"/>
-        <CursorPos X="16" Y="213"/>
-        <UsageCount Value="23"/>
-        <Loaded Value="True"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="145"/>
+        <CursorPos X="3" Y="151"/>
+        <UsageCount Value="62"/>
+      </Unit24>
+      <Unit25>
+        <Filename Value="debugu.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="DebugU"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos Y="26"/>
+        <UsageCount Value="47"/>
       </Unit25>
       <Unit26>
+        <Filename Value="debugformu.pas"/>
+        <ComponentName Value="DebugForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="DebugFormU"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="67"/>
+        <CursorPos X="3" Y="69"/>
+        <UsageCount Value="33"/>
+      </Unit26>
+      <Unit27>
         <Filename Value="D:\fpcup\Lazarus\components\synedit\synedithighlighter.pp"/>
         <UnitName Value="SynEditHighlighter"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="153"/>
         <CursorPos X="25" Y="169"/>
-        <UsageCount Value="10"/>
-      </Unit26>
-      <Unit27>
+        <UsageCount Value="8"/>
+      </Unit27>
+      <Unit28>
         <Filename Value="D:\fpcup\Lazarus\components\synedit\syneditstrconst.pp"/>
         <UnitName Value="SynEditStrConst"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="139"/>
         <CursorPos X="17" Y="96"/>
+        <UsageCount Value="8"/>
+      </Unit28>
+      <Unit29>
+        <Filename Value="D:\fpcup\fpcsrc\rtl\inc\threadh.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="156"/>
+        <CursorPos X="11" Y="176"/>
+        <UsageCount Value="8"/>
+      </Unit29>
+      <Unit30>
+        <Filename Value="..\..\Libs\InternetTools\data\xquery__parse.pas"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="3827"/>
+        <CursorPos X="13" Y="3840"/>
+        <UsageCount Value="8"/>
+      </Unit30>
+      <Unit31>
+        <Filename Value="D:\fpcup\fpcsrc\rtl\unix\sysutils.pp"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="27"/>
+        <UsageCount Value="8"/>
+      </Unit31>
+      <Unit32>
+        <Filename Value="D:\fpcup\fpcsrc\packages\fcl-process\src\dbugintf.pp"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="259"/>
+        <CursorPos X="66" Y="77"/>
+        <UsageCount Value="14"/>
+      </Unit32>
+      <Unit33>
+        <Filename Value="D:\fpcup\lazarus\lcl\lclversion.pas"/>
+        <UnitName Value="LCLVersion"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="27"/>
+        <CursorPos X="15" Y="58"/>
+        <UsageCount Value="8"/>
+      </Unit33>
+      <Unit34>
+        <Filename Value="D:\fpcup\fpcsrc\rtl\inc\systemh.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="1443"/>
+        <CursorPos X="3" Y="1461"/>
+        <UsageCount Value="9"/>
+      </Unit34>
+      <Unit35>
+        <Filename Value="D:\fpcup\fpcsrc\rtl\objpas\classes\classesh.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="1685"/>
+        <CursorPos X="15" Y="1702"/>
+        <UsageCount Value="9"/>
+      </Unit35>
+      <Unit36>
+        <Filename Value="..\..\Libs\InternetTools\data\bbutils.pas"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="24" Y="20"/>
+        <UsageCount Value="11"/>
+      </Unit36>
+      <Unit37>
+        <Filename Value="..\..\Libs\InternetTools\internet\simpleinternet.pas"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="157"/>
+        <CursorPos X="20" Y="160"/>
         <UsageCount Value="10"/>
-      </Unit27>
+      </Unit37>
+      <Unit38>
+        <Filename Value="..\..\Libs\InternetTools\internet\internetaccess.pas"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="290"/>
+        <CursorPos X="14" Y="223"/>
+        <UsageCount Value="13"/>
+      </Unit38>
+      <Unit39>
+        <Filename Value="D:\fpcup\fpcsrc\rtl\objpas\sysutils\sysstrh.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="81"/>
+        <CursorPos X="10" Y="99"/>
+        <UsageCount Value="10"/>
+      </Unit39>
+      <Unit40>
+        <Filename Value="..\..\..\..\..\OneDrive\Sync\Lazarus\Libs\ueControls\source\uerotimage.pas"/>
+        <UnitName Value="uERotImage"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="43"/>
+        <CursorPos X="24" Y="14"/>
+        <UsageCount Value="10"/>
+      </Unit40>
+      <Unit41>
+        <Filename Value="..\..\..\..\..\OneDrive\Sync\Lazarus\Libs\ueControls\source\uebase.pas"/>
+        <UnitName Value="uEBase"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="190"/>
+        <CursorPos X="3" Y="264"/>
+        <UsageCount Value="10"/>
+      </Unit41>
+      <Unit42>
+        <Filename Value="D:\fpcup\lazarus\lcl\controls.pp"/>
+        <UnitName Value="Controls"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="2339"/>
+        <CursorPos X="15" Y="2357"/>
+        <UsageCount Value="10"/>
+      </Unit42>
     </Units>
-    <JumpHistory Count="11" HistoryIndex="10">
+    <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
-        <Filename Value="mainformu.pas"/>
-        <Caret Line="2993" Column="3" TopLine="2990"/>
+        <Filename Value="libraryformu.pas"/>
+        <Caret Line="386" Column="12" TopLine="357"/>
       </Position1>
       <Position2>
-        <Filename Value="mainformu.pas"/>
-        <Caret Line="2731" Column="14" TopLine="2723"/>
+        <Filename Value="libraryformu.pas"/>
+        <Caret Line="517" Column="12" TopLine="488"/>
       </Position2>
       <Position3>
-        <Filename Value="mainformu.pas"/>
-        <Caret Line="492" Column="15" TopLine="480"/>
+        <Filename Value="libraryformu.pas"/>
+        <Caret Line="801" Column="31" TopLine="772"/>
       </Position3>
       <Position4>
-        <Filename Value="filesmonitoru.pas"/>
-        <Caret Line="214" Column="65" TopLine="184"/>
+        <Filename Value="libraryformu.pas"/>
+        <Caret Line="129" Column="18" TopLine="126"/>
       </Position4>
       <Position5>
-        <Filename Value="filesmonitoru.pas"/>
-        <Caret Line="212" Column="17" TopLine="198"/>
+        <Filename Value="libraryformu.pas"/>
+        <Caret Line="6"/>
       </Position5>
       <Position6>
-        <Filename Value="debugformu.pas"/>
-        <Caret Line="38" Column="10" TopLine="25"/>
+        <Filename Value="libraryformu.pas"/>
+        <Caret Line="44" Column="5" TopLine="15"/>
       </Position6>
       <Position7>
-        <Filename Value="debugformu.pas"/>
-        <Caret Line="66" Column="3" TopLine="64"/>
+        <Filename Value="libraryformu.pas"/>
+        <Caret Line="464" Column="6" TopLine="447"/>
       </Position7>
       <Position8>
-        <Filename Value="debugformu.pas"/>
-        <Caret Line="45" Column="10" TopLine="32"/>
+        <Filename Value="libraryformu.pas"/>
+        <Caret Line="463" Column="6" TopLine="446"/>
       </Position8>
       <Position9>
-        <Filename Value="debugformu.pas"/>
-        <Caret Line="36" Column="12" TopLine="23"/>
+        <Filename Value="libraryformu.pas"/>
+        <Caret Line="466" Column="35" TopLine="447"/>
       </Position9>
       <Position10>
-        <Filename Value="filesmonitoru.pas"/>
-        <Caret Line="213" Column="25" TopLine="198"/>
+        <Filename Value="libraryformu.pas"/>
+        <Caret Line="467" Column="43" TopLine="449"/>
       </Position10>
       <Position11>
-        <Filename Value="mainformu.pas"/>
-        <Caret Line="3000" Column="11"/>
+        <Filename Value="libraryformu.pas"/>
+        <Caret Line="464" TopLine="436"/>
       </Position11>
+      <Position12>
+        <Filename Value="libraryformu.pas"/>
+        <Caret Line="463" TopLine="435"/>
+      </Position12>
+      <Position13>
+        <Filename Value="mainformu.pas"/>
+        <Caret Line="1370" Column="3" TopLine="1359"/>
+      </Position13>
+      <Position14>
+        <Filename Value="mainformu.pas"/>
+        <Caret Line="1366" Column="33" TopLine="1352"/>
+      </Position14>
+      <Position15>
+        <Filename Value="mainformu.pas"/>
+        <Caret Line="1501" TopLine="1498"/>
+      </Position15>
+      <Position16>
+        <Filename Value="libraryformu.pas"/>
+        <Caret Line="4" Column="21"/>
+      </Position16>
+      <Position17>
+        <Filename Value="libraryformu.pas"/>
+        <Caret Line="127" Column="19" TopLine="99"/>
+      </Position17>
+      <Position18>
+        <Filename Value="libraryformu.pas"/>
+        <Caret Line="7" Column="18"/>
+      </Position18>
+      <Position19>
+        <Filename Value="libraryformu.pas"/>
+        <Caret Line="127" Column="24" TopLine="99"/>
+      </Position19>
+      <Position20>
+        <Filename Value="libraryformu.pas"/>
+        <Caret Line="650" Column="33" TopLine="621"/>
+      </Position20>
+      <Position21>
+        <Filename Value="libraryformu.pas"/>
+        <Caret Line="656" Column="44" TopLine="627"/>
+      </Position21>
+      <Position22>
+        <Filename Value="libraryformu.pas"/>
+        <Caret Line="671" Column="8" TopLine="642"/>
+      </Position22>
+      <Position23>
+        <Filename Value="mainformu.pas"/>
+        <Caret Line="1506" Column="25" TopLine="1498"/>
+      </Position23>
+      <Position24>
+        <Filename Value="mainformu.pas"/>
+        <Caret Line="1976" Column="48" TopLine="1974"/>
+      </Position24>
+      <Position25>
+        <Filename Value="mainformu.pas"/>
+        <Caret Line="506" Column="15" TopLine="489"/>
+      </Position25>
+      <Position26>
+        <Filename Value="mainformu.pas"/>
+        <Caret Line="2119" Column="3" TopLine="2115"/>
+      </Position26>
+      <Position27>
+        <Filename Value="mainformu.pas"/>
+        <Caret Line="2122" Column="24" TopLine="2114"/>
+      </Position27>
+      <Position28>
+        <Filename Value="mainformu.pas"/>
+        <Caret Line="505" Column="14" TopLine="488"/>
+      </Position28>
+      <Position29>
+        <Filename Value="libraryformu.pas"/>
+        <Caret Line="264" TopLine="242"/>
+      </Position29>
+      <Position30>
+        <Filename Value="libraryformu.pas"/>
+        <Caret Line="258" Column="11" TopLine="242"/>
+      </Position30>
     </JumpHistory>
+    <RunParams>
+      <FormatVersion Value="2"/>
+      <Modes Count="0" ActiveMode="default"/>
+    </RunParams>
   </ProjectSession>
 </CONFIG>

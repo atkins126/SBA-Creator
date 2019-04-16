@@ -7,7 +7,7 @@ interface
 uses
   Classes, SysUtils, ListViewFilterEdit, Forms, Controls, Graphics,
   Dialogs, ComCtrls, Buttons, ExtCtrls, FileUtil, LazFileUtils, SynExportHTML,
-  StrUtils, SynHighlighterPas, SynHighlighterHTML, SynHighlighterCpp,
+  StrUtils, SynHighlighterPas, SynHighlighterHTML, SynHighlighterCpp, SynHighlighterIni,
   lclintf, StdCtrls, EditBtn, Menus, SBASnippetU, SBAProgramU, IniFilesUTF8,
   SynHighlighterSBA, MarkdownProcessor, MarkdownUtils;
 
@@ -126,7 +126,8 @@ type
     procedure EndGetSnippets;
     function GetVersion(f: string): string;
     function LookupFilterItem(S: string; LV: TListViewDataList): integer;
-    procedure GetFile(url, f: string; status: TLibDwStatus);
+    procedure ProcessGetFile(UrlValue, ZipFile: string; PB: TProgressBar;
+      status: TLibDwStatus);
     procedure UpdateIpCoresList;
     procedure UpdateProgramsList;
     procedure UpdateSnippetsList;
@@ -157,7 +158,7 @@ implementation
 
 {$R *.lfm}
 
-uses MainFormU, ConfigFormU, UtilsU, DWFileU, DebugFormU;
+uses MainFormU, ConfigFormU, UtilsU, DWFileU, DebugU;
 
 var
   LibDwStatus:TLibDwStatus=Idle;
@@ -254,7 +255,12 @@ begin
       begin
         MainForm.SynExporterHTML.Highlighter:=TSynCppSyn.Create(LibraryForm);
         exportlines;
-      end
+      end;
+     'ini':
+       begin
+        MainForm.SynExporterHTML.Highlighter:=TSynIniSyn.Create(LibraryForm);
+        exportlines;
+       end
     else
       begin
         if meta='' then   out_.append('<pre><code>')
@@ -324,17 +330,35 @@ begin
   OpenURL(URL_IpCore);
 end;
 
+procedure TLibraryForm.ProcessGetFile(UrlValue,ZipFile:string;PB:TProgressBar;status:TLibDwStatus);
+var DwT:TDownloadThread;
+begin
+  PB.Style:=pbstMarquee;
+  Application.ProcessMessages;
+  SB.SimpleText:='Downloading file '+ZipFile;
+  if UrlSolveRedir(UrlValue) then
+  begin
+    DeleteFile(ConfigDir+ZipFile);
+    DwT:=TDownloadThread.create(UrlValue+Ed_SBARepoZipFile.Text,ConfigDir+ZipFile);
+    DwT.OnDownloaded:=@dwTerminate;
+    LibDwStatus:=status;
+    DwT.start;
+  end else ShowMessage('Remote repository is offline');
+end;
+
 procedure TLibraryForm.B_SBAbaseSurfClick(Sender: TObject);
 begin
   OpenURL(Ed_SBAbase.Text);
 end;
 
+procedure TLibraryForm.B_SBAbaseGetClick(Sender: TObject);
+begin
+  ProcessGetFile(Ed_SBAbase.Text,cSBABaseZipFile,PB_SBABase,GetBase);
+end;
+
 procedure TLibraryForm.B_SBAlibraryGetClick(Sender: TObject);
 begin
-  PB_SBALibrary.Style:=pbstMarquee;
-  SB.SimpleText:='Downloading file '+cSBAlibraryZipFile;
-  DeleteFile(ConfigDir+cSBAlibraryZipFile);
-  GetFile(Ed_SBAlibrary.Text+Ed_SBARepoZipFile.Text,ConfigDir+cSBAlibraryZipFile,GetLibrary);
+  ProcessGetFile(Ed_SBAlibrary.Text,cSBAlibraryZipFile,PB_SBALibrary,GetLibrary);
 end;
 
 procedure TLibraryForm.B_SBAlibrarySurfClick(Sender: TObject);
@@ -344,10 +368,7 @@ end;
 
 procedure TLibraryForm.B_SBAprogramsGetClick(Sender: TObject);
 begin
-  PB_SBAprograms.Style:=pbstMarquee;
-  SB.SimpleText:='Downloading file '+cSBAprogramsZipFile;
-  DeleteFile(ConfigDir+cSBAprogramsZipFile);
-  GetFile(Ed_SBAprograms.Text+Ed_SBARepoZipFile.Text,ConfigDir+cSBAprogramsZipFile,Getprograms);
+  ProcessGetFile(Ed_SBAprograms.Text,cSBAprogramsZipFile,PB_SBAprograms,Getprograms);
 end;
 
 procedure TLibraryForm.B_SBAprogramsSurfClick(Sender: TObject);
@@ -357,10 +378,7 @@ end;
 
 procedure TLibraryForm.B_SBAsnippetsGetClick(Sender: TObject);
 begin
-  PB_SBAsnippets.Style:=pbstMarquee;
-  SB.SimpleText:='Downloading file '+cSBAsnippetsZipFile;
-  DeleteFile(ConfigDir+cSBAsnippetsZipFile);
-  GetFile(Ed_SBAsnippets.Text+Ed_SBARepoZipFile.Text,ConfigDir+cSBAsnippetsZipFile,Getsnippets);
+  ProcessGetFile(Ed_SBAsnippets.Text,cSBAsnippetsZipFile,PB_SBAsnippets,Getsnippets);
 end;
 
 procedure TLibraryForm.B_SBAsnippetsSurfClick(Sender: TObject);
@@ -480,14 +498,6 @@ begin
   end;
 end;
 
-procedure TLibraryForm.B_SBAbaseGetClick(Sender: TObject);
-begin
-  PB_SBABase.Style:=pbstMarquee;
-  SB.SimpleText:='Downloading file '+cSBABaseZipFile;
-  DeleteFile(ConfigDir+cSBABaseZipFile);
-  GetFile(Ed_SBAbase.Text+Ed_SBARepoZipFile.Text,ConfigDir+cSBABaseZipFile,GetBase);
-end;
-
 procedure TLibraryForm.B_AddtoLibraryClick(Sender: TObject);
 var
   L:TListItem;
@@ -504,7 +514,7 @@ begin
   except
     on E:Exception do ShowMessage(E.Message);
   end;
-  GetAllFileNames(LibraryDir,'*.ini',IpCoreList);
+  GetAllFileNamesOnly(LibraryDir,'*.ini',IpCoreList);
   UpdateIPCoresList;
   LV_IPCores.Invalidate;
   B_AddtoLibrary.Enabled:=IpCoreList.IndexOf(L.Caption)=-1;
@@ -525,7 +535,7 @@ begin
   except
     on E:Exception do Info('TLibraryForm.B_AddtoProgramsClick',E.Message);
   end;
-  GetAllFileNames(ProgramsDir,'*.prg',ProgramsList);
+  GetAllFileNamesOnly(ProgramsDir,'*.prg',ProgramsList);
   UpdateProgramsList;
   LV_Programs.Invalidate;
   B_AddtoPrograms.Enabled:=ProgramsList.IndexOf(L.Caption)=-1;
@@ -546,7 +556,7 @@ begin
   except
     on E:Exception do Info('TLibraryForm.B_AddtoSnippetsClick',E.Message);
   end;
-  GetAllFileNames(SnippetsDir,'*.snp',SnippetsList);
+  GetAllFileNamesOnly(SnippetsDir,'*.snp',SnippetsList);
   UpdateSnippetsList;
   LV_Snippets.Invalidate;
   B_AddtoSnippets.Enabled:=SnippetsList.IndexOf(L.Caption)=-1;
@@ -766,15 +776,6 @@ begin
   UpdateIpCoresList;
   UpdateProgramsList;
   UpdateSnippetsList
-end;
-
-procedure TLibraryForm.GetFile(url,f:string;status:TLibDwStatus);
-var DwT:TDownloadThread;
-begin
-  DwT:=TDownloadThread.create(url,f);
-  DwT.OnDownloaded:=@dwTerminate;
-  LibDwStatus:=status;
-  DwT.start;
 end;
 
 procedure TLibraryForm.dwTerminate;

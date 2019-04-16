@@ -54,7 +54,7 @@ type
 
 implementation
 
-uses SBAProgramU, ConfigFormU, UtilsU, DebugformU;
+uses SBAProgramU, ConfigFormU, UtilsU, DebugU;
 
 { TSBAContrlrProg }
 

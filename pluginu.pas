@@ -54,7 +54,7 @@ function TestforPlugIn(s,d:string):TPlugIn;
 
 implementation
 
-uses UtilsU, DebugFormU;
+uses UtilsU, DebugU;
 
 Const
   cPrjPath='%prjpath%';
@@ -216,7 +216,7 @@ begin
       Inis:=FindAllFiles(d,'*.ini');
       if Inis.Count>0 then
       begin
-        If Inis.Count>1 then Info('TestforPlugIn Warning there ir more of one ini file',Inis);
+        If Inis.Count>1 then Info('TestforPlugIn Warning there is more of one ini file',Inis);
         PlugIn:=TPlugIn.Create(Inis[0]);
         if PlugIn.IsValid then result:=PlugIn;
       end;

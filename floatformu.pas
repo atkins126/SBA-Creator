@@ -40,7 +40,7 @@ implementation
 
 {$R *.lfm}
 
-uses ConfigFormU, DebugFormU;
+uses ConfigFormU, DebugU;
 
 { TFloatForm }
 

@@ -132,7 +132,7 @@ implementation
 
 {$R *.lfm}
 
-uses ConfigFormU, UtilsU, DebugFormU, FloatFormU;
+uses ConfigFormU, UtilsU, DebugU, FloatFormU;
 
 var isClosing:boolean=false;
 

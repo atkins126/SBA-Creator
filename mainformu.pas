@@ -424,6 +424,9 @@ type
     procedure PrjTreeMouseMove(Sender: TObject; Shift: TShiftState; X,
       Y: Integer);
     procedure EndProcTimerTimer(Sender: TObject);
+    procedure PrjTreeNodeChanged(Sender: TObject; Node: TTreeNode;
+      ChangeReason: TTreeNodeChangeReason);
+    procedure PrjTreeSelectionChanged(Sender: TObject);
     procedure ProjectAddUserFilesExecute(Sender: TObject);
     procedure ProjectCoresAddInstExecute(Sender: TObject);
     procedure ProjectCloseExecute(Sender: TObject);
@@ -444,6 +447,7 @@ type
     procedure SBA_cancelExecute(Sender: TObject);
     procedure SBA_EditProgramExecute(Sender: TObject);
     procedure B_ObfClick(Sender: TObject);
+    procedure ForceEditorPagesChange;
     procedure EditorPagesChange(Sender: TObject);
     procedure FileCloseExecute(Sender: TObject);
     procedure SBA_InsertTemplateExecute(Sender: TObject);
@@ -488,6 +492,7 @@ type
     FilesMon:TFilesMon;
     procedure AddIPCoresToTree(t: TTreeNode; cl: TStrings);
     procedure AddUserFilesToTree(const t: TTreeNode; cl:TStrings);
+    procedure AsyncLoadPlugIns(Data: PtrInt);
     { private declarations }
     procedure ChangeEditorButtons(EditorF: TEditorF);
     procedure Check;
@@ -523,6 +528,7 @@ type
     function EditorSaveAs(EditorF: TEditorF): boolean;
     function  SaveFile(f:String; Src:TStrings):Boolean;
     procedure SaveOpenEditor;
+    procedure SetActiveEditor;
     procedure SetPrjVisible(AValue: boolean);
     procedure SetupEditorPopupMenu;
     procedure SetupEdTmplMenu;
@@ -550,7 +556,7 @@ implementation
 
 {$R *.lfm}
 
-uses DebugFormU, SBAProgContrlrU, SBAProjectU, SBAProgramU, ConfigFormU, AboutFormU, sbasnippetu, PrjWizU,
+uses DebugU, SBAProgContrlrU, SBAProjectU, SBAProgramU, ConfigFormU, AboutFormU, sbasnippetu, PrjWizU,
      SBAIPCoresU, DwFileU, FloatFormU, LibraryFormU, ExportPrjFormU, AutoUpdateU,
      PlugInU;
 
@@ -574,30 +580,34 @@ var
   f:string;
   EditorF:TEditorF;
 begin
-  Info('TMainForm Start CloseEditor',i);
+  Info('TMainForm.CloseEditor Start',i);
   result:=true;
   EditorF:=GetEditorPage(i);
-  if EditorF.Editor=nil then exit;
-  if EditorF.Editor.Modified then
+  if assigned(EditorF.Editor) then
   begin
-    EditorPages.ActivePageIndex:=i;
-    EditorPagesChange(nil);
-    f:=EditorF.FileName;
-    r:=MessageDlg('File was modified', 'Save File? '+f, mtConfirmation, [mbYes, mbNo, mbCancel],0);
-    case r of
-      mrCancel: result:=false;
-      mrYes: result:=SaveFile(f, EditorF.Editor.Lines);
-      mrNo: result:=true;
+    // Test if editor can be closed
+    if EditorF.Editor.Modified then
+    begin
+      EditorPages.ActivePageIndex:=i;
+      ForceEditorPagesChange;
+      f:=EditorF.FileName;
+      r:=MessageDlg('File was modified', 'Save File? '+f, mtConfirmation, [mbYes, mbNo, mbCancel],0);
+      case r of
+        mrCancel: result:=false;
+        mrYes: result:=SaveFile(f, EditorF.Editor.Lines);
+        mrNo: result:=true;
+      end;
     end;
   end;
+
   if result then
   begin
+    UpdGuiTimer.Enabled:=false;
     FilesMon.DelFile(EditorF.FileName);
-    FreeAndNil(EditorF.Editor);
-    FreeAndNil(EditorF.Page);
+    EditorF.Close;
   end;
-  EditorPagesChange(nil);
-  Info('TMainForm End CloseEditor',i);
+  ForceEditorPagesChange;
+  Info('TMainForm.CloseEditor End',i);
 end;
 
 function TMainForm.LoadTheme(thmdir:string):boolean;
@@ -612,7 +622,7 @@ begin
   except
     ON E:Exception do
     begin
-      Info('TMainForm.LoadTheme Error',E.Message);
+      InfoErr('TMainForm.LoadTheme Error',E.Message);
       ShowMessage('There was an error loading theme in: '+thmdir);
       exit;
     end;
@@ -704,18 +714,29 @@ begin
   end;
 end;
 
+procedure TMainForm.ForceEditorPagesChange;
+begin
+  Info('TMainForm.ForceEditorPagesChange called by',BackTraceStrFunc(Get_caller_Addr(get_frame)));
+  SetActiveEditor;
+end;
+
 procedure TMainForm.EditorPagesChange(Sender: TObject);
+begin
+  Info('TMainForm.EditorPagesChange','Called');
+  SetActiveEditor;
+end;
+
+procedure TMainForm.SetActiveEditor;
 var
   NewActiveF:TEditorF;
 begin
-  Info('TMainForm.EditorPagesChange','called');
   NewActiveF:=GetActiveEditorPage;
   StatusBar1.Panels[1].Text:=NewActiveF.FileName;
   If NewActiveF.Editor=ActEditorF.Editor then
     exit
   else
     ActEditorF:=NewActiveF;
-  Info('TMainForm.EditorPagesChange FileName',ActEditorF.FileName);
+  Info('TMainForm.SetActiveEditor FileName',ActEditorF.FileName);
   If assigned(ActEditorF.Editor) then
   try
     SyncroEdit.Enabled:=false;
@@ -725,10 +746,10 @@ begin
     SynMultiCaret.Editor:=ActEditorF.Editor;
     wdir:=extractfilepath(NewActiveF.FileName);
     if wdir='' then wdir:=IFTHEN(SBAPrj.name<>'',SBAPrj.location,ProjectsDir);
-    if ToolsFileObf.Checked then ToolsFileObfExecute(Sender);
+    if ToolsFileObf.Checked then ToolsFileObfExecute(Self);
     UpdGuiTimer.Enabled:=true;
   except
-    ON E:Exception do Info('TMainForm.EditorPagesChange Error',E.Message);
+    ON E:Exception do InfoErr('TMainForm.SetActiveEditor Error',E.Message);
   end;
 end;
 
@@ -811,10 +832,10 @@ begin
   end else
   begin
     {$IFDEF WINDOWS}
-    ShowMessage('The application does not have an secure active internet connection, some features could be disabled');
+    ShowMessage('The application does not have a secure active internet connection, some features could be disabled');
     StatusBar1.Panels[1].Text:='No secure internet connection detected';
     {$ELSE}
-    ShowMessage('There is not an secure active internet connection or the SSL libraries (libssl-dev) are not installed, some features could be disabled');
+    ShowMessage('There is not a secure active internet connection or the SSL libraries (libssl-dev) are not installed, some features could be disabled');
     StatusBar1.Panels[1].Text:='No secure internet connection detected or the SSL libraries are not installed';
     {$ENDIF}
   end;
@@ -959,12 +980,13 @@ begin
     Info('TMainForm.PlugInCmd Parameters',ToolProcess.Parameters);
     try
       ProcessStatus:=exePlugIn;
+      EndProcTimer.Enabled:=true;
       ToolProcess.Execute
     except
       ON E:exception do
       begin
         ProcessStatus:=Idle;
-        Info('TMainForm.PlugInCmd Error:',E.Message);
+        InfoErr('TMainForm.PlugInCmd Error:',E.Message);
         ShowMessage('There was an error when executing: '+Path+Cmd);
       end;
     end;
@@ -1072,7 +1094,7 @@ begin
   if I>=0 then
   begin
     EditorPages.ActivePageIndex:=I;
-    EditorPagesChange(Self);
+    ForceEditorPagesChange;
     EdTabMenu.PopUp;
   end;
 end;
@@ -1122,7 +1144,7 @@ begin
   except
     ON E:Exception do
     begin
-      Info('TMainForm.SaveFile Error',E.Message);
+      InfoErr('TMainForm.SaveFile Error',E.Message);
       showmessage('Can not write '+f);
       FilesMon.Enabled:=EnableFilesMon;
       exit(false);
@@ -1353,7 +1375,7 @@ begin
   except
     ON E:Exception do
     begin
-      Info('TMainForm.PrjTreeClick Error',E.Message);
+      InfoErr('TMainForm.PrjTreeClick Error',E.Message);
       CoreImage.Picture.Clear;
     end;
   end
@@ -1473,6 +1495,17 @@ begin
   end;
 end;
 
+procedure TMainForm.PrjTreeNodeChanged(Sender: TObject; Node: TTreeNode;
+  ChangeReason: TTreeNodeChangeReason);
+begin
+
+end;
+
+procedure TMainForm.PrjTreeSelectionChanged(Sender: TObject);
+begin
+  PrjTreeClick(Sender);
+end;
+
 procedure TMainForm.ProjectAddUserFilesExecute(Sender: TObject);
 begin
   OpenDialog.DefaultExt:='';
@@ -1502,7 +1535,11 @@ begin
       ActEditorF.Editor.CaretX:=0;
       ActEditorF.Editor.InsertTextAtCaret(IP.Text);
     except
-      ON E:Exception do ShowMessage(E.Message);
+      ON E:Exception do
+      begin
+        ShowMessage(E.Message);
+        InfoErr('TMainForm.ProjectCoresAddInstExecute',E.Message);
+      end;
     end;
   finally
     if assigned(MXL) then FreeAndNil(MXL);
@@ -1552,7 +1589,7 @@ begin
     IniFile:=TIniFile.Create(LocSBAPrjParams);
     exportpath:=IniFile.ReadString('PrjExportPaths',SBAPrj.name,'');
   except
-    ON E:Exception do Info('TMainForm.ProjectExportExecute Error',E.Message);
+    ON E:Exception do InfoErr('TMainForm.ProjectExportExecute Error',E.Message);
   end;
   ExportPrjForm.L_PrjDir.Caption:='Project folder: '+SBAPrj.location;
   ExportPrjForm.Ed_TargetDir.Directory:=exportpath;
@@ -1689,7 +1726,7 @@ begin
     OpenInEditor(S);
   end;
   Log.clear;
-  EditorPagesChange(nil);
+  ForceEditorPagesChange;
 end;
 
 procedure TMainForm.MainPagesChange(Sender: TObject);
@@ -1698,7 +1735,7 @@ begin
   If MainPages.ActivePage=EditorsTab then
   begin
     MainForm.Menu := EditorMenu;
-    EditorPagesChange(Self);
+    //ForceEditorPagesChange(Self); //Avoid double call
   end else if MainPages.ActivePage=ProgEditTab then
   begin
     MainForm.Menu := ProgMenu;
@@ -1776,7 +1813,7 @@ begin
     EditorF.Page:=EditorPages.Pages[i];
     EditorF.FileName:=EditorPages.Pages[i].Hint;
   except
-    ON E:Exception do Info('TMainForm.GetEditorPage Error',E.Message);
+    ON E:Exception do InfoErr('TMainForm.GetEditorPage Error',E.Message);
   end;
   Result:=EditorF;
 end;
@@ -2175,10 +2212,7 @@ procedure TMainForm.FormCreate(Sender: TObject);
 var
   Success:Boolean;
 begin
-  {$IFDEF DEBUG}
-  DebugForm:=TDebugForm.Create(Self);
   info('TMainForm','Start of create method');
-  {$ENDIF}
   FPrjVisible:=false;
   Success:=false;
   try
@@ -2258,7 +2292,7 @@ begin
   begin
     MainPages.ActivePage:=EditorsTab;
     MainPagesChange(nil);
-    EditorPagesChange(nil);
+    ForceEditorPagesChange;
   end;
   IniFile.Free;
 end;
@@ -2444,7 +2478,7 @@ begin
   EditorF.Editor.OnStatusChange:=@EditorStatusChange;
   selectHighlighter(EditorF);
   EditorPages.ActivePage:=ActiveTab;
-  EditorPagesChange(nil);
+  ForceEditorPagesChange;
   Result:=EditorF;
 end;
 
@@ -2464,10 +2498,7 @@ begin
   If Assigned(SBAContrlrProg) then FreeandNil(SBAContrlrProg);
   if assigned(SBAPrj) then FreeAndNil(SBAPrj);
   if assigned(AutoUpdate) then FreeAndNil(AutoUpdate);
-  {$IFDEF DEBUG}
   Info('TMainForm','End of FormDestroy');
-  if Assigned(DebugForm) then FreeandNil(DebugForm);
-  {$ENDIF}
 end;
 
 procedure TMainForm.FormDropFiles(Sender: TObject;
@@ -2631,7 +2662,7 @@ begin
 
     MainPages.ActivePage:=EditorsTab;
     MainPagesChange(Sender);
-    EditorPagesChange(nil);
+    ForceEditorPagesChange;
     SynEdit_X.ClearAll;
     SBAContrlrProg.FileName:=cSBADefaultPrgName;
     SynEdit_X.Modified:=false;
@@ -2670,9 +2701,14 @@ begin
   else SBA_SaveAsExecute(Sender);
 end;
 
-procedure TMainForm.ToolsReloadPlugInsExecute(Sender: TObject);
+procedure TMainForm.AsyncLoadPlugIns(Data: PtrInt);
 begin
   LoadPlugIns;
+end;
+
+procedure TMainForm.ToolsReloadPlugInsExecute(Sender: TObject);
+begin
+  Application.QueueAsyncCall(@AsyncLoadPlugIns,0);
 end;
 
 procedure TMainForm.TReplaceDialogReplace(Sender: TObject);
@@ -2806,10 +2842,11 @@ var
 begin
   PS:=ProcessStatus;
   ProcessStatus:=Idle;
+  EndProcTimer.Enabled:=false;
   try
     if ToolProcess.NumBytesAvailable>0 then ToolProcessReadData(Sender);
   except
-    ON E:Exception do Info('TMainForm.ToolProcessTerminate Error',E.Message);
+    ON E:Exception do InfoErr('TMainForm.ToolProcessTerminate Error',E.Message);
   end;
   Log.ItemIndex:=Log.Count-1;
   case PS of
@@ -2937,6 +2974,7 @@ begin
   {$ENDIF}
   Log.Clear;
   ProcessStatus:=Obfusct;
+  EndProcTimer.Enabled:=true;
   ToolProcess.Execute;
   while ToolProcess.Running do begin sleep(300); application.ProcessMessages; end;
   if not fileexists(wpath+'obfuscated_file.'+s) then
@@ -2953,6 +2991,7 @@ begin
   begin
     ActEditorF.Editor.Lines.LoadFromFile(f);
     ActEditorF.FileName:=f;
+    if assigned(ActEditorF.Page) then ActEditorF.Page.Caption:=ExtractFileName(f);
     selectHighlighter(ActEditorF);
     ActEditorF.Editor.ReadOnly:=(FileGetAttr(f) and faReadOnly)<>0;
     ActEditorF.Editor.Modified:=false;
@@ -2975,7 +3014,7 @@ begin
       if EditorPages.Pages[i].Hint=f then
       begin
         EditorPages.ActivePageIndex:=i;
-        EditorPagesChange(nil);
+        ForceEditorPagesChange;
         break;
       end;
 
@@ -2992,6 +3031,7 @@ var f1,f2,f3:boolean;
 begin
   if MainPages.ActivePage<>EditorsTab then exit;
   Info('TMainForm.ChangeEditorButtons',EditorF.FileName);
+  if not assigned(EditorF.editor) then exit;
   f1:=EditorF.editor.Modified;
   f2:=not EditorF.EditorEmpty;
   f3:=not EditorF.editor.ReadOnly;
@@ -3094,6 +3134,7 @@ begin
   {$ENDIF}
   info('TMainForm.SyntaxCheck',ToolProcess.Parameters);
   ProcessStatus:=SyntaxChk;
+  EndProcTimer.Enabled:=true;
   ToolProcess.Execute;
   { TODO : Pensar en eliminar el .bat y usar una lista para crear los parámetros debido a las posibles rutas con espacios. }
 end;
@@ -3125,6 +3166,7 @@ begin
     WriteStr(S,ProcessStatus);
     Info('TMainForm.ToolProcessWaitforIdle','timeout: '+S);
     //Terminar el proceso que ejecuta si este falla
+    EndProcTimer.Enabled:=false;
     ToolProcess.Terminate(0);
     ProcessStatus:=TimeOut;
   end;
@@ -3255,7 +3297,23 @@ end;
 procedure TMainForm.Check;
 Var ExpDate : TDateTime;
 begin
-  ExpDate:=EncodeDate(2018,12,31);
+  Info('TMainForm.Check','Compilation Date: '+{$I %date%});
+  if TryStrToDate({$I %date%}, ExpDate, 'YYYY/MM/DD', '/') then
+  begin
+    ExpDate:=IncMonth(ExpDate,6);
+  end else ExpDate:=EncodeDate(2019,12,31);
+(*
+  try
+    ExpDate:=IncMonth(ScanDateTime('yyyy/mm/dd',{$I %date%}),6);
+  except
+    ON E:Exception do
+    begin
+      Info('TMainForm.Check Error',E.Message);
+      ExpDate:=EncodeDate(2019,12,31);
+    end;
+  end;
+*)
+  Info('TMainForm.Check','Expiration on: '+DateToStr(ExpDate));
   if CompareDate(Today,ExpDate)>0 then
   begin
     ShowMessage('Sorry, this beta version has expired. You can download the new version from http://sba.accesus.com, thanks you for your support!');
@@ -3350,7 +3408,7 @@ begin
     ON E:Exception do
     begin
       DeleteFile(ConfigDir+'newbanner.gif');
-      Info('TMainForm.LoadAnnouncement','Error loading new banner:'+E.Message);
+      InfoErr('TMainForm.LoadAnnouncement','Error loading new banner:'+E.Message);
     end;
   end;
 end;
@@ -3366,7 +3424,7 @@ begin
   if assigned(EditorF.Page) then
   begin
     EditorPages.ActivePage:=EditorF.Page;
-    EditorPagesChange(Self);
+    ForceEditorPagesChange;
   end;
   s:='The file has been altered by an external program. Do you wish to '+
      'reload the document?';

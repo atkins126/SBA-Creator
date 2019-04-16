@@ -123,7 +123,7 @@ procedure UpdateLists;
 
 implementation
 
-uses MainFormU, SBAProgramU, UtilsU, DebugFormU, EditorU, PlugInU;
+uses MainFormU, SBAProgramU, UtilsU, DebugU, EditorU, PlugInU;
 
 {$R *.lfm}
 
@@ -150,9 +150,9 @@ end;
 
 procedure UpdateLists;
 begin
-  GetAllFileNames(LibraryDir,'*.ini',IpCoreList);
-  GetAllFileNames(SnippetsDir,'*.snp',SnippetsList);
-  GetAllFileNames(ProgramsDir,'*.prg',ProgramsList);
+  GetAllFileNamesOnly(LibraryDir,'*.ini',IpCoreList);
+  GetAllFileNamesOnly(SnippetsDir,'*.snp',SnippetsList);
+  GetAllFileNamesOnly(ProgramsDir,'*.prg',ProgramsList);
 end;
 
 function SetUpConfig: boolean;
