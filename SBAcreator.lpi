@@ -21,8 +21,8 @@
       <UseVersionInfo Value="True"/>
       <AutoIncrementBuild Value="True"/>
       <MinorVersionNr Value="4"/>
-      <RevisionNr Value="9"/>
-      <BuildNr Value="36"/>
+      <RevisionNr Value="11"/>
+      <BuildNr Value="40"/>
       <Attributes pvaPreRelease="True"/>
       <StringTable CompanyName="uE Peru" FileDescription="SBA System Creator" LegalCopyright="(c) Miguel A. Risco-Castillo" ProductVersion="Public Beta"/>
     </VersionInfo>

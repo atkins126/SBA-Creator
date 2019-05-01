@@ -10,7 +10,7 @@ uses
   SynHighlighterVerilog, SynHighlighterJSON, SynEditMarkupHighAll, SynEdit,
   SynEditTypes, SynEditKeyCmds, SynPluginSyncroEdit, SynHighlighterIni,
   SynEditHighlighter, SynCompletion, SynPluginMulticaret, SynHighlighterHTML,
-  SynExportHTML, SynHighlighterPas, SynHighlighterCpp,
+  SynExportHTML, SynHighlighterPas, SynHighlighterCpp, SynHighlighterPython,
   FileUtil, LazFileUtils, dateutils, ListViewFilterEdit,
   ExtendedNotebook, strutils, LazUTF8, Clipbrd, IniPropStorage, StdActns,
   BGRASpriteAnimation, uebutton, uETilePanel, versionsupportu, types, lclintf,
@@ -28,6 +28,7 @@ type
     MenuItem92: TMenuItem;
     MenuItem93: TMenuItem;
     MenuItem94: TMenuItem;
+    SynPythonSyn: TSynPythonSyn;
     ToolButton13: TToolButton;
     ToolButton61: TToolButton;
     ToolsReloadPlugIns: TAction;
@@ -375,6 +376,7 @@ type
     ToolButton7: TToolButton;
     ToolButton9: TToolButton;
     btn_config: TuEButton;
+    procedure ATTabs1TabPlusClick(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure B_SBAAdressClick(Sender: TObject);
     procedure btn_sba_libraryClick(Sender: TObject);
@@ -424,8 +426,6 @@ type
     procedure PrjTreeMouseMove(Sender: TObject; Shift: TShiftState; X,
       Y: Integer);
     procedure EndProcTimerTimer(Sender: TObject);
-    procedure PrjTreeNodeChanged(Sender: TObject; Node: TTreeNode;
-      ChangeReason: TTreeNodeChangeReason);
     procedure PrjTreeSelectionChanged(Sender: TObject);
     procedure ProjectAddUserFilesExecute(Sender: TObject);
     procedure ProjectCoresAddInstExecute(Sender: TObject);
@@ -494,7 +494,7 @@ type
     procedure AddUserFilesToTree(const t: TTreeNode; cl:TStrings);
     procedure AsyncLoadPlugIns(Data: PtrInt);
     { private declarations }
-    procedure ChangeEditorButtons(EditorF: TEditorF);
+    procedure ChangeEditorButtons(var EditorF: TEditorF);
     procedure Check;
     procedure CheckStartParams;
     function CloseProg: boolean;
@@ -502,9 +502,9 @@ type
     function CloseProject: boolean;
     procedure Colorize(ini:string);
     procedure CopyPrjHistory;
-    function SelectExportHighligther(EditorF: TEditorF): TSynCustomHighlighter;
-    procedure ExporttoHtmlFile(EditorF: TEditorF);
-    procedure CopyAsHtml(EditorF: TEditorF);
+    function SelectExportHighligther(var EditorF: TEditorF): TSynCustomHighlighter;
+    procedure ExporttoHtmlFile(var EditorF: TEditorF);
+    procedure CopyAsHtml(var EditorF: TEditorF);
     procedure LoadPlugIns;
     function CreateTempFile(fn:string): boolean;
     procedure DetectSBAController;
@@ -518,14 +518,14 @@ type
     function selectHighlighter(var EditorF: TEditorF): TEdType;
     procedure HighLightReservedWords(List:TStrings);
     function NewEditorPage:TEditorF;
-    procedure Obfuscate(EditorF:TEditorF);
+    procedure Obfuscate(var EditorF:TEditorF);
     function Open(f: String): boolean;
     procedure OpenInEditor(const f: string);
     procedure OpenProject(const f:string);
     procedure OpenTreeItem(TN: TTreeNode);
     procedure PlugInCmd(Sender: TObject);
     procedure ReOpenEditorFiles;
-    function EditorSaveAs(EditorF: TEditorF): boolean;
+    function EditorSaveAs(var EditorF: TEditorF): boolean;
     function  SaveFile(f:String; Src:TStrings):Boolean;
     procedure SaveOpenEditor;
     procedure SetActiveEditor;
@@ -760,6 +760,11 @@ var
   sl,om:TStringList;
   f:boolean;
 begin
+  if mapfile='' then
+  begin
+    ShowMessage('There is not Mapfile for this kind of file');
+    exit;
+  end;
   s:=ActEditorF.FileName;
   Info('TMainForm.B_ObfClick',s);
   if ActEditorF.Editor.Modified then
@@ -801,6 +806,7 @@ begin
   SynEdit_X.ClearUndo;
   if SBAContrlrProg.CpySrc2Prog(ActEditorF.Editor.Lines,SynEdit_X.Lines) then
   begin
+    SBAContrlrProg.FileName:=IFTHEN(SBAprj.name='',cSBADefaultPrgName,SBAprj.location+SBAprj.name+'.prg');
     PrgReturnTab:=EditorsTab;
     SBA_ReturnToEditor.Enabled:=true;
     MainPages.ActivePage:=ProgEditTab;
@@ -809,11 +815,7 @@ begin
     ExtractSBACnfgCnst;
   end else ShowMessage('Format error in controller, please verify "/SBA:" block signatures.');
   SynEdit_X.EndUpdate;
-  ActEditorF.Editor:=SynEdit_X;
-  ActEditorF.Page:=nil;
-  ActEditorF.FileName:=cSBADefaultPrgName;
-  selectHighlighter(ActEditorF);
-  SynEdit_X.Modified:=false;
+  SynEdit_X.Modified:=true;
 end;
 
 procedure TMainForm.B_SBALabelsClick(Sender: TObject);
@@ -999,6 +1001,11 @@ begin
   MainPagesChange(Sender);
 end;
 
+procedure TMainForm.ATTabs1TabPlusClick(Sender: TObject);
+begin
+  ATTabs1.AddTab(0,'Prueba');
+end;
+
 procedure TMainForm.B_SBAAdressClick(Sender: TObject);
 begin
   if SBAPrj.name<>'' then ExtractSBACnfgCnst else ShowMessage('There is no an open project');
@@ -1155,22 +1162,19 @@ begin
   result:=true;
 end;
 
-function TMainForm.EditorSaveAs(EditorF:TEditorF):boolean;
+function TMainForm.EditorSaveAs(var EditorF:TEditorF):boolean;
 begin
   result:=false;
   SaveDialog.FileName:=EditorF.FileName;
   SaveDialog.InitialDir:=ExtractFilePath(EditorF.FileName);
   SaveDialog.DefaultExt:=fileext;
-  SaveDialog.Filter:='VHDL file|*.vhd;*.vhdl|Verilog file|*.v;*.vl|System Verilog|*.sv|'+
-                     'Ini file|*.ini|'+
-                     'Markdown file|*.md;*.mkd;*.mdwn;*.mdtxt;*.mdtext;*.text|'+
-                     'Text files|*.txt|'+
-                     'All files|*.*';
+  SaveDialog.Filter:=FileTypeStr;
   if SaveDialog.Execute and SaveFile(SaveDialog.FileName, EditorF.Editor.Lines) then
   begin
     FilesMon.DelFile(EditorF.FileName);
     EditorF.FileName:=SaveDialog.FileName;
     EditorF.Editor.Modified:=false;
+    selectHighlighter(EditorF);
     FilesMon.AddFile(SaveDialog.FileName);
     result:=true;
   end;
@@ -1210,12 +1214,11 @@ begin
 end;
 
 procedure TMainForm.FileSaveAsExecute(Sender: TObject);
-var EditorF:TEditorF;
 begin
   If EditorPages.PageCount>0 then
   begin
-    EditorF:=GetActiveEditorPage;
-    if EditorSaveAs(EditorF) then
+    ActEditorF:=GetActiveEditorPage;
+    if EditorSaveAs(ActEditorF) then
     begin
      StatusBar1.Panels[1].Text:=SaveDialog.FileName;
      UpdGuiTimer.Enabled:=true;
@@ -1317,6 +1320,7 @@ begin
   MainPages.ActivePage:=HiddenPage;
   MainPagesChange(Sender);
   ActEditorF.Editor:=SynEdit_Test;
+  ActEditorF.Page:=nil;
   {$ENDIF}
 end;
 
@@ -1493,12 +1497,6 @@ begin
     {ENDIF}
     ToolProcessTerminate(nil);
   end;
-end;
-
-procedure TMainForm.PrjTreeNodeChanged(Sender: TObject; Node: TTreeNode;
-  ChangeReason: TTreeNodeChangeReason);
-begin
-
 end;
 
 procedure TMainForm.PrjTreeSelectionChanged(Sender: TObject);
@@ -1877,6 +1875,7 @@ begin
   begin
     MainPages.ActivePage:=PrgReturnTab;
     MainPagesChange(Sender);
+    ForceEditorPagesChange;
     SynEdit_X.ClearAll;
     SynEdit_X.Modified:=false;
   end;
@@ -2085,7 +2084,7 @@ de archivos individales, cores y requerimientos; y proyectos. }
   else SyntaxCheck(s,'',ActEditorF.EdType);
 end;
 
-function TMainForm.SelectExportHighligther(EditorF:TEditorF):TSynCustomHighlighter;
+function TMainForm.SelectExportHighligther(var EditorF:TEditorF):TSynCustomHighlighter;
 begin
   case EditorF.EdType of
     vhdl,prg:
@@ -2096,12 +2095,14 @@ begin
       result:=TSynIniSyn.Create(MainForm);
     json:
       result:=TSynJSONSyn.Create(MainForm);
-//  html:
-//    result.:=TSynHTMLSyn.Create(MainForm);
+    html:
+      result:=TSynHTMLSyn.Create(MainForm);
     pas:
       result:=TSynFreePascalSyn.Create(MainForm);
     cpp:
       result:=TSynCppSyn.Create(MainForm);
+    python:
+      result:=TSynPythonSyn.Create(MainForm);
   else
     result:=nil;
   end;
@@ -2113,7 +2114,7 @@ begin
     Info('TMainForm.ExporttoHtml ',result.ClassName);
 end;
 
-procedure TMainForm.ExporttoHtmlFile(EditorF: TEditorF);
+procedure TMainForm.ExporttoHtmlFile(var EditorF: TEditorF);
 var f:string;
 begin
   Info('TMainForm.ExporttoHtmlFile',EditorF.FileName);
@@ -2142,7 +2143,7 @@ begin
   end;
 end;
 
-procedure TMainForm.CopyAsHtml(EditorF: TEditorF);
+procedure TMainForm.CopyAsHtml(var EditorF: TEditorF);
 begin
   if not EditorF.Editor.SelAvail then exit;
   SynExporterHTML.Highlighter:=SelectExportHighligther(EditorF);
@@ -2810,11 +2811,7 @@ begin
   OpenDialog.FileName:='';
   OpenDialog.InitialDir:=wdir;
   OpenDialog.DefaultExt:='.vhd';
-  OpenDialog.Filter:='VHDL file|*.vhd;*.vhdl|Verilog file|*.v;*.vl;*.ver|System Verilog|*.sv|'+
-                     'Ini files|*.ini|'+
-                     'Markdown files|*.md;*.mkd;*.mdwn;*.mdtxt;*.mdtext;*.text|'+
-                     'Text files|*.txt|'+
-                     'All files|*.*';
+  OpenDialog.Filter:=FileTypeStr;
   if OpenDialog.Execute then OpenInEditor(OpenDialog.FileName);
 end;
 
@@ -2936,7 +2933,7 @@ begin
   end;
 end;
 
-procedure TMainForm.Obfuscate(EditorF: TEditorF);
+procedure TMainForm.Obfuscate(var EditorF: TEditorF);
 var
   f,s,wpath,wfile:string;
 begin
@@ -3026,11 +3023,14 @@ begin
   UpdGuiTimer.Enabled:=true;
 end;
 
-procedure TMainForm.ChangeEditorButtons(EditorF: TEditorF);
+procedure TMainForm.ChangeEditorButtons(var EditorF: TEditorF);
 var f1,f2,f3:boolean;
 begin
   if MainPages.ActivePage<>EditorsTab then exit;
   Info('TMainForm.ChangeEditorButtons',EditorF.FileName);
+  Info('EditorF.editor.Modified',EditorF.editor.Modified);
+  Info('EditorF.EditorEmpty',EditorF.EditorEmpty);
+  Info('EditorF.editor.ReadOnly',EditorF.editor.ReadOnly);
   if not assigned(EditorF.editor) then exit;
   f1:=EditorF.editor.Modified;
   f2:=not EditorF.EditorEmpty;
@@ -3363,6 +3363,12 @@ begin
     cpp : begin
       commentstr:='//';
       EditorF.Editor.Highlighter:=SynCppSyn;
+      EditorF.Editor.Options:=EditorF.Editor.Options-[eoShowSpecialChars]+[eoTrimTrailingSpaces];
+      mapfile:=''
+    end;
+    python: begin
+      commentstr:='#';
+      EditorF.Editor.Highlighter:=SynPythonSyn;
       EditorF.Editor.Options:=EditorF.Editor.Options-[eoShowSpecialChars]+[eoTrimTrailingSpaces];
       mapfile:=''
     end;

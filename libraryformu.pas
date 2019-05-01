@@ -9,7 +9,7 @@ uses
   Dialogs, ComCtrls, Buttons, ExtCtrls, FileUtil, LazFileUtils, SynExportHTML,
   StrUtils, SynHighlighterPas, SynHighlighterHTML, SynHighlighterCpp, SynHighlighterIni,
   lclintf, StdCtrls, EditBtn, Menus, SBASnippetU, SBAProgramU, IniFilesUTF8,
-  SynHighlighterSBA, MarkdownProcessor, MarkdownUtils;
+  SynHighlighterPython, SynHighlighterSBA, MarkdownProcessor, MarkdownUtils;
 
 type
   tLibDwStatus=(Idle,GetBase, GetLibrary, GetPrograms, GetSnippets);
@@ -254,6 +254,11 @@ begin
     'cpp','c++','c':
       begin
         MainForm.SynExporterHTML.Highlighter:=TSynCppSyn.Create(LibraryForm);
+        exportlines;
+      end;
+    'py','python':
+      begin
+        MainForm.SynExporterHTML.Highlighter:=TSynPythonSyn.Create(LibraryForm);
         exportlines;
       end;
      'ini':

@@ -122,7 +122,7 @@ begin
   end;
 end;
 
-{$if defined(CODETYPHON) or (lcl_fullversion >= 1070000) }
+{$if (lcl_fullversion >= 1070000)}
 procedure TSBAProgram.AddItemToProgramsFilter(FileIterator: TFileIterator);
 var
   Data:TListViewDataItem;

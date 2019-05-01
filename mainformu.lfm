@@ -1,15 +1,15 @@
 object MainForm: TMainForm
-  Left = 1146
+  Left = 1321
   Height = 698
-  Top = 0
+  Top = 40
   Width = 765
   HorzScrollBar.Page = 765
   HorzScrollBar.Range = 765
   VertScrollBar.Page = 639
   VertScrollBar.Range = 639
   AllowDropFiles = True
-  ClientHeight = 0
-  ClientWidth = 0
+  ClientHeight = 678
+  ClientWidth = 765
   Constraints.MinHeight = 698
   Constraints.MinWidth = 765
   KeyPreview = True
@@ -20,7 +20,7 @@ object MainForm: TMainForm
   OnDropFiles = FormDropFiles
   OnResize = FormResize
   SessionProperties = 'CoreImage.Height;Height;Left;Log.Height;P_ProgAddress.Height;P_ProgLabels.Height;P_Project.Width;SnippetsList.Height;Top;Width;WindowState;P_AuxProg.Width'
-  LCLVersion = '2.0.1.0'
+  LCLVersion = '2.0.3.0'
   object MainPages: TPageControl
     Left = 0
     Height = 655
@@ -4337,6 +4337,8 @@ object MainForm: TMainForm
         ColorBorderPassive = cl3DLight
         ColorTabActive = clHighlightText
         ColorTabPassive = clBtnFace
+        ColorTabOver = clGradientActiveCaption
+        ColorCloseBgOver = clNone
         ColorCloseX = clMaroon
         ColorCloseXOver = clRed
         ColorArrow = clBlack
@@ -4345,6 +4347,9 @@ object MainForm: TMainForm
         OptTabHeight = 22
         OptSpacer = 2
         OptShowModifiedText = '*'
+        OptMouseMiddleClickClose = False
+        OptMouseDoubleClickClose = False
+        OnTabPlusClick = ATTabs1TabPlusClick
       end
     end
   end
@@ -6474,7 +6479,7 @@ object MainForm: TMainForm
     MarkupInfoSync.FrameColor = clFuchsia
     MarkupInfoArea.Background = clMoneyGreen
     MarkupInfoArea.Foreground = clNone
-    left = 444
+    left = 602
     top = 400
   end
   object IniStor: TIniPropStorage
@@ -7311,7 +7316,7 @@ object MainForm: TMainForm
     ExecCommandID = ecSynCompletionExecute
     Editor = SynEdit_X
     ToggleReplaceWhole = False
-    left = 364
+    left = 523
     top = 400
   end
   object UpdGuiTimer: TTimer
@@ -7359,7 +7364,7 @@ object MainForm: TMainForm
     HTMLFontSize = fs02
     Title = 'SBACreator HTML Exported file'
     UseBackground = False
-    left = 292
+    left = 444
     top = 400
   end
   object SynFreePascalSyn: TSynFreePascalSyn
@@ -7383,6 +7388,12 @@ object MainForm: TMainForm
     NumberAttri.Foreground = clGreen
     StringAttri.Foreground = clBlue
     left = 148
+    top = 400
+  end
+  object SynPythonSyn: TSynPythonSyn
+    DefaultFilter = 'Python Files (*.py)|*.py'
+    Enabled = False
+    left = 288
     top = 400
   end
 end

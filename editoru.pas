@@ -12,7 +12,7 @@ uses
 
 type
 
-TEdType=(vhdl, prg, verilog, systemverilog, ini, json, markdown, cpp, html, pas, other, none);
+TEdType=(vhdl, prg, verilog, systemverilog, ini, json, markdown, cpp, html, pas, python, other, none);
 
 { TEditorF }
 
@@ -39,6 +39,18 @@ var
   EditorList:TFPList;
   ActEditorF:TEditorF;
   EditorCnt:integer=1;
+
+const
+  FileTypeStr='VHDL file|*.vhd;*.vhdl|'+
+              'Verilog file|*.v;*.vl;*.ver|'+
+              'System Verilog|*.sv|'+
+              'Ini files|*.ini|'+
+              'Markdown files|*.md;*.mkd;*.mdwn;*.mdtxt;*.mdtext;*.text|'+
+              'Text files|*.txt|'+
+              'Python files|*.py|'+
+              'C files|*.c;*.cpp|'+
+              'Html files|*.htm;*.html|'+
+              'All files|*.*';
 
 implementation
 
@@ -119,7 +131,7 @@ function TEditorF.Edtypeselect: TEdType;
 var
   ts:string;
 begin
-  ts:=extractfileext(FileName);
+  ts:=extractfileext(FFileName);
   Info('TMainForm.Edtypeselect ext',ts);
   if FFileName='' then exit(none);
   case lowercase(ts) of
@@ -130,6 +142,7 @@ begin
     '.ini' : result:=ini;
     '.sba' : result:=json;
     '.c','.cpp' : result:=cpp;
+    '.py' : result:=python;
     '.htm','.html': result:=html;
     '.p','.pas' : result:=pas;
     '.markdown','.mdown','.mkdn',
@@ -196,7 +209,7 @@ end;
 
 function TEditorF.EditorEmpty: boolean;
 begin
-  Result:=(Editor.Lines.Count=0) or ((Editor.Lines.Count=1) and (Editor.Lines[1]=''));
+  Result:=(Editor.Lines.Count=0) or ((Editor.Lines.Count=1) and (Editor.Lines[0]=''));
 end;
 
 procedure TEditorF.Close;

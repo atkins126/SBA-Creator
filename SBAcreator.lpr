@@ -16,7 +16,7 @@ uses
   exportprjformu, UScaleDPI,
   lazcontrols, uecontrols, SBAIPCoresU, PlugInU
   {$IFDEF debug}
-  , SysUtils
+  , SysUtils, unit1
   {$ENDIF}
   ;
 
