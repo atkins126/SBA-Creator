@@ -1808,8 +1808,11 @@ begin
   end else
   try
     EditorF.Editor:=TSynEdit(MainForm.FindComponent('SynEdit_'+inttostr(EditorPages.Pages[i].Tag)));
-    EditorF.Page:=EditorPages.Pages[i];
-    EditorF.FileName:=EditorPages.Pages[i].Hint;
+    if i < EditorPages.PageCount then
+    begin
+      EditorF.Page:=EditorPages.Pages[i];
+      EditorF.FileName:=EditorPages.Pages[i].Hint;
+    end;
   except
     ON E:Exception do InfoErr('TMainForm.GetEditorPage Error',E.Message);
   end;
@@ -1883,6 +1886,10 @@ end;
 
 procedure TMainForm.FileCloseExecute(Sender: TObject);
 begin
+  if Sender is TTabSheet then
+  begin
+    EditorPages.ActivePage:=TTabSheet(Sender);
+  end;
   Info('TMainForm.FileCloseExecute Start',EditorPages.ActivePageIndex);
   CloseEditor(EditorPages.ActivePageIndex);
   If EditorPages.PageCount=0 then
@@ -2766,6 +2773,11 @@ begin
   begin
     Info('TMainForm.UpdGuiTimerTimer',ActEditorF.FileName);
     ChangeEditorButtons(ActEditorF);
+    {$IFDEF WINDOWS}
+    //Disabled because bug in linux (program close when close editors):
+    //Allow to pass the focus to the most recent opened editor
+    ActiveControl:=ActEditorF.Editor;
+    {$ENDIF}
     DetectSBAController;
   end;
 end;
@@ -2817,7 +2829,8 @@ end;
 
 procedure TMainForm.DetectSBAController;
 begin
-  SBA_EditProgram.Enabled:=SBAContrlrProg.DetectSBAContrlr(ActEditorF.Editor.Lines);
+  if assigned(ActEditorF.Editor) then
+    SBA_EditProgram.Enabled:=SBAContrlrProg.DetectSBAContrlr(ActEditorF.Editor.Lines);
 end;
 
 procedure TMainForm.ToolProcessReadData(Sender: TObject);
@@ -3026,12 +3039,11 @@ end;
 procedure TMainForm.ChangeEditorButtons(var EditorF: TEditorF);
 var f1,f2,f3:boolean;
 begin
-  if MainPages.ActivePage<>EditorsTab then exit;
+  if (MainPages.ActivePage<>EditorsTab) or not assigned(EditorF.editor) then exit;
   Info('TMainForm.ChangeEditorButtons',EditorF.FileName);
   Info('EditorF.editor.Modified',EditorF.editor.Modified);
   Info('EditorF.EditorEmpty',EditorF.EditorEmpty);
   Info('EditorF.editor.ReadOnly',EditorF.editor.ReadOnly);
-  if not assigned(EditorF.editor) then exit;
   f1:=EditorF.editor.Modified;
   f2:=not EditorF.EditorEmpty;
   f3:=not EditorF.editor.ReadOnly;
@@ -3045,7 +3057,6 @@ begin
   SearchReplace.Enabled:=f2 and f3;
   if assigned(EditorF.Page) then
     EditorF.Page.Caption:=IfThen(f1,'*'+ExtractFileName(EditorF.FileName),ExtractFileName(EditorF.FileName));
-  if EditorPages.ActivePage.Showing then EditorF.Editor.SetFocus;
 end;
 
 procedure TMainForm.SyntaxCheck(f, path: string; hdl: TEdType);
