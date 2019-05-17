@@ -7,7 +7,7 @@ interface
 uses
   Classes, SysUtils, FileUtil, LazFileUtils, ListViewFilterEdit, Forms,
   Controls, Graphics, Dialogs, ExtCtrls, StdCtrls, Buttons, EditBtn,IniPropStorage,
-  ButtonPanel, ComCtrls, ATListbox;
+  ButtonPanel, ComCtrls;
 
 type
 
@@ -84,7 +84,6 @@ const  //based in sub dirs in zip file from Github
   DefLibraryDir='SBA-Library';
   DefSnippetsDir='SBA-Snippets';
   DefProgramsDir='SBA-Programs';
-
   DefProjectsDir='sbaprojects';
 
   cSBAbaseZipFile='sbamaster.zip';
@@ -96,14 +95,14 @@ const  //based in sub dirs in zip file from Github
   cSBADocZipFile='doc.zip';
   cLocSBAprjparams='lprjparams.ini'; // Save the local parameters for each project file
   cSBApluginsZipFile='plugins.zip';
+  cDefNewFileName='NewFile';
 
 var
   ConfigForm: TConfigForm;
   ConfigFile,AppDir,ConfigDir,LibraryDir,SnippetsDir,ProgramsDir,
-  ProjectsDir,SBAbaseDir,ThemeDir,TempFolder:string;
+  ProjectsDir,SBAbaseDir,ThemeDir,ThemeFile,TempFolder:string;
   LocSBAPrjParams:string;  //Local associated Prj parameters ini file
-  DefAuthor,EditorFontName:string;
-  EditorFontSize:integer;
+  DefAuthor:string;
   LibAsReadOnly:Boolean;
   AutoOpenPrjF:Boolean;
   AutoOpenEdFiles:Boolean;

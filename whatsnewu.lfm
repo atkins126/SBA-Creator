@@ -1,0 +1,56 @@
+object WhatsNewF: TWhatsNewF
+  Left = 744
+  Height = 491
+  Top = 275
+  Width = 430
+  BorderIcons = []
+  BorderStyle = bsDialog
+  Caption = 'WhatsNewF'
+  ClientHeight = 491
+  ClientWidth = 430
+  FormStyle = fsStayOnTop
+  Position = poMainFormCenter
+  LCLVersion = '2.0.3.0'
+  object Memo1: TMemo
+    Left = 10
+    Height = 406
+    Top = 35
+    Width = 410
+    Align = alClient
+    BorderSpacing.Around = 10
+    ReadOnly = True
+    ScrollBars = ssAutoBoth
+    TabOrder = 0
+  end
+  object ButtonPanel1: TButtonPanel
+    Left = 6
+    Height = 34
+    Top = 451
+    Width = 418
+    OKButton.Name = 'OKButton'
+    OKButton.DefaultCaption = True
+    HelpButton.Name = 'HelpButton'
+    HelpButton.DefaultCaption = True
+    CloseButton.Name = 'CloseButton'
+    CloseButton.DefaultCaption = True
+    CancelButton.Name = 'CancelButton'
+    CancelButton.DefaultCaption = True
+    ButtonOrder = boCloseCancelOK
+    TabOrder = 1
+    ShowButtons = [pbOK, pbCancel]
+  end
+  object Label1: TLabel
+    Left = 10
+    Height = 15
+    Top = 10
+    Width = 420
+    Align = alTop
+    AutoSize = False
+    BorderSpacing.Left = 10
+    BorderSpacing.Top = 10
+    Caption = 'Would you like to download it?'
+    Font.Style = [fsBold]
+    ParentColor = False
+    ParentFont = False
+  end
+end

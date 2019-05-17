@@ -122,8 +122,14 @@ begin
   result:=StringReplace(result,cPrjName,SBAPrj.Name,[rfIgnoreCase]);
   result:=StringReplace(result,cPrjAuthor,SBAPrj.author,[rfIgnoreCase]);
   //
-  result:=StringReplace(result,cFileName,ActEditorF.FileName,[rfIgnoreCase]);
-  result:=StringReplace(result,cFilePath,ExtractFilePath(ActEditorF.FileName),[rfIgnoreCase]);
+  if assigned(ActEditor) then
+  begin
+    result:=StringReplace(result,cFileName,ActEditor.FileName,[rfIgnoreCase]);
+    result:=StringReplace(result,cFilePath,ExtractFilePath(ActEditor.FileName),[rfIgnoreCase]);
+  end else begin
+    result:=StringReplace(result,cFileName,cDefNewFileName+'.vhd',[rfIgnoreCase]);
+    result:=StringReplace(result,cFilePath,'',[rfIgnoreCase]);
+  end;
   //
   result:=StringReplace(result,cAppDir,AppDir,[rfIgnoreCase]);
   result:=StringReplace(result,cConfigFile,ConfigFile,[rfIgnoreCase]);
@@ -216,7 +222,7 @@ begin
       Inis:=FindAllFiles(d,'*.ini');
       if Inis.Count>0 then
       begin
-        If Inis.Count>1 then Info('TestforPlugIn Warning there is more of one ini file',Inis);
+        If Inis.Count>1 then Info('TestforPlugIn Warning there ir more of one ini file',Inis);
         PlugIn:=TPlugIn.Create(Inis[0]);
         if PlugIn.IsValid then result:=PlugIn;
       end;

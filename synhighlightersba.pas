@@ -921,7 +921,8 @@ end;
 procedure TSynSBASyn.FoldValidProc;
 var
   tmp:integer;
-  found,inRoundbracket:boolean;
+  found:boolean;
+  inRoundbracket:boolean=false;
 begin
   tmp:=run;
   found:=false;
