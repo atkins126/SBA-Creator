@@ -12,15 +12,15 @@ object LibraryForm: TLibraryForm
   OnDestroy = FormDestroy
   Position = poMainFormCenter
   SessionProperties = 'Ed_SBAbase.Text;Ed_SBAlibrary.Text;Ed_SBAprograms.Text;Ed_SBARepoZipFile.Text;Ed_SBAsnippets.Text;Ed_SBARepoZipFile.Items;Ed_SBARepoZipFile.ItemIndex'
-  LCLVersion = '2.0.1.0'
+  LCLVersion = '2.0.3.0'
   object LibraryPages: TPageControl
     Left = 0
     Height = 570
     Top = 0
     Width = 550
-    ActivePage = UpdateRep
+    ActivePage = IPCores
     Align = alClient
-    TabIndex = 0
+    TabIndex = 1
     TabOrder = 0
     object UpdateRep: TTabSheet
       Caption = 'Update repositories'
@@ -930,18 +930,17 @@ object LibraryForm: TLibraryForm
             TabOrder = 1
           end
         end
-        object IPCoreImage: TImage
+        object CoreImagePanel: TuEImage
           Left = 3
           Height = 246
           Top = 26
           Width = 376
-          AntialiasingMode = amOn
+          Debug = False
           Align = alTop
           BorderSpacing.Around = 3
           Center = True
           Proportional = True
           Stretch = True
-          StretchOutEnabled = False
         end
       end
     end

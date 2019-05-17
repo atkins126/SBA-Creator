@@ -20,9 +20,9 @@
     <VersionInfo>
       <UseVersionInfo Value="True"/>
       <AutoIncrementBuild Value="True"/>
-      <MinorVersionNr Value="4"/>
-      <RevisionNr Value="11"/>
-      <BuildNr Value="44"/>
+      <MinorVersionNr Value="5"/>
+      <RevisionNr Value="1"/>
+      <BuildNr Value="56"/>
       <Attributes pvaPreRelease="True"/>
       <StringTable CompanyName="uE Peru" FileDescription="SBA System Creator" LegalCopyright="(c) Miguel A. Risco-Castillo" ProductVersion="Public Beta"/>
     </VersionInfo>
@@ -432,48 +432,42 @@
         <Mode0 Name="default"/>
       </Modes>
     </RunParams>
-    <RequiredPackages Count="13">
+    <RequiredPackages Count="11">
       <Item1>
-        <PackageName Value="eccontrols"/>
+        <PackageName Value="attabs_package"/>
       </Item1>
       <Item2>
-        <PackageName Value="attabs_package"/>
+        <PackageName Value="internettools"/>
       </Item2>
       <Item3>
-        <PackageName Value="atflatcontrols_package"/>
+        <PackageName Value="fpc_markdown"/>
       </Item3>
       <Item4>
-        <PackageName Value="internettools"/>
+        <PackageName Value="FrameViewer09"/>
       </Item4>
       <Item5>
-        <PackageName Value="fpc_markdown"/>
+        <PackageName Value="LazUtils"/>
       </Item5>
       <Item6>
-        <PackageName Value="FrameViewer09"/>
+        <PackageName Value="LazControls"/>
       </Item6>
       <Item7>
-        <PackageName Value="LazUtils"/>
+        <PackageName Value="HistoryLazarus"/>
       </Item7>
       <Item8>
-        <PackageName Value="LazControls"/>
+        <PackageName Value="bgracontrols"/>
       </Item8>
       <Item9>
-        <PackageName Value="HistoryLazarus"/>
+        <PackageName Value="uEControls"/>
       </Item9>
       <Item10>
-        <PackageName Value="bgracontrols"/>
+        <PackageName Value="SynEdit"/>
       </Item10>
       <Item11>
-        <PackageName Value="uEControls"/>
-      </Item11>
-      <Item12>
-        <PackageName Value="SynEdit"/>
-      </Item12>
-      <Item13>
         <PackageName Value="LCL"/>
-      </Item13>
+      </Item11>
     </RequiredPackages>
-    <Units Count="26">
+    <Units Count="27">
       <Unit0>
         <Filename Value="SBAcreator.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -625,6 +619,14 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="DebugU"/>
       </Unit25>
+      <Unit26>
+        <Filename Value="whatsnewu.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="WhatsNewF"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="WhatsNewU"/>
+      </Unit26>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

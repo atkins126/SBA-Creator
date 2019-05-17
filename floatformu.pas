@@ -6,14 +6,14 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, StdCtrls,
-  lclintf, LCLType, ExtCtrls, INIFilesUTF8;
+  lclintf, LCLType, ExtCtrls, uEImage, INIFilesUTF8, BGRABitmap;
 
 type
 
   { TFloatForm }
 
   TFloatForm = class(TForm)
-    Image: TImage;
+    CoreImagePanel: TuEImage;
     L_Title: TLabel;
     L_CoreName: TLabel;
     L_Description: TLabel;
@@ -71,8 +71,9 @@ procedure TFloatForm.TimerShowTimer(Sender: TObject);
 begin
   Info('TFloatForm','ShowCore= '+L_CoreName.caption);
   TimerShow.Enabled:=false;
+  CoreImagePanel.Image.Clear;
   try
-    Image.Picture.LoadFromFile(LibraryDir+L_CoreName.caption+PathDelim+'image.png');
+    CoreImagePanel.LoadFromFile(LibraryDir+L_CoreName.caption+PathDelim+'image.png');
     L_Title.Caption:='';
     L_Description.Caption:='';
     try
@@ -87,7 +88,6 @@ begin
   except
     ON E:Exception do
     begin
-      Image.Picture.Clear;
       Visible := False;
     end;
   end;

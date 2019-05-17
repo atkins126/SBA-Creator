@@ -11,10 +11,9 @@ uses
   Interfaces, // this includes the LCL widgetset
   Forms, FrameViewer09, HistoryLazarus, MainFormU, synhighlighterverilog,
   synhighlightersba, versionsupportu, SBAProgContrlrU, AboutFormU, sbasnippetu,
-  configformu, PrjWizU, dwfileU, DebugU, AutoUpdateU, SBAProjectU,
-  floatformu, CoresPrjEdFormU, LibraryFormU, UtilsU, sbaprogramu,
-  exportprjformu, UScaleDPI,
-  lazcontrols, uecontrols, SBAIPCoresU, PlugInU
+  configformu, PrjWizU, dwfileU, DebugU, AutoUpdateU, SBAProjectU, floatformu,
+  CoresPrjEdFormU, LibraryFormU, UtilsU, sbaprogramu, exportprjformu, UScaleDPI,
+  lazcontrols, uecontrols, SBAIPCoresU, PlugInU, WhatsNewU
   {$IFDEF debug}
   , SysUtils
   {$ENDIF}
@@ -40,6 +39,7 @@ begin
   Application.CreateForm(TLibraryForm, LibraryForm);
   Application.CreateForm(TprjWizForm, prjWizForm);
   Application.CreateForm(TAboutForm, AboutForm);
+  Application.CreateForm(TWhatsNewF, WhatsNewF);
   //HighDPI(96);
   Application.Run;
 end.

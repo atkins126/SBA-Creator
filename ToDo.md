@@ -21,14 +21,21 @@ archivos de restricciones para cada tipo de tarjeta, etc. La jerarquía de carpet
 
 Si hay un proyecto abierto, la ruta por defecto para los nuevos archivos debe ser el directorio del proyecto.
 
-Si se reinicia el editor PRG (nuevo controler) reiniciar también el nombre del archivo prg para que "save as" sea usado de nuevo y no se use el nombre del prg anterior. 
+Si se reinicia el editor PRG (nuevo controler) reiniciar también el nombre del archivo prg para que "save as"
+sea usado de nuevo y no se use el nombre del prg anterior. 
 
 Para ampliar el funcionamiento del plugin de edición sincronizada se ha hecho un cambio a la unidad SynPluginSyncroEdit:
 de  MAX_SYNC_ED_WORDS = 50// 250;  a  MAX_SYNC_ED_WORDS = 100;// 250;  
 
 ~~Listo: Colocar un save all en el editor hdl.~~
 
-~~Listo: FoldValidProc en synhighlightersba.pas para funciones y procedimientos no funciona si la función o procedimiento tiene varios parámetros debido al ";" de separación entre parámetros. Se debe elegir otro criterio.~~
+~~Listo: FoldValidProc en synhighlightersba.pas para funciones y procedimientos no funciona si la función o
+procedimiento tiene varios parámetros debido al ";" de separación entre parámetros. Se debe elegir otro criterio.~~
 
+Cuando se pasa al modo edición del programa del Controlador, si hay instrucciones en una columna antes de la
+aparición del símbolo => se borran todos los caracteres que se encuentren antes de dicha columna.
+El funcionamiendo debería ser: si hay texto antes de la columna del => que no sea un When, entonces borrar
+los espacios vacíos precedentes hasta el primer caracter.
 
-Cuando se pasa al modo edición del programa del Controlador, si hay instrucciones en una columna antes de la aparición del símbolo => se borran todos los caracteres que se encuentren antes de dicha columna. El funcionamiendo debería ser: si hay texto antes de la columna del => que no sea un When, entonces borrar los espacios vacíos precedentes hasta el primer caracter.
+Hay un extraño bug en Ubuntux64, si el botón EditPaste del toolbar está enlazado a la acción EditPaste,
+hay un alto consumo de CPU. Parche temporal: quitar la asociación con la acción y enlazar el evento Onclick del botón

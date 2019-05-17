@@ -1,12 +1,12 @@
 unit EditorU;
 
-{$mode objfpc}{$H+}{$MODESWITCH ADVANCEDRECORDS}
+{$mode objfpc}{$H+}
 
 interface
 
 uses
-  Controls, Graphics, Dialogs, Classes, SysUtils, ComCtrls,
-  StdCtrls, LazFileUtils, SynEdit, SynEditMouseCmds,
+  Controls, Graphics, Dialogs, Classes, SysUtils, ComCtrls, Fgl,
+  StdCtrls, LazFileUtils, SynEdit, SynEditMouseCmds, IniFiles,
   SynEditMarkupHighAll, SynEditTypes, SynEditKeyCmds,
   UtilsU, DebugU;
 
@@ -14,49 +14,218 @@ type
 
 TEdType=(vhdl, prg, verilog, systemverilog, ini, json, markdown, cpp, html, pas, python, other, none);
 
-{ TEditorF }
+{ TEditor }
 
-TEditorF = record
+TEditor = class (TSynEdit)
 private
+  FEdType: TEdType;
   FFileName: string;
+  FOnFileNameChanged: TNotifyEvent;
+  FPage: TObject;
+  function GetisEmpty: boolean;
+  procedure SetEdType(AValue: TEdType);
   procedure SetFileName(AValue: string);
+  procedure SetPage(AValue: TObject);
 public
-  EdType: TEdType;
-  Editor: TSynEdit;
-  Page: TTabSheet;
-  HasError: boolean;
-  procedure FormatEditor;
-  function InsertBlock(BStart,BEnd:string;t:TStrings):boolean;
-  procedure Reformat(osl, nsl: Tstrings; filetype: TEdType; Acommentstr: string='--');
-  function Edtypeselect:TEdType;
-  procedure CreateEditor(AOwner: TComponent; ATab: TTabSheet; Template:TSynEdit=nil);
+  constructor Create(AOwner: TComponent); override;
+  destructor Destroy; override;
+  procedure CommentBlock;
+  procedure UncommentBlock;
+  procedure Colorize(Ini: string);
+published
   property FileName:string read FFileName write SetFileName;
-  function EditorEmpty : boolean;
-  procedure Close;
+  property isEmpty:boolean read GetisEmpty;
+  property EdType:TEdType read FEdType write SetEdType;
+  property Page: TObject read FPage write SetPage;
+  property OnFileNameChanged: TNotifyEvent read FOnFileNameChanged write FOnFileNameChanged;
 end;
 
+//TEditorList = specialize TFPGObjectList<TEditor>;
+
 var
-  EditorList:TFPList;
-  ActEditorF:TEditorF;
-  EditorCnt:integer=1;
+//  EditorList:TEditorList;
+  ActEditor:TEditor=nil;
+  EditorCnt:integer=0;
+  DefEdType:TEdtype=vhdl;
+  EditorFontName:string;
+  EditorFontSize:integer;
+  CommentStr:string='--';
 
 const
-  FileTypeStr='VHDL file|*.vhd;*.vhdl|'+
-              'Verilog file|*.v;*.vl;*.ver|'+
-              'System Verilog|*.sv|'+
-              'Ini files|*.ini|'+
-              'Markdown files|*.md;*.mkd;*.mdwn;*.mdtxt;*.mdtext;*.text|'+
-              'Text files|*.txt|'+
-              'Python files|*.py|'+
-              'C files|*.c;*.cpp|'+
-              'Html files|*.htm;*.html|'+
-              'All files|*.*';
+  DefFileTypeKey='VHDL=.vhd|'+
+                 'Verilog=.v|'+
+                 'System Verilog=.sv|'+
+                 'Ini=.ini|'+
+                 'Markdown=.md|'+
+                 'Python=.py|'+
+                 'C=.c|'+
+                 'Html=.htm';
+
+  DefFileFilter='VHDL|*.vhd;*.vhdl|'+
+                'Verilog|*.v;*.vl;*.ver|'+
+                'System Verilog|*.sv|'+
+                'Ini|*.ini|'+
+                'Markdown|*.md;*.mkd;*.mdwn;*.mdtxt;*.mdtext;*.text|'+
+                'Text|*.txt|'+
+                'Python|*.py|'+
+                'C|*.c;*.cpp|'+
+                'Html|*.htm;*.html|'+
+                'All files|*.*';
+
+function GetFileType(F: String): TEdType;
+function GetFileTypeKey:TStringList;
+function GetFileExt(FType: TEdType): string;
+function InsertBlock(Editor:TEditor; BStart,BEnd:string;t:TStrings):boolean;
+procedure FormatEditor(Editor:TEditor);
+procedure Reformat(osl, nsl: Tstrings; filetype: TEdType; Acommentstr: string='--');
 
 implementation
 
-{TEditorF}
+{TEditor}
 
-function TEditorF.InsertBlock(BStart,BEnd:string;t:TStrings):boolean;
+procedure TEditor.SetFileName(AValue: string);
+begin
+  if FFileName=AValue then Exit;
+  FFileName:=AValue;
+  FEdType:=GetFileType(FFileName);
+  if assigned(FOnFileNameChanged) then FOnFileNameChanged(Self);
+end;
+
+procedure TEditor.SetEdType(AValue: TEdType);
+begin
+  if FEdType=AValue then Exit;
+  FEdType:=AValue;
+end;
+
+function TEditor.GetisEmpty: boolean;
+begin
+  Result:=(Lines.Count=0) or ((Lines.Count=1) and (Lines[0]=''));
+end;
+
+procedure TEditor.SetPage(AValue: TObject);
+begin
+  if FPage=AValue then Exit;
+  FPage:=AValue;
+end;
+
+constructor TEditor.Create(AOwner: TComponent);
+begin
+  Info('TEditor.Create',AOwner.Name);
+  inherited Create(AOwner);
+  DoubleBuffered:=true;
+  BorderStyle:= bsNone;
+  FEdType:= DefEdType;
+  FFileName:= '';
+  FPage:= nil;
+  FOnFileNameChanged:=nil;
+  Tag:=EditorCnt;
+  FormatEditor(Self);
+  Keystrokes.Items[Keystrokes.FindCommand(ecSetMarker1)].Command:=ecToggleMarker1;
+  Modified:=false;
+  Inc(EditorCnt);
+end;
+
+destructor TEditor.Destroy;
+begin
+  OnStatusChange:=nil;
+  inherited Destroy;
+end;
+
+procedure TEditor.Colorize(Ini:string);
+var
+  SynMarkup:TSynEditMarkupHighlightAllCaret;
+  IniFile:TIniFile;
+begin
+  try
+    IniFile:=TIniFile.Create(ini);
+    With IniFile do
+    begin
+      Color:=StringToColor(ReadString('Editor','Color','clWhite'));
+      BracketMatchColor.Foreground:=StringToColor(ReadString('Editor','BracketMatchColorFg','clNone'));
+      BracketMatchColor.Background:=StringToColor(ReadString('Editor','BracketMatchColorBg','clSilver'));
+      FoldedCodeColor.Foreground:=StringToColor(ReadString('Editor','FoldedCodeColorFg','clGray'));
+      FoldedCodeColor.Background:=StringToColor(ReadString('Editor','FoldedCodeColorBg','clNone'));
+      Font.Color:=StringToColor(ReadString('Editor','FontColor','clDefault'));
+      Gutter.Color:=StringToColor(ReadString('Editor','GutterColor','clBtnFace'));
+      Gutter.LineNumberPart().MarkupInfo.Background:=StringToColor(ReadString('Editor','GutterColor','clBtnFace'));
+      Gutter.MarksPart().MarkupInfo.Background:=StringToColor(ReadString('Editor','GutterColor','clBtnFace'));
+      Gutter.ChangesPart().MarkupInfo.Background:=StringToColor(ReadString('Editor','GutterColor','clBtnFace'));
+      Gutter.SeparatorPart().MarkupInfo.Background:=StringToColor(ReadString('Editor','GutterColor','clBtnFace'));
+      Gutter.CodeFoldPart().MarkupInfo.Background:=StringToColor(ReadString('Editor','Color','clWhite'));
+      HighlightAllColor.Background:=StringToColor(ReadString('Editor','HighlightAllColorBg','clMaroon'));
+      HighlightAllColor.Foreground:=StringToColor(ReadString('Editor','HighlightAllColorFg','clHighlightText'));
+      LineHighlightColor.Background:=StringToColor(ReadString('Editor','LineHighlightColorBg','clCream'));
+      LineHighlightColor.FrameColor:=StringToColor(ReadString('Editor','LineHighlightColorFc','clSilver'));
+      MouseLinkColor.Foreground:=StringToColor(ReadString('Editor','MouseLinkColorFg','clBlue'));
+      RightEdgeColor:=StringToColor(ReadString('Editor','RightEdgeColor','clSilver'));
+      RightGutter.Color:=StringToColor(ReadString('Editor','RightGutterColor','clBtnFace'));
+      SelectedColor.Background:=StringToColor(ReadString('Editor','SelectedColorBg','clHighlight'));
+      SelectedColor.Foreground:=StringToColor(ReadString('Editor','SelectedColorFg','clHighlightText'));
+      SynMarkup:=TSynEditMarkupHighlightAllCaret(MarkupByClass[TSynEditMarkupHighlightAllCaret]);
+      SynMarkup.MarkupInfo.Background:= StringToColor(ReadString('Editor','GutterColor','clBtnFace'));
+      SynMarkup.MarkupInfo.FrameColor:= StringToColor(ReadString('Editor','LineHighlightColorFc','clGray'));
+    end;
+  finally
+    If assigned(IniFile) then FreeAndNil(IniFile);
+  end;
+end;
+
+procedure TEditor.CommentBlock;
+Var
+  C:TPoint;
+  L:integer;
+begin
+  BeginUpdate(true);
+  C:=CaretXY;
+  if SelAvail then
+  begin
+    for L:=BlockBegin.y to BlockEnd.y do
+    begin
+      CaretY:=L;
+      CaretX:=0;
+      InsertTextAtCaret(commentstr);
+    end;
+    CaretY:=C.Y;
+  end else
+  begin
+    CaretX:=0;
+    InsertTextAtCaret(commentstr);
+  end;
+  CaretX:=C.X+length(commentstr);
+  EndUpdate;
+end;
+
+procedure TEditor.UncommentBlock;
+Var
+  C:TPoint;
+  L:Integer;
+begin
+  BeginUpdate(true);
+  C:=CaretXY;
+  if SelAvail then
+  begin
+    for L:=BlockBegin.y to BlockEnd.y do
+    begin
+     CaretY:=L;
+     if (Pos(commentstr,ActEditor.LineText)=1) then
+     begin
+       CaretX:=length(commentstr)+1;
+       ExecuteCommand(ecDeleteBOL,'',nil);
+     end;
+    end;
+    CaretY:=C.Y;
+  end else if (Pos(commentstr,ActEditor.LineText)=1) then
+  begin
+    CaretX:=length(commentstr)+1;
+    ExecuteCommand(ecDeleteBOL,'',nil);
+  end;
+  CaretX:=C.X-length(commentstr);
+  EndUpdate;
+end;
+
+//------------------- Utilities ---------------------//
+
+function InsertBlock(Editor:TEditor; BStart,BEnd:string;t:TStrings):boolean;
 var
   sblk,eblk,y:integer;
 begin
@@ -65,7 +234,7 @@ begin
   Y:=Editor.CaretY;
   sblk:=GetPosList(BStart,Editor.Lines);
   eblk:=GetPosList(BEnd,Editor.Lines,sblk);
-  Info('TEditorF.InsertBlock',Format('%s %d:%d',[BStart,sblk+1,eblk+1]));
+  Info('TEditor.InsertBlock',Format('%s %d:%d',[BStart,sblk+1,eblk+1]));
   if (sblk<>-1) and (eblk<>-1) then
   begin
     if (Editor.CaretY<sblk+1) or (Editor.CaretY>eblk+1) then
@@ -77,154 +246,14 @@ begin
     end;
     while (t.count>0) and (t[t.count-1]='') do t.Delete(t.count-1);
     sblk:=Editor.CaretY;
-    Info('TEditorF.InsertBlock Insert At:',Editor.CaretY);
+    Info('TEditor.InsertBlock Insert At:',Editor.CaretY);
     Editor.InsertTextAtCaret(t.Text);
     if Y<sblk then Editor.CaretY:=Y else Editor.CaretY:=Y+t.Count;
     result:=true;
   end else ShowMessage('Error in block definitions, check '+BStart+' keywords');
 end;
 
-procedure TEditorF.SetFileName(AValue: string);
-begin
-  if FFileName=AValue then Exit;
-  FFileName:=AValue;
-  Edtypeselect;
-  if assigned(Page) then Page.Hint:=AValue;
-end;
-
-procedure TEditorF.FormatEditor;
-var
-  SynMarkup: TSynEditMarkupHighlightAllCaret;
-begin
-  Editor.Font.Height:=-12;
-  Editor.Font.Quality:=fqProof;
-  Editor.Gutter.Width:=54;
-  Editor.Options:=[eoAutoIndent, eoBracketHighlight, eoGroupUndo,
-    eoScrollPastEof, eoScrollPastEol, eoSmartTabs, eoTabIndent, eoTabsToSpaces,
-    eoTrimTrailingSpaces, eoAltSetsColumnMode];
-  Editor.MouseOptions:=[emAltSetsColumnMode];
-  Editor.ScrollBars:=ssAutoBoth;
-  Editor.HighlightAllColor.Background:=clMaroon;
-  Editor.BracketMatchColor.Background:=clWhite;
-  Editor.LineHighlightColor.Background:=clCream;
-  Editor.LineHighlightColor.FrameColor:=clSilver;
-  Editor.LineHighlightColor.FrameStyle:=slsDotted;
-  Editor.TabWidth:=4;
-  Editor.Gutter.MarksPart().AutoSize:=false;
-  Editor.Gutter.MarksPart().Width:=16;
-  Editor.Gutter.LineNumberPart().Width:=22;
-  Editor.Gutter.LineNumberPart().DigitCount:=3;
-  Editor.Gutter.LineNumberPart().ShowOnlyLineNumbersMultiplesOf:=5;
-  Editor.Gutter.SeparatorPart().MarkupInfo.Background:=clBtnFace;
-  Editor.Gutter.SeparatorPart().MarkupInfo.Foreground:=clGray;
-  Editor.Gutter.CodeFoldPart().MarkupInfo.Background:=clWindow;
-  SynMarkup:=TSynEditMarkupHighlightAllCaret(Editor.MarkupByClass[
-    TSynEditMarkupHighlightAllCaret]);
-  SynMarkup.MarkupInfo.Background:= clBtnFace;
-  SynMarkup.MarkupInfo.FrameColor:= clGray;
-  SynMarkup.WaitTime := 500;
-  SynMarkup.Trim := True;
-  SynMarkup.FullWord:= True;
-end;
-
-function TEditorF.Edtypeselect: TEdType;
-var
-  ts:string;
-begin
-  ts:=extractfileext(FFileName);
-  Info('TMainForm.Edtypeselect ext',ts);
-  if FFileName='' then exit(none);
-  case lowercase(ts) of
-    '.vhd','.vhdl': result:=vhdl;
-    '.prg','.snp' : result:=prg;
-    '.v','.vl','.ver' : result:=verilog;
-    '.sv' : result:=systemverilog;
-    '.ini' : result:=ini;
-    '.sba' : result:=json;
-    '.c','.cpp' : result:=cpp;
-    '.py' : result:=python;
-    '.htm','.html': result:=html;
-    '.p','.pas' : result:=pas;
-    '.markdown','.mdown','.mkdn',
-    '.md','.mkd','.mdwn',
-    '.mdtxt','.mdtext','.text',
-    '.rmd' : result:=markdown;
-  else result:=other;
-  end;
-  EdType:=result;
-end;
-
-procedure TEditorF.CreateEditor(AOwner: TComponent; ATab: TTabSheet;
-  Template: TSynEdit);
-var
-  SaveName,f: String;
-  memStrm: TMemoryStream;
-  SynMarkup: TSynEditMarkupHighlightAllCaret;
-begin
-  if Template<>nil then
-  try
-    memStrm:=TMemoryStream.Create;
-    SaveName:=Template.Name;
-    Template.Name:='SynEdit_'+inttostr(EditorCnt);
-    memStrm.WriteComponent(Template);
-    Template.Name:=SaveName;
-    Editor:= TSynEdit.Create(AOwner);
-    memStrm.Position:=0;
-    memStrm.ReadComponent(Editor);
-    SynMarkup:=TSynEditMarkupHighlightAllCaret(Editor.MarkupByClass[
-      TSynEditMarkupHighlightAllCaret]);
-    SynMarkup.MarkupInfo.Background:= TSynEditMarkupHighlightAllCaret(Template.MarkupByClass[
-      TSynEditMarkupHighlightAllCaret]).MarkupInfo.Background;
-    SynMarkup.MarkupInfo.FrameColor:= TSynEditMarkupHighlightAllCaret(Template.MarkupByClass[
-      TSynEditMarkupHighlightAllCaret]).MarkupInfo.FrameColor;
-    SynMarkup.WaitTime := 500;
-    SynMarkup.Trim := True;
-    SynMarkup.FullWord:= True;
-  finally
-    if assigned(memStrm) then freeAndNil(memStrm);
-  end else
-  begin
-    Editor:= TSynEdit.Create(AOwner);
-    Editor.Name:='SynEdit_'+inttostr(EditorCnt);
-    Editor.Tag:=EditorCnt;
-    FormatEditor;
-    Editor.Keystrokes.Items[Editor.Keystrokes.FindCommand(ecSetMarker1)].Command:=
-      ecToggleMarker1;
-  end;
-  Editor.Parent:=ATab;
-  Editor.Clear;
-  Editor.Align:=alClient;
-  Page:=ATab;
-  f:='NewFile'+inttostr(EditorCnt)+'.vhd';
-  SetFileName(AppendPathDelim(GetCurrentDir)+f);
-  Page.Caption:=f;
-  Page.Tag:=EditorCnt;
-  Editor.Modified:=false;
-  Inc(EditorCnt);
-  Info('TEditorF.CreateEditor',f);
-  //Editor.BookMarkOptions.BookmarkImages:=MarkImages;
-  //Editor.PopupMenu:=EditorPopUp;
-  //Editor.OnStatusChange:=@SynEditStatusChange;
-end;
-
-function TEditorF.EditorEmpty: boolean;
-begin
-  Result:=(Editor.Lines.Count=0) or ((Editor.Lines.Count=1) and (Editor.Lines[0]=''));
-end;
-
-procedure TEditorF.Close;
-begin
-  Info('TEditorF.Close',Filename);
-  FFileName:='';
-  if assigned(Editor) then
-  begin
-    Editor.OnStatusChange:=nil;
-    FreeAndNil(Editor);
-  end;
-  if assigned(Page) then FreeAndNil(Page);
-end;
-
-procedure TEditorF.Reformat(osl, nsl: Tstrings; filetype: TEdType;
+procedure Reformat(osl, nsl: Tstrings; filetype: TEdType;
   Acommentstr: string);
 var
   s: string;
@@ -281,6 +310,99 @@ begin
   nsl.Add(Acommentstr+' This file was obfuscated and reformated using SBA Creator                  --');
   nsl.Add(Acommentstr+'------------------------------------------------------------------------------');
   ostr.Free;
+end;
+
+function GetFileType(F:String):TEdType;
+var
+  ts:string;
+begin
+  if F='' then exit(none);
+  ts:=extractfileext(F);
+  case lowercase(ts) of
+    '.vhd','.vhdl': result:=vhdl;
+    '.prg','.snp' : result:=prg;
+    '.v','.vl','.ver' : result:=verilog;
+    '.sv' : result:=systemverilog;
+    '.ini' : result:=ini;
+    '.sba' : result:=json;
+    '.c','.cpp' : result:=cpp;
+    '.py' : result:=python;
+    '.htm','.html': result:=html;
+    '.p','.pas' : result:=pas;
+    '.markdown','.mdown','.mkdn',
+    '.md','.mkd','.mdwn',
+    '.mdtxt','.mdtext','.text',
+    '.rmd' : result:=markdown;
+  else result:=other;
+  end;
+end;
+
+function GetFileExt(FType:TEdType):string;
+begin
+  case FType of
+    vhdl:result:='.vhd';
+    prg:result:='.prg';
+    verilog:result:='.v';
+    systemverilog:result:='.sv';
+    ini:result:='.ini';
+    json:result:='.sba';
+    cpp:result:='.c';
+    python:result:='.py';
+    html:result:='.htm';
+    pas:result:='.pas';
+    markdown:result:='.md';
+    else result:='.txt';
+  end;
+end;
+
+function GetFileTypeKey: TStringList;
+var FFileTypeKey:TStringList;
+begin
+  FFileTypeKey:=TStringList.Create;
+  FFileTypeKey.Delimiter := '|';
+  FFileTypeKey.StrictDelimiter := True;
+  FFileTypeKey.DelimitedText:=DefFileTypeKey;
+  result:=FFileTypeKey;
+end;
+
+procedure FormatEditor(Editor:TEditor);
+var
+  SynMarkup: TSynEditMarkupHighlightAllCaret;
+begin
+  with Editor do
+  begin
+    Font.Name:=EditorFontName;
+    Font.Size:=EditorFontSize;
+    //Font.Height:=-12;
+    Font.Quality:=fqProof;
+    Gutter.Width:=54;
+    Options:=[eoAutoIndent, eoBracketHighlight, eoGroupUndo,
+       eoScrollPastEof, eoScrollPastEol, eoSmartTabs, eoTabIndent, eoTabsToSpaces,
+       eoTrimTrailingSpaces, eoAltSetsColumnMode];
+     MouseOptions:=[emAltSetsColumnMode];
+     ScrollBars:=ssAutoBoth;
+     HighlightAllColor.Background:=clMaroon;
+     BracketMatchColor.Background:=clWhite;
+     LineHighlightColor.Background:=clCream;
+     LineHighlightColor.FrameColor:=clSilver;
+     LineHighlightColor.FrameStyle:=slsDotted;
+     TabWidth:=4;
+     Gutter.MarksPart().AutoSize:=false;
+     Gutter.MarksPart().Width:=16;
+     Gutter.LineNumberPart().Width:=22;
+     Gutter.LineNumberPart().DigitCount:=3;
+     Gutter.LineNumberPart().ShowOnlyLineNumbersMultiplesOf:=5;
+     Gutter.SeparatorPart().MarkupInfo.Background:=clBtnFace;
+     Gutter.SeparatorPart().MarkupInfo.Foreground:=clGray;
+     Gutter.CodeFoldPart().MarkupInfo.Background:=clWindow;
+     SynMarkup:=TSynEditMarkupHighlightAllCaret(Editor.MarkupByClass[
+       TSynEditMarkupHighlightAllCaret]);
+     SynMarkup.MarkupInfo.Background:= clBtnFace;
+     SynMarkup.MarkupInfo.FrameColor:= clGray;
+     SynMarkup.WaitTime := 500;
+     SynMarkup.Trim := True;
+     SynMarkup.FullWord:= True;
+  end;
 end;
 
 end.

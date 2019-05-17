@@ -5,11 +5,12 @@ unit LibraryFormU;
 interface
 
 uses
-  Classes, SysUtils, ListViewFilterEdit, Forms, Controls, Graphics,
-  Dialogs, ComCtrls, Buttons, ExtCtrls, FileUtil, LazFileUtils, SynExportHTML,
-  StrUtils, SynHighlighterPas, SynHighlighterHTML, SynHighlighterCpp, SynHighlighterIni,
+  Classes, SysUtils, ListViewFilterEdit, Forms, Controls, Graphics, Dialogs,
+  ComCtrls, Buttons, ExtCtrls, FileUtil, LazFileUtils, SynExportHTML, StrUtils,
+  SynHighlighterPas, SynHighlighterHTML, SynHighlighterCpp, SynHighlighterIni,
   lclintf, StdCtrls, EditBtn, Menus, SBASnippetU, SBAProgramU, IniFilesUTF8,
-  SynHighlighterPython, SynHighlighterSBA, MarkdownProcessor, MarkdownUtils;
+  SynHighlighterPython, SynHighlighterSBA, MarkdownProcessor, MarkdownUtils,
+  uEImage, BGRABitmap, Math;
 
 type
   tLibDwStatus=(Idle,GetBase, GetLibrary, GetPrograms, GetSnippets);
@@ -32,6 +33,7 @@ type
     B_SBAprogramsSurf: TBitBtn;
     B_SBAsnippetsGet: TBitBtn;
     B_SBAsnippetsSurf: TBitBtn;
+    CoreImagePanel: TuEImage;
     Ed_SBAbase: TEditButton;
     Ed_SBAlibrary: TEditButton;
     Ed_SBAprograms: TEditButton;
@@ -41,7 +43,6 @@ type
     GB_SBAlibrary: TGroupBox;
     GB_SBAprograms: TGroupBox;
     GB_SBAsnippets: TGroupBox;
-    IPCoreImage: TImage;
     Label1: TLabel;
     Label10: TLabel;
     Label11: TLabel;
@@ -324,6 +325,7 @@ begin
     1 : d:=LibraryDir+L.Caption;
     2 : d:=ProgramsDir;
     3 : d:=SnippetsDir;
+  else d:='';
   end;
   Info('MenuItem1Click','Try to open folder : '+d);
   if DirectoryExists(d) then OpenDocument(d);
@@ -453,7 +455,11 @@ var
   l:TListItem;
   Ini:TIniFile;
 begin
+  CoreImagePanel.Image.Clear;
   IpCoreDescription.Clear;
+  L_TitleIpCore.Caption:='';
+  IpCoreDataSheet:='';
+  URL_IpCore:='';
   L:=LV_IPCores.Selected;
   if (L=nil) or (LV_IPCores.Items.Count=0) then exit;
   B_AddtoLibrary.Enabled:=(L.SubItems[1]='N') or (L.SubItems[1]='U');
@@ -471,9 +477,9 @@ begin
     Ini.free;
   end;
   try
-    IPCoreImage.Picture.LoadFromFile(Img);
+    CoreImagePanel.LoadFromFile(Img);
   except
-    ON E:Exception do IPCoreImage.Picture.Clear;
+    ON E:Exception do InfoErr('TLibraryForm.LV_IPCoresSelectItem',E.Message)
   end;
 end;
 
