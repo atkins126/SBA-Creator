@@ -1456,6 +1456,7 @@ var
   Coord:TPoint;
 begin
   if not assigned(ActEditor) then exit;
+  Info('TMainForm.SetMiniMap',Point(X,Y));
   Coord:=MiniMap.PixelsToRowColumn(Point(X,Y));
   ActEditor.CaretXY:=Coord;
   ActEditor.Invalidate;
@@ -2052,14 +2053,13 @@ end;
 procedure TMainForm.SyncMiniMapTimer(Sender: TObject);
 begin
   SyncMiniMap.Enabled:=false;
-  if not assigned(MiniMap) or not assigned(ActEditor) then exit;
-  MiniMap.CaretXY:=ActEditor.CaretXY;
+  if not assigned(MiniMap) or not assigned(ActEditor) or not MiniMap.Visible then exit;
   if (MiniMap.Tag <> ActEditor.TopLine) then
   begin
     MiniMap.Tag := ActEditor.TopLine;
     if (ActEditor.TopLine+ActEditor.LinesInWindow)>(MiniMap.TopLine+MiniMap.LinesInWindow)
-    then MiniMap.TopLine:=ActEditor.TopLine+ActEditor.LinesInWindow-MiniMap.LinesInWindow;
-    if  ActEditor.TopLine<MiniMap.TopLine then MiniMap.TopLine:=ActEditor.TopLine;
+    then MiniMap.TopLine:=ActEditor.TopLine+ActEditor.LinesInWindow-MiniMap.LinesInWindow
+    else if  ActEditor.TopLine<MiniMap.TopLine then MiniMap.TopLine:=ActEditor.TopLine;
   end;
   MiniMap.Invalidate;
 end;
@@ -2615,6 +2615,7 @@ begin
   PrgEditor.Align:=alClient;
   PrgEditor.Parent:=PrgPage;
   PrgEditor.BookMarkOptions.BookmarkImages:=MarkImages;
+  PrgEditor.OnStatusChange:=@EditorStatusChange;
 end;
 
 procedure TMainForm.SetupMiniMap;
@@ -3161,7 +3162,10 @@ procedure TMainForm.EditorStatusChange(Sender: TObject;
   Changes: TSynStatusChanges);
 begin
   if ([scCaretX, scCaretY] * Changes) <> [] then
+  begin
     StatusBar1.Panels[0].Text:=Format('%4d:%-4d',[TEditor(Sender).CaretY,TEditor(Sender).CaretX]);
+    if MiniMap.Visible then MiniMap.CaretXY:=TEditor(Sender).CaretXY;
+  end;
   if scModified in Changes then
   begin
     UpdGuiTimer.Enabled:=true;

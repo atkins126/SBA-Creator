@@ -23,10 +23,13 @@ private
   FOnFileNameChanged: TNotifyEvent;
   FPage: TObject;
   FSharedBuffer:TEditor;
+  FSharedTopLine:Integer;
   function GetisEmpty: boolean;
   procedure SetEdType(AValue: TEdType);
   procedure SetFileName(AValue: string);
   procedure SetPage(AValue: TObject);
+protected
+  procedure DoOnStatusChange(Changes: TSynStatusChanges); override;
 public
   constructor Create(AOwner: TComponent); override;
   destructor Destroy; override;
@@ -112,6 +115,12 @@ begin
   FPage:=AValue;
 end;
 
+procedure TEditor.DoOnStatusChange(Changes: TSynStatusChanges);
+begin
+  if assigned(FSharedBuffer) and (([scTopLine] * Changes) <> []) then FSharedBuffer.FSharedTopLine:=TopLine;
+  inherited DoOnStatusChange(Changes);
+end;
+
 constructor TEditor.Create(AOwner: TComponent);
 begin
   Info('TEditor.Create',AOwner.Name);
@@ -123,6 +132,7 @@ begin
   FPage:= nil;
   FOnFileNameChanged:=nil;
   FSharedBuffer:=nil;
+  FSharedTopLine:=0;
   Tag:=EditorCnt;
   FormatEditor(Self);
   Keystrokes.Items[Keystrokes.FindCommand(ecSetMarker1)].Command:=ecToggleMarker1;
@@ -184,6 +194,7 @@ begin
   begin
     Highlighter:=AValue.Highlighter;
     EdType:=AValue.EdType;
+    TopLine:=AValue.FSharedTopLine;
   end;
 end;
 

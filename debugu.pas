@@ -11,6 +11,7 @@ procedure info(L:String;M:String='');
 procedure info(L:String;I:integer);
 procedure info(L:String;b:boolean);
 procedure info(L:String;SL:Tstrings);
+procedure info(L:String;P:TPoint);
 procedure infoErr(L:String;M:String='');
 
 implementation
@@ -55,7 +56,14 @@ begin
   {$ENDIF}
 end;
 
-procedure infoErr(L,M:String);
+procedure info(L: String; P: TPoint);
+begin
+  {$IFDEF DEBUG}
+  info(L,' X='+inttostr(P.x)+' Y='+inttostr(P.y));
+  {$ENDIF}
+end;
+
+procedure infoErr(L: String; M: String);
 begin
   {$IFDEF DEBUG}
   SendDebugFmtEx('%s: %s',[L,M],dlError);
