@@ -57,21 +57,25 @@ type
   TUpdateStatus=(upStGetVersionFile,upStGetWhatsNew,upStDwNewVersion,upStUpdating,upStIdle);
 
   TAutoUpdate=class(TObject)
+  private
+    FNewVersionAvailable:boolean;
+    Fupdatefolder: string;
+    procedure EndCheckNewVersion;
+    procedure FileDownloaded;
+    procedure WaitForIdle;
   public
     upStatus:TUpdateStatus;
     upStError:boolean;
+    CBCheckNewVersion:procedure of object;
     constructor Create;
-    function NewVersionAvailable:boolean;
+    procedure CheckNewVersion;
     function GetWhatsNew: boolean;
     function DownloadNewVersion:boolean;
     function UpdateToNewVersion:boolean;
     function GetNewVersion:string;
     function DownloadInProgress:boolean;
-  private
-    Fupdatefolder: string;
-    procedure FileDownloaded;
-    procedure WaitForIdle;
   published
+    property NewVersionAvailable:Boolean read FNewVersionAvailable;
     property updatefolder:string read Fupdatefolder write Fupdatefolder;
   end;
 
@@ -85,8 +89,12 @@ var
 
 procedure TAutoUpdate.FileDownloaded;
 begin
+  Info('TAutoUpdate.FileDownloaded','');
   case upStatus of
-    upStGetVersionFile:upStatus:=upStIdle;
+    upStGetVersionFile:begin
+      upStatus:=upStIdle;
+      EndCheckNewVersion;
+    end;
     upStGetWhatsNew:upStatus:=upStIdle;
     upStDwNewVersion:upStatus:=upStIdle;
     upStUpdating:upStatus:=upStIdle;
@@ -108,32 +116,46 @@ end;
 
 constructor TAutoUpdate.Create;
 begin
+  inherited Create;
   upStatus:=upStIdle;
   upStError:=false;
-  inherited Create;
+  CBCheckNewVersion:=nil;
 end;
 
-function TAutoUpdate.NewVersionAvailable: boolean;
+procedure TAutoUpdate.CheckNewVersion;
 var
   f:string;
-  ini:TiniFile;
   Dwt:TDownloadThread;
 begin
-  result:=false;
+  Info('TAutoUpdate.CheckNewVersion');
+  FNewVersionAvailable:=false;
   f:=ConfigDir+VersionFile;
   Deletefile(f);
   upStatus:=upStGetVersionFile;
   DwT:=TDownloadThread.create(Format(SBADwUrl,[VersionFile]),f);
   DwT.OnDownloaded:=@FileDownloaded;
   DwT.start;
-  WaitForIdle;
+end;
+
+
+procedure TAutoUpdate.EndCheckNewVersion;
+var
+  f:string;
+  ini:TiniFile;
+begin
+  Info('TAutoUpdate.EndCheckNewVersion');
+  f:=ConfigDir+VersionFile;
   if not fileexists(f) then exit;
   ini:=TIniFile.Create(f);
-  VersionStr:=Ini.ReadString('versions','GUI','0.0.0.1');
-  if assigned(ini) then FreeAndNil(ini);
-  result:=VCmpr(GetFileVersion,VersionStr)<0;
+  try
+    VersionStr:=Ini.ReadString('versions','GUI','0.0.0.1');
+  finally
+    if assigned(ini) then FreeAndNil(ini);
+  end;
+  FNewVersionAvailable:=VCmpr(GetFileVersion,VersionStr)<0;
   Info('TAutoUpdate','Online version: '+VersionStr);
-  Info('TAutoUpdate.NewVersionAvailable',result);
+  Info('TAutoUpdate.NewVersionAvailable',FNewVersionAvailable);
+  if assigned(CBCheckNewVersion) then CBCheckNewVersion;
 end;
 
 function TAutoUpdate.GetWhatsNew:boolean;

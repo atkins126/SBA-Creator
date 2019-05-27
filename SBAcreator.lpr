@@ -9,11 +9,11 @@ uses
   {$ENDIF}{$ENDIF}
 
   Interfaces, // this includes the LCL widgetset
-  Forms, FrameViewer09, HistoryLazarus, MainFormU, synhighlighterverilog,
+  Forms, HistoryLazarus, MainFormU, synhighlighterverilog,
   synhighlightersba, versionsupportu, SBAProgContrlrU, AboutFormU, sbasnippetu,
   configformu, PrjWizU, dwfileU, DebugU, AutoUpdateU, SBAProjectU, floatformu,
   CoresPrjEdFormU, LibraryFormU, UtilsU, sbaprogramu, exportprjformu, UScaleDPI,
-  lazcontrols, uecontrols, SBAIPCoresU, PlugInU, WhatsNewU
+  lazcontrols, anchordockpkg, uecontrols, SBAIPCoresU, PlugInU, WhatsNewU
   {$IFDEF debug}
   , SysUtils
   {$ENDIF}

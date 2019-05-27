@@ -7,12 +7,13 @@ interface
 uses
   Controls, Graphics, Dialogs, Classes, SysUtils, ComCtrls, Fgl,
   StdCtrls, LazFileUtils, SynEdit, SynEditMouseCmds, IniFiles,
-  SynEditMarkupHighAll, SynEditTypes, SynEditKeyCmds,
+  SynEditMarkupHighAll, SynEditTypes, SynEditKeyCmds, SynCompletion,
   UtilsU, DebugU;
+
 
 type
 
-TEdType=(vhdl, prg, verilog, systemverilog, ini, json, markdown, cpp, html, pas, python, other, none);
+TEdType=(vhdl, prg, verilog, systemverilog, ini, json, markdown, cpp, html, pas, python, batch, shell, other, none);
 
 { TEditor }
 
@@ -31,6 +32,7 @@ private
 protected
   procedure DoOnStatusChange(Changes: TSynStatusChanges); override;
 public
+  SynCompletion: TSynCompletion;
   constructor Create(AOwner: TComponent); override;
   destructor Destroy; override;
   procedure CommentBlock;
@@ -54,8 +56,8 @@ var
   ActEditor:TEditor=nil;
   EditorCnt:integer=0;
   DefEdType:TEdtype=vhdl;
-  EditorFontName:string;
-  EditorFontSize:integer;
+  EditorFontName:string='';
+  EditorFontSize:integer=0;
   CommentStr:string='--';
 
 const
@@ -66,9 +68,12 @@ const
                  'Markdown=.md|'+
                  'Python=.py|'+
                  'C=.c|'+
-                 'Html=.htm';
+                 'Html=.htm|'+
+                 'Batch=.cmd|'+
+                 'Shell=.sh';
 
-  DefFileFilter='VHDL|*.vhd;*.vhdl|'+
+  DefFileFilter='All files|*.*|'+
+                'VHDL|*.vhd;*.vhdl|'+
                 'Verilog|*.v;*.vl;*.ver|'+
                 'System Verilog|*.sv|'+
                 'Ini|*.ini|'+
@@ -77,14 +82,14 @@ const
                 'Python|*.py|'+
                 'C|*.c;*.cpp|'+
                 'Html|*.htm;*.html|'+
-                'All files|*.*';
+                'Batch|*.bat;*.cmd|'+
+                'Shell|*.sh';
 
 function GetFileType(F: String): TEdType;
 function GetFileTypeKey:TStringList;
 function GetFileExt(FType: TEdType): string;
 function InsertBlock(Editor:TEditor; BStart,BEnd:string;t:TStrings):boolean;
 procedure FormatEditor(Editor:TEditor);
-procedure Reformat(osl, nsl: Tstrings; filetype: TEdType; Acommentstr: string='--');
 
 implementation
 
@@ -125,6 +130,7 @@ constructor TEditor.Create(AOwner: TComponent);
 begin
   Info('TEditor.Create',AOwner.Name);
   inherited Create(AOwner);
+  Inc(EditorCnt);
   DoubleBuffered:=true;
   BorderStyle:= bsNone;
   FEdType:= DefEdType;
@@ -137,7 +143,11 @@ begin
   FormatEditor(Self);
   Keystrokes.Items[Keystrokes.FindCommand(ecSetMarker1)].Command:=ecToggleMarker1;
   Modified:=false;
-  Inc(EditorCnt);
+  SynCompletion:=TSynCompletion.Create(AOwner);
+  SynCompletion.Position:=-1;
+  SynCompletion.ShowSizeDrag:=True;
+  SynCompletion.EndOfTokenChr:='()[].,;:'' =<>+-';
+  SynCompletion.Editor:=Self;
 end;
 
 destructor TEditor.Destroy;
@@ -187,7 +197,8 @@ end;
 
 procedure TEditor.ShareTextBufferFrom(AValue: TEditor);
 begin
-  if FSharedBuffer=AValue then Exit;
+  //if FSharedBuffer=AValue then Exit;
+  if FSharedBuffer<>nil then UnShareTextBuffer;
   FSharedBuffer:=AValue;
   inherited ShareTextBufferFrom(AValue);
   if AValue<>nil then
@@ -287,65 +298,6 @@ begin
   end else ShowMessage('Error in block definitions, check '+BStart+' keywords');
 end;
 
-procedure Reformat(osl, nsl: Tstrings; filetype: TEdType;
-  Acommentstr: string);
-var
-  s: string;
-  c: char;
-  j: Integer;
-  i: Integer;
-  ostr: TStringList;
-  f,sp:boolean;
-
-  function RandomCase(c:char):char;
-  begin
-    if Random(2)=1 then result:=upcase(c) else result:=lowercase(c);
-  end;
-
-begin
-  if not (filetype in [vhdl,prg,verilog,systemverilog]) then exit;
-
-  ostr:=TStringList.Create;
-  ostr.Assign(osl);
-
-  //Delete comments
-  for i:=ostr.Count-1 downto 0 do
-  begin
-    s:=ostr[i];
-    j:=pos(Acommentstr,s);
-    if j>0 then ostr[i]:=LeftStr(s,j-1);
-  end;
-
-  nsl.clear;
-  s:=''; j:=1; f:=false; sp:=false;
-
-  //Delete Tabs, Double spaces and CR LF, reformat to random case and 80 cols
-  for i:=1 to length(ostr.Text) do
-  begin
-    c:=ostr.Text[i];
-    case c of
-      '"' : f:=not f;
-      #09,#10,#13 : c:=' ';
-      'a'..'z', 'A'..'Z': if (filetype=vhdl) then c:=RandomCase(c);
-    end;
-    if (c=' ') then if sp then Continue else sp:=true else sp:=false;
-    s:=s+c;
-    if (j>80) and (c in [' ', ';', '+', '-', '(', ')']) and not f then
-    begin
-      nsl.Add(s);
-      s:='';
-      j:=1;
-    end else inc(j);
-  end;
-  if s<>'' then nsl.Add(s);
-
-  // Add last comments
-  nsl.Add(Acommentstr+'------------------------------------------------------------------------------');
-  nsl.Add(Acommentstr+' This file was obfuscated and reformated using SBA Creator                  --');
-  nsl.Add(Acommentstr+'------------------------------------------------------------------------------');
-  ostr.Free;
-end;
-
 function GetFileType(F:String):TEdType;
 var
   ts:string;
@@ -367,6 +319,8 @@ begin
     '.md','.mkd','.mdwn',
     '.mdtxt','.mdtext','.text',
     '.rmd' : result:=markdown;
+    '.cmd','.bat': result:=batch;
+    '.sh': result:=shell;
   else result:=other;
   end;
 end;
@@ -385,6 +339,8 @@ begin
     html:result:='.htm';
     pas:result:='.pas';
     markdown:result:='.md';
+    batch:result:='.cmd';
+    shell:result:='.sh';
     else result:='.txt';
   end;
 end;
@@ -405,37 +361,37 @@ var
 begin
   with Editor do
   begin
-    Font.Name:=EditorFontName;
-    Font.Size:=EditorFontSize;
+    if EditorFontName<>'' then Font.Name:=EditorFontName;
+    if EditorFontSize<>0 then Font.Size:=EditorFontSize;
     //Font.Height:=-12;
     Font.Quality:=fqProof;
     Gutter.Width:=54;
     Options:=[eoAutoIndent, eoBracketHighlight, eoGroupUndo,
        eoScrollPastEof, eoScrollPastEol, eoSmartTabs, eoTabIndent, eoTabsToSpaces,
        eoTrimTrailingSpaces, eoAltSetsColumnMode];
-     MouseOptions:=[emAltSetsColumnMode];
-     ScrollBars:=ssAutoBoth;
-     HighlightAllColor.Background:=clMaroon;
-     BracketMatchColor.Background:=clWhite;
-     LineHighlightColor.Background:=clCream;
-     LineHighlightColor.FrameColor:=clSilver;
-     LineHighlightColor.FrameStyle:=slsDotted;
-     TabWidth:=4;
-     Gutter.MarksPart().AutoSize:=false;
-     Gutter.MarksPart().Width:=16;
-     Gutter.LineNumberPart().Width:=22;
-     Gutter.LineNumberPart().DigitCount:=3;
-     Gutter.LineNumberPart().ShowOnlyLineNumbersMultiplesOf:=5;
-     Gutter.SeparatorPart().MarkupInfo.Background:=clBtnFace;
-     Gutter.SeparatorPart().MarkupInfo.Foreground:=clGray;
-     Gutter.CodeFoldPart().MarkupInfo.Background:=clWindow;
-     SynMarkup:=TSynEditMarkupHighlightAllCaret(Editor.MarkupByClass[
-       TSynEditMarkupHighlightAllCaret]);
-     SynMarkup.MarkupInfo.Background:= clBtnFace;
-     SynMarkup.MarkupInfo.FrameColor:= clGray;
-     SynMarkup.WaitTime := 500;
-     SynMarkup.Trim := True;
-     SynMarkup.FullWord:= True;
+    MouseOptions:=[emAltSetsColumnMode];
+    ScrollBars:=ssAutoBoth;
+    HighlightAllColor.Background:=clMaroon;
+    BracketMatchColor.Background:=clWhite;
+    LineHighlightColor.Background:=clCream;
+    LineHighlightColor.FrameColor:=clSilver;
+    LineHighlightColor.FrameStyle:=slsDotted;
+    TabWidth:=4;
+    Gutter.MarksPart().AutoSize:=false;
+    Gutter.MarksPart().Width:=16;
+    Gutter.LineNumberPart().Width:=22;
+    Gutter.LineNumberPart().DigitCount:=3;
+    Gutter.LineNumberPart().ShowOnlyLineNumbersMultiplesOf:=5;
+    Gutter.SeparatorPart().MarkupInfo.Background:=clBtnFace;
+    Gutter.SeparatorPart().MarkupInfo.Foreground:=clGray;
+    Gutter.CodeFoldPart().MarkupInfo.Background:=clWindow;
+    SynMarkup:=TSynEditMarkupHighlightAllCaret(Editor.MarkupByClass[
+      TSynEditMarkupHighlightAllCaret]);
+    SynMarkup.MarkupInfo.Background:= clBtnFace;
+    SynMarkup.MarkupInfo.FrameColor:= clGray;
+    SynMarkup.WaitTime := 500;
+    SynMarkup.Trim := True;
+    SynMarkup.FullWord:= True;
   end;
 end;
 

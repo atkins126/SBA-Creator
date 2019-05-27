@@ -21,8 +21,8 @@
       <UseVersionInfo Value="True"/>
       <AutoIncrementBuild Value="True"/>
       <MinorVersionNr Value="5"/>
-      <RevisionNr Value="1"/>
-      <BuildNr Value="59"/>
+      <RevisionNr Value="3"/>
+      <BuildNr Value="75"/>
       <Attributes pvaPreRelease="True"/>
       <StringTable CompanyName="uE Peru" FileDescription="SBA System Creator" LegalCopyright="(c) Miguel A. Risco-Castillo" ProductVersion="Public Beta"/>
     </VersionInfo>
@@ -115,7 +115,6 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="..\..\Libs\InternetTools\data;..\..\Libs\InternetTools\internet;..\..\Libs\InternetTools\system"/>
             <UnitOutputDirectory Value="$Env(TEMP)\lazarus\lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
@@ -159,7 +158,6 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="..\..\Libs\InternetTools\data;..\..\Libs\InternetTools\internet;..\..\Libs\InternetTools\system"/>
             <UnitOutputDirectory Value="$Env(TEMP)\lazarus\lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <CodeGeneration>
@@ -237,7 +235,6 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="..\..\Libs\InternetTools\data;..\..\Libs\InternetTools\internet;..\..\Libs\InternetTools\system"/>
             <UnitOutputDirectory Value="$Env(TEMP)\lazarus\lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <CodeGeneration>
@@ -316,7 +313,6 @@
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
             <Libraries Value="C:\Codetyphon\binLibraries\x86_64-linux\"/>
-            <OtherUnitFiles Value="..\..\Libs\InternetTools\data;..\..\Libs\InternetTools\internet;..\..\Libs\InternetTools\system"/>
             <UnitOutputDirectory Value="$Env(TEMP)\lazarus\lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <CodeGeneration>
@@ -432,40 +428,43 @@
         <Mode0 Name="default"/>
       </Modes>
     </RunParams>
-    <RequiredPackages Count="11">
+    <RequiredPackages Count="12">
       <Item1>
-        <PackageName Value="attabs_package"/>
+        <PackageName Value="AnchorDocking"/>
       </Item1>
       <Item2>
-        <PackageName Value="internettools"/>
+        <PackageName Value="laz_synapse"/>
       </Item2>
       <Item3>
-        <PackageName Value="fpc_markdown"/>
+        <PackageName Value="internettools"/>
       </Item3>
       <Item4>
-        <PackageName Value="FrameViewer09"/>
+        <PackageName Value="attabs_package"/>
       </Item4>
       <Item5>
-        <PackageName Value="LazUtils"/>
+        <PackageName Value="fpc_markdown"/>
       </Item5>
       <Item6>
-        <PackageName Value="LazControls"/>
+        <PackageName Value="LazUtils"/>
       </Item6>
       <Item7>
-        <PackageName Value="HistoryLazarus"/>
+        <PackageName Value="LazControls"/>
       </Item7>
       <Item8>
-        <PackageName Value="bgracontrols"/>
+        <PackageName Value="HistoryLazarus"/>
       </Item8>
       <Item9>
-        <PackageName Value="uEControls"/>
+        <PackageName Value="bgracontrols"/>
       </Item9>
       <Item10>
-        <PackageName Value="SynEdit"/>
+        <PackageName Value="uEControls"/>
       </Item10>
       <Item11>
-        <PackageName Value="LCL"/>
+        <PackageName Value="SynEdit"/>
       </Item11>
+      <Item12>
+        <PackageName Value="LCL"/>
+      </Item12>
     </RequiredPackages>
     <Units Count="27">
       <Unit0>

@@ -26,6 +26,8 @@ Add special list of highlighted words
 
 unit SynHighlighterSBA;
 
+{$mode objfpc}{$H+}
+
 interface
 
 uses
@@ -39,7 +41,22 @@ type
 
   TProcTableProc = procedure of object;
 
-  TBlockID = (PackageBlk, EntityBlk, ArchBlk, CompBlk, EntCompBlk, MapBlk, RecordBlk, ProcessBlk, CaseBlk, ForBlk, IfBlk, WhileBlk, FuncProcBlk);
+  TBlockID = (
+    PackageBlk,  // Package block
+    EntityBlk,
+    ArchBlk,     // Declarative
+    ArchImplBlk, // Implementation
+    CompBlk,
+    EntCompBlk,
+    MapBlk,
+    RecordBlk,
+    ProcessBlk,
+    CaseBlk,
+    ForBlk,
+    IfBlk,
+    WhileBlk,
+    FuncProcBlk
+    );
 
 type
 
@@ -253,7 +270,10 @@ begin
          KeyComp('constant')
       then fTokenID := tkKey;
       if KeyComp('case') then begin fTokenID := tkKey; StartCodeFoldBlock(Pointer(PtrUInt(CaseBlk))); end;
-      if KeyComp('component') then begin fTokenID := tkKey; StartCodeFoldBlock(Pointer(PtrUInt(CompBlk))); end;
+      if KeyComp('component') then begin
+        fTokenID := tkKey;
+        if (Blk=ArchBlk) then StartCodeFoldBlock(Pointer(PtrUInt(CompBlk)));
+      end;
       //ieee
       if KeyComp('character') then fTokenID := tkIeee;
     end;

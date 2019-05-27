@@ -50,6 +50,19 @@ Ctrl + Shift + Y           Delete to End of Line
 Ctrl + Shift + I           Increase Indent  
 Ctrl + Shift + U           Decrease Indent  
 ```
+Syncro Editing
+--------------
+```
+Ctrl + J                   Star Syncro Editing
+Ctrl + Right               Next Cell  
+Tab                        Next Cell Selected  
+Ctrl + Left                Previous Cell  
+Shift + Tab                Previous Cell Selected  
+Home                       Cell Home  
+End                        Cell End  
+Ctrl + A                   Select Cell content
+Esc                        End Syncro Editing
+```
 File/Tab Handling:
 ------------------
 ```

@@ -234,7 +234,7 @@ end;
 
 constructor TSBAContrlrProg.Create;
 begin
-  FFileName:=cSBADefaultPrgName;
+  FFileName:=ProgramsDir+cSBADefaultPrgName;
 end;
 
 // Extract Labels and complete steps numbers

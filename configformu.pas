@@ -7,7 +7,7 @@ interface
 uses
   Classes, SysUtils, FileUtil, LazFileUtils, ListViewFilterEdit, Forms,
   Controls, Graphics, Dialogs, ExtCtrls, StdCtrls, Buttons, EditBtn,IniPropStorage,
-  ButtonPanel, ComCtrls;
+  ButtonPanel, ComCtrls, Process;
 
 type
 
@@ -155,6 +155,10 @@ begin
 end;
 
 function SetUpConfig: boolean;
+{$IFDEF UNIX}
+var s:string; //dummy string for RunCommandIndir
+{$ENDIF}
+
 begin
   result:=false;
   Info('SetUpConfig','ConfigDir= '+ConfigDir);
@@ -235,6 +239,11 @@ begin
   if FileExists(AppDir+'newbanner.gif') then if CopyFile(AppDir+'banner.gif',ConfigDir+'newbanner.gif') then DeleteFile(AppDir+'newbanner.gif');
   if FileExists(AppDir+'templates.ini') then if CopyFile(AppDir+'templates.ini',ConfigDir+'templates.ini') then DeleteFile(AppDir+'templates.ini');
   if FileExists(AppDir+'autocomplete.txt') then if CopyFile(AppDir+'autocomplete.txt',ConfigDir+'autocomplete.txt')then DeleteFile(AppDir+'autocomplete.txt');
+
+  {$IFDEF UNIX}
+  RunCommandInDir(AppDir,'/bin/bash',['-c','chmod -R +x .'],s);
+  RunCommandInDir(ConfigDir+'plugins','/bin/bash',['-c','chmod -R +x .'],s);
+  {$ENDIF}
 
   result:=true;
 end;
@@ -386,6 +395,7 @@ begin
   CB_FilesMonitor.Checked:=EnableFilesMon;
   CB_BakTimeStamp.Checked:=BakTimeStamp;
   Ed_EditorFontName.Text:=EditorFontName;
+  Ed_EditorFontSize.Text:=IntToStr(EditorFontSize);
   Ed_SBAversion.ItemIndex:=SBAversion;
   Ed_SelTheme.ItemIndex:=SelTheme;
   ListPlugIns;
@@ -456,7 +466,7 @@ end;
 
 procedure TConfigForm.B_LoadPlugInClick(Sender: TObject);
 var
-  d:string;
+  d,s:string;
 begin
   if TempPlugIn=nil then exit;
   d:=ConfigDir+'plugins'+PathDelim+GetDeepestDir(TempPlugIn.IniFile)+PathDelim;
@@ -467,8 +477,11 @@ begin
     begin
       GetPlugInList;
       ListPlugIns;
+      {$IFDEF UNIX}
+      RunCommandInDir(d,'/bin/bash',['-c','chmod -R +x .'],s);
+      {$ENDIF}
     end else ShowMessage('Error: The Plugin folder cannot be created.');
-  end else ShowMessage('The Plugin folder already exists: '+d);
+  end else ShowMessage('The Plugin folder already exists: '+d+' delete it manually if  you want to install again.');
 end;
 
 procedure TConfigForm.B_LoadThemeClick(Sender: TObject);

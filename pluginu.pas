@@ -5,8 +5,8 @@ unit PlugInU;
 interface
 
 uses
-  Classes, SysUtils, Menus, Graphics, Controls,
-  fileutil, LazFileUtils, IniFiles, Fgl,
+  Classes, SysUtils, Menus, Graphics, Controls, ComCtrls,
+  Buttons, fileutil, LazFileUtils, IniFiles, Fgl,
   Dialogs, ConfigFormU, SBAProjectU, EditorU;
 
 type
@@ -32,6 +32,9 @@ type
     MenuCaption:string;
     MenuIcon:string;
     MenuHint:string;
+    TBCaption:string;
+    TBIcon:string;
+    TBHint:string;
     Tag:Integer;
     PlugInCmd:TPlugInCmd;
     MenuItem:TMenuItem;
@@ -40,6 +43,7 @@ type
     function ParseParameters:string;
     procedure OnClick(Sender: TObject);
     function CreateMenuItem(Menu: TMenuItem): TMenuItem;
+    function CreateSpeedButton(PluginBar: TWinControl): TSpeedButton;
     function GetPlugIn(plid: string): TPlugIn;
     property Enabled:Boolean read FEnabled write SetEnabled;
   end;
@@ -62,6 +66,7 @@ Const
   cPrjName='%prjname%';
   cFileName='%filename%';
   cFilePath='%filepath%';
+  cFileNameOnly='%filenameonly%';
   cAppDir='%appdir%';
   cConfigFile='%configfile%';
 
@@ -101,6 +106,9 @@ begin
     MenuCaption:=Ini.Readstring('Menu','Caption','');
     MenuIcon:=Ini.Readstring('Menu','Icon','');
     MenuHint:=Ini.Readstring('Menu','Hint','');
+    TBCaption:=Ini.Readstring('TBButton','Caption','');
+    TBIcon:=Ini.Readstring('TBButton','Icon','');
+    TBHint:=Ini.Readstring('TBButton','Hint','');
   finally
     If assigned(Ini) then FreeAndNil(Ini);
   end;
@@ -126,9 +134,11 @@ begin
   begin
     result:=StringReplace(result,cFileName,ActEditor.FileName,[rfIgnoreCase]);
     result:=StringReplace(result,cFilePath,ExtractFilePath(ActEditor.FileName),[rfIgnoreCase]);
+    result:=StringReplace(result,cFileNameOnly,ExtractFileNameOnly(ActEditor.FileName),[rfIgnoreCase]);
   end else begin
-    result:=StringReplace(result,cFileName,cDefNewFileName+'.vhd',[rfIgnoreCase]);
+    result:=StringReplace(result,cFileName,'',[rfIgnoreCase]);
     result:=StringReplace(result,cFilePath,'',[rfIgnoreCase]);
+    result:=StringReplace(result,cFileNameOnly,'',[rfIgnoreCase]);
   end;
   //
   result:=StringReplace(result,cAppDir,AppDir,[rfIgnoreCase]);
@@ -157,6 +167,36 @@ begin
       end;
     end;
     result:=MenuItem;
+  end else result:=nil;
+end;
+
+function TPlugIn.CreateSpeedButton(PluginBar: TWinControl): TSpeedButton;
+var
+  PB:TSpeedButton;
+  picture:TPicture;
+begin
+  if not TBCaption.IsEmpty then
+  begin
+    PB:=TSpeedButton.Create(PluginBar);
+    PB.Flat:=true;
+    PB.Align:=alLeft;
+    PB.Caption:=TBCaption;
+    PB.Hint:=TBHint;
+    PB.OnClick:=@OnClick;
+    PB.NumGlyphs:=1;
+    if not TBIcon.IsEmpty and fileexists(Path+TBIcon)then
+    begin
+      Picture := TPicture.Create;
+      try
+        Picture.LoadFromFile(Path+MenuIcon);
+        PB.Glyph.Assign(Picture.Graphic);
+      finally
+        Picture.Free;
+      end;
+    end;
+    PB.AutoSize:=true;
+    PB.Parent := PluginBar;
+    result:=PB;
   end else result:=nil;
 end;
 
