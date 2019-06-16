@@ -7,7 +7,11 @@ interface
 uses
   Classes, SysUtils, FileUtil, LazFileUtils, ListViewFilterEdit, Forms,
   Controls, Graphics, Dialogs, ExtCtrls, StdCtrls, Buttons, EditBtn,IniPropStorage,
-  ButtonPanel, ComCtrls, Process;
+  ButtonPanel, ComCtrls
+  {$IFDEF UNIX}
+  ,Process
+  {$ENDIF}
+  ;
 
 type
 
@@ -238,7 +242,6 @@ begin
   if FileExists(AppDir+cSBAAdvPrgTemplate) then if CopyFile(AppDir+cSBAAdvPrgTemplate,ConfigDir+cSBAAdvPrgTemplate) then DeleteFile(AppDir+cSBAAdvPrgTemplate);
   if FileExists(AppDir+'newbanner.gif') then if CopyFile(AppDir+'banner.gif',ConfigDir+'newbanner.gif') then DeleteFile(AppDir+'newbanner.gif');
   if FileExists(AppDir+'templates.ini') then if CopyFile(AppDir+'templates.ini',ConfigDir+'templates.ini') then DeleteFile(AppDir+'templates.ini');
-  if FileExists(AppDir+'autocomplete.txt') then if CopyFile(AppDir+'autocomplete.txt',ConfigDir+'autocomplete.txt')then DeleteFile(AppDir+'autocomplete.txt');
 
   {$IFDEF UNIX}
   RunCommandInDir(AppDir,'/bin/bash',['-c','chmod -R +x .'],s);

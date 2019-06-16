@@ -18,6 +18,7 @@ const
   cSBAdcdr='SBAdcdr.vhd'; // SBA v1.1
   cSBAmux='SBAmux.vhd';   // SBA v1.2
   cSBActrlr='SBActrlr.vhd';
+  cSBAlicense='SBAlicense.md';
   cSBApkg='SBApkg.vhd';
   cSyscon='Syscon.vhd';
   cDataIntf='DataIntf.vhd';
@@ -407,6 +408,7 @@ begin
       1 : CopyFile(SBAbaseDir+cSBAmux,Flocation+Fname+'_'+cSBAmux);
     end;
     CopyFile(SBAbaseDir+cSBActrlr,Flocation+Fname+'_'+cSBActrlr);
+    CopyFile(SBAbaseDir+cSBAlicense,Flocation+cSBAlicense);
     CreateDir(FLocLib);
     CopyFile(SBAbaseDir+cSBApkg,FLocLib+cSBApkg);
     CopyFile(SBAbaseDir+cSyscon,FLocLib+cSyscon);
@@ -858,6 +860,7 @@ begin
     if Fexplibfiles then CopyDirTree(Floclib,ExportPath+cPrjLib+PathDelim,[cffOverwriteFile,cffCreateDestDirectory,cffPreserveTime]);
     if Fexpuserfiles then CopyDirTree(Flocuser,ExportPath+cPrjUser+PathDelim,[cffOverwriteFile,cffCreateDestDirectory,cffPreserveTime]);
   end;
+  CopyFile(Flocation+cSBAlicense,ExportPath+cSBAlicense);
 end;
 
 procedure TSBAPrj.CopyIPCoreFiles(cl: TStrings);

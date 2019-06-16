@@ -3,7 +3,7 @@ SynHighlighterSBA v1.2
 
 This unit provides a SBA VHDL highlighter for SynEdit.
 
-2015 (c) Miguel A. Risco-Castillo
+2018 (c) Miguel A. Risco-Castillo
 
 The contents of this file are subject to the Mozilla Public License
 Version 1.1 (the "License"); you may not use this file except in compliance
@@ -210,6 +210,7 @@ end;
 procedure TSynSBASyn.SetHLWordsList(AValue: TStringList);
 begin
   if FHLWordsList=AValue then Exit;
+  if assigned(FHLWordsList) then FHLWordsList.Free;
   FHLWordsList:=AValue;
 end;
 

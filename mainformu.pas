@@ -6,17 +6,14 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, Buttons,
-  ComCtrls, Process, AsyncProcess, ExtCtrls, Menus, ActnList, SynHighlighterSBA,
-  SynHighlighterVerilog, SynHighlighterJSON, SynEdit, SynEditTypes,
-  SynEditKeyCmds, SynPluginSyncroEdit, SynHighlighterIni, SynEditHighlighter,
-  SynPluginMulticaret, SynHighlighterHTML, SynExportHTML,
-  SynHighlighterPas, SynHighlighterCpp, SynHighlighterPython,
-  SynHighlighterBat, synhighlighterunixshellscript, FileUtil, LazFileUtils,
+  ComCtrls, Process, AsyncProcess, ExtCtrls, Menus, ActnList, SynEdit, SynEditTypes,
+  SynEditKeyCmds, SynPluginSyncroEdit, SynEditHighlighter,
+  SynPluginMulticaret, SynExportHTML,
+  SynCompletion, FileUtil, LazFileUtils,
   dateutils, ListViewFilterEdit, BGRABitmap, BGRABitmapTypes,
-  BGRASpriteAnimation, strutils, LazUTF8, Math, Clipbrd,
-  IniPropStorage, StdActns, uebutton, uETilePanel, uEImage, versionsupportu,
-  types, lclintf, LCLType, HistoryFiles, attabs, IniFiles, EditorU,
-  FilesMonitorU;
+  BGRASpriteAnimation, strutils, LazUTF8, Math, Clipbrd, IniPropStorage,
+  StdActns, uebutton, uETilePanel, uEImage, versionsupportu, types, lclintf,
+  LCLType, HistoryFiles, attabs, IniFiles, EditorU, FilesMonitorU, DataSheetU;
 
 type
   tProcessStatus=(Idle,TimeOut,SyntaxChk,exePlugIn);
@@ -24,6 +21,8 @@ type
   { TMainForm }
 
   TMainForm = class(TForm)
+    MI_FindInstance: TMenuItem;
+    ProjectFindInstance: TAction;
     LogClear: TAction;
     LogCopy: TAction;
     MenuItem14: TMenuItem;
@@ -108,19 +107,10 @@ type
     EditCopyAsHtml: TAction;
     MenuItem10: TMenuItem;
     MenuItem4: TMenuItem;
-    SynBatSyn: TSynBatSyn;
-    SynUNIXShellScriptSyn: TSynUNIXShellScriptSyn;
-    SynPythonSyn: TSynPythonSyn;
-    SynCppSyn: TSynCppSyn;
     SynExporterHTML: TSynExporterHTML;
-    SynFreePascalSyn: TSynFreePascalSyn;
-    SynIniSyn: TSynIniSyn;
-    SynHTMLSyn: TSynHTMLSyn;
-    SynSBASyn:TSynSBASyn;
-    SynVerilogSyn:TSynVerilogSyn;
-    SynJSONSyn:TSynJSONSyn;
     SyncroEdit: TSynPluginSyncroEdit;
     SynMultiCaret:TSynPluginMulticaret;
+    SynAutoComplete: TSynAutoComplete;
     ToolsExporttoHtml: TAction;
     PlugInsMenu: TMenuItem;
     ProjectItemDataSheet: TAction;
@@ -412,7 +402,7 @@ type
     procedure MainPanelResize(Sender: TObject);
     procedure MiniMapMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
-    procedure MiniMapMouseEnter(Sender: TObject);
+    procedure MiniMapEnter(Sender: TObject);
     procedure MiniMapMouseMove(Sender: TObject; Shift: TShiftState; X,
       Y: Integer);
     procedure MiniMapMouseUp(Sender: TObject; Button: TMouseButton;
@@ -439,6 +429,7 @@ type
     procedure ProjectExportExecute(Sender: TObject);
     procedure MainGotoEditorExecute(Sender: TObject);
     procedure MainGotoPrgExecute(Sender: TObject);
+    procedure ProjectFindInstanceExecute(Sender: TObject);
     procedure ProjectItemDataSheetExecute(Sender: TObject);
     procedure ProjectNewExecute(Sender: TObject);
     procedure ProjectOpenExecute(Sender: TObject);
@@ -507,7 +498,6 @@ type
     procedure GotoProgEdit;
     procedure NewFileMenuExecute(Sender: TObject);
     procedure NewPrg;
-    function SelectExportHighligther(var Editor: TEditor): TSynCustomHighlighter;
     procedure ExporttoHtmlFile(var Editor: TEditor);
     procedure CopyAsHtml(var Editor: TEditor);
     procedure LoadPlugIns;
@@ -566,7 +556,7 @@ implementation
 {$R *.lfm}
 
 uses DebugU, SBAProgContrlrU, SBAProjectU, SBAProgramU, ConfigFormU, AboutFormU, sbasnippetu, PrjWizU,
-     SBAIPCoresU, DwFileU, FloatFormU, LibraryFormU, ExportPrjFormU, AutoUpdateU, WhatsNewU,
+     SBAIPCoresU, DwFileU, FloatFormU, ExportPrjFormU, AutoUpdateU, WhatsNewU,
      PlugInU;
 
 var
@@ -904,7 +894,13 @@ end;
 procedure TMainForm.btn_sba_libraryClick(Sender: TObject);
 var s:string;
 begin
-  ShowLibraryForm;
+  Enabled:=false;
+  {$IFDEF WINDOWS}
+  RunCommand(AppDir+'SBAlibrary.exe',[ConfigFile],s);
+  {$ELSE}
+  RunCommand(AppDir+'SBAlibrary',[ConfigFile],s);
+  {$ENDIF}
+  Enabled:=true;
   SBASnippet.UpdateSnippetsFilter(SnippetsFilter);
 end;
 
@@ -1023,10 +1019,10 @@ begin
   if assigned(Editor) then
   begin
     Editor.CaretX:=0;
+    SL:=TStringList.Create;
+    Ini:=TInifile.Create(ConfigDir+'templates.ini',[ifoStripQuotes]);
     try
-      SL:=TStringList.Create;
       SL.Clear;
-      Ini:=TInifile.Create(ConfigDir+'templates.ini',[ifoStripQuotes]);
       j:=Ini.ReadInteger(TMenuItem(Sender).Caption,'Lines',0);
       for n:=0 to j-1 do SL.Add(Ini.ReadString(TMenuItem(Sender).Caption,'L'+inttostr(n),''));
       if SL.Count>0 then Editor.InsertTextAtCaret(SL.Text);
@@ -1431,13 +1427,45 @@ begin
   //btn_new_project.Constraints.MinWidth:=v;
 end;
 
+procedure TMainForm.MiniMapSetup;
+begin
+  MiniMap:=TEditor.Create(Self);
+  Dec(EditorCnt);
+  MiniMap.Visible:=false;
+  MiniMap.Width:=165;
+  MiniMap.Align:=alRight;
+  MiniMap.Font.Height:= -3;
+  MiniMap.Font.Name:= 'Courier New';
+  MiniMap.Font.Pitch:= fpFixed;
+  MiniMap.Font.Quality := fqAntialiased;
+  MiniMap.BorderStyle:= bsNone;
+  MiniMap.Gutter.AutoSize:= False;
+  MiniMap.Gutter.Visible:= False;
+  MiniMap.Gutter.Width:= 0;
+  MiniMap.Gutter.MouseActions.Clear;
+  MiniMap.RightGutter.Width:= 0;
+  MiniMap.RightGutter.MouseActions.Clear;
+  MiniMap.Keystrokes.Clear;
+  MiniMap.MouseActions.Clear;
+  MiniMap.MouseTextActions.Clear;
+  MiniMap.MouseSelActions.Clear;
+  MiniMap.Options:=[eoNoCaret, eoNoSelection, eoScrollPastEol];
+  MiniMap.ReadOnly:= True;
+  MiniMap.ScrollBars:= ssNone;
+  MiniMap.OnSpecialLineColors:= @MiniMapSpecialLineColors;
+  MiniMap.OnMouseDown:= @MiniMapMouseDown;
+  MiniMap.OnMouseMove:= @MiniMapMouseMove;
+  MiniMap.OnMouseUp:= @MiniMapMouseUp;
+  MiniMap.OnEnter:= @MiniMapEnter;
+end;
+
 procedure TMainForm.MiniMapMouseDown(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
 begin
   MiniMapinDrag:=true;
 end;
 
-procedure TMainForm.MiniMapMouseEnter(Sender: TObject);
+procedure TMainForm.MiniMapEnter(Sender: TObject);
 begin
   if assigned(ActEditor) and ActEditor.Visible then ActEditor.SetFocus;
 end;
@@ -1527,6 +1555,7 @@ begin
   MI_UpdCore.Visible:=false;
   MI_RemCore.Visible:=false;
   MI_AddInstance.Visible:=false;
+  MI_FindInstance.Visible:=False;
   MI_AddUserFile.Visible:=false;
   MI_RemUserFile.Visible:=false;
   if ((TN.Parent=nil) and (TN.Text='User')) or
@@ -1540,6 +1569,7 @@ begin
   begin
     MI_AddCore.Visible:=true;
     MI_OpenDataSheet.Visible:=True;
+    MI_FindInstance.Visible:=True;
     //MI_UpdCore.Visible:=true;
     //MI_RemCore.Visible:=true;
     MI_AddInstance.Visible:=true;
@@ -1797,6 +1827,20 @@ begin
   if ActEditor.isEmpty then NewPrg else ExtractSBALabels;
 end;
 
+procedure TMainForm.ProjectFindInstanceExecute(Sender: TObject);
+var
+  TN:TTreeNode;
+  corename:string;
+begin
+  TN:=PrjTree.Selected;
+  if (TN<>nil) and (TN.Parent<>nil) and (TN.GetParentNodeOfAbsoluteLevel(0).Text='Lib') then
+  begin
+    corename:=TN.Text;
+    if ActEditor.SearchReplace('entity work.'+corename,'',[ssoEntireScope])=0
+    then ShowMessage(corename+' instance not found');
+  end else ShowMessage('Please select an IP core first');
+end;
+
 procedure TMainForm.ProjectItemDataSheetExecute(Sender: TObject);
 var
   TN:TTreeNode;
@@ -1810,7 +1854,7 @@ begin
     Ini:=TIniFile.Create(f+TN.Text+'.ini');
     try
       dsname:=f+Ini.ReadString('MAIN','DataSheet','readme.md');
-      LibraryForm.OpenDataSheet(dsname);
+      OpenDataSheet(dsname);
     finally
       Ini.free;
     end;
@@ -2184,54 +2228,20 @@ begin
   else SyntaxCheck(s,'',ActEditor.EdType);
 end;
 
-function TMainForm.SelectExportHighligther(var Editor:TEditor):TSynCustomHighlighter;
-begin
-  case Editor.EdType of
-    vhdl,prg:
-      result:=TSynSBASyn.Create(MainForm);
-    verilog,systemverilog:
-      result:=TSynVerilogSyn.Create(MainForm);
-    ini:
-      result:=TSynIniSyn.Create(MainForm);
-    json:
-      result:=TSynJSONSyn.Create(MainForm);
-    html:
-      result:=TSynHTMLSyn.Create(MainForm);
-    pas:
-      result:=TSynFreePascalSyn.Create(MainForm);
-    cpp:
-      result:=TSynCppSyn.Create(MainForm);
-    python:
-      result:=TSynPythonSyn.Create(MainForm);
-    batch:
-      result:=TSynBatSyn.Create(MainForm);
-    shell:
-      result:=TSynUnixShellScriptSyn.Create(MainForm)
-  else
-    result:=nil;
-  end;
-  if result=nil then
-  begin
-    Info('TMainForm.ExporttoHtml','Highligther not found');
-    Exit(nil);
-  end else
-    Info('TMainForm.ExporttoHtml ',result.ClassName);
-end;
-
 procedure TMainForm.ExporttoHtmlFile(var Editor: TEditor);
 var f:string;
 begin
   Info('TMainForm.ExporttoHtmlFile',Editor.FileName);
   if Editor.EdType=markdown then
   begin
-    f:=LibraryForm.Md2Html(Editor.Text,Editor.FileName);
+    f:=Md2Html(Editor.Text,Editor.FileName);
     if f='' then exit;
     OpenURL('file://'+f+'?time='+TimetoStr(now));
     Sleep(300);
     DeleteFile(f);
     exit;
   end;
-  SynExporterHTML.Highlighter:=SelectExportHighligther(Editor);
+  SynExporterHTML.Highlighter:=Editor.CreateExportHighligther;
   if assigned(SynExporterHTML.Highlighter) then
   begin
     SynExporterHTML.Options:=SynExporterHTML.Options-[heoWinClipHeader];
@@ -2249,14 +2259,14 @@ end;
 
 procedure TMainForm.CopyAsHtml(var Editor: TEditor);
 begin
-  if not Editor.SelAvail then exit;
-  SynExporterHTML.Highlighter:=SelectExportHighligther(Editor);
+  if not assigned(Editor) or not Editor.SelAvail then exit;
+  SynExporterHTML.Highlighter:=Editor.CreateExportHighligther;
   if assigned(SynExporterHTML.Highlighter) then with Editor do
   begin
     SynExporterHTML.Options:=SynExporterHTML.Options+[heoWinClipHeader];
     SynExporterHTML.ExportRange(Lines,BlockBegin,BlockEnd);
     SynExporterHTML.CopyToClipboard;
-    if assigned(SynExporterHTML.Highlighter) then SynExporterHTML.Highlighter.Free;
+    SynExporterHTML.Highlighter.Free;
   end;
 end;
 
@@ -2357,10 +2367,9 @@ begin
   SnippetsList:=TStringList.Create;
   ProgramsList:=TStringList.Create;
   UpdateLists;
-  SynSBASyn:= TSynSBASyn.Create(Self);
-  SynVerilogSyn:= TSynVerilogSyn.Create(Self);
-  SynJSONSyn:=TSynJSONSyn.create(Self);
+  SynHighLightersCreate(Self);
   SynMultiCaret:=TSynPluginMulticaret.Create(Self);
+  SynAutoComplete:=TSynAutoComplete.Create(Self);
   PrjHistory.IniFile:=ConfigDir+'FileHistory.ini';
   PrjHistory.UpdateParentMenu;
   EditorHistory.IniFile:=ConfigDir+'FileHistory.ini';
@@ -2444,7 +2453,7 @@ begin
   end;
 end;
 
-procedure TMainform.SetupTBEditOpenPopUp;
+procedure TMainForm.SetupTBEditOpenPopUp;
 var
   m,n:TMenuItem;
 begin
@@ -2517,6 +2526,15 @@ var
   i,j:integer;
   EdTemplates:TPopupMenu;
 
+  procedure AutoCompleteAdd(Template:String);
+  var
+    j,n:integer;
+  begin
+    SynAutoComplete.AutoCompleteList.Add(Ini.ReadString(Template,'AutoComplete',''));
+    j:=Ini.ReadInteger(Template,'Lines',0);
+    for n:=0 to j-1 do SynAutoComplete.AutoCompleteList.Add('='+Ini.ReadString(Template,'L'+inttostr(n),''));
+  end;
+
   procedure CreateSubMenu(N:TMenuItem);
   var
     M:TMenuItem;
@@ -2524,6 +2542,8 @@ var
     i,j:integer;
   begin
     If not assigned(N) then exit;
+    if Ini.ValueExists(N.Caption,'AutoComplete') then
+      AutoCompleteAdd(N.Caption);
     if Ini.ValueExists(N.Caption,'NumItems') then
     begin
       j:=Ini.ReadInteger(N.Caption,'NumItems',0);
@@ -2543,10 +2563,11 @@ var
   end;
 
 begin
+  SynAutoComplete.AutoCompleteList.Clear;
   EdTemplates:= TPopupMenu.Create(Self);
   with EdTemplates do
   Try
-    Ini:=TIniFile.Create(ConfigDir+'templates.ini');
+    Ini:=TIniFile.Create(ConfigDir+'templates.ini',[ifoStripQuotes]);
     j:=Ini.ReadInteger('MAIN','NumItems',0);
     for i:=0 to j-1 do
     begin
@@ -2607,38 +2628,6 @@ begin
   PrgEditor.OnStatusChange:=@EditorStatusChange;
 end;
 
-procedure TMainForm.MiniMapSetup;
-begin
-  MiniMap:=TEditor.Create(Self);
-  Dec(EditorCnt);
-  MiniMap.Visible:=false;
-  MiniMap.Width:=165;
-  MiniMap.Align:=alRight;
-  MiniMap.Font.Height:= -3;
-  MiniMap.Font.Name:= 'Courier New';
-  MiniMap.Font.Pitch:= fpFixed;
-  MiniMap.Font.Quality := fqAntialiased;
-  MiniMap.OnMouseDown:= @MiniMapMouseDown;
-  MiniMap.OnMouseMove:= @MiniMapMouseMove;
-  MiniMap.OnMouseUp:= @MiniMapMouseUp;
-  MiniMap.OnMouseEnter:= @MiniMapMouseEnter;
-  MiniMap.BorderStyle:= bsNone;
-  MiniMap.Gutter.AutoSize:= False;
-  MiniMap.Gutter.Visible:= False;
-  MiniMap.Gutter.Width:= 0;
-  MiniMap.Gutter.MouseActions.Clear;
-  MiniMap.RightGutter.Width:= 0;
-  MiniMap.RightGutter.MouseActions.Clear;
-  MiniMap.Keystrokes.Clear;
-  MiniMap.MouseActions.Clear;
-  MiniMap.MouseTextActions.Clear;
-  MiniMap.MouseSelActions.Clear;
-  MiniMap.Options:= [eoNoCaret, eoNoSelection, eoScrollPastEol];
-  MiniMap.ReadOnly:= True;
-  MiniMap.ScrollBars:= ssNone;
-  MiniMap.OnSpecialLineColors:= @MiniMapSpecialLineColors;
-end;
-
 procedure TMainForm.NewFileMenuExecute(Sender: TObject);
 begin
   if (Sender.ClassName='TMenuItem') then
@@ -2682,10 +2671,6 @@ begin
   if Assigned(ProgramsList) then FreeandNil(ProgramsList);
   if Assigned(SnippetsList) then FreeandNil(SnippetsList);
   if Assigned(IPCoreList) then FreeandNil(IPCoreList);
-  If Assigned(SynSBASyn) then FreeandNil(SynSBASyn);
-  If Assigned(SynVerilogSyn) then FreeandNil(SynVerilogSyn);
-  If Assigned(SynJSONSyn) then FreeandNil(SynJSONSyn);
-  If Assigned(SynMultiCaret) then FreeandNil(SynMultiCaret);
   if Assigned(SBASnippet) then FreeandNil(SBASnippet);
   If Assigned(SBAContrlrProg) then FreeandNil(SBAContrlrProg);
   if assigned(SBAPrj) then FreeAndNil(SBAPrj);
@@ -3068,8 +3053,11 @@ begin
   if (scFocus in Changes) and TEditor(Sender).Focused then
   begin
     ChangeEditorButtons(TEditor(Sender));
+    SyncroEdit.Enabled:=false;
     SyncroEdit.Editor:=TEditor(Sender);
+    SyncroEdit.Enabled:=true;
     SynMultiCaret.Editor:=TEditor(Sender);
+    SynAutoComplete.AddEditor(TEditor(Sender));
   end;
   SyncMiniMap.Enabled:=true;
 end;
@@ -3405,69 +3393,8 @@ begin
   end;
 
   result:=Editor.Edtype;
+  Editor.selectHighlighter;
 
-  case result of
-    vhdl,prg : begin
-      commentstr:='--';
-      Editor.Highlighter:=SynSBASyn;
-      Editor.Options:=Editor.Options-[eoShowSpecialChars]+[eoTrimTrailingSpaces];
-    end;
-    verilog,systemverilog : begin
-      commentstr:='//';
-      Editor.Highlighter:=SynVerilogSyn;
-      Editor.Options:=Editor.Options-[eoShowSpecialChars]+[eoTrimTrailingSpaces];
-    end;
-    ini: begin
-      commentstr:=';';
-      Editor.Highlighter:=SynIniSyn;
-      Editor.Options:=Editor.Options-[eoShowSpecialChars]+[eoTrimTrailingSpaces];
-    end;
-    json: begin
-      commentstr:='"__comment":';
-      Editor.Highlighter:=SynJSONSyn;
-      Editor.Options:=Editor.Options-[eoShowSpecialChars]+[eoTrimTrailingSpaces];
-    end;
-    pas : begin
-      commentstr:='//';
-      Editor.Highlighter:=SynFreePascalSyn;
-      Editor.Options:=Editor.Options-[eoShowSpecialChars]+[eoTrimTrailingSpaces];
-    end;
-    cpp : begin
-      commentstr:='//';
-      Editor.Highlighter:=SynCppSyn;
-      Editor.Options:=Editor.Options-[eoShowSpecialChars]+[eoTrimTrailingSpaces];
-    end;
-    python: begin
-      commentstr:='#';
-      Editor.Highlighter:=SynPythonSyn;
-      Editor.Options:=Editor.Options-[eoShowSpecialChars]+[eoTrimTrailingSpaces];
-    end;
-    html : begin
-      commentstr:='<!--';
-      Editor.Highlighter:=SynHTMLSyn;
-      Editor.Options:=Editor.Options-[eoShowSpecialChars]+[eoTrimTrailingSpaces];
-    end;
-    markdown: begin
-      commentstr:='';
-      Editor.Highlighter:=SynHTMLSyn;
-      Editor.Options:=Editor.Options+[eoShowSpecialChars]-[eoTrimTrailingSpaces];
-    end;
-    batch: begin
-      commentstr:='REM ';
-      Editor.Highlighter:=SynBatSyn;
-      Editor.Options:=Editor.Options-[eoShowSpecialChars]+[eoTrimTrailingSpaces];
-    end;
-    shell: begin
-      commentstr:='#';
-      Editor.Highlighter:=SynUNIXShellScriptSyn;
-      Editor.Options:=Editor.Options-[eoShowSpecialChars]+[eoTrimTrailingSpaces];
-    end;
-    other : begin
-      commentstr:='--';
-      Editor.Highlighter:=nil;
-      Editor.Options:=Editor.Options-[eoShowSpecialChars]+[eoTrimTrailingSpaces];
-    end;
-  end;
   if assigned(SplitEd) then
   begin
     SplitEd.EdType:=Editor.EdType;
@@ -3478,9 +3405,12 @@ begin
   begin
     MiniMap.EdType:=Editor.EdType;
     MiniMap.Highlighter:=Editor.Highlighter;
-    MiniMap.Options:=Editor.Options;
   end;
-  if FileExists(ConfigDir+'autocomplete'+GetFileExt(Editor.EdType)+'.txt') then Editor.SynCompletion.ItemList.LoadFromFile(ConfigDir+'autocomplete'+GetFileExt(Editor.EdType)+'.txt');
+  if FileExists(AppDir+'wordlist'+GetFileExt(Editor.EdType)+'.txt') then
+    if CopyFile(AppDir+'wordlist'+GetFileExt(Editor.EdType)+'.txt',ConfigDir+'wordlist'+GetFileExt(Editor.EdType)+'.txt')then
+      DeleteFile(AppDir+'wordlist'+GetFileExt(Editor.EdType)+'.txt');
+  if FileExists(ConfigDir+'wordlist'+GetFileExt(Editor.EdType)+'.txt') then
+    Editor.SynCompletion.ItemList.LoadFromFile(ConfigDir+'wordlist'+GetFileExt(Editor.EdType)+'.txt');
 end;
 
 procedure TMainForm.GetFile(filename: string);
@@ -3656,6 +3586,26 @@ begin
         SynUnixShellScriptSyn.IdentifierAttri.Foreground:=StringToColor(ReadString('Editor','HighlighterIdentifierFg','clWindowText'));
         SynUnixShellScriptSyn.StringAttri.Foreground:=StringToColor(ReadString('Editor','HighlighterStringAttriFg','clMaroon'));
         SynUnixShellScriptSyn.SymbolAttri.Foreground:=StringToColor(ReadString('Editor','HighlighterSymbolAttriFg','clTeal'));
+      end;
+      if assigned(SynTclTkSyn) then
+      begin
+        SynTclTkSyn.CommentAttribute.Foreground:=StringToColor(ReadString('Editor','HighlighterCommentFg','clGreen'));
+        SynTclTkSyn.KeywordAttribute.Foreground:=StringToColor(ReadString('Editor','HighlighterKeyAttriFg','clBlue'));
+        SynTclTkSyn.SecondKeyAttri.Foreground:=StringToColor(ReadString('Editor','HighlighterKeyAttriFg','clBlue'));
+        SynTclTkSyn.KeyAttri.Foreground:=StringToColor(ReadString('Editor','HighlighterKeyAttriFg','clBlue'));
+        SynTclTkSyn.NumberAttri.Foreground:=StringToColor(ReadString('Editor','HighlighterNumberAttriFg','clRed'));
+        SynTclTkSyn.IdentifierAttri.Foreground:=StringToColor(ReadString('Editor','HighlighterIdentifierFg','clWindowText'));
+        SynTclTkSyn.StringAttribute.Foreground:=StringToColor(ReadString('Editor','HighlighterStringAttriFg','clMaroon'));
+        SynTclTkSyn.StringAttri.Foreground:=StringToColor(ReadString('Editor','HighlighterStringAttriFg','clMaroon'));
+        SynTclTkSyn.SymbolAttribute.Foreground:=StringToColor(ReadString('Editor','HighlighterSymbolAttriFg','clTeal'));
+        SynTclTkSyn.SymbolAttri.Foreground:=StringToColor(ReadString('Editor','HighlighterSymbolAttriFg','clTeal'));
+        SynTclTkSyn.CommentAttri.Foreground:=StringToColor(ReadString('Editor','HighlighterCommentFg','clGreen'));
+{
+property WhitespaceAttribute: TSynHighlighterAttributes
+  index SYN_ATTR_WHITESPACE read GetDefaultAttribute;
+property SpaceAttri: TSynHighlighterAttributes read fSpaceAttri
+  write fSpaceAttri;
+}
       end;
       //
       SyncroEdit.MarkupInfoArea.Background:=StringToColor(ReadString('Editor','SyncroEditBg','clMoneyGreen'));

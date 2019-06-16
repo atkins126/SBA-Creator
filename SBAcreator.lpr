@@ -12,8 +12,8 @@ uses
   Forms, HistoryLazarus, MainFormU, synhighlighterverilog,
   synhighlightersba, versionsupportu, SBAProgContrlrU, AboutFormU, sbasnippetu,
   configformu, PrjWizU, dwfileU, DebugU, AutoUpdateU, SBAProjectU, floatformu,
-  CoresPrjEdFormU, LibraryFormU, UtilsU, sbaprogramu, exportprjformu, UScaleDPI,
-  lazcontrols, anchordockpkg, uecontrols, SBAIPCoresU, PlugInU, WhatsNewU
+  CoresPrjEdFormU, UtilsU, sbaprogramu, exportprjformu, UScaleDPI,
+  lazcontrols, anchordockpkg, uecontrols, SBAIPCoresU, PlugInU, WhatsNewU, DataSheetU
   {$IFDEF debug}
   , SysUtils
   {$ENDIF}
@@ -36,7 +36,6 @@ begin
   Application.CreateForm(TFloatForm, FloatForm);
   Application.CreateForm(TCoresPrjEdForm, CoresPrjEdForm);
   Application.CreateForm(TExportPrjForm, ExportPrjForm);
-  Application.CreateForm(TLibraryForm, LibraryForm);
   Application.CreateForm(TprjWizForm, prjWizForm);
   Application.CreateForm(TAboutForm, AboutForm);
   Application.CreateForm(TWhatsNewF, WhatsNewF);

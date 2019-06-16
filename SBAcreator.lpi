@@ -22,7 +22,7 @@
       <AutoIncrementBuild Value="True"/>
       <MinorVersionNr Value="5"/>
       <RevisionNr Value="3"/>
-      <BuildNr Value="75"/>
+      <BuildNr Value="80"/>
       <Attributes pvaPreRelease="True"/>
       <StringTable CompanyName="uE Peru" FileDescription="SBA System Creator" LegalCopyright="(c) Miguel A. Risco-Castillo" ProductVersion="Public Beta"/>
     </VersionInfo>
@@ -37,7 +37,6 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="..\..\Libs\InternetTools\data;..\..\Libs\InternetTools\internet;..\..\Libs\InternetTools\system"/>
             <UnitOutputDirectory Value="$Env(TEMP)\lazarus\lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
@@ -136,7 +135,6 @@
             <Debugging>
               <DebugInfoType Value="dsDwarf2Set"/>
               <UseHeaptrc Value="True"/>
-              <UseExternalDbgSyms Value="True"/>
             </Debugging>
             <Options>
               <Win32>
@@ -428,43 +426,49 @@
         <Mode0 Name="default"/>
       </Modes>
     </RunParams>
-    <RequiredPackages Count="12">
+    <RequiredPackages Count="14">
       <Item1>
-        <PackageName Value="AnchorDocking"/>
+        <PackageName Value="ExtraHighlighters"/>
       </Item1>
       <Item2>
-        <PackageName Value="laz_synapse"/>
+        <PackageName Value="ExtraHighlighters_Dsgn"/>
       </Item2>
       <Item3>
-        <PackageName Value="internettools"/>
+        <PackageName Value="AnchorDocking"/>
       </Item3>
       <Item4>
-        <PackageName Value="attabs_package"/>
+        <PackageName Value="laz_synapse"/>
       </Item4>
       <Item5>
-        <PackageName Value="fpc_markdown"/>
+        <PackageName Value="internettools"/>
       </Item5>
       <Item6>
-        <PackageName Value="LazUtils"/>
+        <PackageName Value="attabs_package"/>
       </Item6>
       <Item7>
-        <PackageName Value="LazControls"/>
+        <PackageName Value="fpc_markdown"/>
       </Item7>
       <Item8>
-        <PackageName Value="HistoryLazarus"/>
+        <PackageName Value="LazUtils"/>
       </Item8>
       <Item9>
-        <PackageName Value="bgracontrols"/>
+        <PackageName Value="LazControls"/>
       </Item9>
       <Item10>
-        <PackageName Value="uEControls"/>
+        <PackageName Value="HistoryLazarus"/>
       </Item10>
       <Item11>
-        <PackageName Value="SynEdit"/>
+        <PackageName Value="bgracontrols"/>
       </Item11>
       <Item12>
-        <PackageName Value="LCL"/>
+        <PackageName Value="uEControls"/>
       </Item12>
+      <Item13>
+        <PackageName Value="SynEdit"/>
+      </Item13>
+      <Item14>
+        <PackageName Value="LCL"/>
+      </Item14>
     </RequiredPackages>
     <Units Count="27">
       <Unit0>
@@ -553,78 +557,75 @@
         <UnitName Value="CoresPrjEdFormU"/>
       </Unit13>
       <Unit14>
-        <Filename Value="libraryformu.pas"/>
-        <IsPartOfProject Value="True"/>
-        <ComponentName Value="LibraryForm"/>
-        <HasResources Value="True"/>
-        <ResourceBaseClass Value="Form"/>
-        <UnitName Value="LibraryFormU"/>
-      </Unit14>
-      <Unit15>
         <Filename Value="utilsu.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="UtilsU"/>
-      </Unit15>
-      <Unit16>
+      </Unit14>
+      <Unit15>
         <Filename Value="sbaprogramu.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="SBAProgramU"/>
-      </Unit16>
-      <Unit17>
+      </Unit15>
+      <Unit16>
         <Filename Value="exportprjformu.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="ExportPrjForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="ExportPrjFormU"/>
-      </Unit17>
-      <Unit18>
+      </Unit16>
+      <Unit17>
         <Filename Value="autoupdateu.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="AutoUpdateU"/>
-      </Unit18>
-      <Unit19>
+      </Unit17>
+      <Unit18>
         <Filename Value="synhighlighterjson.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="SynHighlighterJSON"/>
-      </Unit19>
-      <Unit20>
+      </Unit18>
+      <Unit19>
         <Filename Value="sbaipcoresu.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="SBAIPCoresU"/>
-      </Unit20>
-      <Unit21>
+      </Unit19>
+      <Unit20>
         <Filename Value="editoru.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="EditorU"/>
-      </Unit21>
-      <Unit22>
+      </Unit20>
+      <Unit21>
         <Filename Value="wgetfileu.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="WGetFileU"/>
-      </Unit22>
-      <Unit23>
+      </Unit21>
+      <Unit22>
         <Filename Value="pluginu.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="PlugInU"/>
-      </Unit23>
-      <Unit24>
+      </Unit22>
+      <Unit23>
         <Filename Value="filesmonitoru.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="FilesMonitorU"/>
-      </Unit24>
-      <Unit25>
+      </Unit23>
+      <Unit24>
         <Filename Value="debugu.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="DebugU"/>
-      </Unit25>
-      <Unit26>
+      </Unit24>
+      <Unit25>
         <Filename Value="whatsnewu.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="WhatsNewF"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="WhatsNewU"/>
+      </Unit25>
+      <Unit26>
+        <Filename Value="datasheetu.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="DataSheetU"/>
       </Unit26>
     </Units>
   </ProjectOptions>

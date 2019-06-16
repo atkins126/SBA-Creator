@@ -7,13 +7,24 @@ interface
 uses
   Controls, Graphics, Dialogs, Classes, SysUtils, ComCtrls, Fgl,
   StdCtrls, LazFileUtils, SynEdit, SynEditMouseCmds, IniFiles,
-  SynEditMarkupHighAll, SynEditTypes, SynEditKeyCmds, SynCompletion,
+  SynEditHighlighter,SynEditMarkupHighAll, SynEditTypes,
+  SynEditKeyCmds, SynCompletion,
+  SynHighlighterSBA,
+  SynHighlighterVerilog,
+  SynHighlighterJSON,
+  SynHighlighterIni,
+  SynHighlighterHTML,
+  SynHighlighterPas,
+  SynHighlighterCpp,
+  SynHighlighterPython,
+  SynHighlighterBat,
+  SynHighlighterTclTk,
+  synhighlighterunixshellscript,
   UtilsU, DebugU;
-
 
 type
 
-TEdType=(vhdl, prg, verilog, systemverilog, ini, json, markdown, cpp, html, pas, python, batch, shell, other, none);
+TEdType=(vhdl, prg, verilog, systemverilog, ini, json, markdown, cpp, html, pas, python, tcl, batch, shell, other, none);
 
 { TEditor }
 
@@ -40,6 +51,8 @@ public
   procedure Colorize(Ini: string);
   procedure ShareTextBufferFrom(AValue: TEditor);
   procedure UnShareTextBuffer;
+  function CreateExportHighligther: TSynCustomHighlighter;
+  function SelectHighlighter: TSynCustomHighlighter;
 published
   property FileName:string read FFileName write SetFileName;
   property isEmpty:boolean read GetisEmpty;
@@ -60,6 +73,20 @@ var
   EditorFontSize:integer=0;
   CommentStr:string='--';
 
+// Highlighters
+  SynTclTkSyn: TSynTclTkSyn;
+  SynSBASyn:TSynSBASyn;
+  SynVerilogSyn:TSynVerilogSyn;
+  SynJSONSyn:TSynJSONSyn;
+  SynBatSyn: TSynBatSyn;
+  SynUNIXShellScriptSyn: TSynUNIXShellScriptSyn;
+  SynPythonSyn: TSynPythonSyn;
+  SynCppSyn: TSynCppSyn;
+  SynFreePascalSyn: TSynFreePascalSyn;
+  SynIniSyn: TSynIniSyn;
+  SynHTMLSyn: TSynHTMLSyn;
+
+
 const
   DefFileTypeKey='VHDL=.vhd|'+
                  'Verilog=.v|'+
@@ -67,6 +94,7 @@ const
                  'Ini=.ini|'+
                  'Markdown=.md|'+
                  'Python=.py|'+
+                 'Tcl/Tk=.tcl|'+
                  'C=.c|'+
                  'Html=.htm|'+
                  'Batch=.cmd|'+
@@ -80,6 +108,7 @@ const
                 'Markdown|*.md;*.mkd;*.mdwn;*.mdtxt;*.mdtext;*.text|'+
                 'Text|*.txt|'+
                 'Python|*.py|'+
+                'Tcl/tk|*.tcl;*.tk|'+
                 'C|*.c;*.cpp|'+
                 'Html|*.htm;*.html|'+
                 'Batch|*.bat;*.cmd|'+
@@ -90,6 +119,7 @@ function GetFileTypeKey:TStringList;
 function GetFileExt(FType: TEdType): string;
 function InsertBlock(Editor:TEditor; BStart,BEnd:string;t:TStrings):boolean;
 procedure FormatEditor(Editor:TEditor);
+procedure SynHighLightersCreate(AOwner:TComponent);
 
 implementation
 
@@ -197,7 +227,6 @@ end;
 
 procedure TEditor.ShareTextBufferFrom(AValue: TEditor);
 begin
-  //if FSharedBuffer=AValue then Exit;
   if FSharedBuffer<>nil then UnShareTextBuffer;
   FSharedBuffer:=AValue;
   inherited ShareTextBufferFrom(AValue);
@@ -268,6 +297,114 @@ begin
   EndUpdate;
 end;
 
+function TEditor.CreateExportHighligther:TSynCustomHighlighter;
+begin
+  case EdType of
+    vhdl,prg:
+      result:=TSynSBASyn.Create(Owner);
+    verilog,systemverilog:
+      result:=TSynVerilogSyn.Create(Owner);
+    ini:
+      result:=TSynIniSyn.Create(Owner);
+    json:
+      result:=TSynJSONSyn.Create(Owner);
+    html:
+      result:=TSynHTMLSyn.Create(Owner);
+    pas:
+      result:=TSynFreePascalSyn.Create(Owner);
+    cpp:
+      result:=TSynCppSyn.Create(Owner);
+    python:
+      result:=TSynPythonSyn.Create(Owner);
+    batch:
+      result:=TSynBatSyn.Create(Owner);
+    shell:
+      result:=TSynUnixShellScriptSyn.Create(Owner);
+    tcl:
+      result:=TSynTclTkSyn.Create(Owner)
+  else
+    result:=nil;
+  end;
+  if result=nil then
+  begin
+    Info('TEditor.ExporttoHtml','Highligther not found');
+    Exit(nil);
+  end else
+    Info('TEditor.ExporttoHtml ',result.ClassName);
+end;
+
+function TEditor.SelectHighlighter: TSynCustomHighlighter;
+begin
+  case edType of
+    vhdl,prg : begin
+      commentstr:='--';
+      Highlighter:=SynSBASyn;
+      Options:=Options-[eoShowSpecialChars]+[eoTrimTrailingSpaces];
+    end;
+    verilog,systemverilog : begin
+      commentstr:='//';
+      Highlighter:=SynVerilogSyn;
+      Options:=Options-[eoShowSpecialChars]+[eoTrimTrailingSpaces];
+    end;
+    ini: begin
+      commentstr:=';';
+      Highlighter:=SynIniSyn;
+      Options:=Options-[eoShowSpecialChars]+[eoTrimTrailingSpaces];
+    end;
+    json: begin
+      commentstr:='"__comment":';
+      Highlighter:=SynJSONSyn;
+      Options:=Options-[eoShowSpecialChars]+[eoTrimTrailingSpaces];
+    end;
+    pas : begin
+      commentstr:='//';
+      Highlighter:=SynFreePascalSyn;
+      Options:=Options-[eoShowSpecialChars]+[eoTrimTrailingSpaces];
+    end;
+    cpp : begin
+      commentstr:='//';
+      Highlighter:=SynCppSyn;
+      Options:=Options-[eoShowSpecialChars]+[eoTrimTrailingSpaces];
+    end;
+    python: begin
+      commentstr:='#';
+      Highlighter:=SynPythonSyn;
+      Options:=Options-[eoShowSpecialChars]+[eoTrimTrailingSpaces];
+    end;
+    html : begin
+      commentstr:='<!--';
+      Highlighter:=SynHTMLSyn;
+      Options:=Options-[eoShowSpecialChars]+[eoTrimTrailingSpaces];
+    end;
+    markdown: begin
+      commentstr:='';
+      Highlighter:=SynHTMLSyn;
+      Options:=Options+[eoShowSpecialChars]-[eoTrimTrailingSpaces];
+    end;
+    batch: begin
+      commentstr:='REM ';
+      Highlighter:=SynBatSyn;
+      Options:=Options-[eoShowSpecialChars]+[eoTrimTrailingSpaces];
+    end;
+    shell: begin
+      commentstr:='#';
+      Highlighter:=SynUNIXShellScriptSyn;
+      Options:=Options-[eoShowSpecialChars]+[eoTrimTrailingSpaces];
+    end;
+    tcl: begin
+      commentstr:='#';
+      Highlighter:=SynTclTkSyn;;
+      Options:=Options-[eoShowSpecialChars]+[eoTrimTrailingSpaces];
+    end;
+    other : begin
+      commentstr:='--';
+      Highlighter:=nil;
+      Options:=Options-[eoShowSpecialChars]+[eoTrimTrailingSpaces];
+    end;
+  end;
+  result:=Highlighter;
+end;
+
 //------------------- Utilities ---------------------//
 
 function InsertBlock(Editor:TEditor; BStart,BEnd:string;t:TStrings):boolean;
@@ -313,6 +450,7 @@ begin
     '.sba' : result:=json;
     '.c','.cpp' : result:=cpp;
     '.py' : result:=python;
+    '.tcl','.tk' : result:=tcl;
     '.htm','.html': result:=html;
     '.p','.pas' : result:=pas;
     '.markdown','.mdown','.mkdn',
@@ -336,6 +474,7 @@ begin
     json:result:='.sba';
     cpp:result:='.c';
     python:result:='.py';
+    tcl:result:='.tcl';
     html:result:='.htm';
     pas:result:='.pas';
     markdown:result:='.md';
@@ -395,5 +534,19 @@ begin
   end;
 end;
 
-end.
+procedure SynHighLightersCreate(AOwner:TComponent);
+begin
+  SynSBASyn:= TSynSBASyn.Create(AOwner);
+  SynVerilogSyn:= TSynVerilogSyn.Create(AOwner);
+  SynJSONSyn:=TSynJSONSyn.create(AOwner);
+  SynBatSyn:= TSynBatSyn.Create(AOwner);
+  SynUNIXShellScriptSyn:= TSynUNIXShellScriptSyn.Create(AOwner);
+  SynTclTkSyn:= TSynTclTkSyn.Create(AOwner);
+  SynPythonSyn:= TSynPythonSyn.Create(AOwner);
+  SynCppSyn:= TSynCppSyn.Create(AOwner);
+  SynFreePascalSyn:= TSynFreePascalSyn.Create(AOwner);
+  SynIniSyn:= TSynIniSyn.Create(AOwner);
+  SynHTMLSyn:= TSynHTMLSyn.Create(AOwner);
+end;
 
+end.
