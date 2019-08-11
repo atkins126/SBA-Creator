@@ -3,8 +3,8 @@
   <ProjectSession>
     <PathDelim Value="\"/>
     <Version Value="11"/>
-    <BuildModes Active="Release Linux ARMV7A"/>
-    <Units Count="41">
+    <BuildModes Active="Release x32"/>
+    <Units Count="39">
       <Unit0>
         <Filename Value="SBAcreator.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -20,8 +20,8 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="MainFormU"/>
-        <TopLine Value="894"/>
-        <CursorPos X="21" Y="899"/>
+        <TopLine Value="1181"/>
+        <CursorPos X="35" Y="1201"/>
         <ExtraEditorCount Value="1"/>
         <ExtraEditor1>
           <EditorIndex Value="-1"/>
@@ -31,7 +31,7 @@
         <UsageCount Value="200"/>
         <Bookmarks Count="2">
           <Item0 X="10" Y="1077" ID="2"/>
-          <Item1 X="5" Y="1841" ID="1"/>
+          <Item1 X="5" Y="1842" ID="1"/>
         </Bookmarks>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -97,8 +97,8 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="SBAProjectU"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="79"/>
-        <CursorPos X="25" Y="95"/>
+        <TopLine Value="523"/>
+        <CursorPos X="3" Y="527"/>
         <UsageCount Value="200"/>
       </Unit8>
       <Unit9>
@@ -109,7 +109,8 @@
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="ConfigFormU"/>
         <EditorIndex Value="-1"/>
-        <CursorPos X="11" Y="14"/>
+        <TopLine Value="463"/>
+        <CursorPos X="5" Y="472"/>
         <UsageCount Value="200"/>
       </Unit9>
       <Unit10>
@@ -207,19 +208,20 @@
         <Filename Value="sbaipcoresu.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="SBAIPCoresU"/>
-        <EditorIndex Value="-1"/>
-        <CursorPos X="3" Y="30"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="1"/>
+        <CursorPos X="10" Y="166"/>
         <UsageCount Value="200"/>
+        <Loaded Value="True"/>
       </Unit19>
       <Unit20>
         <Filename Value="editoru.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="EditorU"/>
-        <IsVisibleTab Value="True"/>
-        <EditorIndex Value="1"/>
-        <CursorPos X="15" Y="8"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="110"/>
+        <CursorPos X="33" Y="130"/>
         <UsageCount Value="200"/>
-        <Loaded Value="True"/>
       </Unit20>
       <Unit21>
         <Filename Value="wgetfileu.pas"/>
@@ -271,7 +273,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="58"/>
         <CursorPos X="26" Y="72"/>
-        <UsageCount Value="147"/>
+        <UsageCount Value="175"/>
       </Unit26>
       <Unit27>
         <Filename Value="synhighlightertcltk.pas"/>
@@ -279,7 +281,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="768"/>
         <CursorPos X="78" Y="772"/>
-        <UsageCount Value="35"/>
+        <UsageCount Value="33"/>
       </Unit27>
       <Unit28>
         <Filename Value="libraryformu.pas"/>
@@ -289,165 +291,207 @@
         <UnitName Value="LibraryFormU"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="15" Y="142"/>
-        <UsageCount Value="189"/>
+        <UsageCount Value="187"/>
       </Unit28>
       <Unit29>
-        <Filename Value="mainformu.lfm"/>
-        <EditorIndex Value="-1"/>
-        <CursorPos X="30" Y="513"/>
-        <UsageCount Value="1"/>
-        <DefaultSyntaxHighlighter Value="LFM"/>
-      </Unit29>
-      <Unit30>
         <Filename Value="..\..\..\..\..\OneDrive\Sync\Lazarus\Libs\ueControls\source\uebutton.pas"/>
         <UnitName Value="uEButton"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="39"/>
-        <UsageCount Value="8"/>
-      </Unit30>
-      <Unit31>
+        <UsageCount Value="6"/>
+      </Unit29>
+      <Unit30>
         <Filename Value="D:\fpcup\fpcsrc\rtl\objpas\classes\classesh.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="1854"/>
         <CursorPos X="14" Y="1869"/>
-        <UsageCount Value="4"/>
-      </Unit31>
-      <Unit32>
-        <Filename Value="D:\fpcup\lazarus\lcl\controls.pp"/>
-        <UnitName Value="Controls"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="1964"/>
-        <CursorPos X="3" Y="1980"/>
         <UsageCount Value="2"/>
-      </Unit32>
-      <Unit33>
+      </Unit30>
+      <Unit31>
         <Filename Value="D:\fpcup\lazarus\components\synedit\synhighlighterpython.pas"/>
         <UnitName Value="SynHighlighterPython"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="28"/>
         <CursorPos X="45" Y="1087"/>
-        <UsageCount Value="4"/>
-      </Unit33>
-      <Unit34>
-        <Filename Value="D:\fpcup\lazarus\lcl\extctrls.pp"/>
-        <UnitName Value="ExtCtrls"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="1030"/>
-        <CursorPos X="38" Y="1048"/>
         <UsageCount Value="2"/>
-      </Unit34>
-      <Unit35>
-        <Filename Value="D:\fpcup\lazarus\lcl\buttons.pp"/>
-        <UnitName Value="Buttons"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="64"/>
-        <UsageCount Value="2"/>
-      </Unit35>
-      <Unit36>
+      </Unit31>
+      <Unit32>
         <Filename Value="D:\fpcup\lazarus\components\synedit\synedithighlighter.pp"/>
         <UnitName Value="SynEditHighlighter"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="441"/>
         <CursorPos X="25" Y="446"/>
-        <UsageCount Value="5"/>
-      </Unit36>
-      <Unit37>
+        <UsageCount Value="3"/>
+      </Unit32>
+      <Unit33>
         <Filename Value="D:\fpcup\lazarus\components\synedit\syneditstrconst.pp"/>
         <UnitName Value="SynEditStrConst"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="284"/>
         <CursorPos X="3" Y="301"/>
-        <UsageCount Value="5"/>
-      </Unit37>
-      <Unit38>
+        <UsageCount Value="3"/>
+      </Unit33>
+      <Unit34>
         <Filename Value="D:\fpcup\lazarus\components\synedit\synhighlighterpas.pp"/>
         <UnitName Value="SynHighlighterPas"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="356"/>
         <CursorPos X="15" Y="2460"/>
-        <UsageCount Value="5"/>
-      </Unit38>
-      <Unit39>
+        <UsageCount Value="3"/>
+      </Unit34>
+      <Unit35>
         <Filename Value="..\..\Libs\extrasyn\SyneditHighlighters\synhighlightertcltk.pas"/>
         <UnitName Value="SynHighlighterTclTk"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="176"/>
-        <UsageCount Value="25"/>
-      </Unit39>
-      <Unit40>
+        <UsageCount Value="23"/>
+      </Unit35>
+      <Unit36>
         <Filename Value="D:\fpcup\lazarus\components\lazutils\fileutil.pas"/>
         <UnitName Value="FileUtil"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="174"/>
         <CursorPos X="20" Y="175"/>
-        <UsageCount Value="9"/>
-      </Unit40>
+        <UsageCount Value="7"/>
+      </Unit36>
+      <Unit37>
+        <Filename Value="D:\fpcup\lazarus\components\synedit\synhighlighterhtml.pp"/>
+        <UnitName Value="SynHighlighterHTML"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="72"/>
+        <CursorPos X="8" Y="63"/>
+        <UsageCount Value="8"/>
+      </Unit37>
+      <Unit38>
+        <Filename Value="D:\fpcup\lazarus\components\synedit\synedittypes.pp"/>
+        <UnitName Value="SynEditTypes"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="87"/>
+        <CursorPos X="42" Y="99"/>
+        <UsageCount Value="10"/>
+      </Unit38>
     </Units>
-    <JumpHistory Count="16" HistoryIndex="15">
+    <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
         <Filename Value="mainformu.pas"/>
-        <Caret Line="3051" Column="33" TopLine="3034"/>
+        <Caret Line="418" Column="49" TopLine="402"/>
       </Position1>
       <Position2>
         <Filename Value="mainformu.pas"/>
-        <Caret Line="2983" Column="7" TopLine="2966"/>
+        <Caret Line="415" Column="52" TopLine="399"/>
       </Position2>
       <Position3>
         <Filename Value="mainformu.pas"/>
-        <Caret Line="472" Column="46" TopLine="456"/>
+        <Caret Line="412" Column="59" TopLine="396"/>
       </Position3>
       <Position4>
         <Filename Value="mainformu.pas"/>
-        <Caret Line="485" Column="32" TopLine="469"/>
+        <Caret Line="411" Column="33" TopLine="395"/>
       </Position4>
       <Position5>
         <Filename Value="mainformu.pas"/>
-        <Caret Line="464" Column="45" TopLine="449"/>
+        <Caret Line="403" Column="49" TopLine="387"/>
       </Position5>
       <Position6>
         <Filename Value="mainformu.pas"/>
-        <Caret Line="421" Column="49" TopLine="406"/>
+        <Caret Line="687" Column="8" TopLine="671"/>
       </Position6>
       <Position7>
         <Filename Value="mainformu.pas"/>
-        <Caret Line="419" Column="7" TopLine="403"/>
+        <Caret Line="687" Column="8"/>
       </Position7>
       <Position8>
         <Filename Value="mainformu.pas"/>
-        <Caret Line="418" Column="49" TopLine="402"/>
+        <Caret Line="899" Column="21" TopLine="894"/>
       </Position8>
       <Position9>
         <Filename Value="mainformu.pas"/>
-        <Caret Line="415" Column="52" TopLine="399"/>
+        <Caret Line="3569" Column="25" TopLine="3563"/>
       </Position9>
       <Position10>
         <Filename Value="mainformu.pas"/>
-        <Caret Line="412" Column="59" TopLine="396"/>
+        <Caret Line="3578" Column="36" TopLine="3563"/>
       </Position10>
       <Position11>
         <Filename Value="mainformu.pas"/>
-        <Caret Line="411" Column="33" TopLine="395"/>
+        <Caret Line="17" Column="3"/>
       </Position11>
       <Position12>
         <Filename Value="mainformu.pas"/>
-        <Caret Line="403" Column="49" TopLine="387"/>
+        <Caret Line="19" Column="17"/>
       </Position12>
       <Position13>
         <Filename Value="mainformu.pas"/>
-        <Caret Line="687" Column="8" TopLine="671"/>
+        <Caret Line="343" Column="24" TopLine="318"/>
       </Position13>
       <Position14>
-        <Filename Value="editoru.pas"/>
-        <Caret Line="8" Column="61"/>
+        <Filename Value="mainformu.pas"/>
+        <Caret Line="479" Column="27" TopLine="454"/>
       </Position14>
       <Position15>
         <Filename Value="mainformu.pas"/>
-        <Caret Line="687" Column="8"/>
+        <Caret Line="3057" Column="24" TopLine="3039"/>
       </Position15>
       <Position16>
         <Filename Value="mainformu.pas"/>
-        <Caret Line="899" Column="21" TopLine="894"/>
+        <Caret Line="3041" Column="3" TopLine="3039"/>
       </Position16>
+      <Position17>
+        <Filename Value="mainformu.pas"/>
+        <Caret Line="3051" TopLine="3039"/>
+      </Position17>
+      <Position18>
+        <Filename Value="mainformu.pas"/>
+        <Caret Line="1762" Column="13" TopLine="1738"/>
+      </Position18>
+      <Position19>
+        <Filename Value="mainformu.pas"/>
+        <Caret Line="1275" Column="13" TopLine="1266"/>
+      </Position19>
+      <Position20>
+        <Filename Value="mainformu.pas"/>
+        <Caret Line="522" Column="20" TopLine="508"/>
+      </Position20>
+      <Position21>
+        <Filename Value="sbaipcoresu.pas"/>
+        <Caret Line="125" TopLine="104"/>
+      </Position21>
+      <Position22>
+        <Filename Value="sbaipcoresu.pas"/>
+        <Caret Line="6" Column="4"/>
+      </Position22>
+      <Position23>
+        <Filename Value="sbaipcoresu.pas"/>
+        <Caret Line="24" Column="104"/>
+      </Position23>
+      <Position24>
+        <Filename Value="sbaipcoresu.pas"/>
+        <Caret Line="77" Column="45" TopLine="51"/>
+      </Position24>
+      <Position25>
+        <Filename Value="sbaipcoresu.pas"/>
+        <Caret Line="90" Column="12" TopLine="64"/>
+      </Position25>
+      <Position26>
+        <Filename Value="sbaipcoresu.pas"/>
+        <Caret Line="91" Column="18" TopLine="65"/>
+      </Position26>
+      <Position27>
+        <Filename Value="sbaipcoresu.pas"/>
+        <Caret Line="92" Column="13" TopLine="66"/>
+      </Position27>
+      <Position28>
+        <Filename Value="sbaipcoresu.pas"/>
+        <Caret Line="110" Column="28" TopLine="85"/>
+      </Position28>
+      <Position29>
+        <Filename Value="sbaipcoresu.pas"/>
+        <Caret Line="111" Column="22" TopLine="86"/>
+      </Position29>
+      <Position30>
+        <Filename Value="sbaipcoresu.pas"/>
+        <Caret Line="112" Column="23" TopLine="87"/>
+      </Position30>
     </JumpHistory>
     <RunParams>
       <FormatVersion Value="2"/>

@@ -861,6 +861,7 @@ begin
     if Fexpuserfiles then CopyDirTree(Flocuser,ExportPath+cPrjUser+PathDelim,[cffOverwriteFile,cffCreateDestDirectory,cffPreserveTime]);
   end;
   CopyFile(Flocation+cSBAlicense,ExportPath+cSBAlicense);
+  result:=true;
 end;
 
 procedure TSBAPrj.CopyIPCoreFiles(cl: TStrings);

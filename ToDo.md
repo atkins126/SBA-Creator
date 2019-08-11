@@ -24,7 +24,7 @@ Si hay un proyecto abierto, la ruta por defecto para los nuevos archivos debe se
 Si se reinicia el editor PRG (nuevo controler) reiniciar también el nombre del archivo prg para que "save as"
 sea usado de nuevo y no se use el nombre del prg anterior. 
 
-Para ampliar el funcionamiento del plugin de edición sincronizada se ha hecho un cambio a la unidad SynPluginSyncroEdit:
+Para ampliar el funcionamiento del plugin de edición sincronizada se ha hecho un cambio a la unidad SynPluginSyncroEdit.pp:
 de  MAX_SYNC_ED_WORDS = 50// 250;  a  MAX_SYNC_ED_WORDS = 100;// 250;  
 
 ~~Listo: Colocar un save all en el editor hdl.~~
@@ -39,3 +39,7 @@ los espacios vacíos precedentes hasta el primer caracter.
 
 Hay un extraño bug en Ubuntux64, si el botón EditPaste del toolbar está enlazado a la acción EditPaste,
 hay un alto consumo de CPU. Parche temporal: quitar la asociación con la acción y enlazar el evento Onclick del botón
+
+El editor de Altera usa los () para crear los folding.
+
+Tratar al ACK_O como al INT_O, es decir, crear la señal, etc.

@@ -89,7 +89,7 @@ var
   f:String;
   i,j,k:integer;
   DIL,DOL,ADL:Integer;
-  WE,STB,INT:boolean;
+  WE,STB,INT,ACK:boolean;
 begin
   ADL:=1;
   DIL:=16;
@@ -111,6 +111,7 @@ begin
       WE:=INI.ReadInteger('Config','WE'+f,1)=1;
       STB:=INI.ReadInteger('Config','STB'+f,1)=1;
       INT:=INI.ReadInteger('Config','INT'+f,0)=1;
+      ACK:=INI.ReadInteger('Config','ACK'+f,0)=1;
       ADL:=INI.ReadInteger('Config','ADR'+f+'LINES',1);
       DIL:=INI.ReadInteger('Config','DATI'+f+'LINES',16);
       DOL:=INI.ReadInteger('Config','DATO'+f+'LINES',16);
@@ -144,6 +145,7 @@ begin
       1: IP.add('    DAT'+f+'_O => ADATi(STB_'+instance+'),');
     end;
     if INT then   IP.add('    INT'+f+'_O => INT_'+instance+',');
+    if ACK then   IP.add('    ACK'+f+'_O => ACK_'+instance+',');
     IP.add('    -------------');
     if IL.Count>0 then for i:=0 to IL.Count-1 do
       IP.add(Format('    %:-6s=> %s',[IL.names[i],IL.ValueFromIndex[i]])+
@@ -162,6 +164,7 @@ begin
       IPS.add(Format('  Signal %:-11s: DATA_type;',['DAT_'+instance]));
     end;
     if INT then IPS.add(Format('  Signal %:-11s: std_logic;',['INT_'+instance]));
+    if ACK then IPS.add(Format('  Signal %:-11s: std_logic;',['ACK_'+instance]));
     if STB or (DOL>0) then STL.add(Format('  Constant %:-11s: integer := %d;',['STB_'+instance,STL.count]));
     if SL.Count>0 then for i:=0 to SL.Count-1 do
       IPS.add(Format('  Signal %:-11s: %s;',[SL.names[i],SL.ValueFromIndex[i]]));
@@ -193,8 +196,8 @@ begin
           f:=AL.Names[i]+' to '+AL.Names[i]+'+'+InttoStr(k);
         end;
         AML.Add(Format('  Constant %:-11s: integer := %d;',[AL.Names[i],AM+j]));
-        DCL.Add(Format('     When %-20s=> STBi <= stb(%-15s-- %-10s = %d',[f,'STB_'+instance+');',AL.Names[i],AM+j]));
-        if DOL>0 then MXL.Add(Format('     When %-20s=> DAT_O <= ADAT_I(%-15s-- %-10s = %d',[f,'STB_'+instance+');',AL.Names[i],AM+j]));
+        DCL.Add(Format('     When %-20s=> STBi <= stb(%s',[f,'STB_'+instance+');']));
+        if DOL>0 then MXL.Add(Format('     When %-20s=> DAT_O <= ADAT_I(%s',[f,'STB_'+instance+');']));
       end;
       AM:=IfThen(k=0,AM+j+1,AM+k+1);
     end;

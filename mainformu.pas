@@ -1196,6 +1196,8 @@ begin
       exit(false);
     end;
   end;
+  Log.Items.Append('File saved: '+f);
+  Log.ItemIndex:=Log.Count-1;
   FilesMon.UpdateFile(f);
   FilesMon.Enabled:=EnableFilesMon;
   result:=true;
@@ -1758,7 +1760,11 @@ begin
     expmonolithic:=CB_ExpPrjMonolithic.Checked;
     explibfiles:=CB_ExpPrjAllLib.Checked;
     expuserfiles:=CB_ExpPrjUser.Checked;
-    If SBAPrj.PrjExport(exportpath) then StatusBar1.Panels[1].Text:='Project was export to: '+exportpath;
+    If SBAPrj.PrjExport(exportpath) then
+    begin
+      Log.Items.Append('Project was exported to: '+exportpath);
+      Log.ItemIndex:=Log.Count-1;
+    end;
   end;
 end;
 
@@ -3039,10 +3045,16 @@ end;
 
 procedure TMainForm.EditorStatusChange(Sender: TObject;
   Changes: TSynStatusChanges);
+var
+  wsel:integer;
 begin
   if ([scCaretX, scCaretY] * Changes) <> [] then
   begin
-    StatusBar1.Panels[0].Text:=Format('%4d:%-4d',[TEditor(Sender).CaretY,TEditor(Sender).CaretX]);
+    if TEditor(Sender).SelAvail then
+      wsel:=TEditor(Sender).SelEnd-TEditor(Sender).SelStart
+    else
+      wsel:=0;
+    StatusBar1.Panels[0].Text:=Format('%4d:%-4d %4d',[TEditor(Sender).CaretY,TEditor(Sender).CaretX,wsel]);
     if MiniMap.Visible then MiniMap.CaretXY:=TEditor(Sender).CaretXY;
   end;
   if scModified in Changes then
@@ -3600,12 +3612,6 @@ begin
         SynTclTkSyn.SymbolAttribute.Foreground:=StringToColor(ReadString('Editor','HighlighterSymbolAttriFg','clTeal'));
         SynTclTkSyn.SymbolAttri.Foreground:=StringToColor(ReadString('Editor','HighlighterSymbolAttriFg','clTeal'));
         SynTclTkSyn.CommentAttri.Foreground:=StringToColor(ReadString('Editor','HighlighterCommentFg','clGreen'));
-{
-property WhitespaceAttribute: TSynHighlighterAttributes
-  index SYN_ATTR_WHITESPACE read GetDefaultAttribute;
-property SpaceAttri: TSynHighlighterAttributes read fSpaceAttri
-  write fSpaceAttri;
-}
       end;
       //
       SyncroEdit.MarkupInfoArea.Background:=StringToColor(ReadString('Editor','SyncroEditBg','clMoneyGreen'));

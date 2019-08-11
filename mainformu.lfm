@@ -38,6 +38,466 @@ object MainForm: TMainForm
       end>
     SimplePanel = False
   end
+  object EditorsPanel: TPanel
+    Left = 0
+    Height = 655
+    Top = 0
+    Width = 791
+    Align = alClient
+    BevelOuter = bvNone
+    ClientHeight = 655
+    ClientWidth = 791
+    Color = 15790320
+    ParentColor = False
+    TabOrder = 0
+    OnClick = EditorsPanelClick
+    object P_Project: TPanel
+      Left = 0
+      Height = 655
+      Top = 0
+      Width = 147
+      Align = alLeft
+      BevelColor = clGray
+      BevelOuter = bvNone
+      ClientHeight = 655
+      ClientWidth = 147
+      TabOrder = 0
+      Visible = False
+      object CoreImagePanel: TuEImage
+        Left = 0
+        Height = 138
+        Top = 517
+        Width = 147
+        Debug = False
+        Align = alBottom
+        Center = True
+        Proportional = True
+        Stretch = True
+      end
+      object L_PrjInfo: TLabel
+        Left = 0
+        Height = 22
+        Top = 0
+        Width = 147
+        Align = alTop
+        Alignment = taCenter
+        AutoSize = False
+        Caption = 'Project Info'
+        Layout = tlCenter
+        ParentColor = False
+      end
+      object Splitter5: TSplitter
+        Cursor = crVSplit
+        Left = 0
+        Height = 3
+        Top = 514
+        Width = 147
+        Align = alBottom
+        ResizeAnchor = akBottom
+        ResizeStyle = rsPattern
+      end
+      object PrjToolBar: TToolBar
+        Left = 0
+        Height = 25
+        Top = 22
+        Width = 147
+        AutoSize = True
+        ButtonHeight = 23
+        ButtonWidth = 22
+        Caption = 'PrjToolBar'
+        Color = clWhite
+        EdgeBorders = [ebTop, ebBottom]
+        EdgeInner = esLowered
+        EdgeOuter = esNone
+        Font.Height = 13
+        Images = ImageList
+        ParentColor = False
+        ParentFont = False
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 0
+        object ToolButton8: TToolButton
+          Left = 23
+          Top = 1
+          Action = ProjectNew
+        end
+        object ToolButton15: TToolButton
+          Left = 45
+          Top = 1
+          Action = ProjectOpen
+        end
+        object ToolButton16: TToolButton
+          Left = 67
+          Top = 1
+          Action = ProjectSave
+        end
+        object ToolButton27: TToolButton
+          Left = 1
+          Top = 1
+          Action = ProjectClose
+        end
+        object ToolButton33: TToolButton
+          Left = 116
+          Top = 1
+          Action = ProjectExport
+        end
+        object ToolButton49: TToolButton
+          Left = 94
+          Top = 1
+          Action = ProjectEditCoreList
+        end
+        object ToolButton48: TToolButton
+          Left = 89
+          Height = 23
+          Top = 1
+          Caption = 'ToolButton48'
+          Style = tbsDivider
+        end
+      end
+      object PrjTree: TTreeView
+        Left = 0
+        Height = 467
+        Top = 47
+        Width = 147
+        Align = alClient
+        AutoExpand = True
+        BackgroundColor = clCream
+        BorderStyle = bsNone
+        Color = clCream
+        ExpandSignColor = clTeal
+        ExpandSignType = tvestPlusMinus
+        HotTrack = True
+        Images = TreeImg
+        PopupMenu = PrjTreeMenu
+        ReadOnly = True
+        RightClickSelect = True
+        ScrollBars = ssAutoBoth
+        SelectionColor = 14120960
+        StateImages = TreeImg
+        TabOrder = 1
+        OnClick = PrjTreeClick
+        OnContextPopup = PrjTreeContextPopup
+        OnDblClick = PrjTreeDblClick
+        OnMouseDown = PrjTreeMouseDown
+        OnMouseLeave = PrjTreeMouseLeave
+        OnMouseMove = PrjTreeMouseMove
+        OnSelectionChanged = PrjTreeSelectionChanged
+        Options = [tvoAutoExpand, tvoAutoItemHeight, tvoHideSelection, tvoHotTrack, tvoKeepCollapsedNodes, tvoReadOnly, tvoRightClickSelect, tvoShowButtons, tvoShowLines, tvoShowRoot, tvoToolTips, tvoNoDoubleClickExpand]
+      end
+    end
+    object Spl_Project: TSplitter
+      Left = 147
+      Height = 655
+      Top = 0
+      Width = 3
+      ResizeStyle = rsPattern
+      Visible = False
+    end
+    object P_Editors: TPanel
+      Left = 150
+      Height = 655
+      Top = 0
+      Width = 641
+      Align = alClient
+      BevelOuter = bvNone
+      ClientHeight = 655
+      ClientWidth = 641
+      TabOrder = 2
+      object Spl_Log: TSplitter
+        Cursor = crVSplit
+        Left = 0
+        Height = 3
+        Top = 557
+        Width = 641
+        Align = alBottom
+        ResizeAnchor = akBottom
+        ResizeStyle = rsPattern
+      end
+      object Log: TListBox
+        Left = 0
+        Height = 95
+        Top = 560
+        Width = 641
+        Align = alBottom
+        BorderStyle = bsNone
+        ItemHeight = 0
+        OnDblClick = LogDblClick
+        OnMouseMove = LogMouseMove
+        ParentShowHint = False
+        ParentFont = False
+        PopupMenu = LogPopup
+        ShowHint = True
+        TabOrder = 3
+      end
+      object EditorToolBar: TToolBar
+        Left = 0
+        Height = 22
+        Top = 0
+        Width = 641
+        ButtonHeight = 22
+        ButtonWidth = 22
+        Caption = 'EditorToolBar'
+        Color = clWhite
+        EdgeBorders = [ebBottom]
+        EdgeInner = esNone
+        EdgeOuter = esNone
+        Font.Height = -11
+        Images = ImageList
+        ParentColor = False
+        ParentFont = False
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 0
+        object TBEditNew: TToolButton
+          Left = 23
+          Top = 0
+          Action = FileNew
+          Style = tbsDropDown
+        end
+        object TBEditOpen: TToolButton
+          Left = 57
+          Top = 0
+          Action = FileOpen
+          Style = tbsDropDown
+        end
+        object ToolButton9: TToolButton
+          Left = 91
+          Top = 0
+          Action = FileSave
+        end
+        object ToolButton10: TToolButton
+          Left = 1
+          Top = 0
+          Action = FileClose
+        end
+        object ToolButton14: TToolButton
+          Left = 490
+          Top = 0
+          Action = ToolsFileSyntaxCheck
+        end
+        object ToolButton11: TToolButton
+          Left = 534
+          Height = 22
+          Top = 0
+          Caption = 'ToolButton11'
+          Style = tbsDivider
+        end
+        object ToolButton17: TToolButton
+          Left = 135
+          Height = 22
+          Top = 0
+          Caption = 'ToolButton17'
+          Style = tbsDivider
+        end
+        object ToolButton18: TToolButton
+          Left = 512
+          Top = 0
+          Action = SBA_EditProgram
+        end
+        object ToolButton25: TToolButton
+          Left = 397
+          Height = 22
+          Top = 0
+          Caption = 'ToolButton25'
+          Style = tbsDivider
+        end
+        object ToolButton26: TToolButton
+          Left = 140
+          Top = 0
+          Action = EditUndo
+        end
+        object ToolButton39: TToolButton
+          Left = 189
+          Top = 0
+          Action = EditCut
+        end
+        object ToolButton41: TToolButton
+          Left = 211
+          Top = 0
+          Action = EditCopy
+        end
+        object ToolButton42: TToolButton
+          Left = 233
+          Hint = 'Paste'
+          Top = 0
+          Caption = '&Paste'
+          ImageIndex = 22
+          OnClick = EditPasteExecute
+        end
+        object TBSearchFind: TToolButton
+          Left = 353
+          Top = 0
+          Action = SearchFind
+        end
+        object TBSearchReplace: TToolButton
+          Left = 375
+          Top = 0
+          Action = SearchReplace
+        end
+        object ToolButton19: TToolButton
+          Left = 184
+          Height = 22
+          Top = 0
+          Caption = 'ToolButton19'
+          Style = tbsDivider
+        end
+        object EdTemplateButton: TToolButton
+          Left = 539
+          Hint = 'Templates'
+          Top = 0
+          Caption = '&Templates'
+          ImageIndex = 38
+          Style = tbsButtonDrop
+        end
+        object ToolButton51: TToolButton
+          Left = 162
+          Top = 0
+          Action = EditRedo
+        end
+        object ToolButton54: TToolButton
+          Left = 260
+          Top = 0
+          Action = EditBlkIndent
+        end
+        object ToolButton55: TToolButton
+          Left = 282
+          Top = 0
+          Action = EditBlkUnindent
+        end
+        object ToolButton56: TToolButton
+          Left = 304
+          Top = 0
+          Action = EditBlkComment
+        end
+        object ToolButton57: TToolButton
+          Left = 326
+          Top = 0
+          Action = EditBlkUncomment
+        end
+        object ToolButton58: TToolButton
+          Left = 348
+          Height = 22
+          Top = 0
+          Caption = 'ToolButton58'
+          Style = tbsDivider
+        end
+        object ToolButton59: TToolButton
+          Left = 255
+          Height = 22
+          Top = 0
+          Caption = 'ToolButton59'
+          Style = tbsDivider
+        end
+        object ToolButton60: TToolButton
+          Left = 113
+          Top = 0
+          Action = FileSaveAll
+        end
+        object ToolButton13: TToolButton
+          Left = 468
+          Top = 0
+          Action = ToolsExporttoHtml
+        end
+        object TBMiniMap: TToolButton
+          Left = 446
+          Top = 0
+          Action = EditShowMiniMap
+          Style = tbsCheck
+        end
+        object TBSplitHorizontal: TToolButton
+          Left = 402
+          Top = 0
+          Action = EditSplitHorizontal
+          Style = tbsCheck
+        end
+        object TBSplitVertical: TToolButton
+          Left = 424
+          Top = 0
+          Action = EditSplitVertical
+          Style = tbsCheck
+        end
+      end
+      object EditorPages: TPanel
+        Left = 0
+        Height = 504
+        Top = 22
+        Width = 641
+        Align = alClient
+        BevelOuter = bvNone
+        ClientHeight = 504
+        ClientWidth = 641
+        TabOrder = 1
+        object EditorTabs: TATTabs
+          Left = 0
+          Height = 25
+          Top = 0
+          Width = 641
+          Align = alTop
+          Font.Color = clBtnText
+          ParentFont = False
+          ParentShowHint = False
+          ShowHint = True
+          Tabs = <>
+          DoubleBuffered = True
+          ColorBg = clWindow
+          ColorBorderActive = clActiveBorder
+          ColorBorderPassive = cl3DLight
+          ColorTabActive = clWindow
+          ColorTabPassive = clBtnFace
+          ColorTabOver = clGradientActiveCaption
+          ColorFont = clCaptionText
+          ColorCloseBgOver = clRed
+          ColorCloseBorderOver = clNone
+          ColorCloseX = clGray
+          ColorCloseXOver = clWindow
+          ColorArrow = clBlack
+          ColorArrowOver = clSilver
+          OptButtonLayout = '<>,v'
+          OptVarWidth = True
+          OptTruncateCaption = attcNone
+          OptTabHeight = 22
+          OptTabWidthMinimal = 100
+          OptSpaceInitial = 15
+          OptSpacer = 2
+          OptShowScrollMark = False
+          OptShowXRounded = False
+          OptShowModifiedText = '*'
+          OptMouseMiddleClickClose = False
+          OptMouseDoubleClickClose = False
+          OptHintForX = 'Close tab'
+          OptHintForPlus = 'Add tab'
+          OptHintForArrowLeft = 'Scroll tabs left'
+          OptHintForArrowRight = 'Scroll tabs right'
+          OptHintForArrowMenu = 'Show tabs list'
+          OptHintForUser0 = '0'
+          OptHintForUser1 = '1'
+          OptHintForUser2 = '2'
+          OptHintForUser3 = '3'
+          OptHintForUser4 = '4'
+          OnTabClick = EditorPagesChange
+          OnTabPlusClick = FileNewExecute
+          OnTabClose = EditorTabsTabClose
+        end
+      end
+      object PlugInBar: TPanel
+        Left = 5
+        Height = 26
+        Top = 531
+        Width = 636
+        Align = alBottom
+        Alignment = taLeftJustify
+        BorderSpacing.Left = 5
+        BorderSpacing.Top = 5
+        BorderSpacing.CellAlignHorizontal = ccaLeftTop
+        BevelOuter = bvNone
+        ChildSizing.HorizontalSpacing = 2
+        ChildSizing.Layout = cclLeftToRightThenTopToBottom
+        Constraints.MaxHeight = 26
+        Constraints.MinHeight = 26
+        TabOrder = 4
+      end
+    end
+  end
   object ProgEditPanel: TPanel
     Left = 0
     Height = 655
@@ -604,466 +1064,6 @@ object MainForm: TMainForm
       Align = alClient
       BevelOuter = bvNone
       TabOrder = 1
-    end
-  end
-  object EditorsPanel: TPanel
-    Left = 0
-    Height = 655
-    Top = 0
-    Width = 791
-    Align = alClient
-    BevelOuter = bvNone
-    ClientHeight = 655
-    ClientWidth = 791
-    Color = 15790320
-    ParentColor = False
-    TabOrder = 0
-    OnClick = EditorsPanelClick
-    object P_Project: TPanel
-      Left = 0
-      Height = 655
-      Top = 0
-      Width = 147
-      Align = alLeft
-      BevelColor = clGray
-      BevelOuter = bvNone
-      ClientHeight = 655
-      ClientWidth = 147
-      TabOrder = 0
-      Visible = False
-      object CoreImagePanel: TuEImage
-        Left = 0
-        Height = 138
-        Top = 517
-        Width = 147
-        Debug = False
-        Align = alBottom
-        Center = True
-        Proportional = True
-        Stretch = True
-      end
-      object L_PrjInfo: TLabel
-        Left = 0
-        Height = 22
-        Top = 0
-        Width = 147
-        Align = alTop
-        Alignment = taCenter
-        AutoSize = False
-        Caption = 'Project Info'
-        Layout = tlCenter
-        ParentColor = False
-      end
-      object Splitter5: TSplitter
-        Cursor = crVSplit
-        Left = 0
-        Height = 3
-        Top = 514
-        Width = 147
-        Align = alBottom
-        ResizeAnchor = akBottom
-        ResizeStyle = rsPattern
-      end
-      object PrjToolBar: TToolBar
-        Left = 0
-        Height = 25
-        Top = 22
-        Width = 147
-        AutoSize = True
-        ButtonHeight = 23
-        ButtonWidth = 22
-        Caption = 'PrjToolBar'
-        Color = clWhite
-        EdgeBorders = [ebTop, ebBottom]
-        EdgeInner = esLowered
-        EdgeOuter = esNone
-        Font.Height = 13
-        Images = ImageList
-        ParentColor = False
-        ParentFont = False
-        ParentShowHint = False
-        ShowHint = True
-        TabOrder = 0
-        object ToolButton8: TToolButton
-          Left = 23
-          Top = 1
-          Action = ProjectNew
-        end
-        object ToolButton15: TToolButton
-          Left = 45
-          Top = 1
-          Action = ProjectOpen
-        end
-        object ToolButton16: TToolButton
-          Left = 67
-          Top = 1
-          Action = ProjectSave
-        end
-        object ToolButton27: TToolButton
-          Left = 1
-          Top = 1
-          Action = ProjectClose
-        end
-        object ToolButton33: TToolButton
-          Left = 116
-          Top = 1
-          Action = ProjectExport
-        end
-        object ToolButton49: TToolButton
-          Left = 94
-          Top = 1
-          Action = ProjectEditCoreList
-        end
-        object ToolButton48: TToolButton
-          Left = 89
-          Height = 23
-          Top = 1
-          Caption = 'ToolButton48'
-          Style = tbsDivider
-        end
-      end
-      object PrjTree: TTreeView
-        Left = 0
-        Height = 467
-        Top = 47
-        Width = 147
-        Align = alClient
-        AutoExpand = True
-        BackgroundColor = clCream
-        BorderStyle = bsNone
-        Color = clCream
-        ExpandSignColor = clTeal
-        ExpandSignType = tvestPlusMinus
-        HotTrack = True
-        Images = TreeImg
-        PopupMenu = PrjTreeMenu
-        ReadOnly = True
-        RightClickSelect = True
-        ScrollBars = ssAutoBoth
-        SelectionColor = 14120960
-        StateImages = TreeImg
-        TabOrder = 1
-        OnClick = PrjTreeClick
-        OnContextPopup = PrjTreeContextPopup
-        OnDblClick = PrjTreeDblClick
-        OnMouseDown = PrjTreeMouseDown
-        OnMouseLeave = PrjTreeMouseLeave
-        OnMouseMove = PrjTreeMouseMove
-        OnSelectionChanged = PrjTreeSelectionChanged
-        Options = [tvoAutoExpand, tvoAutoItemHeight, tvoHideSelection, tvoHotTrack, tvoKeepCollapsedNodes, tvoReadOnly, tvoRightClickSelect, tvoShowButtons, tvoShowLines, tvoShowRoot, tvoToolTips, tvoNoDoubleClickExpand]
-      end
-    end
-    object Spl_Project: TSplitter
-      Left = 147
-      Height = 655
-      Top = 0
-      Width = 3
-      ResizeStyle = rsPattern
-      Visible = False
-    end
-    object P_Editors: TPanel
-      Left = 150
-      Height = 655
-      Top = 0
-      Width = 641
-      Align = alClient
-      BevelOuter = bvNone
-      ClientHeight = 655
-      ClientWidth = 641
-      TabOrder = 2
-      object Spl_Log: TSplitter
-        Cursor = crVSplit
-        Left = 0
-        Height = 3
-        Top = 557
-        Width = 641
-        Align = alBottom
-        ResizeAnchor = akBottom
-        ResizeStyle = rsPattern
-      end
-      object Log: TListBox
-        Left = 0
-        Height = 95
-        Top = 560
-        Width = 641
-        Align = alBottom
-        BorderStyle = bsNone
-        ItemHeight = 0
-        OnDblClick = LogDblClick
-        OnMouseMove = LogMouseMove
-        ParentShowHint = False
-        ParentFont = False
-        PopupMenu = LogPopup
-        ShowHint = True
-        TabOrder = 3
-      end
-      object EditorToolBar: TToolBar
-        Left = 0
-        Height = 22
-        Top = 0
-        Width = 641
-        ButtonHeight = 22
-        ButtonWidth = 22
-        Caption = 'EditorToolBar'
-        Color = clWhite
-        EdgeBorders = [ebBottom]
-        EdgeInner = esNone
-        EdgeOuter = esNone
-        Font.Height = -11
-        Images = ImageList
-        ParentColor = False
-        ParentFont = False
-        ParentShowHint = False
-        ShowHint = True
-        TabOrder = 0
-        object TBEditNew: TToolButton
-          Left = 23
-          Top = 0
-          Action = FileNew
-          Style = tbsDropDown
-        end
-        object TBEditOpen: TToolButton
-          Left = 57
-          Top = 0
-          Action = FileOpen
-          Style = tbsDropDown
-        end
-        object ToolButton9: TToolButton
-          Left = 91
-          Top = 0
-          Action = FileSave
-        end
-        object ToolButton10: TToolButton
-          Left = 1
-          Top = 0
-          Action = FileClose
-        end
-        object ToolButton14: TToolButton
-          Left = 490
-          Top = 0
-          Action = ToolsFileSyntaxCheck
-        end
-        object ToolButton11: TToolButton
-          Left = 534
-          Height = 22
-          Top = 0
-          Caption = 'ToolButton11'
-          Style = tbsDivider
-        end
-        object ToolButton17: TToolButton
-          Left = 135
-          Height = 22
-          Top = 0
-          Caption = 'ToolButton17'
-          Style = tbsDivider
-        end
-        object ToolButton18: TToolButton
-          Left = 512
-          Top = 0
-          Action = SBA_EditProgram
-        end
-        object ToolButton25: TToolButton
-          Left = 397
-          Height = 22
-          Top = 0
-          Caption = 'ToolButton25'
-          Style = tbsDivider
-        end
-        object ToolButton26: TToolButton
-          Left = 140
-          Top = 0
-          Action = EditUndo
-        end
-        object ToolButton39: TToolButton
-          Left = 189
-          Top = 0
-          Action = EditCut
-        end
-        object ToolButton41: TToolButton
-          Left = 211
-          Top = 0
-          Action = EditCopy
-        end
-        object ToolButton42: TToolButton
-          Left = 233
-          Hint = 'Paste'
-          Top = 0
-          Caption = '&Paste'
-          ImageIndex = 22
-          OnClick = EditPasteExecute
-        end
-        object TBSearchFind: TToolButton
-          Left = 353
-          Top = 0
-          Action = SearchFind
-        end
-        object TBSearchReplace: TToolButton
-          Left = 375
-          Top = 0
-          Action = SearchReplace
-        end
-        object ToolButton19: TToolButton
-          Left = 184
-          Height = 22
-          Top = 0
-          Caption = 'ToolButton19'
-          Style = tbsDivider
-        end
-        object EdTemplateButton: TToolButton
-          Left = 539
-          Hint = 'Templates'
-          Top = 0
-          Caption = '&Templates'
-          ImageIndex = 38
-          Style = tbsButtonDrop
-        end
-        object ToolButton51: TToolButton
-          Left = 162
-          Top = 0
-          Action = EditRedo
-        end
-        object ToolButton54: TToolButton
-          Left = 260
-          Top = 0
-          Action = EditBlkIndent
-        end
-        object ToolButton55: TToolButton
-          Left = 282
-          Top = 0
-          Action = EditBlkUnindent
-        end
-        object ToolButton56: TToolButton
-          Left = 304
-          Top = 0
-          Action = EditBlkComment
-        end
-        object ToolButton57: TToolButton
-          Left = 326
-          Top = 0
-          Action = EditBlkUncomment
-        end
-        object ToolButton58: TToolButton
-          Left = 348
-          Height = 22
-          Top = 0
-          Caption = 'ToolButton58'
-          Style = tbsDivider
-        end
-        object ToolButton59: TToolButton
-          Left = 255
-          Height = 22
-          Top = 0
-          Caption = 'ToolButton59'
-          Style = tbsDivider
-        end
-        object ToolButton60: TToolButton
-          Left = 113
-          Top = 0
-          Action = FileSaveAll
-        end
-        object ToolButton13: TToolButton
-          Left = 468
-          Top = 0
-          Action = ToolsExporttoHtml
-        end
-        object TBMiniMap: TToolButton
-          Left = 446
-          Top = 0
-          Action = EditShowMiniMap
-          Style = tbsCheck
-        end
-        object TBSplitHorizontal: TToolButton
-          Left = 402
-          Top = 0
-          Action = EditSplitHorizontal
-          Style = tbsCheck
-        end
-        object TBSplitVertical: TToolButton
-          Left = 424
-          Top = 0
-          Action = EditSplitVertical
-          Style = tbsCheck
-        end
-      end
-      object EditorPages: TPanel
-        Left = 0
-        Height = 504
-        Top = 22
-        Width = 641
-        Align = alClient
-        BevelOuter = bvNone
-        ClientHeight = 504
-        ClientWidth = 641
-        TabOrder = 1
-        object EditorTabs: TATTabs
-          Left = 0
-          Height = 25
-          Top = 0
-          Width = 641
-          Align = alTop
-          Font.Color = clBtnText
-          ParentFont = False
-          ParentShowHint = False
-          ShowHint = True
-          Tabs = <>
-          DoubleBuffered = True
-          ColorBg = clWindow
-          ColorBorderActive = clActiveBorder
-          ColorBorderPassive = cl3DLight
-          ColorTabActive = clWindow
-          ColorTabPassive = clBtnFace
-          ColorTabOver = clGradientActiveCaption
-          ColorFont = clCaptionText
-          ColorCloseBgOver = clRed
-          ColorCloseBorderOver = clNone
-          ColorCloseX = clGray
-          ColorCloseXOver = clWindow
-          ColorArrow = clBlack
-          ColorArrowOver = clSilver
-          OptButtonLayout = '<>,v'
-          OptVarWidth = True
-          OptTruncateCaption = attcNone
-          OptTabHeight = 22
-          OptTabWidthMinimal = 100
-          OptSpaceInitial = 15
-          OptSpacer = 2
-          OptShowScrollMark = False
-          OptShowXRounded = False
-          OptShowModifiedText = '*'
-          OptMouseMiddleClickClose = False
-          OptMouseDoubleClickClose = False
-          OptHintForX = 'Close tab'
-          OptHintForPlus = 'Add tab'
-          OptHintForArrowLeft = 'Scroll tabs left'
-          OptHintForArrowRight = 'Scroll tabs right'
-          OptHintForArrowMenu = 'Show tabs list'
-          OptHintForUser0 = '0'
-          OptHintForUser1 = '1'
-          OptHintForUser2 = '2'
-          OptHintForUser3 = '3'
-          OptHintForUser4 = '4'
-          OnTabClick = EditorPagesChange
-          OnTabPlusClick = FileNewExecute
-          OnTabClose = EditorTabsTabClose
-        end
-      end
-      object PlugInBar: TPanel
-        Left = 5
-        Height = 26
-        Top = 531
-        Width = 636
-        Align = alBottom
-        Alignment = taLeftJustify
-        BorderSpacing.Left = 5
-        BorderSpacing.Top = 5
-        BorderSpacing.CellAlignHorizontal = ccaLeftTop
-        BevelOuter = bvNone
-        ChildSizing.HorizontalSpacing = 2
-        ChildSizing.Layout = cclLeftToRightThenTopToBottom
-        Constraints.MaxHeight = 26
-        Constraints.MinHeight = 26
-        TabOrder = 4
-      end
     end
   end
   object SystemPanel: TPanel
@@ -3345,6 +3345,7 @@ object MainForm: TMainForm
       Hint = 'Syntax check'
       ImageIndex = 9
       OnExecute = ToolsFileSyntaxCheckExecute
+      ShortCut = 24659
     end
     object SBA_EditProgram: TAction
       Category = 'SBA'
@@ -3353,6 +3354,7 @@ object MainForm: TMainForm
       Hint = 'Open SBA Controller in Program (PRG) Editor'
       ImageIndex = 15
       OnExecute = SBA_EditProgramExecute
+      ShortCut = 24656
     end
     object SBA_ReturnToEditor: TAction
       Category = 'SBA'

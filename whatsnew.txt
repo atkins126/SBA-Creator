@@ -1,0 +1,235 @@
+What's New
+==========
+v0.5.4
+- Added some verbose staments to log window.
+- Added number of selected chars to the right of line/column indicator of the status line.
+- Added support for the automatic ACK IP core signals creation in top file.
+
+v0.5.3  
+- Tk/Tcl syntax highlighting support  
+- Find IPCore instances from IPCore tree context menu  
+- SBAlibrary as external executable  
+- Template autocomplete support in templates.ini (example: write lieee and then press Shift-Space)  
+- Project license file support  
+
+v0.5.2  
+- Improved support for plugins  
+- Plugin Button bar for easy plugin execution  
+- Editable autocomplete files for each file type  
+- Monospaced bottom log panel  
+- Added syntax highlighting for python, batch and shell files  
+- Generalized syntax check using script files  
+- Bug fixes  
+
+v0.5.1  
+- Split Editor windows.  
+- Document mini map.  
+- New File support for several file type.  
+- Better anti-aliasing scaling for IPCore's images.  
+- Better theme support.  
+- Large code rewrite.  
+- Many Performance improvements.  
+
+v0.4.11  
+- Adding editor support to myHDL (Python *.py) files  
+- Bug fixes and Performance improvements  
+
+v0.4.10  
+- Bug fixes and Performance improvements  
+
+v0.4.9  
+- Better domain redirection management for repositories  
+- Requirements and user files export added to SBA project export  
+- Bug fixes and Performance improvements  
+
+v0.4.8  
+- Bugs fixes  
+- Compiled with upgraded libraries  
+
+v0.4.7 Emergency update  
+- fix critical bug when open associate files in explorer  
+- move doc help folder to config user folder  
+- fix a bug on about box  
+- improve SBA highlighter  
+
+v0.4.6  
+- Improved about form  
+- Enable File monitoring for changes by external programs  
+- Option to create backup files with a timestamp in the name  
+- Initial support for HTML help files  
+- Templates file updated  
+- vhdl_map.dat file updated  
+
+v0.4.5  
+- Better support for third-party plugins, see: https://github.com/mriscoc/SBA-DemoPlugIn  
+- Updated About box  
+- Better support for Markdown files  
+- Export of edited file as a highlighted HTML file  
+- Copy of fragments as highlighted HTML to clipboard  
+- Bugs fixes  
+
+Old Releases  
+============
+
+v0.4.4  
+- Check for Active Network Connection and SSL support.  
+- Better support for plugins (button and tools menu).  
+- Allows opening data sheet for IPCores in Project tree.  
+- Performance improvements.  
+- Bug fixes.  
+
+v0.4.3  
+- File download improved  
+- Library management improved  
+- Snippet insertion improved  
+- Cleanup some code  
+- Fix bugs  
+
+v0.4.1  
+- Support for SBA v1.2  
+- A lot of changes to support the new SBAmux  
+- Theme colorizer (Light, dark, custom), see config in the help menu  
+- The download of support and library files now is multithreaded.  
+- A lot of bug corrections.  
+
+v0.3.36.02  
+- Bug fixes and performance improvements  
+
+v0.3.35.99  
+- Reset Beta expiration date  
+- Bug fixes and performance improvements  
+
+v0.3.34.94  
+- Reset Beta expiration date  
+
+v0.3.33.92  
+- Bug fixes and performance improvements  
+
+v0.3.32.89  
+- Added save all button in HDL editor  
+- Added option to export user files  
+- Added Insert Author in the Edit menu   
+- Added Open Config option in the Help menu  
+- Added support to delete local user files  
+- Bug fixes and performance improvements  
+
+v0.3.31.80  
+- Bug fixes and performance improvements  
+
+v0.3.30.78  
+- Cosmetic changes in toolbar  
+- Code cleanup  
+- External auto-completion keywords text file  
+- Bug fixes and performance improvements  
+
+v0.3.29.75  
+- Bug fixes and performance improvements  
+
+v0.3.28.70  
+- New multicaret editor in column mode and manual mode with  
+  Ctrl-Shift-LeftClick  
+- New code completion with Ctrl-Space  
+
+v0.3.27.67  
+- Now is possible associate ".sba",".prg" and ".snp" files  
+- Update of the beta expiration date  
+- Re-open of last open documents at startup (option in config form)  
+- "location" field in SBA JSON has been deprecated  
+- Bug fixes  
+
+v0.3.25.62  
+- Better support for AutoUpdate  
+- Bug fixes in Library management  
+- Support for drag and drop of editor tabs  
+- Updated Linux version  
+- Now is possible to associate ".vhd" files to be opened in the editor  
+
+v0.3.24.60  
+- Bug fixes and some improvements  
+
+v0.3.23.51  
+- Better AutoUpdate  
+- Support for user editable files in IP-cores libraries  
+- Fixes to issues reported by the user community  
+- Performance improvements  
+
+v0.3.20.44  
+- Bug fixes and better access to recent projects from the main menu  
+
+v0.3.19.33  
+- Bug fixes and Library Manager improvements  
+
+v0.3.18.28  
+- Best fit in HD (1366x768) displays  
+- Bug fixes in LibraryForm   
+
+v0.3.17.26  
+- Modified new files in editor invoke "save as" dialog  
+- Shorter WhatsNew when a new version is detected  
+
+v0.3.16.24  
+- Improve Library support  
+- Minor bug corrections  
+
+v0.3.16.22  
+- Better support for open JSON SBA project files  
+- Improve JSON compatibility with RFC 7159  
+
+v0.3.15.20  
+- Reset expiration date of the beta test  
+- Sourceforge break auto updates, this feature is now under test with  
+  different server  
+- Configuration value for advanced SBA Controller editing capabilities  
+- Minor bug corrections  
+
+v0.3.14.14  
+- Code Reformat now open a new editor tab with the results.  
+
+v0.3.13.12  
+- Reset expiration date of beta test  
+- Complete support for vhdl editor templates, use template.ini  
+  in the config folder to add your own templates  
+
+v0.3.12.06  
+- Better support for themes  
+- IPCore float form now also show IPCore Title  
+- Auto update feature now shows what is new before to update  
+- Improve auto calculations of SBA memory map  
+- Better support for multi SBA bus cores  
+
+v0.3.11.92  
+- Initial support for themes and plugins  
+- Base files updates (use SBA Library form to update base files)  
+- More extensible and configurable SBA Controller (only in new projects)  
+- User signals, procedures, and Statements  
+
+v0.3.10.90:  
+- Improve support for alternative repositories  
+- Improve default library folder structure  
+- Minor bug corrections  
+
+v0.3.8.84:  
+- Bug correction in the clipboard import error catching  
+
+v0.3.8.82:  
+- Project wizard support for paste SBA project definitions from the clipboard  
+
+v0.3.7.80:  
+- Improve project wizard  
+
+v0.3.6.78:  
+- Improve library management  
+- Improve editor popup menu  
+
+v0.3.5.74:  
+- Minor bugs correction  
+- Now the SBA Project can be exported  
+
+v0.3.4.70:  
+- Improve debug messages and auto update  
+- In project wizard, the option to create a project folder now is checked  
+  for default  
+- Preliminary implementation of the export project  
+
+v0.3.2.65:  
+- Improve support for automatic updates  
