@@ -1,6 +1,6 @@
 backup
-Tools
-Doc
+/Tools
+/Doc
 images
 *.bak
 *.exe
