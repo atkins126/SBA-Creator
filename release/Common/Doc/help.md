@@ -1,5 +1,8 @@
-SBACreator - Editor ShortCuts
-=============================
+SBACreator
+==========
+
+Editor ShortCuts Help
+=====================
 
 Moving:
 -------
