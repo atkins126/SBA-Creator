@@ -25,6 +25,6 @@ To create SBA projects, use the New Project button and follow the instructions o
 
 The main SBA Creator program check for updates automatically but, the support VHDL files and libraries are not checked. If you want, you can verify for updates of the SBA base files and IP cores libraries using SBA Library button.
 
-If you have a question regarding SBA creator, please goto to the [SBA forum](http://sbasystem.foro.pro/).
+If you have a question regarding SBA creator, please goto to the [SBA forum](http://sbaforum.accesus.com/).
 
 
