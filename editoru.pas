@@ -9,7 +9,7 @@ uses
   StdCtrls, LazFileUtils, SynEdit, SynEditMouseCmds, IniFiles,
   SynEditHighlighter,SynEditMarkupHighAll, SynEditTypes,
   SynEditKeyCmds, SynCompletion,
-  SynHighlighterSBA,
+  SynHighlighterVHDL,
   SynHighlighterVerilog,
   SynHighlighterJSON,
   SynHighlighterIni,
@@ -75,7 +75,7 @@ var
 
 // Highlighters
   SynTclTkSyn: TSynTclTkSyn;
-  SynSBASyn:TSynSBASyn;
+  SynSBASyn:TSynVHDLSyn;
   SynVerilogSyn:TSynVerilogSyn;
   SynJSONSyn:TSynJSONSyn;
   SynBatSyn: TSynBatSyn;
@@ -301,7 +301,7 @@ function TEditor.CreateExportHighligther:TSynCustomHighlighter;
 begin
   case EdType of
     vhdl,prg:
-      result:=TSynSBASyn.Create(Owner);
+      result:=TSynVHDLSyn.Create(Owner);
     verilog,systemverilog:
       result:=TSynVerilogSyn.Create(Owner);
     ini:
@@ -536,7 +536,7 @@ end;
 
 procedure SynHighLightersCreate(AOwner:TComponent);
 begin
-  SynSBASyn:= TSynSBASyn.Create(AOwner);
+  SynSBASyn:= TSynVHDLSyn.Create(AOwner);
   SynVerilogSyn:= TSynVerilogSyn.Create(AOwner);
   SynJSONSyn:=TSynJSONSyn.create(AOwner);
   SynBatSyn:= TSynBatSyn.Create(AOwner);

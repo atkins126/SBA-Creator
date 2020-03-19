@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Dialogs, SynExportHTML, MarkdownProcessor, MarkdownUtils,
-  SynHighlighterSBA, SynHighlighterVerilog,
+  SynHighlighterVHDL, SynHighlighterVerilog,
   SynHighlighterIni, SynHighlighterHTML, SynHighlighterPas, SynHighlighterCpp,
   SynHighlighterPython,
   LazFileUtils, StrUtils, LCLIntf;
@@ -97,7 +97,7 @@ begin
     case meta of
       'vhdl':
         begin
-          SynExporterHTML.Highlighter:=TSynSBASyn.Create(SynExporterHTML);
+          SynExporterHTML.Highlighter:=TSynVHDLSyn.Create(SynExporterHTML);
           exportlines;
         end;
       'verilog','ver','sv':

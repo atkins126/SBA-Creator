@@ -3374,7 +3374,7 @@ begin
   if TryStrToDate({$I %date%}, ExpDate, 'YYYY/MM/DD', '/') then
   begin
     ExpDate:=IncMonth(ExpDate,6);
-  end else ExpDate:=EncodeDate(2019,12,31);
+  end else ExpDate:=EncodeDate(2020,12,31);
 (*
   try
     ExpDate:=IncMonth(ScanDateTime('yyyy/mm/dd',{$I %date%}),6);

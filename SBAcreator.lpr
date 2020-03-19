@@ -10,7 +10,7 @@ uses
 
   Interfaces, // this includes the LCL widgetset
   Forms, HistoryLazarus, MainFormU, synhighlighterverilog,
-  synhighlightersba, versionsupportu, SBAProgContrlrU, AboutFormU, sbasnippetu,
+  synhighlightervhdl, versionsupportu, SBAProgContrlrU, AboutFormU, sbasnippetu,
   configformu, PrjWizU, dwfileU, DebugU, AutoUpdateU, SBAProjectU, floatformu,
   CoresPrjEdFormU, UtilsU, sbaprogramu, exportprjformu, UScaleDPI,
   lazcontrols, anchordockpkg, uecontrols, SBAIPCoresU, PlugInU, WhatsNewU, DataSheetU

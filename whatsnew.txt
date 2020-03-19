@@ -1,5 +1,8 @@
 What's New
 ==========
+v0.5.5
+- Reset Beta expiration date
+ 
 v0.5.4
 - Added some verbose staments to log window.
 - Added number of selected chars to the right of line/column indicator of the status line.
